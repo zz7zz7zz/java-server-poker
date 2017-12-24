@@ -1,0 +1,8 @@
+// protoc --java_out=./src ./src/com/poker/protocols/im/proto/ImMessage.proto 
+option java_package = "com.poker.protocols.im";
+option java_outer_classname = "ImMessageProto";
+
+message ImMessage{
+	required int32 type  = 1;
+	required string text = 2;
+}
