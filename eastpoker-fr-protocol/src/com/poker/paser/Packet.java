@@ -9,6 +9,8 @@ package com.poker.paser;
 public class Packet {
 
     public Header header;
+    
+    public byte[] head = new byte[Header.HEADER_LENGTH];
     public byte[] body;
 
     //---------------------------------------------------------------------------------------------
