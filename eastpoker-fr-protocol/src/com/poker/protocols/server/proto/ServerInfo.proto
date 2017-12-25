@@ -1,0 +1,11 @@
+// protoc --java_out=./src ./src/com/poker/protocols/server/proto/ServerInfo.proto 
+option java_package = "com.poker.protocols.server";
+option java_outer_classname = "ServerInfoProto";
+
+message ServerInfo{
+	required int32  type  = 1;
+	required string name  = 2;
+	required int32  id    = 3;
+	required string host  = 4;
+	required int32  port  = 5;
+}
