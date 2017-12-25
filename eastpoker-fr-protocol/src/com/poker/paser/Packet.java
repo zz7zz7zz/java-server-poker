@@ -23,6 +23,7 @@ public class Packet {
         public byte     encrypt;
         public int      cmd;
         public short    gid;
+        public int      sequenceId;
 
         //-----------------------------------
         public int getLength(byte[] data){
@@ -45,6 +46,9 @@ public class Packet {
             return 0;
         }
 
+        public short getSequenceId(byte[] data){
+            return 0;
+        }
         //-----------------------------------
         public void setLength(int length){
             this.length = length;
@@ -66,6 +70,9 @@ public class Packet {
             this.gid = gid;
         }
 
+        public void setSequenceId(short sequenceId){
+            this.sequenceId = sequenceId;
+        }  
         //-----------------------------------
         public static byte[] build(byte[] header , Header mHeader){
 
