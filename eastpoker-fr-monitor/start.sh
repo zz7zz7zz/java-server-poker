@@ -1,1 +1,1 @@
-nohup java -jar Monitor.jar -n 'Monitor' -i 1 -p 9995 &
+nohup java -jar Monitor.jar -n 'Monitor' -i 0 -p 9990 &

@@ -1,1 +1,10 @@
-nohup java -jar Access.jar -n 'Access' -i 1 -p 9999 &
+nohup java -jar Access.jar -n 'Access' -i 0 -p 10010 &
+nohup java -jar Access.jar -n 'Access' -i 1 -p 10011 &
+nohup java -jar Access.jar -n 'Access' -i 2 -p 10012 &
+nohup java -jar Access.jar -n 'Access' -i 3 -p 10013 &
+nohup java -jar Access.jar -n 'Access' -i 4 -p 10014 &
+nohup java -jar Access.jar -n 'Access' -i 5 -p 10015 &
+nohup java -jar Access.jar -n 'Access' -i 6 -p 10016 &
+nohup java -jar Access.jar -n 'Access' -i 7 -p 10017 &
+nohup java -jar Access.jar -n 'Access' -i 8 -p 10018 &
+nohup java -jar Access.jar -n 'Access' -i 9 -p 10019 &
