@@ -2,22 +2,71 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import com.google.protobuf.ByteString;
 import com.poker.protocols.im.ImMessageProto;
+import com.poker.protocols.server.DispatchChainProto;
+import com.poker.protocols.server.DispatchPacketProto;
 
 public class Main {
 
 	public static void main(String []argc){
-		testImMessage();
+		testDispatch();
+		//testImMessage();
 	}
 	
+public static void testDispatch(){
+		
+		// ï¿½ï¿½ï¿½Õ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý½á¹¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Person  
+		DispatchPacketProto.DispatchPacket.Builder builder = DispatchPacketProto.DispatchPacket.newBuilder();
+		builder.setSequenceId(1);
+		builder.setData(ByteString.copyFrom("abc".getBytes()));
+
+		DispatchChainProto.DispatchChain.Builder chainBuilder = DispatchChainProto.DispatchChain.newBuilder();
+		chainBuilder.setSrcServerType(1);
+		chainBuilder.setSrcServerId(11);
+		chainBuilder.setDstServerType(2);
+		chainBuilder.setDstServerId(21);
+		
+		builder.addDispatchChainList(chainBuilder);
+		
+		
+//		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ByteArrayOutputStreamï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
+		ByteArrayOutputStream output = new ByteArrayOutputStream(16*1024);
+		DispatchPacketProto.DispatchPacket obj = builder.build();
+		try {
+			obj.writeTo(output);
+			//op.write(obj.toByteArray())
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+//		
+//		// -------------- ï¿½Ö¸ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ ---------------  
+		byte[] byteArray = output.toByteArray(); 
+		System.out.println(" output length " + byteArray.length + " toString " + new String(byteArray));
+//		
+//		
+//		 // -------------- ï¿½Ö¸ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç½ï¿½ï¿½Õ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý½ï¿½ï¿½Õºï¿½ï¿½ï¿½ï¿½Ð»ï¿½ ---------------  
+//        
+//        // ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ByteArrayInputStreamï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
+        ByteArrayInputStream input = new ByteArrayInputStream(byteArray);
+        try {
+        	DispatchPacketProto.DispatchPacket readObj = DispatchPacketProto.DispatchPacket.parseFrom(input);
+			
+			System.out.println(" input length " + byteArray.length + " toString " + readObj.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+	}
+
 	public static void testImMessage(){
 		
-		// °´ÕÕ¶¨ÒåµÄÊý¾Ý½á¹¹£¬´´½¨Ò»¸öPerson  
+		// ï¿½ï¿½ï¿½Õ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý½á¹¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Person  
 		ImMessageProto.ImMessage.Builder builder = ImMessageProto.ImMessage.newBuilder();
 		builder.setType(1);
 		builder.setText("Im123456789");
 		
-		// ½«Êý¾ÝÐ´µ½Êä³öÁ÷£¬ÈçÍøÂçÊä³öÁ÷£¬ÕâÀï¾ÍÓÃByteArrayOutputStreamÀ´´úÌæ  
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ByteArrayOutputStreamï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
 		ByteArrayOutputStream output = new ByteArrayOutputStream(16*1024);
 		ImMessageProto.ImMessage obj = builder.build();
 		try {
@@ -27,14 +76,14 @@ public class Main {
 			e.printStackTrace();
 		}
 		
-		// -------------- ·Ö¸îÏß£ºÉÏÃæÊÇ·¢ËÍ·½£¬½«Êý¾ÝÐòÁÐ»¯ºó·¢ËÍ ---------------  
+		// -------------- ï¿½Ö¸ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ ---------------  
 		byte[] byteArray = output.toByteArray(); 
 		System.out.println(" output length " + byteArray.length + " toString " + new String(byteArray));
 		
 		
-		 // -------------- ·Ö¸îÏß£ºÏÂÃæÊÇ½ÓÊÕ·½£¬½«Êý¾Ý½ÓÊÕºó·´ÐòÁÐ»¯ ---------------  
+		 // -------------- ï¿½Ö¸ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç½ï¿½ï¿½Õ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý½ï¿½ï¿½Õºï¿½ï¿½ï¿½ï¿½Ð»ï¿½ ---------------  
         
-        // ½ÓÊÕµ½Á÷²¢¶ÁÈ¡£¬ÈçÍøÂçÊäÈëÁ÷£¬ÕâÀïÓÃByteArrayInputStreamÀ´´úÌæ  
+        // ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ByteArrayInputStreamï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
         ByteArrayInputStream input = new ByteArrayInputStream(byteArray);
         try {
         	ImMessageProto.ImMessage readObj = ImMessageProto.ImMessage.parseFrom(input);
