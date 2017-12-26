@@ -1,4 +1,4 @@
-package com.poker.paser;
+package com.poker.data;
 
 /**
  * author       :   Administrator
@@ -6,7 +6,7 @@ package com.poker.paser;
  * description  :
  */
 
-public class Packet {
+public class DataPacket {
 
     public Header header;
     

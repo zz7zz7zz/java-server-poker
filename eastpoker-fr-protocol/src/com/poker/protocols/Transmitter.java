@@ -2,7 +2,7 @@
 package com.poker.protocols;
 
 import com.google.protobuf.ByteString;
-import com.poker.paser.Packet;
+import com.poker.data.DataPacket;
 import com.poker.protocols.server.DispatchChainProto;
 import com.poker.protocols.server.DispatchPacketProto;
 import com.poker.server.Server;
@@ -41,7 +41,7 @@ public final class Transmitter {
 		wrap(squenceId, cmd, data, Transmitter.server_type, Transmitter.server_id, Server.SERVER_GOLDCOIN, dst_server_id);
 	}
 	
-	public static Packet wrap(int squenceId, int cmd , byte[] data, int src_server_type , int src_server_id ,int dst_server_type , int dst_server_id){
+	public static DataPacket wrap(int squenceId, int cmd , byte[] data, int src_server_type , int src_server_id ,int dst_server_type , int dst_server_id){
 		
 		//流水id
 		DispatchPacketProto.DispatchPacket.Builder builder = DispatchPacketProto.DispatchPacket.newBuilder();
@@ -61,7 +61,7 @@ public final class Transmitter {
 		DispatchPacketProto.DispatchPacket dispatchPacket = builder.build();
 		byte[] body = dispatchPacket.toByteArray();
 		
-		Packet mPacket = new Packet();
+		DataPacket mPacket = new DataPacket();
 		mPacket.body = body;
 		
 		return mPacket;

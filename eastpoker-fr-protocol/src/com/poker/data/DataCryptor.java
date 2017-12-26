@@ -1,4 +1,4 @@
-package com.poker.paser;
+package com.poker.data;
 
 /**
  * author       :   Administrator
@@ -6,7 +6,7 @@ package com.poker.paser;
  * description  :
  */
 
-public final class CryptoUtil {
+public final class DataCryptor {
 
     public final static byte[] ENCRYPT_DATA = new byte[256];
     public final static byte[] DECRYPT_DATA = new byte[256];
