@@ -2,9 +2,15 @@ package com.poker.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.LinkedList;
 
+import com.open.net.client.impl.tcp.nio.NioClient;
+import com.open.net.client.structures.BaseClient;
+import com.open.net.client.structures.BaseMessageProcessor;
+import com.open.net.client.structures.IConnectListener;
+import com.open.net.client.structures.TcpAddress;
 import com.open.net.server.GServer;
-import com.open.net.server.impl.tcp.nio.NioClient;
 import com.open.net.server.impl.tcp.nio.NioServer;
 import com.open.net.server.structures.AbstractClient;
 import com.open.net.server.structures.AbstractMessageProcessor;
@@ -32,7 +38,7 @@ public class Main {
         mServerInfo.initFileConfig("./conf/lib.server.config");
         
         //1.2 数据初始化
-        GServer.init(mServerInfo, NioClient.class);
+        GServer.init(mServerInfo, com.open.net.server.impl.tcp.nio.NioClient.class);
         
         //1.3 日志初始化
         Logger.init("./conf/lib.log.config");
@@ -47,6 +53,17 @@ public class Main {
         //2.1 发送给服务监听器
     	NetUtil.send_data_by_udp_nio("", 9995, String.format("%s %d Enter", mServerInfo.name,mServerInfo.id).getBytes());
     	
+    	//2.2 连接到Dispatcher
+    	int dispatcherSize = (null != mConfig.dispatcher_net_udp) ? mConfig.dispatcher_net_tcp.length : 0;
+    	if(dispatcherSize > 0){
+    		dispatcher = new NioClient[dispatcherSize];
+    		for(int i=0; i< dispatcherSize ; i++){
+    			dispatcher[i] = new NioClient(mDisPatcherMessageProcessor,mDisPatcherConnectResultListener); 
+    			dispatcher[i].setConnectAddress(new TcpAddress[]{mConfig.dispatcher_net_tcp[i]});
+    			dispatcher[i].connect();
+    		}
+    	}
+    	
         //4.连接初始化
         Logger.v("-------Server------start---------");
         try {
@@ -60,6 +77,44 @@ public class Main {
         Logger.v("-------Server------end---------");
     }
 
+    //-------------------------------------------------------------------------------------------
+    public static NioClient [] dispatcher;
+    
+	private static IConnectListener mDisPatcherConnectResultListener = new IConnectListener() {
+		@Override
+		public void onConnectionSuccess(BaseClient client) {
+
+		}
+
+		@Override
+		public void onConnectionFailed(BaseClient client) {
+
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			for(NioClient mClient: dispatcher){
+				if(mClient == client){
+					Logger.v("-------dispatcher onConnectionFailed---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
+					mClient.connect();
+					break;
+				}
+			}
+		}
+	};
+
+	private static BaseMessageProcessor mDisPatcherMessageProcessor =new BaseMessageProcessor() {
+
+		@Override
+		public void onReceiveMessages(BaseClient arg0,
+				LinkedList<com.open.net.client.structures.message.Message> arg1) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	
     //-------------------------------------------------------------------------------------------
     public static AbstractMessageProcessor mMessageProcessor = new AbstractMessageProcessor() {
 
