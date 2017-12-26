@@ -9,6 +9,8 @@ import com.poker.server.Server;
 
 public final class Transmitter {
 	
+	public static byte[] BUFF = new byte[16*1024];
+	
 	public static int server_type;
 	public static int server_id;
 	
@@ -41,7 +43,7 @@ public final class Transmitter {
 		wrap(squenceId, cmd, data, Transmitter.server_type, Transmitter.server_id, Server.SERVER_GOLDCOIN, dst_server_id);
 	}
 	
-	public static DataPacket wrap(int squenceId, int cmd , byte[] data, int src_server_type , int src_server_id ,int dst_server_type , int dst_server_id){
+	public static byte[] wrap(int squenceId, int cmd , byte[] data, int src_server_type , int src_server_id ,int dst_server_type , int dst_server_id){
 		
 		//流水id
 		DispatchPacketProto.DispatchPacket.Builder builder = DispatchPacketProto.DispatchPacket.newBuilder();
@@ -61,9 +63,6 @@ public final class Transmitter {
 		DispatchPacketProto.DispatchPacket dispatchPacket = builder.build();
 		byte[] body = dispatchPacket.toByteArray();
 		
-		DataPacket mPacket = new DataPacket();
-		mPacket.body = body;
-		
-		return mPacket;
+		return DataPacket.build(BUFF, squenceId, cmd, (byte)0, (byte)0, (short)0, body);
 	}
 }
