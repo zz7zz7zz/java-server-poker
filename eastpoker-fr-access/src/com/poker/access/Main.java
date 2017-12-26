@@ -14,6 +14,7 @@ import com.open.net.server.structures.ServerLog.LogListener;
 import com.open.net.server.structures.message.Message;
 import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
+import com.poker.common.config.Config;
 
 /**
  * author       :   long
@@ -25,34 +26,37 @@ public class Main {
 
     public static void main(String [] args){
     	
-    	//1.配置初始化
+    	//1.1 配置初始化
         ServerConfig mServerInfo = new ServerConfig();
         mServerInfo.initArgsConfig(args);
         mServerInfo.initFileConfig("./conf/lib.server.config");
         
-        //2.数据初始化
+        //1.2 数据初始化
         GServer.init(mServerInfo, NioClient.class);
         
-        //3.日志初始化
+        //1.3 日志初始化
         Logger.init("./conf/lib.log.config");
         Logger.addFilterTraceElement(ServerLog.class.getName());
         Logger.addFilterTraceElement(mLogListener.getClass().getName());
         Logger.v("-------Server------"+ mServerInfo.toString());
         
+        //1.4 业务配置初始化
+        Config mConfig = new Config();
+        mConfig.initFileConfig("./conf/server.config");
+        
+        //2.1 发送给服务监听器
+    	NetUtil.send_data_by_udp_nio("", 9995, String.format("%s %d Enter", mServerInfo.name,mServerInfo.id).getBytes());
+    	
         //4.连接初始化
         Logger.v("-------Server------start---------");
         try {
-        	String serverInfo = String.format("%s %d Enter", mServerInfo.name,mServerInfo.id);
-        	NetUtil.send_data_by_udp_nio("", 9995, serverInfo.getBytes());
-        	
             NioServer mNioServer = new NioServer(mServerInfo,mMessageProcessor,mLogListener);
             mNioServer.start();
         } catch (IOException e) {
             e.printStackTrace();
         } 
         
-    	String serverInfo = String.format("%s %d Exit", mServerInfo.name,mServerInfo.id);
-    	NetUtil.send_data_by_udp_nio("", 9995, serverInfo.getBytes());
+    	NetUtil.send_data_by_udp_nio("", 9995, String.format("%s %d Exit", mServerInfo.name,mServerInfo.id).getBytes());
         Logger.v("-------Server------end---------");
     }
 
