@@ -33,7 +33,7 @@ public class Main {
         GServer.init(mServerInfo, UdpBioClient.class);
         
         //3.日志初始化
-        Logger.init("./conf/lib.log.config");
+        Logger.init("./conf/lib.log.config",mServerInfo.id);
         Logger.addFilterTraceElement(ServerLog.class.getName());
         Logger.addFilterTraceElement(mLogListener.getClass().getName());
         Logger.v("-------Server------"+ mServerInfo.toString());
