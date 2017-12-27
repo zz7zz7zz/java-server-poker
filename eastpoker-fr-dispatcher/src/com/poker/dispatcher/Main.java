@@ -102,7 +102,7 @@ public class Main {
     
     public static AbstractMessageProcessor mMessageProcessor = new AbstractMessageProcessor() {
 
-        private ByteBuffer mWriteBuffer  = ByteBuffer.allocate(128*1024);
+        private ByteBuffer mWriteBuffer  = ByteBuffer.allocate(16*1024);
         private long oldTime = System.currentTimeMillis();
         private long nowTime  = oldTime;
         
