@@ -101,7 +101,7 @@ public class Main {
     
     //---------------------------------------Dispatcher----------------------------------------------------
     public static void register_dispatcher(Config mConfig){
-    	int dispatcherSize = (null != mConfig.dispatcher_net_udp) ? mConfig.dispatcher_net_tcp.length : 0;
+    	int dispatcherSize = (null != mConfig.dispatcher_net_tcp) ? mConfig.dispatcher_net_tcp.length : 0;
     	if(dispatcherSize > 0){
     		dispatcher = new NioClient[dispatcherSize];
     		for(int i=0; i< dispatcherSize ; i++){
@@ -126,7 +126,7 @@ public class Main {
 	private static IConnectListener mDisPatcherConnectResultListener = new IConnectListener() {
 		@Override
 		public void onConnectionSuccess(BaseClient client) {
-		
+			Logger.v("-------dispatcher onConnectionSuccess---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
 			//register to dispatchServer
 			byte[] buff = DataTransfer.register2Dispatcher(Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
 			mDisPatcherMessageProcessor.send(client,buff,0,DataPacket.Header.getLength(buff));
