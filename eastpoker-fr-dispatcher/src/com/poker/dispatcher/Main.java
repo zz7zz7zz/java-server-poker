@@ -77,7 +77,7 @@ public class Main {
 
     //---------------------------------------Monitor----------------------------------------------------
     public static void register_monitor(Config mConfig){
-        byte[] buff = DataTransfer.register2Monitor(Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+        byte[] buff = DataTransfer.register2Monitor(Server.SERVER_DIAPATCHER,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
@@ -87,7 +87,7 @@ public class Main {
     }
     
     public static void unregister_monitor(Config mConfig){
-        byte[] buff = DataTransfer.unregister2Monitor(Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+        byte[] buff = DataTransfer.unregister2Monitor(Server.SERVER_DIAPATCHER,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
