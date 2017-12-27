@@ -423,12 +423,26 @@ public final class ServerInfoProto {
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
+    //------------------------start-----------------------------
+    public static com.poker.protocols.server.ServerInfoProto.ServerInfo parseFrom(byte[] data,int offset,int length)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return PARSER.parseFrom(data,offset,length);
+    }
+    //------------------------end-----------------------------
     public static com.poker.protocols.server.ServerInfoProto.ServerInfo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
+    //------------------------start-----------------------------
+    public static com.poker.protocols.server.ServerInfoProto.ServerInfo parseFrom(
+    		byte[] data,int offset,int length,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return PARSER.parseFrom(data,offset,length, extensionRegistry);
+        }
+    //------------------------end-----------------------------
     public static com.poker.protocols.server.ServerInfoProto.ServerInfo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);

@@ -25,7 +25,7 @@ public class DataPacket {
     //---------------------------------------------------------------------------------------------
     public static final class Header {
 
-        static final int HEADER_LENGTH = 16;
+    	public static final int HEADER_LENGTH = 16;
 
         public int      length;//包体长度，包含包头+包体
         public int      sequenceId;//流水id
