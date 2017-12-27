@@ -68,52 +68,100 @@ public class DataPacket {
         
         //----------------------------------------------------------------------
         public static int getLength(byte[] buff){
-            return DataConverter.getInt(buff, OFFSET_LENGTH);
+            return getLength(buff, 0);
+        }
+        
+        public static int getLength(byte[] buff,int offset){
+            return DataConverter.getInt(buff, offset+OFFSET_LENGTH);
         }
 
         public static int getSequenceId(byte[] buff){
-            return DataConverter.getInt(buff, OFFSET_SEQUENCEID);
+            return getSequenceId(buff,0);
+        }
+        
+        public static int getSequenceId(byte[] buff,int offset){
+            return DataConverter.getInt(buff, offset+OFFSET_SEQUENCEID);
         }
         
         public static int getCmd(byte[] buff){
+            return getCmd(buff,0);
+        }
+        
+        public static int getCmd(byte[] buff,int offset){
         	return DataConverter.getInt(buff, OFFSET_CMD);
         }
         
         public static byte getVersion(byte[] buff){
-        	return DataConverter.getByte(buff, OFFSET_VERSION);
+            return getVersion(buff,0);
+        }
+        
+        public static byte getVersion(byte[] buff,int offset){
+        	return DataConverter.getByte(buff, offset+OFFSET_VERSION);
         }
 
         public static byte getEncrypt(byte[] buff){
-        	return DataConverter.getByte(buff, OFFSET_ENCRYPT);
+            return getEncrypt(buff,0);
+        }
+        
+        public static byte getEncrypt(byte[] buff,int offset){
+        	return DataConverter.getByte(buff, offset+OFFSET_ENCRYPT);
         }
 
         public static short getGid(byte[] buff){
-        	return DataConverter.getShort(buff, OFFSET_GID);
+            return getGid(buff,0);
+        }
+        
+        public static short getGid(byte[] buff,int offset){
+        	return DataConverter.getShort(buff, offset+OFFSET_GID);
         }
 
         //----------------------------------------------------------------------
         public int setLength(byte[] buff){
-            return DataConverter.putInt(buff, OFFSET_LENGTH,this.length);
+            return setLength(buff, 0);
         }
 
+        public int setLength(byte[] buff,int offset){
+            return DataConverter.putInt(buff,offset+ OFFSET_LENGTH,this.length);
+        }
+        
         public int setSequenceId(byte[] buff){
-            return DataConverter.putInt(buff, OFFSET_SEQUENCEID,this.sequenceId);
+            return setSequenceId(buff, 0);
+        }
+        
+        public int setSequenceId(byte[] buff,int offset){
+            return DataConverter.putInt(buff, offset+OFFSET_SEQUENCEID,this.sequenceId);
         }
         
         public int setCmd(byte[] buff){
-        	return DataConverter.putInt(buff, OFFSET_CMD,this.cmd);
+        	return setCmd(buff, 0);
+        }
+        
+        public int setCmd(byte[] buff,int offset){
+        	return DataConverter.putInt(buff, offset+OFFSET_CMD,this.cmd);
         }
         
         public int setVersion(byte[] buff){
-        	return DataConverter.putByte(buff, OFFSET_VERSION,this.version);
+        	return setVersion(buff, 0);
+        }
+        
+        public int setVersion(byte[] buff,int offset){
+        	return DataConverter.putByte(buff, offset+OFFSET_VERSION,this.version);
         }
 
         public int setEncrypt(byte[] buff){
-        	return DataConverter.putByte(buff, OFFSET_ENCRYPT,this.encrypt);
+        	return setEncrypt(buff, 0);
+        }
+        
+        public int setEncrypt(byte[] buff,int offset){
+        	return DataConverter.putByte(buff, offset+OFFSET_ENCRYPT,this.encrypt);
         }
 
         public int setGid(byte[] buff){
-        	return DataConverter.putShort(buff, OFFSET_GID,this.gid);
+        	return setGid(buff, 0);
+        }
+        
+        public int setGid(byte[] buff,int offset){
+        	return DataConverter.putShort(buff, offset+OFFSET_GID,this.gid);
         }
     }
 }
