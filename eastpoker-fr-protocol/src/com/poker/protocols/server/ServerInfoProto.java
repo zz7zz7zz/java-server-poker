@@ -46,28 +46,28 @@ public final class ServerInfoProto {
      */
     int getId();
 
-    // required string host = 4;
+    // optional string host = 4;
     /**
-     * <code>required string host = 4;</code>
+     * <code>optional string host = 4;</code>
      */
     boolean hasHost();
     /**
-     * <code>required string host = 4;</code>
+     * <code>optional string host = 4;</code>
      */
     java.lang.String getHost();
     /**
-     * <code>required string host = 4;</code>
+     * <code>optional string host = 4;</code>
      */
     com.google.protobuf.ByteString
         getHostBytes();
 
-    // required int32 port = 5;
+    // optional int32 port = 5;
     /**
-     * <code>required int32 port = 5;</code>
+     * <code>optional int32 port = 5;</code>
      */
     boolean hasPort();
     /**
-     * <code>required int32 port = 5;</code>
+     * <code>optional int32 port = 5;</code>
      */
     int getPort();
   }
@@ -262,17 +262,17 @@ public final class ServerInfoProto {
       return id_;
     }
 
-    // required string host = 4;
+    // optional string host = 4;
     public static final int HOST_FIELD_NUMBER = 4;
     private java.lang.Object host_;
     /**
-     * <code>required string host = 4;</code>
+     * <code>optional string host = 4;</code>
      */
     public boolean hasHost() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>required string host = 4;</code>
+     * <code>optional string host = 4;</code>
      */
     public java.lang.String getHost() {
       java.lang.Object ref = host_;
@@ -289,7 +289,7 @@ public final class ServerInfoProto {
       }
     }
     /**
-     * <code>required string host = 4;</code>
+     * <code>optional string host = 4;</code>
      */
     public com.google.protobuf.ByteString
         getHostBytes() {
@@ -305,17 +305,17 @@ public final class ServerInfoProto {
       }
     }
 
-    // required int32 port = 5;
+    // optional int32 port = 5;
     public static final int PORT_FIELD_NUMBER = 5;
     private int port_;
     /**
-     * <code>required int32 port = 5;</code>
+     * <code>optional int32 port = 5;</code>
      */
     public boolean hasPort() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
-     * <code>required int32 port = 5;</code>
+     * <code>optional int32 port = 5;</code>
      */
     public int getPort() {
       return port_;
@@ -342,14 +342,6 @@ public final class ServerInfoProto {
         return false;
       }
       if (!hasId()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasHost()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasPort()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -630,14 +622,6 @@ public final class ServerInfoProto {
           
           return false;
         }
-        if (!hasHost()) {
-          
-          return false;
-        }
-        if (!hasPort()) {
-          
-          return false;
-        }
         return true;
       }
 
@@ -800,16 +784,16 @@ public final class ServerInfoProto {
         return this;
       }
 
-      // required string host = 4;
+      // optional string host = 4;
       private java.lang.Object host_ = "";
       /**
-       * <code>required string host = 4;</code>
+       * <code>optional string host = 4;</code>
        */
       public boolean hasHost() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
-       * <code>required string host = 4;</code>
+       * <code>optional string host = 4;</code>
        */
       public java.lang.String getHost() {
         java.lang.Object ref = host_;
@@ -823,7 +807,7 @@ public final class ServerInfoProto {
         }
       }
       /**
-       * <code>required string host = 4;</code>
+       * <code>optional string host = 4;</code>
        */
       public com.google.protobuf.ByteString
           getHostBytes() {
@@ -839,7 +823,7 @@ public final class ServerInfoProto {
         }
       }
       /**
-       * <code>required string host = 4;</code>
+       * <code>optional string host = 4;</code>
        */
       public Builder setHost(
           java.lang.String value) {
@@ -852,7 +836,7 @@ public final class ServerInfoProto {
         return this;
       }
       /**
-       * <code>required string host = 4;</code>
+       * <code>optional string host = 4;</code>
        */
       public Builder clearHost() {
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -861,7 +845,7 @@ public final class ServerInfoProto {
         return this;
       }
       /**
-       * <code>required string host = 4;</code>
+       * <code>optional string host = 4;</code>
        */
       public Builder setHostBytes(
           com.google.protobuf.ByteString value) {
@@ -874,22 +858,22 @@ public final class ServerInfoProto {
         return this;
       }
 
-      // required int32 port = 5;
+      // optional int32 port = 5;
       private int port_ ;
       /**
-       * <code>required int32 port = 5;</code>
+       * <code>optional int32 port = 5;</code>
        */
       public boolean hasPort() {
         return ((bitField0_ & 0x00000010) == 0x00000010);
       }
       /**
-       * <code>required int32 port = 5;</code>
+       * <code>optional int32 port = 5;</code>
        */
       public int getPort() {
         return port_;
       }
       /**
-       * <code>required int32 port = 5;</code>
+       * <code>optional int32 port = 5;</code>
        */
       public Builder setPort(int value) {
         bitField0_ |= 0x00000010;
@@ -898,7 +882,7 @@ public final class ServerInfoProto {
         return this;
       }
       /**
-       * <code>required int32 port = 5;</code>
+       * <code>optional int32 port = 5;</code>
        */
       public Builder clearPort() {
         bitField0_ = (bitField0_ & ~0x00000010);
@@ -935,7 +919,7 @@ public final class ServerInfoProto {
       "\n5src/com/poker/protocols/server/proto/S" +
       "erverInfo.proto\"P\n\nServerInfo\022\014\n\004type\030\001 " +
       "\002(\005\022\014\n\004name\030\002 \002(\t\022\n\n\002id\030\003 \002(\005\022\014\n\004host\030\004 " +
-      "\002(\t\022\014\n\004port\030\005 \002(\005B-\n\032com.poker.protocols" +
+      "\001(\t\022\014\n\004port\030\005 \001(\005B-\n\032com.poker.protocols" +
       ".serverB\017ServerInfoProto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =

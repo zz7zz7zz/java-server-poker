@@ -6,6 +6,6 @@ message ServerInfo{
 	required int32  type  = 1;
 	required string name  = 2;
 	required int32  id    = 3;
-	required string host  = 4;
-	required int32  port  = 5;
+	optional  string host  = 4;
+	optional  int32  port  = 5;
 }
