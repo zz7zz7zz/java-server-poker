@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Created-By: Long
+Class-Path: libs/protobuf-java-2.5.0.jar
+

@@ -67,27 +67,27 @@ public class DataPacket {
         }
         
         //----------------------------------------------------------------------
-        public int getLength(byte[] buff){
+        public static int getLength(byte[] buff){
             return DataConverter.getInt(buff, OFFSET_LENGTH);
         }
 
-        public int getSequenceId(byte[] buff){
+        public static int getSequenceId(byte[] buff){
             return DataConverter.getInt(buff, OFFSET_SEQUENCEID);
         }
         
-        public int getCmd(byte[] buff){
+        public static int getCmd(byte[] buff){
         	return DataConverter.getInt(buff, OFFSET_CMD);
         }
         
-        public byte getVersion(byte[] buff){
+        public static byte getVersion(byte[] buff){
         	return DataConverter.getByte(buff, OFFSET_VERSION);
         }
 
-        public byte getEncrypt(byte[] buff){
+        public static byte getEncrypt(byte[] buff){
         	return DataConverter.getByte(buff, OFFSET_ENCRYPT);
         }
 
-        public short getGid(byte[] buff){
+        public static short getGid(byte[] buff){
         	return DataConverter.getShort(buff, OFFSET_GID);
         }
 

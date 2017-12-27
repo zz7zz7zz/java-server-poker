@@ -20,7 +20,13 @@ import com.open.net.server.structures.ServerLog.LogListener;
 import com.open.net.server.structures.message.Message;
 import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
+import com.poker.cmd.DispatchCmd;
 import com.poker.common.config.Config;
+import com.poker.data.DataConverter;
+import com.poker.data.DataPacket;
+import com.poker.protocols.DataTransfer;
+import com.poker.protocols.server.ServerInfoProto;
+import com.poker.server.Server;
 
 /**
  * author       :   long
@@ -83,7 +89,18 @@ public class Main {
 	private static IConnectListener mDisPatcherConnectResultListener = new IConnectListener() {
 		@Override
 		public void onConnectionSuccess(BaseClient client) {
-
+			
+			ServerInfoProto.ServerInfo.Builder builder = ServerInfoProto.ServerInfo.newBuilder();
+			builder.setType(3);
+			builder.setName(GServer.mServerInfo.name);
+			builder.setId(GServer.mServerInfo.id);
+			builder.setHost(GServer.mServerInfo.host);
+			builder.setPort(GServer.mServerInfo.port);
+			
+			ServerInfoProto.ServerInfo obj = builder.build();
+			
+			byte[] buff = DataTransfer.send2Dispatcher(1, DispatchCmd.CMD_REGISTER,obj.toByteArray());
+			mDisPatcherMessageProcessor.send(client,buff,0,DataPacket.Header.getLength(buff));
 		}
 
 		@Override
