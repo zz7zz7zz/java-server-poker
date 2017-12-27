@@ -3,9 +3,11 @@ package com.poker.monitor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.server.GServer;
 import com.open.net.server.impl.udp.bio.UdpBioClient;
-import com.open.net.server.impl.udp.bio.UdpBioServer;
+import com.open.net.server.impl.udp.nio.UdpNioClient;
+import com.open.net.server.impl.udp.nio.UdpNioServer;
 import com.open.net.server.structures.AbstractClient;
 import com.open.net.server.structures.AbstractMessageProcessor;
 import com.open.net.server.structures.ServerConfig;
@@ -13,6 +15,8 @@ import com.open.net.server.structures.ServerLog;
 import com.open.net.server.structures.ServerLog.LogListener;
 import com.open.net.server.structures.message.Message;
 import com.open.util.log.Logger;
+import com.poker.data.DataPacket;
+import com.poker.protocols.server.ServerInfoProto;
 
 /**
  * author       :   long
@@ -30,7 +34,7 @@ public class Main {
         mServerInfo.initFileConfig("./conf/lib.server.config");
         
         //2.数据初始化
-        GServer.init(mServerInfo, UdpBioClient.class);
+        GServer.init(mServerInfo, UdpNioClient.class);
         
         //3.日志初始化
         Logger.init("./conf/lib.log.config",mServerInfo.id);
@@ -41,7 +45,7 @@ public class Main {
         //4.连接初始化
         Logger.v("-------Server------start---------");
         try {
-            UdpBioServer mBioServer = new UdpBioServer(mServerInfo,mMessageProcessor,mLogListener);
+            UdpNioServer mBioServer = new UdpNioServer(mServerInfo,mMessageProcessor,mLogListener);
             mBioServer.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -57,8 +61,13 @@ public class Main {
         private long nowTime  = oldTime;
         
         protected void onReceiveMessage(AbstractClient client, Message msg){
-        	
-            Logger.v("onReceiveMessage()  "+new String(msg.data,msg.offset,msg.length));
+        	try {
+        		ServerInfoProto.ServerInfo server = ServerInfoProto.ServerInfo.parseFrom(msg.data,DataPacket.Header.HEADER_LENGTH+msg.offset,msg.length-DataPacket.Header.HEADER_LENGTH);
+        		Logger.v(server.toString());
+			} catch (InvalidProtocolBufferException e) {
+				e.printStackTrace();
+			}
+//            Logger.v("onReceiveMessage()  "+new String(msg.data,msg.offset,msg.length));
 //            String data ="MainUdpBioServer--onReceiveMessage()--src_reuse_type "+msg.src_reuse_type
 //                    + " dst_reuse_type " + msg.dst_reuse_type
 //                    + " block_index " +msg.block_index
