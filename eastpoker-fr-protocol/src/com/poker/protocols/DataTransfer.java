@@ -2,10 +2,13 @@
 package com.poker.protocols;
 
 import com.google.protobuf.ByteString;
+import com.poker.base.Server;
+import com.poker.cmd.DispatchCmd;
+import com.poker.cmd.MonitorCmd;
 import com.poker.data.DataPacket;
 import com.poker.protocols.server.DispatchChainProto;
 import com.poker.protocols.server.DispatchPacketProto;
-import com.poker.server.Server;
+import com.poker.protocols.server.ServerInfoProto;
 
 public final class DataTransfer {
 	
@@ -68,5 +71,48 @@ public final class DataTransfer {
 		byte[] body = dispatchPacket.toByteArray();
 		
 		return DataPacket.build(BUFF, squenceId, cmd, (byte)0, (byte)0, (short)0, body);
+	}
+	
+	//--------------------------------------------------------------------------------------
+	public static byte[] register2Dispatcher(int type ,String name, int id, String host ,int port){
+		
+		ServerInfoProto.ServerInfo.Builder builder = ServerInfoProto.ServerInfo.newBuilder();
+		builder.setType(type);
+		builder.setName(name);
+		builder.setId(id);
+		builder.setHost(host);
+		builder.setPort(port);
+		
+		ServerInfoProto.ServerInfo obj = builder.build();
+		byte[] buff = DataTransfer.send2Dispatcher(1, DispatchCmd.CMD_REGISTER,obj.toByteArray());
+		return buff;
+	}
+	
+	public static byte[] register2Monitor(int type ,String name, int id, String host ,int port){
+		
+		ServerInfoProto.ServerInfo.Builder builder = ServerInfoProto.ServerInfo.newBuilder();
+		builder.setType(type);
+		builder.setName(name);
+		builder.setId(id);
+		builder.setHost(host);
+		builder.setPort(port);
+		
+		ServerInfoProto.ServerInfo obj = builder.build();
+		byte[] buff = DataTransfer.send2Dispatcher(1, MonitorCmd.CMD_SERVER_ENTER,obj.toByteArray());
+		return buff;
+	}
+	
+	public static byte[] unregister2Monitor(int type ,String name, int id, String host ,int port){
+		
+		ServerInfoProto.ServerInfo.Builder builder = ServerInfoProto.ServerInfo.newBuilder();
+		builder.setType(type);
+		builder.setName(name);
+		builder.setId(id);
+		builder.setHost(host);
+		builder.setPort(port);
+		
+		ServerInfoProto.ServerInfo obj = builder.build();
+		byte[] buff = DataTransfer.send2Dispatcher(1, MonitorCmd.CMD_SERVER_EXIT,obj.toByteArray());
+		return buff;
 	}
 }

@@ -20,13 +20,10 @@ import com.open.net.server.structures.ServerLog.LogListener;
 import com.open.net.server.structures.message.Message;
 import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
-import com.poker.cmd.DispatchCmd;
+import com.poker.base.Server;
 import com.poker.common.config.Config;
-import com.poker.data.DataConverter;
 import com.poker.data.DataPacket;
 import com.poker.protocols.DataTransfer;
-import com.poker.protocols.server.ServerInfoProto;
-import com.poker.server.Server;
 
 /**
  * author       :   long
@@ -38,6 +35,7 @@ public class Main {
 
     public static void main(String [] args){
     	
+        //-------------------------------------------------------------------------------------------
     	//1.1 配置初始化
         ServerConfig mServerInfo = new ServerConfig();
         mServerInfo.initArgsConfig(args);
@@ -56,10 +54,53 @@ public class Main {
         Config mConfig = new Config();
         mConfig.initFileConfig("./conf/server.config");
         
+        //-------------------------------------------------------------------------------------------
         //2.1 发送给服务监听器
-    	NetUtil.send_data_by_udp_nio("", 9995, String.format("%s %d Enter", mServerInfo.name,mServerInfo.id).getBytes());
+        register_monitor(mConfig);
     	
     	//2.2 连接到Dispatcher
+    	register_dispatcher(mConfig);
+    	
+        //-------------------------------------------------------------------------------------------
+        //3.0 连接初始化
+        Logger.v("-------Server------start---------");
+        try {
+            NioServer mNioServer = new NioServer(mServerInfo,mMessageProcessor,mLogListener);
+            mNioServer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } 
+        Logger.v("-------Server------end---------");
+        
+        //-------------------------------------------------------------------------------------------
+        //4.0 连接初始化
+        unregister_dispatcher(mConfig);
+        unregister_monitor(mConfig);
+    }
+
+    //---------------------------------------Monitor----------------------------------------------------
+    public static void register_monitor(Config mConfig){
+        byte[] buff = DataTransfer.register2Monitor(Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+        int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
+    	if(monitorSize > 0){
+    		for(int i=0; i< monitorSize ; i++){
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,buff,0,DataPacket.Header.getLength(buff));
+    		}
+    	}
+    }
+    
+    public static void unregister_monitor(Config mConfig){
+        byte[] buff = DataTransfer.unregister2Monitor(Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+        int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
+    	if(monitorSize > 0){
+    		for(int i=0; i< monitorSize ; i++){
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,buff,0,DataPacket.Header.getLength(buff));
+    		}
+    	}
+    }
+    
+    //---------------------------------------Dispatcher----------------------------------------------------
+    public static void register_dispatcher(Config mConfig){
     	int dispatcherSize = (null != mConfig.dispatcher_net_udp) ? mConfig.dispatcher_net_tcp.length : 0;
     	if(dispatcherSize > 0){
     		dispatcher = new NioClient[dispatcherSize];
@@ -69,37 +110,25 @@ public class Main {
     			dispatcher[i].connect();
     		}
     	}
-    	
-        //4.连接初始化
-        Logger.v("-------Server------start---------");
-        try {
-            NioServer mNioServer = new NioServer(mServerInfo,mMessageProcessor,mLogListener);
-            mNioServer.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } 
-        
-    	NetUtil.send_data_by_udp_nio("", 9995, String.format("%s %d Exit", mServerInfo.name,mServerInfo.id).getBytes());
-        Logger.v("-------Server------end---------");
     }
-
-    //-------------------------------------------------------------------------------------------
+    
+    public static void unregister_dispatcher(Config mConfig){
+    	int dispatcherSize = (null != dispatcher) ? dispatcher.length : 0;
+    	if(dispatcherSize > 0){
+    		for(int i=0; i< dispatcherSize ; i++){
+    			dispatcher[i].disconnect();
+    		}
+    	}
+    }
+    
     public static NioClient [] dispatcher;
     
 	private static IConnectListener mDisPatcherConnectResultListener = new IConnectListener() {
 		@Override
 		public void onConnectionSuccess(BaseClient client) {
-			
-			ServerInfoProto.ServerInfo.Builder builder = ServerInfoProto.ServerInfo.newBuilder();
-			builder.setType(3);
-			builder.setName(GServer.mServerInfo.name);
-			builder.setId(GServer.mServerInfo.id);
-			builder.setHost(GServer.mServerInfo.host);
-			builder.setPort(GServer.mServerInfo.port);
-			
-			ServerInfoProto.ServerInfo obj = builder.build();
-			
-			byte[] buff = DataTransfer.send2Dispatcher(1, DispatchCmd.CMD_REGISTER,obj.toByteArray());
+		
+			//register to dispatchServer
+			byte[] buff = DataTransfer.register2Dispatcher(Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
 			mDisPatcherMessageProcessor.send(client,buff,0,DataPacket.Header.getLength(buff));
 		}
 
