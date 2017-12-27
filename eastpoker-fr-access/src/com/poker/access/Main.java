@@ -170,6 +170,8 @@ public class Main {
         
         protected void onReceiveMessage(AbstractClient client, Message msg){
 
+        	Logger.v("onReceiveMessage 0x" + Integer.toHexString(DataPacket.Header.getCmd(msg.data, msg.offset)));
+        	
             Logger.v("--onReceiveMessage()- rece  "+new String(msg.data,msg.offset,msg.length));
             String data ="MainNioServer--onReceiveMessage()--src_reuse_type "+msg.src_reuse_type
                     + " dst_reuse_type " + msg.dst_reuse_type
@@ -198,12 +200,12 @@ public class Main {
 
 		@Override
 		public void onClientEnter(AbstractClient client) {
-			System.out.println("onClientEnter " + client.mClientId);
+			Logger.v("onClientEnter " + client.mClientId);
 		}
 
 		@Override
 		public void onClientExit(AbstractClient client) {
-			System.out.println("onClientExit " + client.mClientId);
+			Logger.v("onClientExit " + client.mClientId);
 		}
     };
     

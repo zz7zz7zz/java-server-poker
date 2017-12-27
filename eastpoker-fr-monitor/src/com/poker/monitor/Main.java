@@ -19,6 +19,7 @@ import com.open.net.server.structures.ServerConfig;
 import com.open.net.server.structures.ServerLog;
 import com.open.net.server.structures.ServerLog.LogListener;
 import com.open.net.server.structures.message.Message;
+import com.open.net.server.utils.TextUtils;
 import com.open.util.log.Logger;
 import com.poker.data.DataPacket;
 import com.poker.protocols.server.ServerInfoProto;
@@ -69,6 +70,8 @@ public class Main {
         
         protected void onReceiveMessage(AbstractClient client, Message msg){
         	try {
+        		Logger.v("onReceiveMessage 0x" + Integer.toHexString(DataPacket.Header.getCmd(msg.data, msg.offset)));
+        		
         		ServerInfo enterServer = ServerInfo.parseFrom(msg.data,DataPacket.Header.HEADER_LENGTH+msg.offset,msg.length-DataPacket.Header.HEADER_LENGTH);
         		ArrayList<ServerInfo> serverArray = serverOnlineList.get(enterServer.getType());
         		if(null == serverArray){
@@ -94,7 +97,7 @@ public class Main {
     				Logger.v(System.getProperty("line.separator"));
     		        Logger.v("------- "+key+" size " + val.size() + " -------");
     		        for(ServerInfo ser:val){
-    		        	Logger.v(String.format("------- %s %d %s %d ", ser.getName(),ser.getId(),ser.getHost(),ser.getPort()));
+    		        	Logger.v(String.format("------- name %s id %d host %s port %d ", ser.getName(),ser.getId(),!TextUtils.isEmpty(ser.getHost())? ser.getHost() : "null",ser.getPort()));
     		        }
     		        
         		}
@@ -131,12 +134,12 @@ public class Main {
 
 		@Override
 		public void onClientEnter(AbstractClient client) {
-			System.out.println("onClientEnter " + client.mClientId);
+			Logger.v("onClientEnter " + client.mClientId);
 		}
 
 		@Override
 		public void onClientExit(AbstractClient client) {
-			System.out.println("onClientExit " + client.mClientId);
+			Logger.v("onClientExit " + client.mClientId);
 		}
     };
 
