@@ -6,12 +6,14 @@ import com.google.protobuf.ByteString;
 import com.poker.protocols.im.ImMessageProto;
 import com.poker.protocols.server.DispatchChainProto;
 import com.poker.protocols.server.DispatchPacketProto;
+import com.poker.protocols.server.LoginProto;
 import com.poker.protocols.server.ServerInfoProto;
 
 public class Main {
 
 	public static void main(String []argc){
-		testDispatchReg();
+		testLogin();
+//		testDispatchReg();
 //		testDispatch();
 		//testImMessage();
 	}
@@ -92,6 +94,42 @@ public class Main {
         ByteArrayInputStream input = new ByteArrayInputStream(byteArray);
         try {
         	ServerInfoProto.ServerInfo readObj = ServerInfoProto.ServerInfo.parseFrom(input);
+			
+			System.out.println(" input length " + byteArray.length + " toString " + readObj.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+	}
+	
+	public static void testLogin(){
+		
+		// 按照定义的数据结构，创建一个对象
+		LoginProto.Login.Builder builder = LoginProto.Login.newBuilder();
+		builder.setUuid("10001");
+		builder.setUid(1);
+		
+		// 将数据写到输出流，如网络输出流，这里就用ByteArrayOutputStream来代替 
+		ByteArrayOutputStream output = new ByteArrayOutputStream(16*1024);
+		LoginProto.Login obj = builder.build();
+		try {
+			obj.writeTo(output);
+			//op.write(obj.toByteArray())
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		// -------------- 分割线：上面是发送方，将数据序列化后发送 ---------------
+		byte[] byteArray = output.toByteArray(); 
+		System.out.println(" output length " + byteArray.length + " toString " + new String(byteArray));
+		
+		
+		// -------------- 分割线：下面是接收方，将数据接收后反序列化 ---------------  
+        
+		// 接收到流并读取，如网络输入流，这里用ByteArrayInputStream来代替  
+//        ByteArrayInputStream input = new ByteArrayInputStream(byteArray);
+        try {
+        	LoginProto.Login readObj = LoginProto.Login.parseFrom(byteArray,0,byteArray.length);
 			
 			System.out.println(" input length " + byteArray.length + " toString " + readObj.toString());
 		} catch (IOException e) {
