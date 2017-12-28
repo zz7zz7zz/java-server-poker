@@ -86,7 +86,7 @@ public class DataPacket {
         }
         
         public static int getCmd(byte[] buff,int offset){
-        	return DataConverter.getInt(buff, OFFSET_CMD);
+        	return DataConverter.getInt(buff, offset + OFFSET_CMD);
         }
         
         public static byte getVersion(byte[] buff){
