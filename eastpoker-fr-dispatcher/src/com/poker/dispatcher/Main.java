@@ -77,22 +77,24 @@ public class Main {
     }
 
     //---------------------------------------Monitor----------------------------------------------------
+    public static byte[] write_buff = new byte[16*1024];
+    
     public static void register_monitor(Config mConfig){
-        byte[] buff = DataTransfer.register2Monitor(Server.SERVER_DIAPATCHER,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+        DataTransfer.register2Monitor(write_buff,Server.SERVER_DIAPATCHER,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,buff,0,DataPacket.Header.getLength(buff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.Header.getLength(write_buff));
     		}
     	}
     }
     
     public static void unregister_monitor(Config mConfig){
-        byte[] buff = DataTransfer.unregister2Monitor(Server.SERVER_DIAPATCHER,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+        DataTransfer.unregister2Monitor(write_buff,Server.SERVER_DIAPATCHER,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,buff,0,DataPacket.Header.getLength(buff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.Header.getLength(write_buff));
     		}
     	}
     }

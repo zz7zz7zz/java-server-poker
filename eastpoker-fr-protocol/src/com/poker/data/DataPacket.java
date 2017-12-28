@@ -8,18 +8,16 @@ package com.poker.data;
 
 public class DataPacket {
 
-    public static byte[] build(byte[] buff,int squenceId, int cmd , byte version, byte encrypt ,short gid, byte[] body){
+    public static void write(byte[] writeBuff, int squenceId, int cmd , byte version, byte encrypt ,short gid, byte[] body){
     	
-    	DataConverter.putInt(buff, 	 Header.OFFSET_LENGTH,	Header.HEADER_LENGTH + body.length);
-        DataConverter.putInt(buff, 	 Header.OFFSET_SEQUENCEID,squenceId);
-        DataConverter.putInt(buff, 	 Header.OFFSET_CMD,cmd);
-        DataConverter.putByte(buff,  Header.OFFSET_VERSION,version);
-        DataConverter.putByte(buff,	 Header.OFFSET_ENCRYPT,encrypt);
-        DataConverter.putShort(buff, Header.OFFSET_GID,gid);
+    	DataConverter.putInt(writeBuff,   Header.OFFSET_LENGTH,	Header.HEADER_LENGTH + body.length);
+        DataConverter.putInt(writeBuff,   Header.OFFSET_SEQUENCEID,squenceId);
+        DataConverter.putInt(writeBuff,   Header.OFFSET_CMD,cmd);
+        DataConverter.putByte(writeBuff,  Header.OFFSET_VERSION,version);
+        DataConverter.putByte(writeBuff,  Header.OFFSET_ENCRYPT,encrypt);
+        DataConverter.putShort(writeBuff, Header.OFFSET_GID,gid);
         
-        DataConverter.putByte(buff, Header.HEADER_LENGTH,body);
-        
-        return buff;
+        DataConverter.putByte(writeBuff, Header.HEADER_LENGTH,body);
     }
     
     //---------------------------------------------------------------------------------------------

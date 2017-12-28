@@ -12,7 +12,7 @@ import com.poker.protocols.server.ServerInfoProto;
 
 public final class DataTransfer {
 	
-	public static byte[] BUFF = new byte[16*1024];
+//	public static byte[] BUFF = new byte[16*1024];
 	
 	public static int server_type;
 	public static int server_id;
@@ -21,36 +21,47 @@ public final class DataTransfer {
 		DataTransfer.server_type = server_type;
 		DataTransfer.server_id   = server_id;
 	}
-	
-	public static byte[] send2Dispatcher(int squenceId, int cmd , byte[] data){
-		return DataPacket.build(BUFF, squenceId, cmd, (byte)0, (byte)0, (short)0, data);
+
+	//---------------------------------------------------------------------------------------------------
+	public static int send2Access(byte[] writeBuff,int squenceId, int cmd , byte[] data, int dst_server_id){
+		send2Dispatcher(writeBuff,squenceId, cmd, data, DataTransfer.server_type, DataTransfer.server_id, Server.SERVER_ACCESS, dst_server_id);
+		return 1;
 	}
 	
-	public static byte[] send2Access(int squenceId, int cmd , byte[] data, int dst_server_id){
-		return send2Dispatcher(squenceId, cmd, data, DataTransfer.server_type, DataTransfer.server_id, Server.SERVER_ACCESS, dst_server_id);
+	public static int send2Login(byte[] writeBuff,int squenceId, int cmd , byte[] data, int dst_server_id){
+		send2Dispatcher(writeBuff,squenceId, cmd, data, DataTransfer.server_type, DataTransfer.server_id, Server.SERVER_LOGIN, dst_server_id);
+		return 1;
 	}
 	
-	public static byte[] send2Login(int squenceId, int cmd , byte[] data, int dst_server_id){
-		return send2Dispatcher(squenceId, cmd, data, DataTransfer.server_type, DataTransfer.server_id, Server.SERVER_LOGIN, dst_server_id);
+	public static int send2User(byte[] writeBuff,int squenceId, int cmd , byte[] data, int dst_server_id){
+		send2Dispatcher(writeBuff,squenceId, cmd, data, DataTransfer.server_type, DataTransfer.server_id, Server.SERVER_USER, dst_server_id);
+		return 1;
 	}
 	
-	public static byte[] send2User(int squenceId, int cmd , byte[] data, int dst_server_id){
-		return send2Dispatcher(squenceId, cmd, data, DataTransfer.server_type, DataTransfer.server_id, Server.SERVER_USER, dst_server_id);
+	public static int send2Allocator(byte[] writeBuff,int squenceId, int cmd , byte[] data, int dst_server_id){
+		send2Dispatcher(writeBuff,squenceId, cmd, data, DataTransfer.server_type, DataTransfer.server_id, Server.SERVER_ALLOCATOR, dst_server_id);
+		return 1;
 	}
 	
-	public static byte[] send2Allocator(int squenceId, int cmd , byte[] data, int dst_server_id){
-		return send2Dispatcher(squenceId, cmd, data, DataTransfer.server_type, DataTransfer.server_id, Server.SERVER_ALLOCATOR, dst_server_id);
+	public static int send2Gamer(byte[] writeBuff,int squenceId, int cmd , byte[] data, int dst_server_id){
+		send2Dispatcher(writeBuff,squenceId, cmd, data, DataTransfer.server_type, DataTransfer.server_id, Server.SERVER_GAME, dst_server_id);
+		return 1;
 	}
 	
-	public static byte[] send2Gamer(int squenceId, int cmd , byte[] data, int dst_server_id){
-		return send2Dispatcher(squenceId, cmd, data, DataTransfer.server_type, DataTransfer.server_id, Server.SERVER_GAME, dst_server_id);
+	public static int send2GoldCoin(byte[] writeBuff,int squenceId, int cmd , byte[] data, int dst_server_id){
+		send2Dispatcher(writeBuff,squenceId, cmd, data, DataTransfer.server_type, DataTransfer.server_id, Server.SERVER_GOLDCOIN, dst_server_id);
+		return 1;
 	}
 	
-	public static byte[] send2GoldCoin(int squenceId, int cmd , byte[] data, int dst_server_id){
-		return send2Dispatcher(squenceId, cmd, data, DataTransfer.server_type, DataTransfer.server_id, Server.SERVER_GOLDCOIN, dst_server_id);
+	//---------------------------------------------------------------------------------------------------
+	//直发
+	public static int send2Dispatcher(byte[] writeBuff,int squenceId, int cmd , byte[] data){
+		DataPacket.write(writeBuff, squenceId, cmd, (byte)0, (byte)0, (short)0, data);
+		return 1;
 	}
 	
-	public static byte[] send2Dispatcher(int squenceId, int cmd , byte[] data, int src_server_type , int src_server_id ,int dst_server_type , int dst_server_id){
+	//转发
+	public static int send2Dispatcher(byte[] writeBuff,int squenceId, int cmd , byte[] data, int src_server_type , int src_server_id ,int dst_server_type , int dst_server_id){
 		
 		//流水id
 		DispatchPacketProto.DispatchPacket.Builder builder = DispatchPacketProto.DispatchPacket.newBuilder();
@@ -70,11 +81,12 @@ public final class DataTransfer {
 		DispatchPacketProto.DispatchPacket dispatchPacket = builder.build();
 		byte[] body = dispatchPacket.toByteArray();
 		
-		return DataPacket.build(BUFF, squenceId, cmd, (byte)0, (byte)0, (short)0, body);
+		DataPacket.write(writeBuff, squenceId, cmd, (byte)0, (byte)0, (short)0, body);
+		return 1;
 	}
 	
 	//--------------------------------------------------------------------------------------
-	public static byte[] register2Dispatcher(int type ,String name, int id, String host ,int port){
+	public static int register2Dispatcher(byte[] writeBuff,int type ,String name, int id, String host ,int port){
 		
 		ServerInfoProto.ServerInfo.Builder builder = ServerInfoProto.ServerInfo.newBuilder();
 		builder.setType(type);
@@ -83,12 +95,11 @@ public final class DataTransfer {
 		builder.setHost(host);
 		builder.setPort(port);
 		
-		ServerInfoProto.ServerInfo obj = builder.build();
-		byte[] buff = DataTransfer.send2Dispatcher(1, DispatchCmd.CMD_REGISTER,obj.toByteArray());
-		return buff;
+		DataPacket.write(writeBuff, 1, DispatchCmd.CMD_REGISTER, (byte)0, (byte)0, (short)0, builder.build().toByteArray());
+		return 1;
 	}
 	
-	public static byte[] register2Monitor(int type ,String name, int id, String host ,int port){
+	public static int unregister2Dispatcher(byte[] writeBuff,int type ,String name, int id, String host ,int port){
 		
 		ServerInfoProto.ServerInfo.Builder builder = ServerInfoProto.ServerInfo.newBuilder();
 		builder.setType(type);
@@ -97,13 +108,26 @@ public final class DataTransfer {
 		builder.setHost(host);
 		builder.setPort(port);
 		
-		ServerInfoProto.ServerInfo obj = builder.build();
-		byte[] buff = DataTransfer.send2Dispatcher(1, MonitorCmd.CMD_SERVER_ENTER,obj.toByteArray());
-		return buff;
+		DataPacket.write(writeBuff, 1, DispatchCmd.CMD_UNREGISTER, (byte)0, (byte)0, (short)0, builder.build().toByteArray());
+		return 1;
+	}
+
+	//--------------------------------------------------------------------------------------
+	public static int register2Monitor(byte[] writeBuff,int type ,String name, int id, String host ,int port){
+		
+		ServerInfoProto.ServerInfo.Builder builder = ServerInfoProto.ServerInfo.newBuilder();
+		builder.setType(type);
+		builder.setName(name);
+		builder.setId(id);
+		builder.setHost(host);
+		builder.setPort(port);
+		
+		DataPacket.write(writeBuff, 2, MonitorCmd.CMD_REGISTER, (byte)0, (byte)0, (short)0, builder.build().toByteArray());
+		return 1;
 	}
 	
-	public static byte[] unregister2Monitor(int type ,String name, int id, String host ,int port){
-		
+	public static int unregister2Monitor(byte[] writeBuff,int type ,String name, int id, String host ,int port){
+
 		ServerInfoProto.ServerInfo.Builder builder = ServerInfoProto.ServerInfo.newBuilder();
 		builder.setType(type);
 		builder.setName(name);
@@ -111,8 +135,8 @@ public final class DataTransfer {
 		builder.setHost(host);
 		builder.setPort(port);
 		
-		ServerInfoProto.ServerInfo obj = builder.build();
-		byte[] buff = DataTransfer.send2Dispatcher(1, MonitorCmd.CMD_SERVER_EXIT,obj.toByteArray());
-		return buff;
+		DataPacket.write(writeBuff, 2, MonitorCmd.CMD_UNREGISTER, (byte)0, (byte)0, (short)0, builder.build().toByteArray());
+		return 1;
 	}
+	//--------------------------------------------------------------------------------------
 }
