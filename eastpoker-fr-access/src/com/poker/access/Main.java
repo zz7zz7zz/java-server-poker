@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.impl.tcp.nio.NioClient;
 import com.open.net.client.structures.BaseClient;
 import com.open.net.client.structures.BaseMessageProcessor;
@@ -21,9 +22,11 @@ import com.open.net.server.structures.message.Message;
 import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
 import com.poker.base.Server;
+import com.poker.cmd.LoginCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
 import com.poker.protocols.DataTransfer;
+import com.poker.protocols.server.LoginProto;
 
 /**
  * author       :   long
@@ -171,7 +174,19 @@ public class Main {
         
         protected void onReceiveMessage(AbstractClient client, Message msg){
 
-        	Logger.v("onReceiveMessage 0x" + Integer.toHexString(DataPacket.Header.getCmd(msg.data, msg.offset)));
+        	int cmd = DataPacket.Header.getCmd(msg.data, msg.offset);
+        	String sCmd = Integer.toHexString(cmd);
+        	Logger.v("onReceiveMessage 0x" + sCmd);
+        	if(cmd == LoginCmd.CMD_LOGIN){
+        		LoginProto.Login readObj;
+				try {
+					readObj = LoginProto.Login.parseFrom(msg.data,DataPacket.Header.HEADER_LENGTH+msg.offset,msg.length-DataPacket.Header.HEADER_LENGTH);
+					System.out.println("login "+ sCmd + " "+readObj.toString());
+				} catch (InvalidProtocolBufferException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
         	
             Logger.v("--onReceiveMessage()- rece  "+new String(msg.data,msg.offset,msg.length));
             String data ="MainNioServer--onReceiveMessage()--src_reuse_type "+msg.src_reuse_type
