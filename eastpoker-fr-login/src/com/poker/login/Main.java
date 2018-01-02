@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.impl.tcp.nio.NioClient;
 import com.open.net.client.structures.BaseClient;
 import com.open.net.client.structures.BaseMessageProcessor;
@@ -21,9 +22,12 @@ import com.open.net.server.structures.message.Message;
 import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
 import com.poker.base.Server;
+import com.poker.cmd.LoginCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
-import com.poker.protocols.DataTransfer;
+import com.poker.protocols.Dispatcher;
+import com.poker.protocols.Monitor;
+import com.poker.protocols.server.LoginProto;
 
 /**
  * author       :   long
@@ -82,21 +86,21 @@ public class Main {
     public static byte[] write_buff = new byte[16*1024];
     
     public static void register_monitor(Config mConfig){
-        DataTransfer.register2Monitor(write_buff,Server.SERVER_LOGIN,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+        Monitor.register2Monitor(write_buff,Server.SERVER_LOGIN,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.Header.getLength(write_buff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.getLength(write_buff));
     		}
     	}
     }
     
     public static void unregister_monitor(Config mConfig){
-        DataTransfer.unregister2Monitor(write_buff,Server.SERVER_LOGIN,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+    	Monitor.unregister2Monitor(write_buff,Server.SERVER_LOGIN,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.Header.getLength(write_buff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.getLength(write_buff));
     		}
     	}
     }
@@ -130,8 +134,8 @@ public class Main {
 		public void onConnectionSuccess(BaseClient client) {
 			Logger.v("-------dispatcher onConnectionSuccess---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
 			//register to dispatchServer
-			DataTransfer.register2Dispatcher(write_buff,Server.SERVER_LOGIN,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
-			mDisPatcherMessageProcessor.send(client,write_buff,0,DataPacket.Header.getLength(write_buff));
+			int length = Dispatcher.register2Dispatcher(write_buff,Server.SERVER_LOGIN,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+			mDisPatcherMessageProcessor.send(client,write_buff,0,length);
 		}
 
 		@Override
@@ -157,8 +161,23 @@ public class Main {
 
 		@Override
 		public void onReceiveMessages(BaseClient arg0,
-				LinkedList<com.open.net.client.structures.message.Message> arg1) {
-			// TODO Auto-generated method stub
+				LinkedList<com.open.net.client.structures.message.Message> list) {
+			
+			for(int i = 0 ;i<list.size();i++){
+				com.open.net.client.structures.message.Message msg = list.get(i);
+				int cmd = DataPacket.getCmd(msg.data, msg.offset);
+	        	Logger.v("onReceiveMessage mDisPatcherMessageProcessor 0x" + Integer.toHexString(DataPacket.getCmd(msg.data, msg.offset)));
+	        	if(cmd == LoginCmd.CMD_LOGIN){
+	        		LoginProto.Login readObj;
+					try {
+						readObj = LoginProto.Login.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length-DataPacket.getHeaderLength());
+						System.out.println("login "+readObj.toString());
+					} catch (InvalidProtocolBufferException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	        	}
+			}
 			
 		}
 	};
@@ -172,8 +191,18 @@ public class Main {
         
         protected void onReceiveMessage(AbstractClient client, Message msg){
 
-        	Logger.v("onReceiveMessage 0x" + Integer.toHexString(DataPacket.Header.getCmd(msg.data, msg.offset)));
-        	
+    		int cmd = DataPacket.getCmd(msg.data, msg.offset);
+        	Logger.v("onReceiveMessage mMessageProcessor 0x" + Integer.toHexString(DataPacket.getCmd(msg.data, msg.offset)));
+        	if(cmd == LoginCmd.CMD_LOGIN){
+        		LoginProto.Login readObj;
+				try {
+					readObj = LoginProto.Login.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length-DataPacket.getHeaderLength());
+					System.out.println("login "+readObj.toString());
+				} catch (InvalidProtocolBufferException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
         }
         
 		@Override

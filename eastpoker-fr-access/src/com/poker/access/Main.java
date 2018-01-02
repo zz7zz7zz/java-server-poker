@@ -5,7 +5,6 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.impl.tcp.nio.NioClient;
 import com.open.net.client.structures.BaseClient;
 import com.open.net.client.structures.BaseMessageProcessor;
@@ -22,13 +21,11 @@ import com.open.net.server.structures.message.Message;
 import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
 import com.poker.base.Server;
-import com.poker.cmd.LoginCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
 import com.poker.data.DataTransfer;
 import com.poker.protocols.Dispatcher;
 import com.poker.protocols.Monitor;
-import com.poker.protocols.server.LoginProto;
 
 /**
  * author       :   long
@@ -188,24 +185,13 @@ public class Main {
         	System.out.println(String.format("onReceiveMessage 0x%s serverType 0x%s squenceId %s",sCmd,sServer,squenceId));
         	Logger.v(String.format("onReceiveMessage 0x%s serverType 0x%s squenceId %s",sCmd,sServer,squenceId));
         	
-        	if(cmd == LoginCmd.CMD_LOGIN){
-        		LoginProto.Login readObj;
-				try {
-					readObj = LoginProto.Login.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length-DataPacket.getHeaderLength());
-					System.out.println("login "+ sCmd + " "+readObj.toString());
-				} catch (InvalidProtocolBufferException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-        	}
-        	
         	//如果Server大于0，则将数据转发至对应的server
         	if(server > 0){
         		int length = 0;
         		if(server == Server.SERVER_LOGIN){
-        			length = ImplDataTransfer.send2Login(writeBuff, squenceId, cmd, msg.data,msg.offset,msg.length);
+        			length = ImplDataTransfer.send2Login(writeBuff, squenceId, msg.data,msg.offset,msg.length);
         		}else if(server == Server.SERVER_USER){
-        			length = ImplDataTransfer.send2User(writeBuff, squenceId, cmd, msg.data,msg.offset,msg.length);
+        			length = ImplDataTransfer.send2User(writeBuff, squenceId, msg.data,msg.offset,msg.length);
         		}
         		
         		dispatchIndex = (dispatchIndex+1) % dispatcher.length;
@@ -263,35 +249,30 @@ public class Main {
     
     public static class ImplDataTransfer{
     	
-    	public static int send2Access(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
+    	public static int send2Login(byte[] writeBuff,int squenceId, byte[] data, int offset ,int length){
     		int dst_server_id = GServer.mServerInfo.id;
-    		return DataTransfer.send2Dispatcher(writeBuff,squenceId, cmd, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, Server.SERVER_ACCESS, dst_server_id);
+    		return DataTransfer.send2Login(writeBuff,squenceId,data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, dst_server_id);
     	}
     	
-    	public static int send2Login(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
+    	public static int send2User(byte[] writeBuff,int squenceId , byte[] data, int offset ,int length){
     		int dst_server_id = GServer.mServerInfo.id;
-    		return DataTransfer.send2Dispatcher(writeBuff,squenceId, cmd, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, Server.SERVER_LOGIN, dst_server_id);
+    		return DataTransfer.send2User(writeBuff,squenceId, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, dst_server_id);
     	}
     	
-    	public static int send2User(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
+    	public static int send2Allocator(byte[] writeBuff,int squenceId , byte[] data, int offset ,int length){
     		int dst_server_id = GServer.mServerInfo.id;
-    		return DataTransfer.send2Dispatcher(writeBuff,squenceId, cmd, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, Server.SERVER_USER, dst_server_id);
-    	}
-    	
-    	public static int send2Allocator(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
-    		int dst_server_id = GServer.mServerInfo.id;
-    		return DataTransfer.send2Dispatcher(writeBuff,squenceId, cmd, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, Server.SERVER_ALLOCATOR, dst_server_id);
+    		return DataTransfer.send2Allocator(writeBuff,squenceId, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, dst_server_id);
     	}
     	
     	public static int send2Gamer(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
     		int dst_server_id = GServer.mServerInfo.id;
-    		DataTransfer.send2Dispatcher(writeBuff,squenceId, cmd, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, Server.SERVER_GAME, dst_server_id);
+    		DataTransfer.send2Gamer(writeBuff,squenceId, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, dst_server_id);
     		return 1;
     	}
     	
     	public static int send2GoldCoin(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
     		int dst_server_id = GServer.mServerInfo.id;
-    		return DataTransfer.send2Dispatcher(writeBuff,squenceId, cmd, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, Server.SERVER_GOLDCOIN, dst_server_id);
+    		return DataTransfer.send2GoldCoin(writeBuff,squenceId, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, dst_server_id);
     	}
     }
     
