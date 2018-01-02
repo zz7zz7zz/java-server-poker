@@ -8,7 +8,7 @@ package com.poker.data;
 
 public class DataPacket {
 
-    public static void write(byte[] writeBuff, int squenceId, int cmd , byte version, byte encrypt ,short gid, byte[] body){
+    public static int write(byte[] writeBuff, int squenceId, int cmd , byte version, byte encrypt ,short gid, byte[] body,int bodyOffset,int bodyLength){
     	
     	DataConverter.putInt(writeBuff,   Header.OFFSET_LENGTH,	Header.HEADER_LENGTH + body.length);
         DataConverter.putInt(writeBuff,   Header.OFFSET_SEQUENCEID,squenceId);
@@ -17,7 +17,9 @@ public class DataPacket {
         DataConverter.putByte(writeBuff,  Header.OFFSET_ENCRYPT,encrypt);
         DataConverter.putShort(writeBuff, Header.OFFSET_GID,gid);
         
-        DataConverter.putByte(writeBuff, Header.HEADER_LENGTH,body);
+        DataConverter.putByte(writeBuff, Header.HEADER_LENGTH,body,bodyOffset,bodyLength);
+        
+        return Header.HEADER_LENGTH + body.length;
     }
     
     //---------------------------------------------------------------------------------------------

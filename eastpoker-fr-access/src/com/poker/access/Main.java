@@ -25,7 +25,9 @@ import com.poker.base.Server;
 import com.poker.cmd.LoginCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
-import com.poker.protocols.DataTransfer;
+import com.poker.data.DataTransfer;
+import com.poker.protocols.Dispatcher;
+import com.poker.protocols.Monitor;
 import com.poker.protocols.server.LoginProto;
 
 /**
@@ -82,24 +84,24 @@ public class Main {
     }
 
     //---------------------------------------Monitor----------------------------------------------------
-    public static byte[] write_buff = new byte[16*1024];
+    public static byte[] writeBuff = new byte[16*1024];
     
     public static void register_monitor(Config mConfig){
-        DataTransfer.register2Monitor(write_buff,Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+    	Monitor.register2Monitor(writeBuff,Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.Header.getLength(write_buff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,writeBuff,0,DataPacket.Header.getLength(writeBuff));
     		}
     	}
     }
     
     public static void unregister_monitor(Config mConfig){
-        DataTransfer.unregister2Monitor(write_buff,Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+        Monitor.unregister2Monitor(writeBuff,Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.Header.getLength(write_buff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,writeBuff,0,DataPacket.Header.getLength(writeBuff));
     		}
     	}
     }
@@ -132,8 +134,8 @@ public class Main {
 		public void onConnectionSuccess(BaseClient client) {
 			Logger.v("-------dispatcher onConnectionSuccess---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
 			//register to dispatchServer
-			DataTransfer.register2Dispatcher(write_buff,Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
-			mDisPatcherMessageProcessor.send(client,write_buff,0,DataPacket.Header.getLength(write_buff));
+			Dispatcher.register2Dispatcher(writeBuff,Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+			mDisPatcherMessageProcessor.send(client,writeBuff,0,DataPacket.Header.getLength(writeBuff));
 		}
 
 		@Override
@@ -176,7 +178,15 @@ public class Main {
 
         	int cmd = DataPacket.Header.getCmd(msg.data, msg.offset);
         	String sCmd = Integer.toHexString(cmd);
-        	Logger.v("onReceiveMessage 0x" + sCmd);
+        	
+        	int server = cmd >> 16;
+        	String sServer = Integer.toHexString(cmd >> 16);
+        	
+        	int squenceId = DataPacket.Header.getSequenceId(msg.data,msg.offset);
+        	
+        	System.out.println(String.format("onReceiveMessage 0x%s serverType 0x%s squenceId %s",sCmd,sServer,squenceId));
+        	Logger.v(String.format("onReceiveMessage 0x%s serverType 0x%s squenceId %s",sCmd,sServer,squenceId));
+        	
         	if(cmd == LoginCmd.CMD_LOGIN){
         		LoginProto.Login readObj;
 				try {
@@ -186,6 +196,15 @@ public class Main {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+        	}
+        	
+        	//如果Server大于0，则将数据转发至对应的server
+        	if(server > 0){
+        		if(server == Server.SERVER_LOGIN){
+        			ImplDataTransfer.send2Login(writeBuff, squenceId, cmd, msg.data,msg.offset,msg.length);
+        		}else if(server == Server.SERVER_USER){
+        			ImplDataTransfer.send2User(writeBuff, squenceId, cmd, msg.data,msg.offset,msg.length);
+        		}
         	}
         	
             Logger.v("--onReceiveMessage()- rece  "+new String(msg.data,msg.offset,msg.length));
@@ -224,6 +243,41 @@ public class Main {
 			Logger.v("onClientExit " + client.mClientId);
 		}
     };
+    
+    
+    public static class ImplDataTransfer{
+    	
+    	public static int send2Access(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
+    		int dst_server_id = GServer.mServerInfo.id;
+    		return DataTransfer.send2Dispatcher(writeBuff,squenceId, cmd, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, Server.SERVER_ACCESS, dst_server_id);
+    	}
+    	
+    	public static int send2Login(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
+    		int dst_server_id = GServer.mServerInfo.id;
+    		return DataTransfer.send2Dispatcher(writeBuff,squenceId, cmd, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, Server.SERVER_LOGIN, dst_server_id);
+    	}
+    	
+    	public static int send2User(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
+    		int dst_server_id = GServer.mServerInfo.id;
+    		return DataTransfer.send2Dispatcher(writeBuff,squenceId, cmd, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, Server.SERVER_USER, dst_server_id);
+    	}
+    	
+    	public static int send2Allocator(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
+    		int dst_server_id = GServer.mServerInfo.id;
+    		return DataTransfer.send2Dispatcher(writeBuff,squenceId, cmd, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, Server.SERVER_ALLOCATOR, dst_server_id);
+    	}
+    	
+    	public static int send2Gamer(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
+    		int dst_server_id = GServer.mServerInfo.id;
+    		DataTransfer.send2Dispatcher(writeBuff,squenceId, cmd, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, Server.SERVER_GAME, dst_server_id);
+    		return 1;
+    	}
+    	
+    	public static int send2GoldCoin(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
+    		int dst_server_id = GServer.mServerInfo.id;
+    		return DataTransfer.send2Dispatcher(writeBuff,squenceId, cmd, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, Server.SERVER_GOLDCOIN, dst_server_id);
+    	}
+    }
     
     public static LogListener mLogListener = new LogListener(){
 

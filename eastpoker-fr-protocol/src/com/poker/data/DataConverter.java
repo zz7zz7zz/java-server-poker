@@ -25,6 +25,16 @@ public final class DataConverter {
 		return in.length;
 	}
 	
+	public static int putByte(byte[] buff, int offset, byte[] in,int in_offset ,int in_length) {
+		if (in == null || in.length == 0 || in.length <= (in_offset + in_length)) {
+			return 0;
+		}
+		for (int i = 0; i < in_length; i++) {
+			buff[offset + i] = in[in_offset + i];
+		}
+		return in.length;
+	}
+	
 	public static int putShort(byte[] buff, int offset, short value) {
 		buff[offset] = (byte) (value >> 8);
 		buff[offset + 1] = (byte) (value);
