@@ -91,7 +91,7 @@ public class Main {
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,writeBuff,0,DataPacket.Header.getLength(writeBuff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,writeBuff,0,DataPacket.getLength(writeBuff));
     		}
     	}
     }
@@ -101,7 +101,7 @@ public class Main {
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,writeBuff,0,DataPacket.Header.getLength(writeBuff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,writeBuff,0,DataPacket.getLength(writeBuff));
     		}
     	}
     }
@@ -128,14 +128,15 @@ public class Main {
     	}
     }
     
+    public static int dispatchIndex = -1;
     public static NioClient [] dispatcher;
 	private static IConnectListener mDisPatcherConnectResultListener = new IConnectListener() {
 		@Override
 		public void onConnectionSuccess(BaseClient client) {
 			Logger.v("-------dispatcher onConnectionSuccess---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
 			//register to dispatchServer
-			Dispatcher.register2Dispatcher(writeBuff,Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
-			mDisPatcherMessageProcessor.send(client,writeBuff,0,DataPacket.Header.getLength(writeBuff));
+			int length = Dispatcher.register2Dispatcher(writeBuff,Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+			mDisPatcherMessageProcessor.send(client,writeBuff,0,length);
 		}
 
 		@Override
@@ -176,13 +177,13 @@ public class Main {
         
         protected void onReceiveMessage(AbstractClient client, Message msg){
 
-        	int cmd = DataPacket.Header.getCmd(msg.data, msg.offset);
+        	int cmd = DataPacket.getCmd(msg.data, msg.offset);
         	String sCmd = Integer.toHexString(cmd);
         	
         	int server = cmd >> 16;
         	String sServer = Integer.toHexString(cmd >> 16);
         	
-        	int squenceId = DataPacket.Header.getSequenceId(msg.data,msg.offset);
+        	int squenceId = DataPacket.getSequenceId(msg.data,msg.offset);
         	
         	System.out.println(String.format("onReceiveMessage 0x%s serverType 0x%s squenceId %s",sCmd,sServer,squenceId));
         	Logger.v(String.format("onReceiveMessage 0x%s serverType 0x%s squenceId %s",sCmd,sServer,squenceId));
@@ -190,7 +191,7 @@ public class Main {
         	if(cmd == LoginCmd.CMD_LOGIN){
         		LoginProto.Login readObj;
 				try {
-					readObj = LoginProto.Login.parseFrom(msg.data,DataPacket.Header.HEADER_LENGTH+msg.offset,msg.length-DataPacket.Header.HEADER_LENGTH);
+					readObj = LoginProto.Login.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length-DataPacket.getHeaderLength());
 					System.out.println("login "+ sCmd + " "+readObj.toString());
 				} catch (InvalidProtocolBufferException e) {
 					// TODO Auto-generated catch block
@@ -200,10 +201,25 @@ public class Main {
         	
         	//如果Server大于0，则将数据转发至对应的server
         	if(server > 0){
+        		int length = 0;
         		if(server == Server.SERVER_LOGIN){
-        			ImplDataTransfer.send2Login(writeBuff, squenceId, cmd, msg.data,msg.offset,msg.length);
+        			length = ImplDataTransfer.send2Login(writeBuff, squenceId, cmd, msg.data,msg.offset,msg.length);
         		}else if(server == Server.SERVER_USER){
-        			ImplDataTransfer.send2User(writeBuff, squenceId, cmd, msg.data,msg.offset,msg.length);
+        			length = ImplDataTransfer.send2User(writeBuff, squenceId, cmd, msg.data,msg.offset,msg.length);
+        		}
+        		
+        		dispatchIndex = (dispatchIndex+1) % dispatcher.length;
+        		NioClient mNioClient = dispatcher[dispatchIndex];
+        		if(mNioClient.isConnected()){
+        			mDisPatcherMessageProcessor.send(mNioClient,writeBuff,0,length);
+        		}else{
+        			for(int i = 0;i<dispatcher.length;i++){
+        				mNioClient = dispatcher[dispatchIndex];
+                		if(mNioClient.isConnected()){
+                			mDisPatcherMessageProcessor.send(mNioClient,writeBuff,0,length);
+                			break;
+                		}
+        			}
         		}
         	}
         	
