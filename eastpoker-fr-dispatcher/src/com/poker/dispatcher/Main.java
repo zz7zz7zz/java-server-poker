@@ -25,6 +25,9 @@ import com.poker.cmd.DispatchCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
 import com.poker.protocols.Monitor;
+import com.poker.protocols.server.DispatchChainProto.DispatchChain;
+import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
+import com.poker.protocols.server.LoginProto;
 import com.poker.protocols.server.ServerInfoProto;
 import com.poker.protocols.server.ServerInfoProto.ServerInfo;
 
@@ -101,7 +104,7 @@ public class Main {
     }
     
     //-------------------------------------------------------------------------------------------
-    public static HashMap<Integer, ArrayList<ServerInfoProto.ServerInfo>> serverOnlineList = new HashMap<Integer, ArrayList<ServerInfoProto.ServerInfo>>();
+    public static HashMap<Integer, ArrayList<AbstractClient>> serverOnlineList = new HashMap<Integer, ArrayList<AbstractClient>>();
     
     public static AbstractMessageProcessor mMessageProcessor = new AbstractMessageProcessor() {
 
@@ -118,33 +121,89 @@ public class Main {
         		
         		int cmd = DataPacket.getCmd(msg.data, msg.offset);
         		if(cmd == DispatchCmd.CMD_REGISTER){
+
         			ServerInfo enterServer = ServerInfo.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
-            		ArrayList<ServerInfo> serverArray = serverOnlineList.get(enterServer.getType());
-            		if(null == serverArray){
-            			serverArray = new ArrayList<ServerInfo>(10);
-            			serverOnlineList.put(enterServer.getType(), serverArray);
+        			
+        			boolean add = true;
+            		ArrayList<AbstractClient> clientArray = serverOnlineList.get(enterServer.getType());
+            		if(null == clientArray){
+            			clientArray = new ArrayList<AbstractClient>(10);
+            			serverOnlineList.put(enterServer.getType(), clientArray);
             		}else{
-                		for(ServerInfo obj:serverArray){
-                			if(obj.getId() == enterServer.getId()){
-                				serverArray.remove(obj);
+                		for(AbstractClient ser:clientArray){
+                			if((ser == client)){
+                				add = false;
                 				break;
+                			}else{ 
+                				ServerInfo attachObj = (ServerInfo) ser.getAttachment();
+                				if(null != attachObj && attachObj.getId() == enterServer.getId()){
+                    				clientArray.remove(ser);
+                    				break;
+                    			}
                 			}
                 		}
             		}
-            		serverArray.add(enterServer);
-
+            		
+            		client.attach(enterServer);
+            		if(add){
+            			clientArray.add(client);
+            		}
+            		
             		//打印所有的服务
-            		Iterator<Entry<Integer, ArrayList<ServerInfo>>> iter = serverOnlineList.entrySet().iterator();
+            		Iterator<Entry<Integer, ArrayList<AbstractClient>>> iter = serverOnlineList.entrySet().iterator();
             		while (iter.hasNext()) {
-        				Entry<Integer, ArrayList<ServerInfo>> entry = iter.next();
+        				Entry<Integer, ArrayList<AbstractClient>> entry = iter.next();
         				Integer key = entry.getKey();
-        				ArrayList<ServerInfo> val = entry.getValue();
+        				ArrayList<AbstractClient> val = entry.getValue();
         				
         		        Logger.v("------- "+key+" size " + val.size() + " -------");
-        		        for(ServerInfo ser:val){
-        		        	Logger.v(String.format("------- name %s id %d host %s port %d ", ser.getName(),ser.getId(),!TextUtils.isEmpty(ser.getHost())? ser.getHost() : "null",ser.getPort()));
+        		        for(AbstractClient ser:val){
+        		        	ServerInfo serInfo = (ServerInfo) ser.getAttachment();
+        		        	Logger.v(String.format("------- name %s id %d host %s port %d ", serInfo.getName(),serInfo.getId(),!TextUtils.isEmpty(serInfo.getHost())? serInfo.getHost() : "null",serInfo.getPort()));
         		        }
             		}
+            		
+        		}else if(cmd == DispatchCmd.CMD_DISPATCH){
+        			DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
+        			int count = mDispatchPacket.getDispatchChainListCount();
+        			if(count>0){
+        				DispatchChain chain = mDispatchPacket.getDispatchChainList(count-1);
+        				int dstServerType = chain.getDstServerType();
+        				int dstServerId = chain.getDstServerId();
+        				
+        				AbstractClient server = null;
+        				ArrayList<AbstractClient> serverArray = serverOnlineList.get(dstServerType);
+        				if(null != serverArray){
+        					for(AbstractClient ser:serverArray){
+        						ServerInfo serInfo = (ServerInfo) ser.getAttachment();
+        						if(serInfo.getId() == dstServerId){
+        							server = ser;
+        							break;
+        						}
+        					}
+        				}
+        				
+        				Logger.v(String.format("dispatch %d %d %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),chain.getDstServerType(),chain.getDstServerId(),(null != server) ? 1 : 0));
+        				
+        				if(null != server){
+        					mDispatchPacket.getData().copyTo(mWriteBuffer);
+        					mWriteBuffer.flip();
+        					mMessageProcessor.unicast(server, mWriteBuffer.array(),0,mWriteBuffer.remaining());
+        				}
+        			}
+        			
+//        			try {
+//    					
+//    					mDispatchPacket.getData().copyTo(mWriteBuffer);
+//    					mWriteBuffer.flip();
+//    					LoginProto.Login readObj = LoginProto.Login.parseFrom(mWriteBuffer.array(),DataPacket.getHeaderLength(),mWriteBuffer.remaining()-DataPacket.getHeaderLength());
+//    					System.out.println("login "+readObj.toString());
+//    				} catch (InvalidProtocolBufferException e) {
+//    					// TODO Auto-generated catch block
+//    					e.printStackTrace();
+//    				}
+    				
+        			System.out.println("DispatchPacket "+mDispatchPacket.toString());
         		}else{
         			
         		}
