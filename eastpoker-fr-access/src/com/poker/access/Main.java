@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.GClient;
 import com.open.net.client.impl.tcp.nio.NioClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
@@ -173,16 +174,33 @@ public class Main {
 	private static AbstractClientMessageProcessor mClientMessageProcessor =new AbstractClientMessageProcessor() {
 
 		@Override
-		public void onReceiveMessages(AbstractClient mClient, LinkedList<com.open.net.client.message.Message> mQueen) {
-			// TODO Auto-generated method stub
-			
+		public void onReceiveMessages(AbstractClient mClient, LinkedList<com.open.net.client.message.Message> list) {
+			for(int i = 0 ;i<list.size();i++){
+				com.open.net.client.message.Message msg = list.get(i);
+				int cmd = DataPacket.getCmd(msg.data, msg.offset);
+				int squenceId = DataPacket.getSequenceId(msg.data,msg.offset);
+				
+	        	String sCmd = Integer.toHexString(cmd);
+	        	Logger.v("Access From DisPatcherMessageProcessor 0x" + Integer.toHexString(DataPacket.getCmd(msg.data, msg.offset)));
+	        	System.out.println(String.format("Access From onReceiveMessage 0x%s  squenceId %s",sCmd,squenceId));
+	        	Logger.v(String.format("Access From onReceiveMessage 0x%s  squenceId %s",sCmd,squenceId));
+	        	
+//	        	mServerMessageProcessor.unicast(client, src, offset, length);
+	        	mWriteBuffer.clear();
+	            mWriteBuffer.put(msg.data,msg.offset,msg.length);
+	            mWriteBuffer.flip();
+//	        unicast(client,mWriteBuffer.array(),0,response.length);
+	            mServerMessageProcessor.broadcast(mWriteBuffer.array(),0,mWriteBuffer.remaining());
+	            mWriteBuffer.clear();
+			}
 		}
 	};
 	
     //-------------------------------------------------------------------------------------------
+	private static ByteBuffer mWriteBuffer  = ByteBuffer.allocate(16*1024);
     public static AbstractServerMessageProcessor mServerMessageProcessor = new AbstractServerMessageProcessor() {
 
-        private ByteBuffer mWriteBuffer  = ByteBuffer.allocate(16*1024);
+        
         private long oldTime = System.currentTimeMillis();
         private long nowTime  = oldTime;
         
@@ -223,21 +241,21 @@ public class Main {
         		}
         	}
         	
-            Logger.v("--onReceiveMessage()- rece  "+new String(msg.data,msg.offset,msg.length));
-            String data ="MainNioServer--onReceiveMessage()--src_reuse_type "+msg.src_reuse_type
-                    + " dst_reuse_type " + msg.dst_reuse_type
-                    + " block_index " +msg.block_index
-                    + " offset " +msg.offset;
-            Logger.v("--onReceiveMessage()--reply "+data);
-            
-            byte[] response = data.getBytes();
-
-            mWriteBuffer.clear();
-            mWriteBuffer.put(response,0,response.length);
-            mWriteBuffer.flip();
-//        unicast(client,mWriteBuffer.array(),0,response.length);
-            broadcast(mWriteBuffer.array(),0,response.length);
-            mWriteBuffer.clear();
+//            Logger.v("--onReceiveMessage()- rece  "+new String(msg.data,msg.offset,msg.length));
+//            String data ="MainNioServer--onReceiveMessage()--src_reuse_type "+msg.src_reuse_type
+//                    + " dst_reuse_type " + msg.dst_reuse_type
+//                    + " block_index " +msg.block_index
+//                    + " offset " +msg.offset;
+//            Logger.v("--onReceiveMessage()--reply "+data);
+//            
+//            byte[] response = data.getBytes();
+//
+//            mWriteBuffer.clear();
+//            mWriteBuffer.put(response,0,response.length);
+//            mWriteBuffer.flip();
+////        unicast(client,mWriteBuffer.array(),0,response.length);
+//            broadcast(mWriteBuffer.array(),0,response.length);
+//            mWriteBuffer.clear();
         }
         
 		@Override
