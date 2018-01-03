@@ -6,21 +6,23 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.open.net.client.GClient;
 import com.open.net.client.impl.tcp.nio.NioClient;
-import com.open.net.client.structures.BaseClient;
-import com.open.net.client.structures.BaseMessageProcessor;
-import com.open.net.client.structures.IConnectListener;
-import com.open.net.client.structures.TcpAddress;
+import com.open.net.client.message.Message;
+import com.open.net.client.object.AbstractClient;
+import com.open.net.client.object.AbstractClientMessageProcessor;
+import com.open.net.client.object.ClientConfig;
+import com.open.net.client.object.IConnectListener;
+import com.open.net.client.object.TcpAddress;
 import com.open.net.server.GServer;
 import com.open.net.server.impl.tcp.nio.NioServer;
-import com.open.net.server.structures.AbstractClient;
-import com.open.net.server.structures.AbstractMessageProcessor;
-import com.open.net.server.structures.ServerConfig;
-import com.open.net.server.structures.ServerLog;
-import com.open.net.server.structures.ServerLog.LogListener;
-import com.open.net.server.structures.message.Message;
+import com.open.net.server.object.ArgsConfig;
+import com.open.net.server.object.ServerConfig;
+import com.open.net.server.object.ServerLog;
+import com.open.net.server.object.ServerLog.LogListener;
 import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
+import com.open.util.log.base.LogConfig;
 import com.poker.base.Server;
 import com.poker.cmd.LoginCmd;
 import com.poker.common.config.Config;
@@ -39,54 +41,60 @@ public class Main {
 
     public static void main(String [] args){
     	
-        //-------------------------------------------------------------------------------------------
-    	//1.1 配置初始化
-        ServerConfig mServerInfo = new ServerConfig();
-        mServerInfo.initArgsConfig(args);
-        mServerInfo.initFileConfig("./conf/lib.server.config");
+        //----------------------------------------- 一、配置初始化 ------------------------------------------
+    	//1.1 服务器配置初始化:解析命令行参数
+    	libArgsConfig = new ArgsConfig();
+    	libArgsConfig.initArgsConfig(args);
+    	libArgsConfig.server_type = Server.SERVER_ACCESS;
+    	
+    	//1.2 服务器配置初始化:解析文件配置
+        ServerConfig libServerConfig = new ServerConfig();
+        libServerConfig.initArgsConfig(libArgsConfig);
+        libServerConfig.initFileConfig("./conf/lib.server.config");
         
-        //1.2 数据初始化
-        GServer.init(mServerInfo, com.open.net.server.impl.tcp.nio.NioClient.class);
+        //1.3 服务器配置初始化:作为客户端配置
+        ClientConfig libClientConfig = new ClientConfig();
+        libClientConfig.initFileConfig("./conf/lib.client.config");
+        GClient.init(libClientConfig);
         
-        //1.3 日志初始化
-        Logger.init("./conf/lib.log.config",mServerInfo.id);
+        //1.3 日志配置初始化
+        LogConfig libLogConfig = Logger.init("./conf/lib.log.config",libArgsConfig.id);
         Logger.addFilterTraceElement(ServerLog.class.getName());
         Logger.addFilterTraceElement(mLogListener.getClass().getName());
-        Logger.v("-------Server------"+ mServerInfo.toString());
         
         //1.4 业务配置初始化
         Config mConfig = new Config();
         mConfig.initFileConfig("./conf/server.config");
         
-        //-------------------------------------------------------------------------------------------
-        //2.1 发送给服务监听器
-        register_monitor(mConfig);
-    	
-    	//2.2 连接到Dispatcher
-    	register_dispatcher(mConfig);
-    	
-        //-------------------------------------------------------------------------------------------
-        //3.0 连接初始化
-        Logger.v("-------Server------start---------");
-        try {
-            NioServer mNioServer = new NioServer(mServerInfo,mMessageProcessor,mLogListener);
-            mNioServer.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } 
-        Logger.v("-------Server------end---------");
+        Logger.v("libArgsConfig: "+ libArgsConfig.toString()+"\r\n");
+        Logger.v("libServerConfig: "+ libServerConfig.toString()+"\r\n");
+        Logger.v("libClientConfig: "+ libClientConfig.toString()+"\r\n");
+        Logger.v("libLogConfig: "+ libLogConfig.toString()+"\r\n");
         
-        //-------------------------------------------------------------------------------------------
-        //4.0 连接初始化
-        unregister_dispatcher(mConfig);
-        unregister_monitor(mConfig);
+        //----------------------------------------- 二、注册到关联服务器 ---------------------------------------
+        register_monitor(mConfig);//注册到服务监听器
+    	register_dispatcher(mConfig);//注册到Dispatcher
+    	
+        //----------------------------------------- 三、服务器初始化 ------------------------------------------
+    	while(true){
+    		try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				break;
+			}
+    	}
+        //----------------------------------------- 四、反注册关联服务器 ---------------------------------------
+        unregister_dispatcher(mConfig);//反注册到服务监听器
+        unregister_monitor(mConfig);//反注册到服务监听器
     }
 
     //---------------------------------------Monitor----------------------------------------------------
+    public static ArgsConfig libArgsConfig;
     public static byte[] write_buff = new byte[16*1024];
     
     public static void register_monitor(Config mConfig){
-        Monitor.register2Monitor(write_buff,Server.SERVER_LOGIN,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+        Monitor.register2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
@@ -96,7 +104,7 @@ public class Main {
     }
     
     public static void unregister_monitor(Config mConfig){
-    	Monitor.unregister2Monitor(write_buff,Server.SERVER_LOGIN,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+    	Monitor.unregister2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
@@ -131,15 +139,15 @@ public class Main {
     
 	private static IConnectListener mDisPatcherConnectResultListener = new IConnectListener() {
 		@Override
-		public void onConnectionSuccess(BaseClient client) {
+		public void onConnectionSuccess(AbstractClient client) {
 			Logger.v("-------dispatcher onConnectionSuccess---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
 			//register to dispatchServer
-			int length = Dispatcher.register2Dispatcher(write_buff,Server.SERVER_LOGIN,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+			int length = Dispatcher.register2Dispatcher(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
 			mDisPatcherMessageProcessor.send(client,write_buff,0,length);
 		}
 
 		@Override
-		public void onConnectionFailed(BaseClient client) {
+		public void onConnectionFailed(AbstractClient client) {
 
 			try {
 				Thread.sleep(500);
@@ -157,14 +165,12 @@ public class Main {
 		}
 	};
 
-	private static BaseMessageProcessor mDisPatcherMessageProcessor =new BaseMessageProcessor() {
+	private static AbstractClientMessageProcessor mDisPatcherMessageProcessor =new AbstractClientMessageProcessor() {
 
 		@Override
-		public void onReceiveMessages(BaseClient arg0,
-				LinkedList<com.open.net.client.structures.message.Message> list) {
-			
+		public void onReceiveMessages(AbstractClient arg0, LinkedList<Message> list) {
 			for(int i = 0 ;i<list.size();i++){
-				com.open.net.client.structures.message.Message msg = list.get(i);
+				Message msg = list.get(i);
 				int cmd = DataPacket.getCmd(msg.data, msg.offset);
 	        	Logger.v("onReceiveMessage mDisPatcherMessageProcessor 0x" + Integer.toHexString(DataPacket.getCmd(msg.data, msg.offset)));
 	        	if(cmd == LoginCmd.CMD_LOGIN){
@@ -178,52 +184,8 @@ public class Main {
 					}
 	        	}
 			}
-			
 		}
 	};
-	
-    //-------------------------------------------------------------------------------------------
-    public static AbstractMessageProcessor mMessageProcessor = new AbstractMessageProcessor() {
-
-    	private ByteBuffer mWriteBuffer  = ByteBuffer.allocate(16*1024);
-        private long oldTime = System.currentTimeMillis();
-        private long nowTime  = oldTime;
-        
-        protected void onReceiveMessage(AbstractClient client, Message msg){
-
-    		int cmd = DataPacket.getCmd(msg.data, msg.offset);
-        	Logger.v("onReceiveMessage mMessageProcessor 0x" + Integer.toHexString(DataPacket.getCmd(msg.data, msg.offset)));
-        	if(cmd == LoginCmd.CMD_LOGIN){
-        		LoginProto.Login readObj;
-				try {
-					readObj = LoginProto.Login.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length-DataPacket.getHeaderLength());
-					System.out.println("login "+readObj.toString());
-				} catch (InvalidProtocolBufferException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-        	}
-        }
-        
-		@Override
-		public void onTimeTick() {
-			nowTime = System.currentTimeMillis();
-			if(nowTime - oldTime > 1000){
-				oldTime = nowTime;
-				
-			}
-		}
-
-		@Override
-		public void onClientEnter(AbstractClient client) {
-			Logger.v("onClientEnter " + client.mClientId);
-		}
-
-		@Override
-		public void onClientExit(AbstractClient client) {
-			Logger.v("onClientExit " + client.mClientId);
-		}
-    };
     
     public static LogListener mLogListener = new LogListener(){
 
