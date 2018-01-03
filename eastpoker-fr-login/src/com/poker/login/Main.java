@@ -1,8 +1,7 @@
 package com.poker.login;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -14,8 +13,6 @@ import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.net.client.object.ClientConfig;
 import com.open.net.client.object.IConnectListener;
 import com.open.net.client.object.TcpAddress;
-import com.open.net.server.GServer;
-import com.open.net.server.impl.tcp.nio.NioServer;
 import com.open.net.server.object.ArgsConfig;
 import com.open.net.server.object.ServerConfig;
 import com.open.net.server.object.ServerLog;
@@ -165,6 +162,8 @@ public class Main {
 		}
 	};
 
+	public static HashMap<String, Integer> uidMap = new HashMap<>();
+	public static int uid_auto_generator = 10000;
 	private static AbstractClientMessageProcessor mDisPatcherMessageProcessor =new AbstractClientMessageProcessor() {
 
 		@Override
@@ -173,16 +172,25 @@ public class Main {
 				Message msg = list.get(i);
 				int cmd = DataPacket.getCmd(msg.data, msg.offset);
 	        	Logger.v("onReceiveMessage mDisPatcherMessageProcessor 0x" + Integer.toHexString(DataPacket.getCmd(msg.data, msg.offset)));
-	        	if(cmd == LoginCmd.CMD_LOGIN){
-	        		LoginProto.Login readObj;
-					try {
-						readObj = LoginProto.Login.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length-DataPacket.getHeaderLength());
-						System.out.println("login "+readObj.toString());
-					} catch (InvalidProtocolBufferException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-	        	}
+	        	
+	        	try {
+		        	if(cmd == LoginCmd.CMD_LOGIN){
+						LoginProto.Login loginRequest = LoginProto.Login.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length-DataPacket.getHeaderLength());
+						System.out.println("login "+loginRequest.toString());
+						
+						String uuid = loginRequest.getUuid();
+						if(null == uidMap.get(uuid)){
+							uidMap.put(uuid, uid_auto_generator);
+							uid_auto_generator++;
+						}
+						
+						
+		        	}
+					
+				} catch (InvalidProtocolBufferException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	};
