@@ -6,18 +6,18 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 import com.open.net.client.impl.tcp.nio.NioClient;
-import com.open.net.client.structures.BaseClient;
-import com.open.net.client.structures.BaseMessageProcessor;
-import com.open.net.client.structures.IConnectListener;
-import com.open.net.client.structures.TcpAddress;
+import com.open.net.client.message.Message;
+import com.open.net.client.object.AbstractClientMessageProcessor;
+import com.open.net.client.object.BaseClient;
+import com.open.net.client.object.IConnectListener;
+import com.open.net.client.object.TcpAddress;
 import com.open.net.server.GServer;
 import com.open.net.server.impl.tcp.nio.NioServer;
-import com.open.net.server.structures.AbstractClient;
-import com.open.net.server.structures.AbstractMessageProcessor;
-import com.open.net.server.structures.ServerConfig;
-import com.open.net.server.structures.ServerLog;
-import com.open.net.server.structures.ServerLog.LogListener;
-import com.open.net.server.structures.message.Message;
+import com.open.net.server.object.AbstractClient;
+import com.open.net.server.object.AbstractServerMessageProcessor;
+import com.open.net.server.object.ServerConfig;
+import com.open.net.server.object.ServerLog;
+import com.open.net.server.object.ServerLog.LogListener;
 import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
 import com.poker.base.Server;
@@ -152,24 +152,23 @@ public class Main {
 		}
 	};
 
-	private static BaseMessageProcessor mClientMessageProcessor =new BaseMessageProcessor() {
+	private static AbstractClientMessageProcessor mClientMessageProcessor =new AbstractClientMessageProcessor() {
 
 		@Override
-		public void onReceiveMessages(BaseClient arg0,
-				LinkedList<com.open.net.client.structures.message.Message> arg1) {
+		public void onReceiveMessages(BaseClient mClient, LinkedList<Message> mQueen) {
 			// TODO Auto-generated method stub
 			
 		}
 	};
 	
     //-------------------------------------------------------------------------------------------
-    public static AbstractMessageProcessor mServerMessageProcessor = new AbstractMessageProcessor() {
+    public static AbstractServerMessageProcessor mServerMessageProcessor = new AbstractServerMessageProcessor() {
 
         private ByteBuffer mWriteBuffer  = ByteBuffer.allocate(16*1024);
         private long oldTime = System.currentTimeMillis();
         private long nowTime  = oldTime;
         
-        protected void onReceiveMessage(AbstractClient client, Message msg){
+        protected void onReceiveMessage(AbstractClient client, com.open.net.server.message.Message msg) {
 
         	int cmd = DataPacket.getCmd(msg.data, msg.offset);
         	String sCmd = Integer.toHexString(cmd);
