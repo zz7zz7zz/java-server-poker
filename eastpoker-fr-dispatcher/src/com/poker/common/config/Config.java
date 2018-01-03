@@ -2,8 +2,8 @@ package com.poker.common.config;
 
 import java.util.HashMap;
 
-import com.open.net.client.structures.TcpAddress;
-import com.open.net.client.structures.UdpAddress;
+import com.open.net.client.object.TcpAddress;
+import com.open.net.client.object.UdpAddress;
 import com.open.net.server.utils.CfgParser;
 
 public class Config {

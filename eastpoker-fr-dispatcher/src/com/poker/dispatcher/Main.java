@@ -9,17 +9,18 @@ import java.util.Map.Entry;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.server.GServer;
-import com.open.net.server.impl.tcp.nio.NioClient;
 import com.open.net.server.impl.tcp.nio.NioServer;
-import com.open.net.server.structures.AbstractClient;
-import com.open.net.server.structures.AbstractMessageProcessor;
-import com.open.net.server.structures.ServerConfig;
-import com.open.net.server.structures.ServerLog;
-import com.open.net.server.structures.ServerLog.LogListener;
-import com.open.net.server.structures.message.Message;
+import com.open.net.server.message.Message;
+import com.open.net.server.object.AbstractServerClient;
+import com.open.net.server.object.AbstractServerMessageProcessor;
+import com.open.net.server.object.ArgsConfig;
+import com.open.net.server.object.ServerConfig;
+import com.open.net.server.object.ServerLog;
+import com.open.net.server.object.ServerLog.LogListener;
 import com.open.net.server.utils.NetUtil;
 import com.open.net.server.utils.TextUtils;
 import com.open.util.log.Logger;
+import com.open.util.log.base.LogConfig;
 import com.poker.base.Server;
 import com.poker.cmd.DispatchCmd;
 import com.poker.common.config.Config;
@@ -27,8 +28,6 @@ import com.poker.data.DataPacket;
 import com.poker.protocols.Monitor;
 import com.poker.protocols.server.DispatchChainProto.DispatchChain;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
-import com.poker.protocols.server.LoginProto;
-import com.poker.protocols.server.ServerInfoProto;
 import com.poker.protocols.server.ServerInfoProto.ServerInfo;
 
 /**
@@ -41,50 +40,57 @@ public class Main {
 
     public static void main(String [] args){
     	
-        //-------------------------------------------------------------------------------------------
-    	//1.1 配置初始化
-        ServerConfig mServerInfo = new ServerConfig();
-        mServerInfo.initArgsConfig(args);
-        mServerInfo.initFileConfig("./conf/lib.server.config");
+        //----------------------------------------- 一、配置初始化 ------------------------------------------
+    	//1.1 服务器配置初始化:解析命令行参数
+    	libArgsConfig = new ArgsConfig();
+    	libArgsConfig.initArgsConfig(args);
+    	libArgsConfig.server_type = Server.SERVER_ACCESS;
+    	
+    	//1.2 服务器配置初始化:解析文件配置
+        ServerConfig libServerConfig = new ServerConfig();
+        libServerConfig.initArgsConfig(libArgsConfig);
+        libServerConfig.initFileConfig("./conf/lib.server.config");
         
-        //1.2 数据初始化
-        GServer.init(mServerInfo, NioClient.class);
-        
-        //1.3 日志初始化
-        Logger.init("./conf/lib.log.config",mServerInfo.id);
+        //1.3 日志配置初始化
+        LogConfig libLogConfig = Logger.init("./conf/lib.log.config",libArgsConfig.id);
         Logger.addFilterTraceElement(ServerLog.class.getName());
         Logger.addFilterTraceElement(mLogListener.getClass().getName());
-        Logger.v("-------Server------"+ mServerInfo.toString());
         
         //1.4 业务配置初始化
         Config mConfig = new Config();
         mConfig.initFileConfig("./conf/server.config");
         
-        //-------------------------------------------------------------------------------------------
-        //2.1 发送给服务监听器
-        register_monitor(mConfig);
+        Logger.v("libArgsConfig: "+ libArgsConfig.toString()+"\r\n");
+        Logger.v("libServerConfig: "+ libServerConfig.toString()+"\r\n");
+        Logger.v("libLogConfig: "+ libLogConfig.toString()+"\r\n");
+        
+        //----------------------------------------- 二、注册到关联服务器 ---------------------------------------
+        register_monitor(mConfig);//注册到服务监听器
     	
-        //-------------------------------------------------------------------------------------------
-        //3.0 连接初始化
-        Logger.v("-------Server------start---------");
+        //----------------------------------------- 三、服务器初始化 ------------------------------------------
+    	Logger.v("-------Server------start---------");
         try {
-            NioServer mNioServer = new NioServer(mServerInfo,mMessageProcessor,mLogListener);
+            //3.1 数据初始化
+            GServer.init(libServerConfig, com.open.net.server.impl.tcp.nio.NioClient.class);
+            
+            //3.2 服务器初始化
+            NioServer mNioServer = new NioServer(libServerConfig,mServerMessageProcessor,mLogListener);
             mNioServer.start();
         } catch (IOException e) {
             e.printStackTrace();
         } 
         Logger.v("-------Server------end---------");
         
-        //-------------------------------------------------------------------------------------------
-        //4.0 连接初始化
-        unregister_monitor(mConfig);
+        //----------------------------------------- 四、反注册关联服务器 ---------------------------------------
+        unregister_monitor(mConfig);//反注册到服务监听器
     }
 
     //---------------------------------------Monitor----------------------------------------------------
+    public static ArgsConfig libArgsConfig;
     public static byte[] write_buff = new byte[16*1024];
     
     public static void register_monitor(Config mConfig){
-        Monitor.register2Monitor(write_buff,Server.SERVER_DIAPATCHER,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+        Monitor.register2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
@@ -94,7 +100,7 @@ public class Main {
     }
     
     public static void unregister_monitor(Config mConfig){
-    	Monitor.unregister2Monitor(write_buff,Server.SERVER_DIAPATCHER,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+    	Monitor.unregister2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
@@ -104,15 +110,15 @@ public class Main {
     }
     
     //-------------------------------------------------------------------------------------------
-    public static HashMap<Integer, ArrayList<AbstractClient>> serverOnlineList = new HashMap<Integer, ArrayList<AbstractClient>>();
+    public static HashMap<Integer, ArrayList<AbstractServerClient>> serverOnlineList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
     
-    public static AbstractMessageProcessor mMessageProcessor = new AbstractMessageProcessor() {
+    public static AbstractServerMessageProcessor mServerMessageProcessor = new AbstractServerMessageProcessor() {
 
         private ByteBuffer mWriteBuffer  = ByteBuffer.allocate(16*1024);
         private long oldTime = System.currentTimeMillis();
         private long nowTime  = oldTime;
         
-        protected void onReceiveMessage(AbstractClient client, Message msg){
+        protected void onReceiveMessage(AbstractServerClient client, Message msg){
 
         	try {
         		
@@ -125,12 +131,12 @@ public class Main {
         			ServerInfo enterServer = ServerInfo.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
         			
         			boolean add = true;
-            		ArrayList<AbstractClient> clientArray = serverOnlineList.get(enterServer.getType());
+            		ArrayList<AbstractServerClient> clientArray = serverOnlineList.get(enterServer.getType());
             		if(null == clientArray){
-            			clientArray = new ArrayList<AbstractClient>(10);
+            			clientArray = new ArrayList<AbstractServerClient>(10);
             			serverOnlineList.put(enterServer.getType(), clientArray);
             		}else{
-                		for(AbstractClient ser:clientArray){
+                		for(AbstractServerClient ser:clientArray){
                 			if((ser == client)){
                 				add = false;
                 				break;
@@ -150,16 +156,16 @@ public class Main {
             		}
             		
             		//打印所有的服务
-            		Iterator<Entry<Integer, ArrayList<AbstractClient>>> iter = serverOnlineList.entrySet().iterator();
+            		Iterator<Entry<Integer, ArrayList<AbstractServerClient>>> iter = serverOnlineList.entrySet().iterator();
             		while (iter.hasNext()) {
-        				Entry<Integer, ArrayList<AbstractClient>> entry = iter.next();
+        				Entry<Integer, ArrayList<AbstractServerClient>> entry = iter.next();
         				Integer key = entry.getKey();
-        				ArrayList<AbstractClient> val = entry.getValue();
+        				ArrayList<AbstractServerClient> val = entry.getValue();
         				
         		        Logger.v("------- "+key+" size " + val.size() + " -------");
-        		        for(AbstractClient ser:val){
+        		        for(AbstractServerClient ser:val){
         		        	ServerInfo serInfo = (ServerInfo) ser.getAttachment();
-        		        	Logger.v(String.format("------- name %s id %d host %s port %d ", serInfo.getName(),serInfo.getId(),!TextUtils.isEmpty(serInfo.getHost())? serInfo.getHost() : "null",serInfo.getPort()));
+        		        	Logger.v(String.format("------- name %s id %d bindHost %s bindPort %d host %s port %d", serInfo.getName(),serInfo.getId(),!TextUtils.isEmpty(serInfo.getHost())? serInfo.getHost() : "null",serInfo.getPort(),ser.mHost,ser.mPort));
         		        }
             		}
             		
@@ -171,10 +177,10 @@ public class Main {
         				int dstServerType = chain.getDstServerType();
         				int dstServerId = chain.getDstServerId();
         				
-        				AbstractClient server = null;
-        				ArrayList<AbstractClient> serverArray = serverOnlineList.get(dstServerType);
+        				AbstractServerClient server = null;
+        				ArrayList<AbstractServerClient> serverArray = serverOnlineList.get(dstServerType);
         				if(null != serverArray){
-        					for(AbstractClient ser:serverArray){
+        					for(AbstractServerClient ser:serverArray){
         						ServerInfo serInfo = (ServerInfo) ser.getAttachment();
         						if(serInfo.getId() == dstServerId){
         							server = ser;
@@ -188,7 +194,7 @@ public class Main {
         				if(null != server){
         					mDispatchPacket.getData().copyTo(mWriteBuffer);
         					mWriteBuffer.flip();
-        					mMessageProcessor.unicast(server, mWriteBuffer.array(),0,mWriteBuffer.remaining());
+        					unicast(server, mWriteBuffer.array(),0,mWriteBuffer.remaining());
         				}
         			}
         			
@@ -239,12 +245,12 @@ public class Main {
 		}
 
 		@Override
-		public void onClientEnter(AbstractClient client) {
+		public void onClientEnter(AbstractServerClient client) {
 			Logger.v("onClientEnter " + client.mClientId);
 		}
 
 		@Override
-		public void onClientExit(AbstractClient client) {
+		public void onClientExit(AbstractServerClient client) {
 			Logger.v("onClientExit " + client.mClientId);
 		}
     };
