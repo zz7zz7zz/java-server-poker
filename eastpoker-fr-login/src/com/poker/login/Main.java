@@ -24,9 +24,12 @@ import com.poker.base.Server;
 import com.poker.cmd.LoginCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
+import com.poker.data.DataTransfer;
 import com.poker.protocols.Dispatcher;
+import com.poker.protocols.LoginResponse;
 import com.poker.protocols.Monitor;
 import com.poker.protocols.server.LoginProto;
+import com.poker.protocols.server.LoginResponseProto;
 
 /**
  * author       :   long
@@ -42,7 +45,7 @@ public class Main {
     	//1.1 服务器配置初始化:解析命令行参数
     	libArgsConfig = new ArgsConfig();
     	libArgsConfig.initArgsConfig(args);
-    	libArgsConfig.server_type = Server.SERVER_ACCESS;
+    	libArgsConfig.server_type = Server.SERVER_LOGIN;
     	
     	//1.2 服务器配置初始化:解析文件配置
         ServerConfig libServerConfig = new ServerConfig();
@@ -89,7 +92,7 @@ public class Main {
     //---------------------------------------Monitor----------------------------------------------------
     public static ArgsConfig libArgsConfig;
     public static byte[] write_buff = new byte[16*1024];
-    
+    public static byte[] write_buff_2 = new byte[16*1024];
     public static void register_monitor(Config mConfig){
         Monitor.register2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
@@ -167,24 +170,34 @@ public class Main {
 	private static AbstractClientMessageProcessor mDisPatcherMessageProcessor =new AbstractClientMessageProcessor() {
 
 		@Override
-		public void onReceiveMessages(AbstractClient arg0, LinkedList<Message> list) {
+		public void onReceiveMessages(AbstractClient mClient, LinkedList<Message> list) {
 			for(int i = 0 ;i<list.size();i++){
 				Message msg = list.get(i);
 				int cmd = DataPacket.getCmd(msg.data, msg.offset);
+				int squenceId = DataPacket.getSequenceId(msg.data,msg.offset);
+				
+	        	String sCmd = Integer.toHexString(cmd);
 	        	Logger.v("onReceiveMessage mDisPatcherMessageProcessor 0x" + Integer.toHexString(DataPacket.getCmd(msg.data, msg.offset)));
+	        	System.out.println(String.format("onReceiveMessage 0x%s  squenceId %s",sCmd,squenceId));
+	        	Logger.v(String.format("onReceiveMessage 0x%s  squenceId %s",sCmd,squenceId));
 	        	
 	        	try {
 		        	if(cmd == LoginCmd.CMD_LOGIN){
 						LoginProto.Login loginRequest = LoginProto.Login.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length-DataPacket.getHeaderLength());
 						System.out.println("login "+loginRequest.toString());
 						
+						int uid = 0;
 						String uuid = loginRequest.getUuid();
 						if(null == uidMap.get(uuid)){
-							uidMap.put(uuid, uid_auto_generator);
+							uid = uid_auto_generator;
+							uidMap.put(uuid, uid);
+							
 							uid_auto_generator++;
 						}
 						
-						
+						int length = LoginResponse.login(write_buff_2, squenceId, uid);
+						length = ImplDataTransfer.send2Access(write_buff, squenceId, write_buff_2, 0, length);
+						mDisPatcherMessageProcessor.send(mClient, write_buff,0,length);
 		        	}
 					
 				} catch (InvalidProtocolBufferException e) {
@@ -194,6 +207,40 @@ public class Main {
 			}
 		}
 	};
+    
+    public static class ImplDataTransfer{
+    	
+    	public static int send2Access(byte[] writeBuff,int squenceId, byte[] data, int offset ,int length){
+    		int dst_server_id = libArgsConfig.id;
+    		return DataTransfer.send2Access(writeBuff,squenceId,data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
+    	}
+    	
+    	public static int send2Login(byte[] writeBuff,int squenceId, byte[] data, int offset ,int length){
+    		int dst_server_id = libArgsConfig.id;
+    		return DataTransfer.send2Login(writeBuff,squenceId,data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
+    	}
+    	
+    	public static int send2User(byte[] writeBuff,int squenceId , byte[] data, int offset ,int length){
+    		int dst_server_id = libArgsConfig.id;
+    		return DataTransfer.send2User(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
+    	}
+    	
+    	public static int send2Allocator(byte[] writeBuff,int squenceId , byte[] data, int offset ,int length){
+    		int dst_server_id = libArgsConfig.id;
+    		return DataTransfer.send2Allocator(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
+    	}
+    	
+    	public static int send2Gamer(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
+    		int dst_server_id = libArgsConfig.id;
+    		DataTransfer.send2Gamer(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
+    		return 1;
+    	}
+    	
+    	public static int send2GoldCoin(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
+    		int dst_server_id = libArgsConfig.id;
+    		return DataTransfer.send2GoldCoin(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
+    	}
+    }
     
     public static LogListener mLogListener = new LogListener(){
 
