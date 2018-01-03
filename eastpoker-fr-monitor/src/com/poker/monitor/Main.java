@@ -11,14 +11,17 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.server.GServer;
 import com.open.net.server.impl.udp.nio.UdpNioClient;
 import com.open.net.server.impl.udp.nio.UdpNioServer;
-import com.open.net.server.structures.AbstractClient;
-import com.open.net.server.structures.AbstractMessageProcessor;
-import com.open.net.server.structures.ServerConfig;
-import com.open.net.server.structures.ServerLog;
-import com.open.net.server.structures.ServerLog.LogListener;
-import com.open.net.server.structures.message.Message;
+import com.open.net.server.message.Message;
+import com.open.net.server.object.AbstractServerClient;
+import com.open.net.server.object.AbstractServerMessageProcessor;
+import com.open.net.server.object.ArgsConfig;
+import com.open.net.server.object.ServerConfig;
+import com.open.net.server.object.ServerLog;
+import com.open.net.server.object.ServerLog.LogListener;
 import com.open.net.server.utils.TextUtils;
 import com.open.util.log.Logger;
+import com.open.util.log.base.LogConfig;
+import com.poker.base.Server;
 import com.poker.cmd.MonitorCmd;
 import com.poker.data.DataPacket;
 import com.poker.protocols.server.ServerInfoProto;
@@ -33,24 +36,34 @@ public class Main {
 
     public static void main(String [] args){
 
-    	//1.配置初始化
-        ServerConfig mServerInfo = new ServerConfig();
-        mServerInfo.initArgsConfig(args);
-        mServerInfo.initFileConfig("./conf/lib.server.config");
+        //----------------------------------------- 一、配置初始化 ------------------------------------------
+    	//1.1 服务器配置初始化:解析命令行参数
+    	libArgsConfig = new ArgsConfig();
+    	libArgsConfig.initArgsConfig(args);
+    	libArgsConfig.server_type = Server.SERVER_ACCESS;
+    	
+    	//1.2 服务器配置初始化:解析文件配置
+        ServerConfig libServerConfig = new ServerConfig();
+        libServerConfig.initArgsConfig(libArgsConfig);
+        libServerConfig.initFileConfig("./conf/lib.server.config");
         
-        //2.数据初始化
-        GServer.init(mServerInfo, UdpNioClient.class);
-        
-        //3.日志初始化
-        Logger.init("./conf/lib.log.config",mServerInfo.id);
+        //1.3 日志配置初始化
+        LogConfig libLogConfig = Logger.init("./conf/lib.log.config",libArgsConfig.id);
         Logger.addFilterTraceElement(ServerLog.class.getName());
         Logger.addFilterTraceElement(mLogListener.getClass().getName());
-        Logger.v("-------Server------"+ mServerInfo.toString());
         
-        //4.连接初始化
+        Logger.v("libArgsConfig: "+ libArgsConfig.toString()+"\r\n");
+        Logger.v("libServerConfig: "+ libServerConfig.toString()+"\r\n");
+        Logger.v("libLogConfig: "+ libLogConfig.toString()+"\r\n");
+        
+        //----------------------------------------- 三、服务器初始化 ------------------------------------------
         Logger.v("-------Server------start---------");
         try {
-            UdpNioServer mBioServer = new UdpNioServer(mServerInfo,mMessageProcessor,mLogListener);
+            //3.1 数据初始化
+            GServer.init(libServerConfig, UdpNioClient.class);
+            
+            //3.2 服务器初始化
+            UdpNioServer mBioServer = new UdpNioServer(libServerConfig,mMessageProcessor,mLogListener);
             mBioServer.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,15 +72,16 @@ public class Main {
     }
 
     //-------------------------------------------------------------------------------------------
+    public static ArgsConfig libArgsConfig;
     public static HashMap<Integer, ArrayList<ServerInfoProto.ServerInfo>> serverOnlineList = new HashMap<Integer, ArrayList<ServerInfoProto.ServerInfo>>();
     
-    public static AbstractMessageProcessor mMessageProcessor = new AbstractMessageProcessor() {
+    public static AbstractServerMessageProcessor mMessageProcessor = new AbstractServerMessageProcessor() {
 
     	private ByteBuffer mWriteBuffer  = ByteBuffer.allocate(16*1024);
         private long oldTime = System.currentTimeMillis();
         private long nowTime  = oldTime;
         
-        protected void onReceiveMessage(AbstractClient client, Message msg){
+        protected void onReceiveMessage(AbstractServerClient client, Message msg){
         	try {
         		
         		int cmd = DataPacket.getCmd(msg.data, msg.offset);
@@ -100,6 +114,7 @@ public class Main {
         		        Logger.v("------- "+key+" size " + val.size() + " -------");
         		        for(ServerInfo ser:val){
         		        	Logger.v(String.format("------- name %s id %d host %s port %d ", ser.getName(),ser.getId(),!TextUtils.isEmpty(ser.getHost())? ser.getHost() : "null",ser.getPort()));
+//        		        	Logger.v(String.format("------- name %s id %d bindHost %s bindPort %d host %s port %d", ser.getName(),ser.getId(),!TextUtils.isEmpty(ser.getHost())? ser.getHost() : "null",ser.getPort(),ser.mHost,ser.mPort));
         		        }
         		        
             		}
@@ -119,12 +134,12 @@ public class Main {
 		}
 
 		@Override
-		public void onClientEnter(AbstractClient client) {
+		public void onClientEnter(AbstractServerClient client) {
 			Logger.v("onClientEnter " + client.mClientId);
 		}
 
 		@Override
-		public void onClientExit(AbstractClient client) {
+		public void onClientExit(AbstractServerClient client) {
 			Logger.v("onClientExit " + client.mClientId);
 		}
     };
