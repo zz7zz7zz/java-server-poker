@@ -37,47 +37,44 @@ public class Main {
 
     public static void main(String [] args){
     	
-        //-------------------------------------------------------------------------------------------
-    	//1.1 配置初始化
+        //----------------------------------------- 一、配置初始化 ------------------------------------------
+    	//1.1 服务器配置初始化:(a.解析命令行参数;b.解析文件配置)
         ServerConfig mServerInfo = new ServerConfig();
         mServerInfo.initArgsConfig(args);
         mServerInfo.initFileConfig("./conf/lib.server.config");
-        
-        //1.2 数据初始化
-        GServer.init(mServerInfo, com.open.net.server.impl.tcp.nio.NioClient.class);
-        
-        //1.3 日志初始化
+
+        //1.2 日志配置初始化
         Logger.init("./conf/lib.log.config",mServerInfo.id);
         Logger.addFilterTraceElement(ServerLog.class.getName());
         Logger.addFilterTraceElement(mLogListener.getClass().getName());
-        Logger.v("-------Server------"+ mServerInfo.toString());
         
-        //1.4 业务配置初始化
+        //1.3 业务配置初始化
         Config mConfig = new Config();
         mConfig.initFileConfig("./conf/server.config");
         
-        //-------------------------------------------------------------------------------------------
-        //2.1 发送给服务监听器
-        register_monitor(mConfig);
+        Logger.v("-------Server------"+ mServerInfo.toString());
+        
+        //----------------------------------------- 二、注册到关联服务器 ---------------------------------------
+        register_monitor(mConfig);//注册到服务监听器
+    	register_dispatcher(mConfig);//注册到Dispatcher
     	
-    	//2.2 连接到Dispatcher
-    	register_dispatcher(mConfig);
-    	
-        //-------------------------------------------------------------------------------------------
-        //3.0 连接初始化
-        Logger.v("-------Server------start---------");
+        //----------------------------------------- 三、服务器初始化 ------------------------------------------
+    	Logger.v("-------Server------start---------");
         try {
-            NioServer mNioServer = new NioServer(mServerInfo,mMessageProcessor,mLogListener);
+        	//3.1 数据初始化
+            GServer.init(mServerInfo, com.open.net.server.impl.tcp.nio.NioClient.class);
+            
+            //3.2 服务器初始化
+            NioServer mNioServer = new NioServer(mServerInfo,mServerMessageProcessor,mLogListener);
             mNioServer.start();
         } catch (IOException e) {
             e.printStackTrace();
         } 
         Logger.v("-------Server------end---------");
         
-        //-------------------------------------------------------------------------------------------
-        //4.0 连接初始化
-        unregister_dispatcher(mConfig);
-        unregister_monitor(mConfig);
+        //----------------------------------------- 四、反注册关联服务器 ---------------------------------------
+        unregister_dispatcher(mConfig);//反注册到服务监听器
+        unregister_monitor(mConfig);//反注册到服务监听器
     }
 
     //---------------------------------------Monitor----------------------------------------------------
@@ -109,7 +106,7 @@ public class Main {
     	if(dispatcherSize > 0){
     		dispatcher = new NioClient[dispatcherSize];
     		for(int i=0; i< dispatcherSize ; i++){
-    			dispatcher[i] = new NioClient(mDisPatcherMessageProcessor,mDisPatcherConnectResultListener); 
+    			dispatcher[i] = new NioClient(mClientMessageProcessor,mClientConnectResultListener); 
     			dispatcher[i].setConnectAddress(new TcpAddress[]{mConfig.dispatcher_net_tcp[i]});
     			dispatcher[i].connect();
     		}
@@ -127,13 +124,13 @@ public class Main {
     
     public static int dispatchIndex = -1;
     public static NioClient [] dispatcher;
-	private static IConnectListener mDisPatcherConnectResultListener = new IConnectListener() {
+	private static IConnectListener mClientConnectResultListener = new IConnectListener() {
 		@Override
 		public void onConnectionSuccess(BaseClient client) {
 			Logger.v("-------dispatcher onConnectionSuccess---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
 			//register to dispatchServer
 			int length = Dispatcher.register2Dispatcher(writeBuff,Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
-			mDisPatcherMessageProcessor.send(client,writeBuff,0,length);
+			mClientMessageProcessor.send(client,writeBuff,0,length);
 		}
 
 		@Override
@@ -155,7 +152,7 @@ public class Main {
 		}
 	};
 
-	private static BaseMessageProcessor mDisPatcherMessageProcessor =new BaseMessageProcessor() {
+	private static BaseMessageProcessor mClientMessageProcessor =new BaseMessageProcessor() {
 
 		@Override
 		public void onReceiveMessages(BaseClient arg0,
@@ -166,7 +163,7 @@ public class Main {
 	};
 	
     //-------------------------------------------------------------------------------------------
-    public static AbstractMessageProcessor mMessageProcessor = new AbstractMessageProcessor() {
+    public static AbstractMessageProcessor mServerMessageProcessor = new AbstractMessageProcessor() {
 
         private ByteBuffer mWriteBuffer  = ByteBuffer.allocate(16*1024);
         private long oldTime = System.currentTimeMillis();
@@ -197,12 +194,12 @@ public class Main {
         		dispatchIndex = (dispatchIndex+1) % dispatcher.length;
         		NioClient mNioClient = dispatcher[dispatchIndex];
         		if(mNioClient.isConnected()){
-        			mDisPatcherMessageProcessor.send(mNioClient,writeBuff,0,length);
+        			mClientMessageProcessor.send(mNioClient,writeBuff,0,length);
         		}else{
         			for(int i = 0;i<dispatcher.length;i++){
         				mNioClient = dispatcher[dispatchIndex];
                 		if(mNioClient.isConnected()){
-                			mDisPatcherMessageProcessor.send(mNioClient,writeBuff,0,length);
+                			mClientMessageProcessor.send(mNioClient,writeBuff,0,length);
                 			break;
                 		}
         			}
