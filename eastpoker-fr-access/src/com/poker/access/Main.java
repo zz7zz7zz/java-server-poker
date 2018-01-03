@@ -5,21 +5,25 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import com.open.net.client.GClient;
 import com.open.net.client.impl.tcp.nio.NioClient;
-import com.open.net.client.message.Message;
 import com.open.net.client.object.AbstractClientMessageProcessor;
-import com.open.net.client.object.BaseClient;
+import com.open.net.client.object.AbstractClient;
+import com.open.net.client.object.ClientConfig;
 import com.open.net.client.object.IConnectListener;
 import com.open.net.client.object.TcpAddress;
 import com.open.net.server.GServer;
 import com.open.net.server.impl.tcp.nio.NioServer;
-import com.open.net.server.object.AbstractClient;
+import com.open.net.server.message.Message;
+import com.open.net.server.object.AbstractServerClient;
 import com.open.net.server.object.AbstractServerMessageProcessor;
+import com.open.net.server.object.ArgsConfig;
 import com.open.net.server.object.ServerConfig;
 import com.open.net.server.object.ServerLog;
 import com.open.net.server.object.ServerLog.LogListener;
 import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
+import com.open.util.log.base.LogConfig;
 import com.poker.base.Server;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
@@ -38,21 +42,34 @@ public class Main {
     public static void main(String [] args){
     	
         //----------------------------------------- 一、配置初始化 ------------------------------------------
-    	//1.1 服务器配置初始化:(a.解析命令行参数;b.解析文件配置)
-        ServerConfig mServerInfo = new ServerConfig();
-        mServerInfo.initArgsConfig(args);
-        mServerInfo.initFileConfig("./conf/lib.server.config");
-
-        //1.2 日志配置初始化
-        Logger.init("./conf/lib.log.config",mServerInfo.id);
+    	//1.1 服务器配置初始化:解析命令行参数
+    	libArgsConfig = new ArgsConfig();
+    	libArgsConfig.initArgsConfig(args);
+    	libArgsConfig.server_type = Server.SERVER_ACCESS;
+    	
+    	//1.2 服务器配置初始化:解析文件配置
+        ServerConfig libServerConfig = new ServerConfig();
+        libServerConfig.initArgsConfig(libArgsConfig);
+        libServerConfig.initFileConfig("./conf/lib.server.config");
+        
+        //1.3 服务器配置初始化:作为客户端配置
+        ClientConfig libClientConfig = new ClientConfig();
+        libClientConfig.initFileConfig("./conf/lib.client.config");
+        GClient.init(libClientConfig);
+        
+        //1.3 日志配置初始化
+        LogConfig libLogConfig = Logger.init("./conf/lib.log.config",libArgsConfig.id);
         Logger.addFilterTraceElement(ServerLog.class.getName());
         Logger.addFilterTraceElement(mLogListener.getClass().getName());
         
-        //1.3 业务配置初始化
+        //1.4 业务配置初始化
         Config mConfig = new Config();
         mConfig.initFileConfig("./conf/server.config");
         
-        Logger.v("-------Server------"+ mServerInfo.toString());
+        Logger.v("libArgsConfig: "+ libArgsConfig.toString()+"\r\n");
+        Logger.v("libServerConfig: "+ libServerConfig.toString()+"\r\n");
+        Logger.v("libClientConfig: "+ libClientConfig.toString()+"\r\n");
+        Logger.v("libLogConfig: "+ libLogConfig.toString()+"\r\n");
         
         //----------------------------------------- 二、注册到关联服务器 ---------------------------------------
         register_monitor(mConfig);//注册到服务监听器
@@ -61,11 +78,10 @@ public class Main {
         //----------------------------------------- 三、服务器初始化 ------------------------------------------
     	Logger.v("-------Server------start---------");
         try {
-        	//3.1 数据初始化
-            GServer.init(mServerInfo, com.open.net.server.impl.tcp.nio.NioClient.class);
+            GServer.init(libServerConfig, com.open.net.server.impl.tcp.nio.NioClient.class);
             
             //3.2 服务器初始化
-            NioServer mNioServer = new NioServer(mServerInfo,mServerMessageProcessor,mLogListener);
+            NioServer mNioServer = new NioServer(libServerConfig,mServerMessageProcessor,mLogListener);
             mNioServer.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,10 +94,11 @@ public class Main {
     }
 
     //---------------------------------------Monitor----------------------------------------------------
+    public static ArgsConfig libArgsConfig;
     public static byte[] writeBuff = new byte[16*1024];
     
     public static void register_monitor(Config mConfig){
-    	Monitor.register2Monitor(writeBuff,Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+    	Monitor.register2Monitor(writeBuff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
@@ -91,7 +108,7 @@ public class Main {
     }
     
     public static void unregister_monitor(Config mConfig){
-        Monitor.unregister2Monitor(writeBuff,Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+        Monitor.unregister2Monitor(writeBuff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
@@ -126,15 +143,15 @@ public class Main {
     public static NioClient [] dispatcher;
 	private static IConnectListener mClientConnectResultListener = new IConnectListener() {
 		@Override
-		public void onConnectionSuccess(BaseClient client) {
+		public void onConnectionSuccess(AbstractClient client) {
 			Logger.v("-------dispatcher onConnectionSuccess---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
 			//register to dispatchServer
-			int length = Dispatcher.register2Dispatcher(writeBuff,Server.SERVER_ACCESS,GServer.mServerInfo.name, GServer.mServerInfo.id,GServer.mServerInfo.host, GServer.mServerInfo.port);
+			int length = Dispatcher.register2Dispatcher(writeBuff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
 			mClientMessageProcessor.send(client,writeBuff,0,length);
 		}
 
 		@Override
-		public void onConnectionFailed(BaseClient client) {
+		public void onConnectionFailed(AbstractClient client) {
 
 			try {
 				Thread.sleep(500);
@@ -155,7 +172,7 @@ public class Main {
 	private static AbstractClientMessageProcessor mClientMessageProcessor =new AbstractClientMessageProcessor() {
 
 		@Override
-		public void onReceiveMessages(BaseClient mClient, LinkedList<Message> mQueen) {
+		public void onReceiveMessages(AbstractClient mClient, LinkedList<com.open.net.client.message.Message> mQueen) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -168,7 +185,7 @@ public class Main {
         private long oldTime = System.currentTimeMillis();
         private long nowTime  = oldTime;
         
-        protected void onReceiveMessage(AbstractClient client, com.open.net.server.message.Message msg) {
+        protected void onReceiveMessage(AbstractServerClient client, Message msg) {
 
         	int cmd = DataPacket.getCmd(msg.data, msg.offset);
         	String sCmd = Integer.toHexString(cmd);
@@ -232,12 +249,12 @@ public class Main {
 		}
 
 		@Override
-		public void onClientEnter(AbstractClient client) {
+		public void onClientEnter(AbstractServerClient client) {
 			Logger.v("onClientEnter " + client.mClientId);
 		}
 
 		@Override
-		public void onClientExit(AbstractClient client) {
+		public void onClientExit(AbstractServerClient client) {
 			Logger.v("onClientExit " + client.mClientId);
 		}
     };
@@ -246,29 +263,29 @@ public class Main {
     public static class ImplDataTransfer{
     	
     	public static int send2Login(byte[] writeBuff,int squenceId, byte[] data, int offset ,int length){
-    		int dst_server_id = GServer.mServerInfo.id;
-    		return DataTransfer.send2Login(writeBuff,squenceId,data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, dst_server_id);
+    		int dst_server_id = libArgsConfig.id;
+    		return DataTransfer.send2Login(writeBuff,squenceId,data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
     	}
     	
     	public static int send2User(byte[] writeBuff,int squenceId , byte[] data, int offset ,int length){
-    		int dst_server_id = GServer.mServerInfo.id;
-    		return DataTransfer.send2User(writeBuff,squenceId, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, dst_server_id);
+    		int dst_server_id = libArgsConfig.id;
+    		return DataTransfer.send2User(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
     	}
     	
     	public static int send2Allocator(byte[] writeBuff,int squenceId , byte[] data, int offset ,int length){
-    		int dst_server_id = GServer.mServerInfo.id;
-    		return DataTransfer.send2Allocator(writeBuff,squenceId, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, dst_server_id);
+    		int dst_server_id = libArgsConfig.id;
+    		return DataTransfer.send2Allocator(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
     	}
     	
     	public static int send2Gamer(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
-    		int dst_server_id = GServer.mServerInfo.id;
-    		DataTransfer.send2Gamer(writeBuff,squenceId, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, dst_server_id);
+    		int dst_server_id = libArgsConfig.id;
+    		DataTransfer.send2Gamer(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
     		return 1;
     	}
     	
     	public static int send2GoldCoin(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
-    		int dst_server_id = GServer.mServerInfo.id;
-    		return DataTransfer.send2GoldCoin(writeBuff,squenceId, data,offset,length, Server.SERVER_ACCESS, GServer.mServerInfo.id, dst_server_id);
+    		int dst_server_id = libArgsConfig.id;
+    		return DataTransfer.send2GoldCoin(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
     	}
     }
     
