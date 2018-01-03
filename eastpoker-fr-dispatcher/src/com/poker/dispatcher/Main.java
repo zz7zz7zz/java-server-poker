@@ -192,6 +192,7 @@ public class Main {
         				Logger.v(String.format("dispatch %d %d %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),chain.getDstServerType(),chain.getDstServerId(),(null != server) ? 1 : 0));
         				
         				if(null != server){
+        					mWriteBuffer.clear();
         					mDispatchPacket.getData().copyTo(mWriteBuffer);
         					mWriteBuffer.flip();
         					unicast(server, mWriteBuffer.array(),0,mWriteBuffer.remaining());

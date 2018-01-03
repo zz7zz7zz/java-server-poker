@@ -165,7 +165,7 @@ public class Main {
 		}
 	};
 
-	public static HashMap<String, Integer> uidMap = new HashMap<>();
+	public static HashMap<String, Long> uidMap = new HashMap<>();
 	public static int uid_auto_generator = 10000;
 	private static AbstractClientMessageProcessor mDisPatcherMessageProcessor =new AbstractClientMessageProcessor() {
 
@@ -186,16 +186,19 @@ public class Main {
 						LoginProto.Login loginRequest = LoginProto.Login.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length-DataPacket.getHeaderLength());
 						System.out.println("login "+loginRequest.toString());
 						
-						int uid = 0;
 						String uuid = loginRequest.getUuid();
-						if(null == uidMap.get(uuid)){
+						long uid = 0;
+						Long uidObject = uidMap.get(uuid);
+						if(null == uidObject){
 							uid = uid_auto_generator;
 							uidMap.put(uuid, uid);
 							
 							uid_auto_generator++;
+						}else{
+							uid = uidObject;
 						}
 						
-						int length = LoginResponse.login(write_buff_2, squenceId, uid);
+						int length = LoginResponse.login(write_buff_2, squenceId, (int)uid);
 						length = ImplDataTransfer.send2Access(write_buff, squenceId, write_buff_2, 0, length);
 						mDisPatcherMessageProcessor.send(mClient, write_buff,0,length);
 		        	}
