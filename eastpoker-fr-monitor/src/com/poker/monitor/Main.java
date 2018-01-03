@@ -24,7 +24,6 @@ import com.open.util.log.base.LogConfig;
 import com.poker.base.Server;
 import com.poker.cmd.MonitorCmd;
 import com.poker.data.DataPacket;
-import com.poker.protocols.server.ServerInfoProto;
 import com.poker.protocols.server.ServerInfoProto.ServerInfo;;
 /**
  * author       :   long
@@ -73,7 +72,7 @@ public class Main {
 
     //-------------------------------------------------------------------------------------------
     public static ArgsConfig libArgsConfig;
-    public static HashMap<Integer, ArrayList<ServerInfoProto.ServerInfo>> serverOnlineList = new HashMap<Integer, ArrayList<ServerInfoProto.ServerInfo>>();
+    public static HashMap<Integer, ArrayList<AbstractServerClient>> serverOnlineList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
     
     public static AbstractServerMessageProcessor mMessageProcessor = new AbstractServerMessageProcessor() {
 
@@ -85,38 +84,49 @@ public class Main {
         	try {
         		
         		int cmd = DataPacket.getCmd(msg.data, msg.offset);
+        		Logger.v(System.getProperty("line.separator"));
         		Logger.v("onReceiveMessage 0x" + Integer.toHexString(cmd));
         		
         		if(cmd == MonitorCmd.CMD_REGISTER){
-            		ServerInfo enterServer = ServerInfo.parseFrom(msg.data,DataPacket.Header.HEADER_LENGTH+msg.offset,msg.length-DataPacket.Header.HEADER_LENGTH);
-            		ArrayList<ServerInfo> serverArray = serverOnlineList.get(enterServer.getType());
-            		if(null == serverArray){
-            			serverArray = new ArrayList<ServerInfo>(10);
-            			serverOnlineList.put(enterServer.getType(), serverArray);
+        			ServerInfo enterServer = ServerInfo.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
+        			
+        			boolean add = true;
+            		ArrayList<AbstractServerClient> clientArray = serverOnlineList.get(enterServer.getType());
+            		if(null == clientArray){
+            			clientArray = new ArrayList<AbstractServerClient>(10);
+            			serverOnlineList.put(enterServer.getType(), clientArray);
             		}else{
-                		for(ServerInfo obj:serverArray){
-                			if(obj.getId() == enterServer.getId()){
-                				serverArray.remove(obj);
+                		for(AbstractServerClient ser:clientArray){
+                			if((ser == client)){
+                				add = false;
                 				break;
+                			}else{ 
+                				ServerInfo attachObj = (ServerInfo) ser.getAttachment();
+                				if(null != attachObj && attachObj.getId() == enterServer.getId()){
+                    				clientArray.remove(ser);
+                    				break;
+                    			}
                 			}
                 		}
             		}
-            		serverArray.add(enterServer);
-
+            		
+            		client.attach(enterServer);
+            		if(add){
+            			clientArray.add(client);
+            		}
+            		
             		//打印所有的服务
-            		Iterator<Entry<Integer, ArrayList<ServerInfo>>> iter = serverOnlineList.entrySet().iterator();
+            		Iterator<Entry<Integer, ArrayList<AbstractServerClient>>> iter = serverOnlineList.entrySet().iterator();
             		while (iter.hasNext()) {
-        				Entry<Integer, ArrayList<ServerInfo>> entry = iter.next();
+        				Entry<Integer, ArrayList<AbstractServerClient>> entry = iter.next();
         				Integer key = entry.getKey();
-        				ArrayList<ServerInfo> val = entry.getValue();
+        				ArrayList<AbstractServerClient> val = entry.getValue();
         				
-        				Logger.v(System.getProperty("line.separator"));
         		        Logger.v("------- "+key+" size " + val.size() + " -------");
-        		        for(ServerInfo ser:val){
-        		        	Logger.v(String.format("------- name %s id %d host %s port %d ", ser.getName(),ser.getId(),!TextUtils.isEmpty(ser.getHost())? ser.getHost() : "null",ser.getPort()));
-//        		        	Logger.v(String.format("------- name %s id %d bindHost %s bindPort %d host %s port %d", ser.getName(),ser.getId(),!TextUtils.isEmpty(ser.getHost())? ser.getHost() : "null",ser.getPort(),ser.mHost,ser.mPort));
+        		        for(AbstractServerClient ser:val){
+        		        	ServerInfo serInfo = (ServerInfo) ser.getAttachment();
+        		        	Logger.v(String.format("------- name %s id %d bindHost %s bindPort %d host %s port %d", serInfo.getName(),serInfo.getId(),!TextUtils.isEmpty(serInfo.getHost())? serInfo.getHost() : "null",serInfo.getPort(),ser.mHost,ser.mPort));
         		        }
-        		        
             		}
         		}
 			} catch (InvalidProtocolBufferException e) {
