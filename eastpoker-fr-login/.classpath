@@ -8,6 +8,6 @@
 	<classpathentry kind="lib" path="libs/open.util.log.jar"/>
 	<classpathentry kind="lib" path="libs/org.json.jar"/>
 	<classpathentry kind="lib" path="libs/protobuf-java-2.5.0.jar"/>
-	<classpathentry kind="lib" path="libs/protocol.jar"/>
+	<classpathentry kind="lib" path="libs/protocol.jar" sourcepath="/eastpoker-fr-protocol"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
