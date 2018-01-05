@@ -29,7 +29,7 @@ public class Config {
     protected void initFileConfig(HashMap<String,Object> map){
     	if(null !=map){
     		
-    		game_id = CfgParser.getInt(map, "Allocator","game_id");
+    		game_id = CfgParser.getInt(map, "Game","game");
     		
             String val[]     = CfgParser.getStringArray(map,"Dispatcher","net_tcp");
             if(null != val){
@@ -72,4 +72,5 @@ public class Config {
 				+ ", dispatcher_net_udp=" + Arrays.toString(dispatcher_net_udp) + ", monitor_net_udp="
 				+ Arrays.toString(monitor_net_udp) + "]";
 	}
+    
 }
