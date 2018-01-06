@@ -140,6 +140,8 @@ public class Main {
 			//register to dispatchServer
 			int length = Dispatcher.register2Dispatcher(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
 			mDisPatcherMessageProcessor.send(client,write_buff,0,length);
+			
+			//上报桌子信息
 		}
 
 		@Override
