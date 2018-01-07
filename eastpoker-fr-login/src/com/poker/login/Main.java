@@ -92,7 +92,7 @@ public class Main {
     //---------------------------------------Monitor----------------------------------------------------
     public static ArgsConfig libArgsConfig;
     public static byte[] write_buff = new byte[16*1024];
-    public static byte[] write_buff_2 = new byte[16*1024];
+    public static byte[] write_buff_dispatcher = new byte[16*1024];
     public static void register_monitor(Config mConfig){
         Monitor.register2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
@@ -198,9 +198,9 @@ public class Main {
 							uid = uidObject;
 						}
 						
-						int length = LoginResponse.login(write_buff_2, squenceId, (int)uid);
-						length = ImplDataTransfer.send2Access(write_buff, squenceId, write_buff_2, 0, length);
-						mDisPatcherMessageProcessor.send(mClient, write_buff,0,length);
+						int length = LoginResponse.login(write_buff, squenceId, (int)uid);
+						length = ImplDataTransfer.send2Access(write_buff_dispatcher, squenceId, write_buff, 0, length);
+						mDisPatcherMessageProcessor.send(mClient, write_buff_dispatcher,0,length);
 		        	}
 					
 				} catch (InvalidProtocolBufferException e) {

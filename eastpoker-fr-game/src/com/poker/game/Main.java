@@ -22,9 +22,9 @@ import com.open.util.log.base.LogConfig;
 import com.poker.base.Server;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
-import com.poker.data.DataTransfer;
 import com.poker.protocols.Dispatcher;
 import com.poker.protocols.Monitor;
+import com.poker.server.TabelMgr;
 
 
 /**
@@ -59,7 +59,7 @@ public class Main {
         Logger.addFilterTraceElement(mLogListener.getClass().getName());
         
         //1.4 业务配置初始化
-        Config mConfig = new Config();
+        mConfig = new Config();
         mConfig.initFileConfig("./conf/server.config");
         
         Logger.v("libArgsConfig: "+ libArgsConfig.toString()+"\r\n");
@@ -87,24 +87,25 @@ public class Main {
 
     //---------------------------------------Monitor----------------------------------------------------
     public static ArgsConfig libArgsConfig;
-    public static byte[] write_buff = new byte[16*1024];
-    public static byte[] write_buff_2 = new byte[16*1024];
+    public static Config mConfig;
+    public static byte[] write_buf = new byte[16*1024];
+    public static byte[] write_buff_dispatcher = new byte[16*1024];
     public static void register_monitor(Config mConfig){
-        Monitor.register2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
+        Monitor.register2Monitor(write_buf,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.getLength(write_buff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buf,0,DataPacket.getLength(write_buf));
     		}
     	}
     }
     
     public static void unregister_monitor(Config mConfig){
-    	Monitor.unregister2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
+    	Monitor.unregister2Monitor(write_buf,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.getLength(write_buff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buf,0,DataPacket.getLength(write_buf));
     		}
     	}
     }
@@ -138,11 +139,11 @@ public class Main {
 		public void onConnectionSuccess(AbstractClient client) {
 			Logger.v("-------dispatcher onConnectionSuccess---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
 			//register to dispatchServer
-			int length = Dispatcher.register2Dispatcher(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
-			mDisPatcherMessageProcessor.send(client,write_buff,0,length);
+			int length = Dispatcher.register2Dispatcher(write_buf,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
+			mDisPatcherMessageProcessor.send(client,write_buf,0,length);
 			
 			//上报桌子信息
-			
+			TabelMgr.reportRoomInfo(write_buff_dispatcher, write_buf, 1, mDisPatcherMessageProcessor, mConfig);
 		}
 
 		@Override
@@ -182,40 +183,6 @@ public class Main {
 			}
 		}
 	};
-    
-    public static class ImplDataTransfer{
-    	
-    	public static int send2Access(byte[] writeBuff,int squenceId, byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2Access(writeBuff,squenceId,data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    	
-    	public static int send2Login(byte[] writeBuff,int squenceId, byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2Login(writeBuff,squenceId,data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    	
-    	public static int send2User(byte[] writeBuff,int squenceId , byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2User(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    	
-    	public static int send2Allocator(byte[] writeBuff,int squenceId , byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2Allocator(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    	
-    	public static int send2Gamer(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		DataTransfer.send2Gamer(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    		return 1;
-    	}
-    	
-    	public static int send2GoldCoin(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2GoldCoin(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    }
     
     public static LogListener mLogListener = new LogListener(){
 

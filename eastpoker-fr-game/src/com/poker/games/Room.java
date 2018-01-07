@@ -1,18 +1,11 @@
 package com.poker.games;
 
-import com.poker.common.config.Config;
-
 public class Room {
 	
-	public static void init(Config config) {
-		
-	}
+	public Table mTables[];
 	
-	public static void reportRoom2Alloc() {
-		
+	public Room(int table_count) {
+		mTables = new Table[table_count];
 	}
-	
-	public static void receiveRoomFromAlloc() {
-		
-	}
+
 }

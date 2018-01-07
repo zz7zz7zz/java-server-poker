@@ -1,0 +1,15 @@
+// protoc --java_out=./src ./src/com/poker/protocols/server/proto/TableInfo.proto ./src/com/poker/protocols/server/proto/RoomInfo.proto 
+
+package com.poker.protocols.server.proto; 
+
+import "src/com/poker/protocols/server/proto/TableInfo.proto";
+
+option java_package = "com.poker.protocols.server";
+option java_outer_classname = "RoomInfoProto";
+
+message RoomInfo{
+	optional int32 table_count  	= 1;
+	optional int32 table_max_user   = 2;
+	
+	repeated TableInfo tableInfoList = 3;   
+}
