@@ -8,8 +8,10 @@ option java_package = "com.poker.protocols.server";
 option java_outer_classname = "RoomInfoProto";
 
 message RoomInfo{
-	optional int32 table_count  	= 1;
-	optional int32 table_max_user   = 2;
-	
-	repeated TableInfo tableInfoList = 3;   
+	optional int32 server_id  	 	= 1;
+	optional int32 game_id  	 		= 2;
+	optional int32 game_level  		= 3;
+	optional int32 table_count  		= 4;
+	optional int32 table_max_user   	= 5;
+	repeated TableInfo tableInfoList = 6;   
 }
