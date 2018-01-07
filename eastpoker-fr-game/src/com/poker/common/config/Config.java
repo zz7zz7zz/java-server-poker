@@ -24,6 +24,8 @@ public class Config {
 
     	public int table_min_user = 0;                //每台桌子对最少玩家数量，达到这个数量即可开始游戏
     public int table_max_user = 0;                //每台桌子对最大玩家数量
+    public int table_min_chip = 0;             //最小进入筹码
+    public int table_max_chip = 0;             //最大进入筹码
     public int table_init_chip = 0;             //初始化筹码
     public int table_init_ante;                  //前注
     public int[] table_bilnd ;                   //盲注，对德州扑克而言，这意味着大盲，数组意味着比赛场，如SNG
