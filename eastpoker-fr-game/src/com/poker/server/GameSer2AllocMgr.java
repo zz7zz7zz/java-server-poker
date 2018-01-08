@@ -6,16 +6,20 @@ import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
 import com.poker.games.Room;
 import com.poker.games.Table;
-import com.poker.protocols.server.RoomInfoProto;
-import com.poker.protocols.server.TableInfoProto;
+import com.poker.protocols.server.GameServerProto;
+import com.poker.protocols.server.GameTableProto;
 
-public class TabelMgr {
+
+public class GameSer2AllocMgr {
 	
 	static boolean isReported = false;
 	public static int reportRoomInfo(byte[] write_buff_dispatcher,byte[] write_buf, int squenceId,AbstractClientMessageProcessor sender,Config config){
 		if(!isReported){
 			isReported = true;
-			RoomInfoProto.RoomInfo.Builder builder = RoomInfoProto.RoomInfo.newBuilder();
+			GameServerProto.GameServer.Builder builder = GameServerProto.GameServer.newBuilder();
+			builder.setServerId(config.server_id);
+			builder.setGameId(config.game_id);
+			builder.setGameLevel(config.game_level);
 			builder.setTableCount(config.table_count);
 			builder.setTableMaxUser(config.table_max_user);
 			
@@ -29,15 +33,18 @@ public class TabelMgr {
 	
 	public static int getRoomInfo(byte[] write_buff_dispatcher,byte[] write_buf, int squenceId,AbstractClientMessageProcessor sender,Config config,Room mRoom){
 		
-		RoomInfoProto.RoomInfo.Builder builder = RoomInfoProto.RoomInfo.newBuilder();
+		GameServerProto.GameServer.Builder builder = GameServerProto.GameServer.newBuilder();
+		builder.setServerId(config.server_id);
+		builder.setGameId(config.game_id);
+		builder.setGameLevel(config.game_level);
 		builder.setTableCount(config.table_count);
 		builder.setTableMaxUser(config.table_max_user);
 		
 		for (Table table : mRoom.mTables) {
-			TableInfoProto.TableInfo.Builder tableBuilder = TableInfoProto.TableInfo.newBuilder();
+			GameTableProto.GameTable.Builder tableBuilder = GameTableProto.GameTable.newBuilder();
 			tableBuilder.setTid(table.tableId);
 			tableBuilder.setCount(table.count);
-			builder.addTableInfoList(tableBuilder);
+			builder.addTableList(tableBuilder);
 		}
 		
 		byte[] body = builder.build().toByteArray();
@@ -48,14 +55,17 @@ public class TabelMgr {
 	
 	public static int updateRoomInfo(byte[] write_buff_dispatcher,byte[] write_buf, int squenceId,AbstractClientMessageProcessor sender,Config config,Table table){
 		
-		RoomInfoProto.RoomInfo.Builder builder = RoomInfoProto.RoomInfo.newBuilder();
+		GameServerProto.GameServer.Builder builder = GameServerProto.GameServer.newBuilder();
+		builder.setServerId(config.server_id);
+		builder.setGameId(config.game_id);
+		builder.setGameLevel(config.game_level);
 		builder.setTableCount(config.table_count);
 		builder.setTableMaxUser(config.table_max_user);
 		
-		TableInfoProto.TableInfo.Builder tableBuilder = TableInfoProto.TableInfo.newBuilder();
+		GameTableProto.GameTable.Builder tableBuilder = GameTableProto.GameTable.newBuilder();
 		tableBuilder.setTid(table.tableId);
 		tableBuilder.setCount(table.count);
-		builder.addTableInfoList(tableBuilder);
+		builder.addTableList(tableBuilder);
 		
 		byte[] body = builder.build().toByteArray();
 		int length = DataPacket.write(write_buf, squenceId, AllocatorCmd.CMD_REPORT_ROOMINFO, (byte)0, (byte)0, (short)0, body,0,body.length);

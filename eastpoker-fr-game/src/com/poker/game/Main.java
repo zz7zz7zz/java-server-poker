@@ -24,7 +24,7 @@ import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
 import com.poker.protocols.Dispatcher;
 import com.poker.protocols.Monitor;
-import com.poker.server.TabelMgr;
+import com.poker.server.GameSer2AllocMgr;
 
 
 /**
@@ -143,7 +143,7 @@ public class Main {
 			mDisPatcherMessageProcessor.send(client,write_buf,0,length);
 			
 			//上报桌子信息
-			TabelMgr.reportRoomInfo(write_buff_dispatcher, write_buf, 1, mDisPatcherMessageProcessor, mConfig);
+			GameSer2AllocMgr.reportRoomInfo(write_buff_dispatcher, write_buf, 1, mDisPatcherMessageProcessor, mConfig);
 		}
 
 		@Override
