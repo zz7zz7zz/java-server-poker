@@ -254,12 +254,6 @@ public final class DispatchPacketProto {
         memoizedIsInitialized = 0;
         return false;
       }
-      for (int i = 0; i < getDispatchChainListCount(); i++) {
-        if (!getDispatchChainList(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -543,12 +537,6 @@ public final class DispatchPacketProto {
         if (!hasData()) {
           
           return false;
-        }
-        for (int i = 0; i < getDispatchChainListCount(); i++) {
-          if (!getDispatchChainList(i).isInitialized()) {
-            
-            return false;
-          }
         }
         return true;
       }

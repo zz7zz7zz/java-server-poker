@@ -11,45 +11,65 @@ public final class DispatchChainProto {
   public interface DispatchChainOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
 
-    // required int32 src_server_type = 1;
+    // optional int32 src_server_type = 1;
     /**
-     * <code>required int32 src_server_type = 1;</code>
+     * <code>optional int32 src_server_type = 1;</code>
      */
     boolean hasSrcServerType();
     /**
-     * <code>required int32 src_server_type = 1;</code>
+     * <code>optional int32 src_server_type = 1;</code>
      */
     int getSrcServerType();
 
-    // required int32 src_server_id = 2;
+    // optional int32 src_server_id = 2;
     /**
-     * <code>required int32 src_server_id = 2;</code>
+     * <code>optional int32 src_server_id = 2;</code>
      */
     boolean hasSrcServerId();
     /**
-     * <code>required int32 src_server_id = 2;</code>
+     * <code>optional int32 src_server_id = 2;</code>
      */
     int getSrcServerId();
 
-    // required int32 dst_server_type = 3;
+    // optional int32 dst_server_type = 3;
     /**
-     * <code>required int32 dst_server_type = 3;</code>
+     * <code>optional int32 dst_server_type = 3;</code>
      */
     boolean hasDstServerType();
     /**
-     * <code>required int32 dst_server_type = 3;</code>
+     * <code>optional int32 dst_server_type = 3;</code>
      */
     int getDstServerType();
 
-    // required int32 dst_server_id = 4;
+    // optional int32 dst_server_id = 4;
     /**
-     * <code>required int32 dst_server_id = 4;</code>
+     * <code>optional int32 dst_server_id = 4;</code>
      */
     boolean hasDstServerId();
     /**
-     * <code>required int32 dst_server_id = 4;</code>
+     * <code>optional int32 dst_server_id = 4;</code>
      */
     int getDstServerId();
+
+    // optional int32 dst_game_group = 5;
+    /**
+     * <code>optional int32 dst_game_group = 5;</code>
+     */
+    boolean hasDstGameGroup();
+    /**
+     * <code>optional int32 dst_game_group = 5;</code>
+     */
+    int getDstGameGroup();
+
+    // optional int32 dst_match_group = 6;
+    /**
+     * <code>optional int32 dst_match_group = 6;</code>
+     */
+    boolean hasDstMatchGroup();
+    /**
+     * <code>optional int32 dst_match_group = 6;</code>
+     */
+    int getDstMatchGroup();
   }
   /**
    * Protobuf type {@code com.poker.protocols.server.proto.DispatchChain}
@@ -122,6 +142,16 @@ public final class DispatchChainProto {
               dstServerId_ = input.readInt32();
               break;
             }
+            case 40: {
+              bitField0_ |= 0x00000010;
+              dstGameGroup_ = input.readInt32();
+              break;
+            }
+            case 48: {
+              bitField0_ |= 0x00000020;
+              dstMatchGroup_ = input.readInt32();
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -162,68 +192,100 @@ public final class DispatchChainProto {
     }
 
     private int bitField0_;
-    // required int32 src_server_type = 1;
+    // optional int32 src_server_type = 1;
     public static final int SRC_SERVER_TYPE_FIELD_NUMBER = 1;
     private int srcServerType_;
     /**
-     * <code>required int32 src_server_type = 1;</code>
+     * <code>optional int32 src_server_type = 1;</code>
      */
     public boolean hasSrcServerType() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int32 src_server_type = 1;</code>
+     * <code>optional int32 src_server_type = 1;</code>
      */
     public int getSrcServerType() {
       return srcServerType_;
     }
 
-    // required int32 src_server_id = 2;
+    // optional int32 src_server_id = 2;
     public static final int SRC_SERVER_ID_FIELD_NUMBER = 2;
     private int srcServerId_;
     /**
-     * <code>required int32 src_server_id = 2;</code>
+     * <code>optional int32 src_server_id = 2;</code>
      */
     public boolean hasSrcServerId() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required int32 src_server_id = 2;</code>
+     * <code>optional int32 src_server_id = 2;</code>
      */
     public int getSrcServerId() {
       return srcServerId_;
     }
 
-    // required int32 dst_server_type = 3;
+    // optional int32 dst_server_type = 3;
     public static final int DST_SERVER_TYPE_FIELD_NUMBER = 3;
     private int dstServerType_;
     /**
-     * <code>required int32 dst_server_type = 3;</code>
+     * <code>optional int32 dst_server_type = 3;</code>
      */
     public boolean hasDstServerType() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required int32 dst_server_type = 3;</code>
+     * <code>optional int32 dst_server_type = 3;</code>
      */
     public int getDstServerType() {
       return dstServerType_;
     }
 
-    // required int32 dst_server_id = 4;
+    // optional int32 dst_server_id = 4;
     public static final int DST_SERVER_ID_FIELD_NUMBER = 4;
     private int dstServerId_;
     /**
-     * <code>required int32 dst_server_id = 4;</code>
+     * <code>optional int32 dst_server_id = 4;</code>
      */
     public boolean hasDstServerId() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>required int32 dst_server_id = 4;</code>
+     * <code>optional int32 dst_server_id = 4;</code>
      */
     public int getDstServerId() {
       return dstServerId_;
+    }
+
+    // optional int32 dst_game_group = 5;
+    public static final int DST_GAME_GROUP_FIELD_NUMBER = 5;
+    private int dstGameGroup_;
+    /**
+     * <code>optional int32 dst_game_group = 5;</code>
+     */
+    public boolean hasDstGameGroup() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional int32 dst_game_group = 5;</code>
+     */
+    public int getDstGameGroup() {
+      return dstGameGroup_;
+    }
+
+    // optional int32 dst_match_group = 6;
+    public static final int DST_MATCH_GROUP_FIELD_NUMBER = 6;
+    private int dstMatchGroup_;
+    /**
+     * <code>optional int32 dst_match_group = 6;</code>
+     */
+    public boolean hasDstMatchGroup() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>optional int32 dst_match_group = 6;</code>
+     */
+    public int getDstMatchGroup() {
+      return dstMatchGroup_;
     }
 
     private void initFields() {
@@ -231,28 +293,14 @@ public final class DispatchChainProto {
       srcServerId_ = 0;
       dstServerType_ = 0;
       dstServerId_ = 0;
+      dstGameGroup_ = 0;
+      dstMatchGroup_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
 
-      if (!hasSrcServerType()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasSrcServerId()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasDstServerType()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasDstServerId()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -271,6 +319,12 @@ public final class DispatchChainProto {
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeInt32(4, dstServerId_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeInt32(5, dstGameGroup_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        output.writeInt32(6, dstMatchGroup_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -296,6 +350,14 @@ public final class DispatchChainProto {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(4, dstServerId_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(5, dstGameGroup_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(6, dstMatchGroup_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -435,6 +497,10 @@ public final class DispatchChainProto {
         bitField0_ = (bitField0_ & ~0x00000004);
         dstServerId_ = 0;
         bitField0_ = (bitField0_ & ~0x00000008);
+        dstGameGroup_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000010);
+        dstMatchGroup_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000020);
         return this;
       }
 
@@ -479,6 +545,14 @@ public final class DispatchChainProto {
           to_bitField0_ |= 0x00000008;
         }
         result.dstServerId_ = dstServerId_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        result.dstGameGroup_ = dstGameGroup_;
+        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+          to_bitField0_ |= 0x00000020;
+        }
+        result.dstMatchGroup_ = dstMatchGroup_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -507,27 +581,17 @@ public final class DispatchChainProto {
         if (other.hasDstServerId()) {
           setDstServerId(other.getDstServerId());
         }
+        if (other.hasDstGameGroup()) {
+          setDstGameGroup(other.getDstGameGroup());
+        }
+        if (other.hasDstMatchGroup()) {
+          setDstMatchGroup(other.getDstMatchGroup());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
 
       public final boolean isInitialized() {
-        if (!hasSrcServerType()) {
-          
-          return false;
-        }
-        if (!hasSrcServerId()) {
-          
-          return false;
-        }
-        if (!hasDstServerType()) {
-          
-          return false;
-        }
-        if (!hasDstServerId()) {
-          
-          return false;
-        }
         return true;
       }
 
@@ -550,22 +614,22 @@ public final class DispatchChainProto {
       }
       private int bitField0_;
 
-      // required int32 src_server_type = 1;
+      // optional int32 src_server_type = 1;
       private int srcServerType_ ;
       /**
-       * <code>required int32 src_server_type = 1;</code>
+       * <code>optional int32 src_server_type = 1;</code>
        */
       public boolean hasSrcServerType() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required int32 src_server_type = 1;</code>
+       * <code>optional int32 src_server_type = 1;</code>
        */
       public int getSrcServerType() {
         return srcServerType_;
       }
       /**
-       * <code>required int32 src_server_type = 1;</code>
+       * <code>optional int32 src_server_type = 1;</code>
        */
       public Builder setSrcServerType(int value) {
         bitField0_ |= 0x00000001;
@@ -574,7 +638,7 @@ public final class DispatchChainProto {
         return this;
       }
       /**
-       * <code>required int32 src_server_type = 1;</code>
+       * <code>optional int32 src_server_type = 1;</code>
        */
       public Builder clearSrcServerType() {
         bitField0_ = (bitField0_ & ~0x00000001);
@@ -583,22 +647,22 @@ public final class DispatchChainProto {
         return this;
       }
 
-      // required int32 src_server_id = 2;
+      // optional int32 src_server_id = 2;
       private int srcServerId_ ;
       /**
-       * <code>required int32 src_server_id = 2;</code>
+       * <code>optional int32 src_server_id = 2;</code>
        */
       public boolean hasSrcServerId() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required int32 src_server_id = 2;</code>
+       * <code>optional int32 src_server_id = 2;</code>
        */
       public int getSrcServerId() {
         return srcServerId_;
       }
       /**
-       * <code>required int32 src_server_id = 2;</code>
+       * <code>optional int32 src_server_id = 2;</code>
        */
       public Builder setSrcServerId(int value) {
         bitField0_ |= 0x00000002;
@@ -607,7 +671,7 @@ public final class DispatchChainProto {
         return this;
       }
       /**
-       * <code>required int32 src_server_id = 2;</code>
+       * <code>optional int32 src_server_id = 2;</code>
        */
       public Builder clearSrcServerId() {
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -616,22 +680,22 @@ public final class DispatchChainProto {
         return this;
       }
 
-      // required int32 dst_server_type = 3;
+      // optional int32 dst_server_type = 3;
       private int dstServerType_ ;
       /**
-       * <code>required int32 dst_server_type = 3;</code>
+       * <code>optional int32 dst_server_type = 3;</code>
        */
       public boolean hasDstServerType() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required int32 dst_server_type = 3;</code>
+       * <code>optional int32 dst_server_type = 3;</code>
        */
       public int getDstServerType() {
         return dstServerType_;
       }
       /**
-       * <code>required int32 dst_server_type = 3;</code>
+       * <code>optional int32 dst_server_type = 3;</code>
        */
       public Builder setDstServerType(int value) {
         bitField0_ |= 0x00000004;
@@ -640,7 +704,7 @@ public final class DispatchChainProto {
         return this;
       }
       /**
-       * <code>required int32 dst_server_type = 3;</code>
+       * <code>optional int32 dst_server_type = 3;</code>
        */
       public Builder clearDstServerType() {
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -649,22 +713,22 @@ public final class DispatchChainProto {
         return this;
       }
 
-      // required int32 dst_server_id = 4;
+      // optional int32 dst_server_id = 4;
       private int dstServerId_ ;
       /**
-       * <code>required int32 dst_server_id = 4;</code>
+       * <code>optional int32 dst_server_id = 4;</code>
        */
       public boolean hasDstServerId() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
-       * <code>required int32 dst_server_id = 4;</code>
+       * <code>optional int32 dst_server_id = 4;</code>
        */
       public int getDstServerId() {
         return dstServerId_;
       }
       /**
-       * <code>required int32 dst_server_id = 4;</code>
+       * <code>optional int32 dst_server_id = 4;</code>
        */
       public Builder setDstServerId(int value) {
         bitField0_ |= 0x00000008;
@@ -673,11 +737,77 @@ public final class DispatchChainProto {
         return this;
       }
       /**
-       * <code>required int32 dst_server_id = 4;</code>
+       * <code>optional int32 dst_server_id = 4;</code>
        */
       public Builder clearDstServerId() {
         bitField0_ = (bitField0_ & ~0x00000008);
         dstServerId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // optional int32 dst_game_group = 5;
+      private int dstGameGroup_ ;
+      /**
+       * <code>optional int32 dst_game_group = 5;</code>
+       */
+      public boolean hasDstGameGroup() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>optional int32 dst_game_group = 5;</code>
+       */
+      public int getDstGameGroup() {
+        return dstGameGroup_;
+      }
+      /**
+       * <code>optional int32 dst_game_group = 5;</code>
+       */
+      public Builder setDstGameGroup(int value) {
+        bitField0_ |= 0x00000010;
+        dstGameGroup_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 dst_game_group = 5;</code>
+       */
+      public Builder clearDstGameGroup() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        dstGameGroup_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // optional int32 dst_match_group = 6;
+      private int dstMatchGroup_ ;
+      /**
+       * <code>optional int32 dst_match_group = 6;</code>
+       */
+      public boolean hasDstMatchGroup() {
+        return ((bitField0_ & 0x00000020) == 0x00000020);
+      }
+      /**
+       * <code>optional int32 dst_match_group = 6;</code>
+       */
+      public int getDstMatchGroup() {
+        return dstMatchGroup_;
+      }
+      /**
+       * <code>optional int32 dst_match_group = 6;</code>
+       */
+      public Builder setDstMatchGroup(int value) {
+        bitField0_ |= 0x00000020;
+        dstMatchGroup_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 dst_match_group = 6;</code>
+       */
+      public Builder clearDstMatchGroup() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        dstMatchGroup_ = 0;
         onChanged();
         return this;
       }
@@ -709,11 +839,12 @@ public final class DispatchChainProto {
     java.lang.String[] descriptorData = {
       "\n8src/com/poker/protocols/server/proto/D" +
       "ispatchChain.proto\022 com.poker.protocols." +
-      "server.proto\"o\n\rDispatchChain\022\027\n\017src_ser" +
-      "ver_type\030\001 \002(\005\022\025\n\rsrc_server_id\030\002 \002(\005\022\027\n" +
-      "\017dst_server_type\030\003 \002(\005\022\025\n\rdst_server_id\030" +
-      "\004 \002(\005B0\n\032com.poker.protocols.serverB\022Dis" +
-      "patchChainProto"
+      "server.proto\"\240\001\n\rDispatchChain\022\027\n\017src_se" +
+      "rver_type\030\001 \001(\005\022\025\n\rsrc_server_id\030\002 \001(\005\022\027" +
+      "\n\017dst_server_type\030\003 \001(\005\022\025\n\rdst_server_id" +
+      "\030\004 \001(\005\022\026\n\016dst_game_group\030\005 \001(\005\022\027\n\017dst_ma" +
+      "tch_group\030\006 \001(\005B0\n\032com.poker.protocols.s" +
+      "erverB\022DispatchChainProto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -725,7 +856,7 @@ public final class DispatchChainProto {
           internal_static_com_poker_protocols_server_proto_DispatchChain_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_com_poker_protocols_server_proto_DispatchChain_descriptor,
-              new java.lang.String[] { "SrcServerType", "SrcServerId", "DstServerType", "DstServerId", });
+              new java.lang.String[] { "SrcServerType", "SrcServerId", "DstServerType", "DstServerId", "DstGameGroup", "DstMatchGroup", });
           return null;
         }
       };
