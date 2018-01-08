@@ -1,7 +1,6 @@
 package com.poker.game;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.open.net.client.GClient;
@@ -24,7 +23,7 @@ import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
 import com.poker.protocols.Dispatcher;
 import com.poker.protocols.Monitor;
-import com.poker.server.GameSer2AllocMgr;
+import com.poker.server.GameSer2Alloc;
 
 
 /**
@@ -85,11 +84,14 @@ public class Main {
         unregister_monitor(mConfig);//反注册到服务监听器
     }
 
-    //---------------------------------------Monitor----------------------------------------------------
+    //---------------------------------------Global----------------------------------------------------
     public static ArgsConfig libArgsConfig;
     public static Config mConfig;
+    public static NioClient [] dispatcher;
     public static byte[] write_buf = new byte[16*1024];
     public static byte[] write_buff_dispatcher = new byte[16*1024];
+    
+    //---------------------------------------Monitor----------------------------------------------------
     public static void register_monitor(Config mConfig){
         Monitor.register2Monitor(write_buf,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
@@ -132,8 +134,6 @@ public class Main {
     	}
     }
     
-    public static NioClient [] dispatcher;
-    
 	private static IConnectListener mDisPatcherConnectResultListener = new IConnectListener() {
 		@Override
 		public void onConnectionSuccess(AbstractClient client) {
@@ -143,7 +143,7 @@ public class Main {
 			mDisPatcherMessageProcessor.send(client,write_buf,0,length);
 			
 			//上报桌子信息
-			GameSer2AllocMgr.reportRoomInfo(write_buff_dispatcher, write_buf, 1, mDisPatcherMessageProcessor, mConfig);
+			GameSer2Alloc.reportRoomInfo(write_buff_dispatcher, write_buf, 1, mDisPatcherMessageProcessor, mConfig);
 		}
 
 		@Override
@@ -165,8 +165,16 @@ public class Main {
 		}
 	};
 
-	public static HashMap<String, Long> uidMap = new HashMap<>();
-	public static int uid_auto_generator = 10000;
+    //-------------------------------------------------------------------------------------------
+    public static LogListener mLogListener = new LogListener(){
+
+		@Override
+		public void onLog(String tag, String msg) {
+			Logger.v(msg);
+		}
+    };
+    
+    //-------------------------------------------------------------------------------------------
 	private static AbstractClientMessageProcessor mDisPatcherMessageProcessor =new AbstractClientMessageProcessor() {
 
 		@Override
@@ -183,12 +191,4 @@ public class Main {
 			}
 		}
 	};
-    
-    public static LogListener mLogListener = new LogListener(){
-
-		@Override
-		public void onLog(String tag, String msg) {
-			Logger.v(msg);
-		}
-    };
 }

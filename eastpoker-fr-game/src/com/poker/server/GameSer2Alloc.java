@@ -10,7 +10,7 @@ import com.poker.protocols.server.GameServerProto;
 import com.poker.protocols.server.GameTableProto;
 
 
-public class GameSer2AllocMgr {
+public class GameSer2Alloc {
 	
 	static boolean isReported = false;
 	public static int reportRoomInfo(byte[] write_buff_dispatcher,byte[] write_buf, int squenceId,AbstractClientMessageProcessor sender,Config config){
