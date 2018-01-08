@@ -19,7 +19,7 @@ import com.open.net.server.object.ServerLog.LogListener;
 import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
-import com.poker.base.Server;
+import com.poker.base.ServerIds;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
 import com.poker.protocols.Dispatcher;
@@ -41,7 +41,7 @@ public class Main {
     	//1.1 服务器配置初始化:解析命令行参数
     	libArgsConfig = new ArgsConfig();
     	libArgsConfig.initArgsConfig(args);
-    	libArgsConfig.server_type = Server.SERVER_GAME;
+    	libArgsConfig.server_type = ServerIds.SERVER_GAME;
     	
     	//1.2 服务器配置初始化:解析文件配置
         ServerConfig libServerConfig = new ServerConfig();

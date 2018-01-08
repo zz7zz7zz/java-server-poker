@@ -110,7 +110,9 @@ public class Main {
     }
     
     //-------------------------------------------------------------------------------------------
-    public static HashMap<Integer, ArrayList<AbstractServerClient>> serverOnlineList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
+    public static HashMap<Integer, ArrayList<AbstractServerClient>> serverList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
+    public static HashMap<Integer, ArrayList<AbstractServerClient>> gameGroupList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
+    public static HashMap<Integer, ArrayList<AbstractServerClient>> matchGroupList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
     
     public static AbstractServerMessageProcessor mServerMessageProcessor = new AbstractServerMessageProcessor() {
 
@@ -128,48 +130,91 @@ public class Main {
         		int cmd = DataPacket.getCmd(msg.data, msg.offset);
         		if(cmd == DispatchCmd.CMD_REGISTER){
 
-        			Server enterServer = Server.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
+        			Server mServer = Server.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
         			
+        			//-------------------------------------------serverType----------------------------------------------
         			boolean add = true;
-            		ArrayList<AbstractServerClient> clientArray = serverOnlineList.get(enterServer.getType());
-            		if(null == clientArray){
-            			clientArray = new ArrayList<AbstractServerClient>(10);
-            			serverOnlineList.put(enterServer.getType(), clientArray);
+            		ArrayList<AbstractServerClient> mServerList = serverList.get(mServer.getType());
+            		if(null == mServerList){
+            			mServerList = new ArrayList<AbstractServerClient>(10);
+            			serverList.put(mServer.getType(), mServerList);
             		}else{
-                		for(AbstractServerClient ser:clientArray){
+                		for(AbstractServerClient ser:mServerList){
                 			if((ser == client)){
                 				add = false;
                 				break;
                 			}else{ 
                 				Server attachObj = (Server) ser.getAttachment();
-                				if(null != attachObj && attachObj.getId() == enterServer.getId()){
-                    				clientArray.remove(ser);
+                				if(null != attachObj && attachObj.getId() == mServer.getId()){
+                    				mServerList.remove(ser);
                     				break;
                     			}
                 			}
                 		}
             		}
-            		
-            		client.attach(enterServer);
+            		client.attach(mServer);
             		if(add){
-            			clientArray.add(client);
+            			mServerList.add(client);
             		}
             		
-            		//打印所有的服务
-            		Iterator<Entry<Integer, ArrayList<AbstractServerClient>>> iter = serverOnlineList.entrySet().iterator();
-            		while (iter.hasNext()) {
-        				Entry<Integer, ArrayList<AbstractServerClient>> entry = iter.next();
-        				Integer key = entry.getKey();
-        				ArrayList<AbstractServerClient> val = entry.getValue();
-        				
-        		        Logger.v("------- "+key+" size " + val.size() + " -------");
-        		        for(AbstractServerClient ser:val){
-        		        	Server serInfo = (Server) ser.getAttachment();
-        		        	Logger.v(String.format("------- name %s id %d bindHost %s bindPort %d host %s port %d", serInfo.getName(),serInfo.getId(),!TextUtils.isEmpty(serInfo.getHost())? serInfo.getHost() : "null",serInfo.getPort(),ser.mHost,ser.mPort));
-        		        }
+            		//-------------------------------------------gameGroup----------------------------------------------
+            		int gameGroup = mServer.getGameGroup();
+            		if(gameGroup >0){
+            			ArrayList<AbstractServerClient> gameGroupArray = gameGroupList.get(mServer.getType());
+                		if(null == gameGroupArray){
+                			gameGroupArray = new ArrayList<AbstractServerClient>(10);
+                			gameGroupList.put(gameGroup, gameGroupArray);
+                		}else{
+                    		for(AbstractServerClient ser:gameGroupArray){
+                    			if((ser == client)){
+                    				add = false;
+                    				break;
+                    			}else{ 
+                    				Server attachObj = (Server) ser.getAttachment();
+                    				if(null != attachObj && attachObj.getId() == mServer.getId()){
+                    					gameGroupArray.remove(ser);
+                        				break;
+                        			}
+                    			}
+                    		}
+                		}
+                		
+                		if(add){
+                			gameGroupArray.add(client);
+                		}
             		}
+            		
+            		//-------------------------------------------matchGroup----------------------------------------------
+            		int matchGroup = mServer.getGameGroup();
+            		if(matchGroup >0){
+            			ArrayList<AbstractServerClient> matchGroupArray = matchGroupList.get(mServer.getType());
+                		if(null == matchGroupArray){
+                			matchGroupArray = new ArrayList<AbstractServerClient>(10);
+                			matchGroupList.put(matchGroup, matchGroupArray);
+                		}else{
+                    		for(AbstractServerClient ser:matchGroupArray){
+                    			if((ser == client)){
+                    				add = false;
+                    				break;
+                    			}else{ 
+                    				Server attachObj = (Server) ser.getAttachment();
+                    				if(null != attachObj && attachObj.getId() == mServer.getId()){
+                    					matchGroupArray.remove(ser);
+                        				break;
+                        			}
+                    			}
+                    		}
+                		}
+                		
+                		if(add){
+                			matchGroupArray.add(client);
+                		}
+            		}
+            		
+            		logServer();
             		
         		}else if(cmd == DispatchCmd.CMD_DISPATCH){
+        			
         			DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
         			int count = mDispatchPacket.getDispatchChainListCount();
         			if(count>0){
@@ -178,7 +223,7 @@ public class Main {
         				int dstServerId = chain.getDstServerId();
         				
         				AbstractServerClient server = null;
-        				ArrayList<AbstractServerClient> serverArray = serverOnlineList.get(dstServerType);
+        				ArrayList<AbstractServerClient> serverArray = serverList.get(dstServerType);
         				if(null != serverArray){
         					for(AbstractServerClient ser:serverArray){
         						Server serInfo = (Server) ser.getAttachment();
@@ -198,17 +243,6 @@ public class Main {
         					unicast(server, mWriteBuffer.array(),0,mWriteBuffer.remaining());
         				}
         			}
-        			
-//        			try {
-//    					
-//    					mDispatchPacket.getData().copyTo(mWriteBuffer);
-//    					mWriteBuffer.flip();
-//    					LoginProto.Login readObj = LoginProto.Login.parseFrom(mWriteBuffer.array(),DataPacket.getHeaderLength(),mWriteBuffer.remaining()-DataPacket.getHeaderLength());
-//    					System.out.println("login "+readObj.toString());
-//    				} catch (InvalidProtocolBufferException e) {
-//    					// TODO Auto-generated catch block
-//    					e.printStackTrace();
-//    				}
     				
         			System.out.println("DispatchPacket "+mDispatchPacket.toString());
         		}else{
@@ -218,22 +252,7 @@ public class Main {
 			} catch (InvalidProtocolBufferException e) {
 				e.printStackTrace();
 			}
-        	
-//            Logger.v("--onReceiveMessage()- rece  "+new String(msg.data,msg.offset,msg.length));
-//            String data ="MainNioServer--onReceiveMessage()--src_reuse_type "+msg.src_reuse_type
-//                    + " dst_reuse_type " + msg.dst_reuse_type
-//                    + " block_index " +msg.block_index
-//                    + " offset " +msg.offset;
-//            Logger.v("--onReceiveMessage()--reply "+data);
-//            
-//            byte[] response = data.getBytes();
-//
-//            mWriteBuffer.clear();
-//            mWriteBuffer.put(response,0,response.length);
-//            mWriteBuffer.flip();
-////        unicast(client,mWriteBuffer.array(),0,response.length);
-//            broadcast(mWriteBuffer.array(),0,response.length);
-//            mWriteBuffer.clear();
+
         }
         
 		@Override
@@ -255,6 +274,32 @@ public class Main {
 			Logger.v("onClientExit " + client.mClientId);
 		}
     };
+    
+    public static void logServer(){
+		//打印所有的服务
+    	logServer(serverList);
+    	
+    	logServer(gameGroupList);
+    	
+    	logServer(matchGroupList);
+    }
+    
+    public static void logServer(HashMap<Integer, ArrayList<AbstractServerClient>> serverList){
+		//打印所有的服务
+		Iterator<Entry<Integer, ArrayList<AbstractServerClient>>> iter = serverList.entrySet().iterator();
+		while (iter.hasNext()) {
+			Entry<Integer, ArrayList<AbstractServerClient>> entry = iter.next();
+			Integer key = entry.getKey();
+			ArrayList<AbstractServerClient> val = entry.getValue();
+			
+	        Logger.v("------- "+key+" size " + val.size() + " -------");
+	        for(AbstractServerClient ser:val){
+	        	Server serInfo = (Server) ser.getAttachment();
+	        	Logger.v(String.format("------- name %s id %d bindHost %s bindPort %d host %s port %d", serInfo.getName(),serInfo.getId(),!TextUtils.isEmpty(serInfo.getHost())? serInfo.getHost() : "null",serInfo.getPort(),ser.mHost,ser.mPort));
+	        }
+		}
+    }
+    
     
     public static LogListener mLogListener = new LogListener(){
 
