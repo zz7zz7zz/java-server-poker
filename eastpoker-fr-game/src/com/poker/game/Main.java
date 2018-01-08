@@ -12,7 +12,6 @@ import com.open.net.client.object.ClientConfig;
 import com.open.net.client.object.IConnectListener;
 import com.open.net.client.object.TcpAddress;
 import com.open.net.server.object.ArgsConfig;
-import com.open.net.server.object.ServerConfig;
 import com.open.net.server.object.ServerLog;
 import com.open.net.server.object.ServerLog.LogListener;
 import com.open.net.server.utils.NetUtil;

@@ -176,7 +176,7 @@ public class MessageHandler {
     }
     
     private void addMatchGroup(AbstractServerClient client,Server mServer){
-    	int matchGroup = mServer.getGameGroup();
+    	int matchGroup = mServer.getMatchGroup();
 		if(matchGroup >0){
 			boolean add = true;
 			ArrayList<AbstractServerClient> matchGroupArray = matchGroupList.get(matchGroup);
@@ -222,7 +222,7 @@ public class MessageHandler {
     private void removeGameGroupServer(AbstractServerClient client){
     	Server attachObj = (Server) client.getAttachment();
     	if(null != attachObj){
-        	ArrayList<AbstractServerClient> mServerList = serverList.get(attachObj.getGameGroup());
+        	ArrayList<AbstractServerClient> mServerList = gameGroupList.get(attachObj.getGameGroup());
         	if(null != mServerList){
         		for(AbstractServerClient ser:mServerList){
         			if((ser == client)){
@@ -237,7 +237,7 @@ public class MessageHandler {
     private void removeMatchGroupServer(AbstractServerClient client){
     	Server attachObj = (Server) client.getAttachment();
     	if(null != attachObj){
-        	ArrayList<AbstractServerClient> mServerList = serverList.get(attachObj.getMatchGroup());
+        	ArrayList<AbstractServerClient> mServerList = matchGroupList.get(attachObj.getMatchGroup());
         	if(null != mServerList){
         		for(AbstractServerClient ser:mServerList){
         			if((ser == client)){
@@ -251,14 +251,14 @@ public class MessageHandler {
     //--------------------------------------------------------------------------------------------------------
     public void logServer(){
 		//打印所有的服务
-    	logServer(serverList);
+    	logServer("---server ",serverList);
     	
-    	logServer(gameGroupList);
+    	logServer("---gameGroup ",gameGroupList);
     	
-    	logServer(matchGroupList);
+    	logServer("---matchGroup ",matchGroupList);
     }
     
-    public void logServer(HashMap<Integer, ArrayList<AbstractServerClient>> serverList){
+    public void logServer(String tag ,HashMap<Integer, ArrayList<AbstractServerClient>> serverList){
 		//打印所有的服务
 		Iterator<Entry<Integer, ArrayList<AbstractServerClient>>> iter = serverList.entrySet().iterator();
 		while (iter.hasNext()) {
@@ -266,7 +266,7 @@ public class MessageHandler {
 			Integer key = entry.getKey();
 			ArrayList<AbstractServerClient> val = entry.getValue();
 			
-	        Logger.v("------- "+key+" size " + val.size() + " -------");
+	        Logger.v(tag+key+" size " + val.size() + " -------");
 	        for(AbstractServerClient ser:val){
 	        	Server serInfo = (Server) ser.getAttachment();
 	        	Logger.v(String.format("------- name %s id %d bindHost %s bindPort %d host %s port %d", serInfo.getName(),serInfo.getId(),!TextUtils.isEmpty(serInfo.getHost())? serInfo.getHost() : "null",serInfo.getPort(),ser.mHost,ser.mPort));
