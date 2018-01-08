@@ -142,7 +142,7 @@ public class Main {
 			mDisPatcherMessageProcessor.send(client,write_buf,0,length);
 			
 			//上报桌子信息
-			mHandler.report_roominfo(write_buff_dispatcher, write_buf, 1, mDisPatcherMessageProcessor, mConfig);
+			mHandler.report_roominfo(client,write_buff_dispatcher, write_buf, 1, mDisPatcherMessageProcessor, mConfig);
 		}
 
 		@Override
@@ -191,7 +191,7 @@ public class Main {
 		        	Logger.v(String.format("onReceiveMessage mDisPatcherMessageProcessor 0x%s  squenceId %s",sCmd,squenceId));
 		        	
 		        	if(cmd == AllocatorCmd.CMD_GET_ROOMINFO){
-		        		mHandler.on_get_roominfo(write_buff_dispatcher,write_buf,1,mDisPatcherMessageProcessor,mConfig,mRoom);
+		        		mHandler.on_get_roominfo(mClient,write_buff_dispatcher,write_buf,1,mDisPatcherMessageProcessor,mConfig,mRoom);
 		        	}
 	        	}catch(Exception e){
 	        		e.printStackTrace();
