@@ -2,15 +2,10 @@ package com.poker.common.config;
 
 import java.util.HashMap;
 
-import com.open.net.client.object.TcpAddress;
 import com.open.net.client.object.UdpAddress;
 import com.open.net.server.utils.CfgParser;
 
 public class Config {
-
-	//Dispatcher
-    public TcpAddress[] dispatcher_net_tcp;
-    public UdpAddress[] dispatcher_net_udp;
     
     //Monitor
     public UdpAddress[] monitor_net_udp;
@@ -24,29 +19,7 @@ public class Config {
     //-------------------------------------------------------------------------------------------
     protected void initFileConfig(HashMap<String,Object> map){
     	if(null !=map){
-            String val[]     = CfgParser.getStringArray(map,"Dispatcher","net_tcp");
-            if(null != val){
-            	dispatcher_net_tcp = new TcpAddress[val.length];
-                for (int i = 0; i < val.length; i++) {
-                    String[] v = val[i].split(":");
-                    if(v.length>1){
-                    	dispatcher_net_tcp[i]  = new TcpAddress(v[0],Integer.valueOf(v[1]));
-                    }
-                }
-            }
-            
-            val              = CfgParser.getStringArray(map,"Dispatcher","net_udp");
-            if(null != val){
-            	dispatcher_net_udp = new UdpAddress[val.length];
-                for (int i = 0; i < val.length; i++) {
-                    String[] v = val[i].split(":");
-                    if(v.length>1){
-                    	dispatcher_net_udp[i] = new UdpAddress(v[0],Integer.valueOf(v[1]));
-                    }
-                }
-            }
-            
-            val              = CfgParser.getStringArray(map,"Monitor","net_udp");
+            String val[] = CfgParser.getStringArray(map,"Monitor","net_udp");
             if(null != val){
             	monitor_net_udp = new UdpAddress[val.length];
                 for (int i = 0; i < val.length; i++) {

@@ -23,6 +23,7 @@ public class MessageHandler {
     public HashMap<Integer, ArrayList<AbstractServerClient>> gameGroupList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
     public HashMap<Integer, ArrayList<AbstractServerClient>> matchGroupList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
     
+    //--------------------------------------------------------------------------------------------------------
     public void register(AbstractServerClient client, Message msg) throws InvalidProtocolBufferException{
     	
     	Server mServer = Server.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
@@ -33,6 +34,7 @@ public class MessageHandler {
 		logServer();
     }
     
+   //--------------------------------------------------------------------------------------------------------
     public void dispatch(AbstractServerClient client, Message msg,ByteBuffer mWriteBuffer,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
 		System.out.println("DispatchPacket "+mDispatchPacket.toString());
@@ -111,6 +113,7 @@ public class MessageHandler {
 		}
     }
     
+   //--------------------------------------------------------------------------------------------------------
     public void exit(AbstractServerClient client){
     	removeServer(client);
     	removeGameGroupServer(client);
@@ -248,6 +251,7 @@ public class MessageHandler {
         	}
     	}
     }
+   
     //--------------------------------------------------------------------------------------------------------
     public void logServer(){
 		//打印所有的服务
