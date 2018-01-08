@@ -35,6 +35,7 @@ public class MessageHandler {
     
     public void dispatch(AbstractServerClient client, Message msg,ByteBuffer mWriteBuffer,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
+		System.out.println("DispatchPacket "+mDispatchPacket.toString());
 		int count = mDispatchPacket.getDispatchChainListCount();
 		if(count>0){
 			DispatchChain chain = mDispatchPacket.getDispatchChainList(count-1);
@@ -62,16 +63,52 @@ public class MessageHandler {
 				mServerMessageProcessor.unicast(server, mWriteBuffer.array(),0,mWriteBuffer.remaining());
 			}
 		}
-		
-		System.out.println("DispatchPacket "+mDispatchPacket.toString());
     }
 
     public void dispatchGameGoup(AbstractServerClient client, Message msg,ByteBuffer mWriteBuffer,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
-    	
+		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
+		System.out.println("DispatchPacket "+mDispatchPacket.toString());
+		int count = mDispatchPacket.getDispatchChainListCount();
+		if(count>0){
+			DispatchChain chain = mDispatchPacket.getDispatchChainList(count-1);
+			int gameGroupId = chain.getDstGameGroup();
+			
+			ArrayList<AbstractServerClient> gameGroupArray = gameGroupList.get(gameGroupId);
+    		if(null != gameGroupArray){
+    			Logger.v(String.format("dispatch_game_group %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),gameGroupId));
+        		for(AbstractServerClient server:gameGroupArray){
+        			Server attachObj = (Server) server.getAttachment();
+        			Logger.v(String.format("dispatch_game_group %d %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),attachObj.getType(),attachObj.getId()));
+    				mWriteBuffer.clear();
+    				mDispatchPacket.getData().copyTo(mWriteBuffer);
+    				mWriteBuffer.flip();
+    				mServerMessageProcessor.unicast(server, mWriteBuffer.array(),0,mWriteBuffer.remaining());
+        		}
+    		}
+		}
     }
     
     public void dispatchMatchGroup(AbstractServerClient client, Message msg,ByteBuffer mWriteBuffer,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
-    	
+    	DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
+		System.out.println("DispatchPacket "+mDispatchPacket.toString());
+		int count = mDispatchPacket.getDispatchChainListCount();
+		if(count>0){
+			DispatchChain chain = mDispatchPacket.getDispatchChainList(count-1);
+			int matchGroupId = chain.getDstMatchGroup();
+			
+			ArrayList<AbstractServerClient> matchGroupArray = matchGroupList.get(matchGroupId);
+    		if(null != matchGroupArray){
+    			Logger.v(String.format("dispatch_match_group %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),matchGroupId));
+        		for(AbstractServerClient server:matchGroupArray){
+        			Server attachObj = (Server) server.getAttachment();
+        			Logger.v(String.format("dispatch_match_group %d %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),attachObj.getType(),attachObj.getId()));
+    				mWriteBuffer.clear();
+    				mDispatchPacket.getData().copyTo(mWriteBuffer);
+    				mWriteBuffer.flip();
+    				mServerMessageProcessor.unicast(server, mWriteBuffer.array(),0,mWriteBuffer.remaining());
+        		}
+    		}
+		}
     }
     
     public void exit(AbstractServerClient client){
@@ -113,7 +150,7 @@ public class MessageHandler {
 		int gameGroup = mServer.getGameGroup();
 		if(gameGroup >0){
 			boolean add = true;
-			ArrayList<AbstractServerClient> gameGroupArray = gameGroupList.get(mServer.getType());
+			ArrayList<AbstractServerClient> gameGroupArray = gameGroupList.get(gameGroup);
     		if(null == gameGroupArray){
     			gameGroupArray = new ArrayList<AbstractServerClient>(10);
     			gameGroupList.put(gameGroup, gameGroupArray);
@@ -142,7 +179,7 @@ public class MessageHandler {
     	int matchGroup = mServer.getGameGroup();
 		if(matchGroup >0){
 			boolean add = true;
-			ArrayList<AbstractServerClient> matchGroupArray = matchGroupList.get(mServer.getType());
+			ArrayList<AbstractServerClient> matchGroupArray = matchGroupList.get(matchGroup);
     		if(null == matchGroupArray){
     			matchGroupArray = new ArrayList<AbstractServerClient>(10);
     			matchGroupList.put(matchGroup, matchGroupArray);
