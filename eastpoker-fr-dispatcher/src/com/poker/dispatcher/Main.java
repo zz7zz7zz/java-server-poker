@@ -124,10 +124,13 @@ public class Main {
         			mHander.register(client, msg);
         		}else if(cmd == DispatchCmd.CMD_DISPATCH){
         			mHander.dispatch(client, msg,mWriteBuffer,mServerMessageProcessor);
+        		}else if(cmd == DispatchCmd.CMD_DISPATCH_GAME_GROUP){
+        			mHander.dispatchGameGoup(client, msg, mWriteBuffer, mServerMessageProcessor);
+        		}else if(cmd == DispatchCmd.CMD_DISPATCH_MATCH_GROUP){
+        			mHander.dispatchMatchGroup(client, msg, mWriteBuffer, mServerMessageProcessor);
         		}else{
         			
         		}
-        		
 			} catch (InvalidProtocolBufferException e) {
 				e.printStackTrace();
 			}

@@ -66,6 +66,14 @@ public class MessageHandler {
 		System.out.println("DispatchPacket "+mDispatchPacket.toString());
     }
 
+    public void dispatchGameGoup(AbstractServerClient client, Message msg,ByteBuffer mWriteBuffer,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
+    	
+    }
+    
+    public void dispatchMatchGroup(AbstractServerClient client, Message msg,ByteBuffer mWriteBuffer,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
+    	
+    }
+    
     public void exit(AbstractServerClient client){
     	removeServer(client);
     	removeGameGroupServer(client);
