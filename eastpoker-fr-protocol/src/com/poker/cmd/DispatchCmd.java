@@ -8,4 +8,6 @@ public final class DispatchCmd {
 	public static final int CMD_UNREGISTER = (ServerIds.SERVER_DIAPATCHER <<16) + 2;//0x20002
 	
 	public static final int CMD_DISPATCH = (ServerIds.SERVER_DIAPATCHER <<16) + 3;//0x20003
+	public static final int CMD_DISPATCH_GAME_GROUP = (ServerIds.SERVER_DIAPATCHER <<16) + 4;//0x20004
+	public static final int CMD_DISPATCH_MATCH_GROUP = (ServerIds.SERVER_DIAPATCHER <<16) + 5;//0x20005
 }

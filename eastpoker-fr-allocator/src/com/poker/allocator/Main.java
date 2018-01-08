@@ -1,7 +1,6 @@
 package com.poker.allocator;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.open.net.client.GClient;
@@ -19,10 +18,11 @@ import com.open.net.server.object.ServerLog.LogListener;
 import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
-import com.poker.base.Server;
+import com.poker.base.ServerIds;
+import com.poker.cmd.AllocatorCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
-import com.poker.data.DataTransfer;
+import com.poker.handler.MessageHandler;
 import com.poker.protocols.Dispatcher;
 import com.poker.protocols.Monitor;
 
@@ -41,7 +41,7 @@ public class Main {
     	//1.1 服务器配置初始化:解析命令行参数
     	libArgsConfig = new ArgsConfig();
     	libArgsConfig.initArgsConfig(args);
-    	libArgsConfig.server_type = Server.SERVER_ALLOCATOR;
+    	libArgsConfig.server_type = ServerIds.SERVER_ALLOCATOR;
     	
     	//1.2 服务器配置初始化:解析文件配置
         ServerConfig libServerConfig = new ServerConfig();
@@ -161,59 +161,6 @@ public class Main {
 		}
 	};
 
-	public static HashMap<String, Long> uidMap = new HashMap<>();
-	public static int uid_auto_generator = 10000;
-	private static AbstractClientMessageProcessor mDisPatcherMessageProcessor =new AbstractClientMessageProcessor() {
-
-		@Override
-		public void onReceiveMessages(AbstractClient mClient, LinkedList<Message> list) {
-			for(int i = 0 ;i<list.size();i++){
-				Message msg = list.get(i);
-				int cmd = DataPacket.getCmd(msg.data, msg.offset);
-				int squenceId = DataPacket.getSequenceId(msg.data,msg.offset);
-				
-	        	String sCmd = Integer.toHexString(cmd);
-	        	Logger.v("onReceiveMessage mDisPatcherMessageProcessor 0x" + Integer.toHexString(DataPacket.getCmd(msg.data, msg.offset)));
-	        	System.out.println(String.format("onReceiveMessage 0x%s  squenceId %s",sCmd,squenceId));
-	        	Logger.v(String.format("onReceiveMessage 0x%s  squenceId %s",sCmd,squenceId));
-			}
-		}
-	};
-    
-    public static class ImplDataTransfer{
-    	
-    	public static int send2Access(byte[] writeBuff,int squenceId, byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2Access(writeBuff,squenceId,data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    	
-    	public static int send2Login(byte[] writeBuff,int squenceId, byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2Login(writeBuff,squenceId,data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    	
-    	public static int send2User(byte[] writeBuff,int squenceId , byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2User(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    	
-    	public static int send2Allocator(byte[] writeBuff,int squenceId , byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2Allocator(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    	
-    	public static int send2Gamer(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		DataTransfer.send2Gamer(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    		return 1;
-    	}
-    	
-    	public static int send2GoldCoin(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2GoldCoin(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    }
-    
     public static LogListener mLogListener = new LogListener(){
 
 		@Override
@@ -221,4 +168,38 @@ public class Main {
 			Logger.v(msg);
 		}
     };
+    
+    public static MessageHandler mHandler = new MessageHandler();
+	private static AbstractClientMessageProcessor mDisPatcherMessageProcessor =new AbstractClientMessageProcessor() {
+
+		@Override
+		public void onReceiveMessages(AbstractClient mClient, LinkedList<Message> list) {
+			for(int i = 0 ;i<list.size();i++){
+				Message msg = list.get(i);
+
+	        	try{
+	        		
+					int cmd = DataPacket.getCmd(msg.data, msg.offset);
+					int squenceId = DataPacket.getSequenceId(msg.data,msg.offset);
+					
+		        	String sCmd = Integer.toHexString(cmd);
+
+		        	System.out.println(String.format("onReceiveMessage mDisPatcherMessageProcessor 0x%s  squenceId %s",sCmd,squenceId));
+		        	Logger.v(String.format("onReceiveMessage mDisPatcherMessageProcessor 0x%s  squenceId %s",sCmd,squenceId));
+		        	
+		        	if(cmd == AllocatorCmd.CMD_REPORT_ROOMINFO){
+		        		mHandler.on_report_roominfo(mClient,msg);
+		        	}else if(cmd == AllocatorCmd.CMD_GET_ROOMINFO){
+		        		mHandler.on_get_roominfo(mClient,msg);
+		        	}else if(cmd == AllocatorCmd.CMD_UPDATE_ROOMINFO){
+		        		mHandler.on_update_roominfo(mClient,msg);
+		        	}
+	        	}catch(Exception e){
+	        		e.printStackTrace();
+	        	}
+
+			}
+		}
+	};
+
 }
