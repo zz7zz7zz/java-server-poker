@@ -1,12 +1,14 @@
 package com.poker.handler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.message.Message;
 import com.open.net.client.object.AbstractClient;
+import com.open.util.log.Logger;
 import com.poker.data.DataPacket;
 import com.poker.protocols.server.GameServerProto;
 import com.poker.protocols.server.GameServerProto.GameServer;
@@ -23,6 +25,11 @@ public class MessageHandler {
     public static class LevelGameSer{
     	//level --> GameSer
     	public HashMap<Integer,ArrayList<GameSer>> level_gameser_list = new HashMap<Integer,ArrayList<GameSer>>();
+
+		@Override
+		public String toString() {
+			return "LevelGameSer [level_gameser_list=" + level_gameser_list + "]";
+		}
     }
     
     public static class GameSer{
@@ -34,11 +41,22 @@ public class MessageHandler {
     	
     	public int unused_count;
     	public int used_count;//在线人数
+		@Override
+		public String toString() {
+			return "GameSer [server_id=" + server_id + ", table_count=" + table_count + ", table_max_user="
+					+ table_max_user + ", tableList=" + Arrays.toString(tableList) + ", unused_count=" + unused_count
+					+ ", used_count=" + used_count + "]";
+		}
     }
     
     public static class Table{
     	public int tid;
     	public int count;//桌子人数
+    	
+		@Override
+		public String toString() {
+			return "Table [tid=" + tid + ", count=" + count + "]";
+		}
     }
     
 	public void on_report_roominfo(AbstractClient mClient , Message msg) throws InvalidProtocolBufferException{
@@ -111,6 +129,8 @@ public class MessageHandler {
 			
 			gameSers.add(gameSer);
 		}
+		
+		System.out.println(game_server_map);
 	}
 	
 	public void on_get_roominfo(AbstractClient mClient , Message msg) throws InvalidProtocolBufferException{
