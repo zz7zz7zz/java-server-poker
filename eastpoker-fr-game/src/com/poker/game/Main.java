@@ -18,11 +18,12 @@ import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
 import com.poker.base.ServerIds;
+import com.poker.cmd.AllocatorCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
+import com.poker.handler.MessageHandler;
 import com.poker.protocols.Dispatcher;
 import com.poker.protocols.Monitor;
-import com.poker.server.GameSer2Alloc;
 
 
 /**
@@ -84,7 +85,7 @@ public class Main {
     public static NioClient [] dispatcher;
     public static byte[] write_buf = new byte[16*1024];
     public static byte[] write_buff_dispatcher = new byte[16*1024];
-    
+    public static MessageHandler mHandler = new MessageHandler();
     //---------------------------------------Monitor----------------------------------------------------
     public static void register_monitor(Config mConfig){
         Monitor.register2Monitor(write_buf,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
@@ -137,7 +138,7 @@ public class Main {
 			mDisPatcherMessageProcessor.send(client,write_buf,0,length);
 			
 			//上报桌子信息
-			GameSer2Alloc.reportRoomInfo(write_buff_dispatcher, write_buf, 1, mDisPatcherMessageProcessor, mConfig);
+			mHandler.report_roominfo(write_buff_dispatcher, write_buf, 1, mDisPatcherMessageProcessor, mConfig);
 		}
 
 		@Override
@@ -175,13 +176,22 @@ public class Main {
 		public void onReceiveMessages(AbstractClient mClient, LinkedList<Message> list) {
 			for(int i = 0 ;i<list.size();i++){
 				Message msg = list.get(i);
-				int cmd = DataPacket.getCmd(msg.data, msg.offset);
-				int squenceId = DataPacket.getSequenceId(msg.data,msg.offset);
-				
-	        	String sCmd = Integer.toHexString(cmd);
-	        	Logger.v("onReceiveMessage mDisPatcherMessageProcessor 0x" + Integer.toHexString(DataPacket.getCmd(msg.data, msg.offset)));
-	        	System.out.println(String.format("onReceiveMessage 0x%s  squenceId %s",sCmd,squenceId));
-	        	Logger.v(String.format("onReceiveMessage 0x%s  squenceId %s",sCmd,squenceId));
+	        	try{
+	        		
+					int cmd = DataPacket.getCmd(msg.data, msg.offset);
+					int squenceId = DataPacket.getSequenceId(msg.data,msg.offset);
+					
+		        	String sCmd = Integer.toHexString(cmd);
+
+		        	System.out.println(String.format("onReceiveMessage mDisPatcherMessageProcessor 0x%s  squenceId %s",sCmd,squenceId));
+		        	Logger.v(String.format("onReceiveMessage mDisPatcherMessageProcessor 0x%s  squenceId %s",sCmd,squenceId));
+		        	
+		        	if(cmd == AllocatorCmd.CMD_GET_ROOMINFO){
+		        		mHandler.on_get_roominfo(write_buff_dispatcher,write_buf,1,mDisPatcherMessageProcessor,mConfig,null);
+		        	}
+	        	}catch(Exception e){
+	        		e.printStackTrace();
+	        	}
 			}
 		}
 	};

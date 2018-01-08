@@ -1,7 +1,7 @@
 package com.poker.server;
 
-import com.poker.data.DataTransfer;
 import com.poker.game.Main;
+import com.poker.data.DataTransfer;
 
 public class ImplDataTransfer{
 	
