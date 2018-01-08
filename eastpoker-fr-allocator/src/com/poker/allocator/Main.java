@@ -59,7 +59,7 @@ public class Main {
         Logger.addFilterTraceElement(mLogListener.getClass().getName());
         
         //1.4 业务配置初始化
-        Config mConfig = new Config();
+        mConfig = new Config();
         mConfig.initFileConfig("./conf/server.config");
         
         Logger.v("libArgsConfig: "+ libArgsConfig.toString()+"\r\n");
@@ -87,6 +87,7 @@ public class Main {
 
     //---------------------------------------Monitor----------------------------------------------------
     public static ArgsConfig libArgsConfig;
+    public static Config mConfig;
     public static byte[] write_buff = new byte[16*1024];
     public static byte[] write_buff_2 = new byte[16*1024];
     public static void register_monitor(Config mConfig){
