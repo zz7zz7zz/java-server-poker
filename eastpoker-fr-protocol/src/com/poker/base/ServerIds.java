@@ -1,6 +1,6 @@
 package com.poker.base;
 
-public final class Server {
+public final class ServerIds {
 	
 	public static final int SERVER_MONITOR 		= 1;
 	

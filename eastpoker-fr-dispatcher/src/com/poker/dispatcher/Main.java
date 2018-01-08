@@ -21,14 +21,14 @@ import com.open.net.server.utils.NetUtil;
 import com.open.net.server.utils.TextUtils;
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
-import com.poker.base.Server;
+import com.poker.base.ServerIds;
 import com.poker.cmd.DispatchCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
 import com.poker.protocols.Monitor;
 import com.poker.protocols.server.DispatchChainProto.DispatchChain;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
-import com.poker.protocols.server.ServerInfoProto.ServerInfo;
+import com.poker.protocols.server.ServerProto.Server;
 
 /**
  * author       :   long
@@ -44,7 +44,7 @@ public class Main {
     	//1.1 服务器配置初始化:解析命令行参数
     	libArgsConfig = new ArgsConfig();
     	libArgsConfig.initArgsConfig(args);
-    	libArgsConfig.server_type = Server.SERVER_DIAPATCHER;
+    	libArgsConfig.server_type = ServerIds.SERVER_DIAPATCHER;
     	
     	//1.2 服务器配置初始化:解析文件配置
         ServerConfig libServerConfig = new ServerConfig();
@@ -128,7 +128,7 @@ public class Main {
         		int cmd = DataPacket.getCmd(msg.data, msg.offset);
         		if(cmd == DispatchCmd.CMD_REGISTER){
 
-        			ServerInfo enterServer = ServerInfo.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
+        			Server enterServer = Server.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
         			
         			boolean add = true;
             		ArrayList<AbstractServerClient> clientArray = serverOnlineList.get(enterServer.getType());
@@ -141,7 +141,7 @@ public class Main {
                 				add = false;
                 				break;
                 			}else{ 
-                				ServerInfo attachObj = (ServerInfo) ser.getAttachment();
+                				Server attachObj = (Server) ser.getAttachment();
                 				if(null != attachObj && attachObj.getId() == enterServer.getId()){
                     				clientArray.remove(ser);
                     				break;
@@ -164,7 +164,7 @@ public class Main {
         				
         		        Logger.v("------- "+key+" size " + val.size() + " -------");
         		        for(AbstractServerClient ser:val){
-        		        	ServerInfo serInfo = (ServerInfo) ser.getAttachment();
+        		        	Server serInfo = (Server) ser.getAttachment();
         		        	Logger.v(String.format("------- name %s id %d bindHost %s bindPort %d host %s port %d", serInfo.getName(),serInfo.getId(),!TextUtils.isEmpty(serInfo.getHost())? serInfo.getHost() : "null",serInfo.getPort(),ser.mHost,ser.mPort));
         		        }
             		}
@@ -181,7 +181,7 @@ public class Main {
         				ArrayList<AbstractServerClient> serverArray = serverOnlineList.get(dstServerType);
         				if(null != serverArray){
         					for(AbstractServerClient ser:serverArray){
-        						ServerInfo serInfo = (ServerInfo) ser.getAttachment();
+        						Server serInfo = (Server) ser.getAttachment();
         						if(serInfo.getId() == dstServerId){
         							server = ser;
         							break;

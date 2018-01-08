@@ -2,7 +2,7 @@
 package com.poker.data;
 
 import com.google.protobuf.ByteString;
-import com.poker.base.Server;
+import com.poker.base.ServerIds;
 import com.poker.cmd.DispatchCmd;
 import com.poker.protocols.server.DispatchChainProto;
 import com.poker.protocols.server.DispatchPacketProto;
@@ -11,28 +11,28 @@ public final class DataTransfer {
 
 	//---------------------------------------------------------------------------------------------------
 	public static int send2Access(byte[] writeBuff,int squenceId, byte[] data, int offset , int length,int src_server_type , int src_server_id , int dst_server_id){
-		return send2Dispatcher(writeBuff,squenceId, DispatchCmd.CMD_DISPATCH, data, offset, length, src_server_type, src_server_id, Server.SERVER_ACCESS, dst_server_id);
+		return send2Dispatcher(writeBuff,squenceId, DispatchCmd.CMD_DISPATCH, data, offset, length, src_server_type, src_server_id, ServerIds.SERVER_ACCESS, dst_server_id);
 	}
 	
 	public static int send2Login(byte[] writeBuff,int squenceId, byte[] data, int offset , int length,int src_server_type , int src_server_id , int dst_server_id){
-		return send2Dispatcher(writeBuff,squenceId, DispatchCmd.CMD_DISPATCH, data, offset, length, src_server_type, src_server_id, Server.SERVER_LOGIN, dst_server_id);
+		return send2Dispatcher(writeBuff,squenceId, DispatchCmd.CMD_DISPATCH, data, offset, length, src_server_type, src_server_id, ServerIds.SERVER_LOGIN, dst_server_id);
 	}
 	
 	public static int send2User(byte[] writeBuff,int squenceId,  byte[] data, int offset , int length,int src_server_type , int src_server_id , int dst_server_id){
-		return send2Dispatcher(writeBuff,squenceId, DispatchCmd.CMD_DISPATCH, data, offset, length,  src_server_type, src_server_id, Server.SERVER_USER, dst_server_id);
+		return send2Dispatcher(writeBuff,squenceId, DispatchCmd.CMD_DISPATCH, data, offset, length,  src_server_type, src_server_id, ServerIds.SERVER_USER, dst_server_id);
 	}
 	
 	public static int send2Allocator(byte[] writeBuff,int squenceId, byte[] data, int offset , int length,int src_server_type , int src_server_id , int dst_server_id){
-		return send2Dispatcher(writeBuff,squenceId, DispatchCmd.CMD_DISPATCH, data, offset, length,  src_server_type, src_server_id, Server.SERVER_ALLOCATOR, dst_server_id);
+		return send2Dispatcher(writeBuff,squenceId, DispatchCmd.CMD_DISPATCH, data, offset, length,  src_server_type, src_server_id, ServerIds.SERVER_ALLOCATOR, dst_server_id);
 	}
 	
 	public static int send2Gamer(byte[] writeBuff,int squenceId, byte[] data, int offset , int length,int src_server_type , int src_server_id , int dst_server_id){
-		send2Dispatcher(writeBuff,squenceId, DispatchCmd.CMD_DISPATCH, data, offset, length,  src_server_type, src_server_id, Server.SERVER_GAME, dst_server_id);
+		send2Dispatcher(writeBuff,squenceId, DispatchCmd.CMD_DISPATCH, data, offset, length,  src_server_type, src_server_id, ServerIds.SERVER_GAME, dst_server_id);
 		return 1;
 	}
 	
 	public static int send2GoldCoin(byte[] writeBuff,int squenceId, byte[] data, int offset , int length,int src_server_type , int src_server_id , int dst_server_id){
-		return send2Dispatcher(writeBuff,squenceId, DispatchCmd.CMD_DISPATCH, data, offset, length,  src_server_type, src_server_id, Server.SERVER_GOLDCOIN, dst_server_id);
+		return send2Dispatcher(writeBuff,squenceId, DispatchCmd.CMD_DISPATCH, data, offset, length,  src_server_type, src_server_id, ServerIds.SERVER_GOLDCOIN, dst_server_id);
 	}
 	
 	//---------------------------------------------------------------------------------------------------
