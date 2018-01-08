@@ -21,6 +21,7 @@ import com.poker.base.ServerIds;
 import com.poker.cmd.AllocatorCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
+import com.poker.games.Room;
 import com.poker.handler.MessageHandler;
 import com.poker.protocols.Dispatcher;
 import com.poker.protocols.Monitor;
@@ -56,6 +57,8 @@ public class Main {
         mConfig = new Config();
         mConfig.initFileConfig("./conf/server.config");
         
+        mRoom = new Room(mConfig);
+        
         Logger.v("libArgsConfig: "+ libArgsConfig.toString()+"\r\n");
         Logger.v("libClientConfig: "+ libClientConfig.toString()+"\r\n");
         Logger.v("libLogConfig: "+ libLogConfig.toString()+"\r\n");
@@ -86,6 +89,7 @@ public class Main {
     public static byte[] write_buf = new byte[16*1024];
     public static byte[] write_buff_dispatcher = new byte[16*1024];
     public static MessageHandler mHandler = new MessageHandler();
+    public static Room mRoom;
     //---------------------------------------Monitor----------------------------------------------------
     public static void register_monitor(Config mConfig){
         Monitor.register2Monitor(write_buf,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
@@ -187,7 +191,7 @@ public class Main {
 		        	Logger.v(String.format("onReceiveMessage mDisPatcherMessageProcessor 0x%s  squenceId %s",sCmd,squenceId));
 		        	
 		        	if(cmd == AllocatorCmd.CMD_GET_ROOMINFO){
-		        		mHandler.on_get_roominfo(write_buff_dispatcher,write_buf,1,mDisPatcherMessageProcessor,mConfig,null);
+		        		mHandler.on_get_roominfo(write_buff_dispatcher,write_buf,1,mDisPatcherMessageProcessor,mConfig,mRoom);
 		        	}
 	        	}catch(Exception e){
 	        		e.printStackTrace();
