@@ -1,6 +1,7 @@
 package com.poker.handler;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.poker.cmd.AllocatorCmd;
 import com.poker.common.config.Config;
@@ -16,7 +17,7 @@ import com.poker.server.ImplDataTransfer;
 public class MessageHandler {
 	
 	boolean isReported = false;
-	public int report_roominfo(byte[] write_buff_dispatcher,byte[] write_buf, int squenceId,AbstractClientMessageProcessor sender,Config config){
+	public int report_roominfo(AbstractClient client,byte[] write_buff_dispatcher,byte[] write_buf, int squenceId,AbstractClientMessageProcessor sender,Config config){
 		if(!isReported){
 			isReported = true;
 			GameServerProto.GameServer.Builder builder = GameServerProto.GameServer.newBuilder();
@@ -29,12 +30,13 @@ public class MessageHandler {
 			byte[] body = builder.build().toByteArray();
 			int length = DataPacket.write(write_buf, squenceId, AllocatorCmd.CMD_REPORT_ROOMINFO, (byte)0, (byte)0, (short)0, body,0,body.length);
 			
-			return ImplDataTransfer.send2Allocator(write_buff_dispatcher, squenceId, write_buf, 0, length);
+			length =  ImplDataTransfer.send2Allocator(write_buff_dispatcher, squenceId, write_buf, 0, length);
+			sender.send(client, write_buff_dispatcher, 0, length);
 		}
 		return 0;
 	}
 	
-	public void on_get_roominfo(byte[] write_buff_dispatcher,byte[] write_buf, int squenceId,AbstractClientMessageProcessor sender,Config config,Room mRoom) throws InvalidProtocolBufferException{
+	public void on_get_roominfo(AbstractClient client,byte[] write_buff_dispatcher,byte[] write_buf, int squenceId,AbstractClientMessageProcessor sender,Config config,Room mRoom) throws InvalidProtocolBufferException{
 		GameServerProto.GameServer.Builder builder = GameServerProto.GameServer.newBuilder();
 		builder.setServerId(config.server_id);
 		builder.setGameId(config.game_id);
@@ -50,9 +52,10 @@ public class MessageHandler {
 		}
 		
 		byte[] body = builder.build().toByteArray();
-		int length = DataPacket.write(write_buf, squenceId, AllocatorCmd.CMD_REPORT_ROOMINFO, (byte)0, (byte)0, (short)0, body,0,body.length);
+		int length = DataPacket.write(write_buf, squenceId, AllocatorCmd.CMD_GET_ROOMINFO, (byte)0, (byte)0, (short)0, body,0,body.length);
 		
-		ImplDataTransfer.send2Allocator(write_buff_dispatcher, squenceId, write_buf, 0, length);
+		length = ImplDataTransfer.send2Allocator(write_buff_dispatcher, squenceId, write_buf, 0, length);
+		sender.send(client, write_buff_dispatcher, 0, length);
 	}
 
 }
