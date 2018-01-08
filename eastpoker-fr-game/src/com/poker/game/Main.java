@@ -139,7 +139,7 @@ public class Main {
 		public void onConnectionSuccess(AbstractClient client) {
 			Logger.v("-------dispatcher onConnectionSuccess---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
 			//register to dispatchServer
-			int length = Dispatcher.register2Dispatcher(write_buf,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
+			int length = Dispatcher.register2Dispatcher(write_buf,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port,mConfig.game_id,-1);
 			mDisPatcherMessageProcessor.send(client,write_buf,0,length);
 			
 			//上报桌子信息
