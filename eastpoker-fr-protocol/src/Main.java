@@ -8,7 +8,7 @@ import com.poker.protocols.server.DispatchChainProto;
 import com.poker.protocols.server.DispatchPacketProto;
 import com.poker.protocols.server.LoginProto;
 import com.poker.protocols.server.LoginResponseProto;
-import com.poker.protocols.server.ServerInfoProto;
+import com.poker.protocols.server.ServerProto;
 
 public class Main {
 
@@ -68,7 +68,7 @@ public class Main {
 	public static void testDispatchReg(){
 		
 		// 按照定义的数据结构，创建一个对象
-		ServerInfoProto.ServerInfo.Builder builder = ServerInfoProto.ServerInfo.newBuilder();
+		ServerProto.Server.Builder builder = ServerProto.Server.newBuilder();
 		builder.setType(1);
 		builder.setName("name");
 		builder.setId(1);
@@ -77,7 +77,7 @@ public class Main {
 		
 		// 将数据写到输出流，如网络输出流，这里就用ByteArrayOutputStream来代替 
 		ByteArrayOutputStream output = new ByteArrayOutputStream(16*1024);
-		ServerInfoProto.ServerInfo obj = builder.build();
+		ServerProto.Server obj = builder.build();
 		try {
 			obj.writeTo(output);
 			//op.write(obj.toByteArray())
@@ -95,7 +95,7 @@ public class Main {
 		// 接收到流并读取，如网络输入流，这里用ByteArrayInputStream来代替  
         ByteArrayInputStream input = new ByteArrayInputStream(byteArray);
         try {
-        	ServerInfoProto.ServerInfo readObj = ServerInfoProto.ServerInfo.parseFrom(input);
+        	ServerProto.Server readObj = ServerProto.Server.parseFrom(input);
 			
 			System.out.println(" input length " + byteArray.length + " toString " + readObj.toString());
 		} catch (IOException e) {

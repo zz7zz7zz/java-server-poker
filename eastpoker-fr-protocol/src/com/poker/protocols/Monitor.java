@@ -2,13 +2,13 @@ package com.poker.protocols;
 
 import com.poker.cmd.MonitorCmd;
 import com.poker.data.DataPacket;
-import com.poker.protocols.server.ServerInfoProto;
+import com.poker.protocols.server.ServerProto;
 
 public class Monitor {
 	
 	public static int register2Monitor(byte[] writeBuff,int type ,String name, int id, String host ,int port){
 		
-		ServerInfoProto.ServerInfo.Builder builder = ServerInfoProto.ServerInfo.newBuilder();
+		ServerProto.Server.Builder builder = ServerProto.Server.newBuilder();
 		builder.setType(type);
 		builder.setName(name);
 		builder.setId(id);
@@ -22,7 +22,7 @@ public class Monitor {
 	
 	public static int unregister2Monitor(byte[] writeBuff,int type ,String name, int id, String host ,int port){
 
-		ServerInfoProto.ServerInfo.Builder builder = ServerInfoProto.ServerInfo.newBuilder();
+		ServerProto.Server.Builder builder = ServerProto.Server.newBuilder();
 		builder.setType(type);
 		builder.setName(name);
 		builder.setId(id);
