@@ -24,13 +24,13 @@ public class Config {
     //桌子信息
     public int table_count = 0;                   //一个房间中对桌子数量
 
-    	public int table_min_user = 0;                //每台桌子对最少玩家数量，达到这个数量即可开始游戏
+    public int table_min_user = 0;                //每台桌子对最少玩家数量，达到这个数量即可开始游戏
     public int table_max_user = 0;                //每台桌子对最大玩家数量
-    public int table_min_chip = 0;             //最小进入筹码
-    public int table_max_chip = 0;             //最大进入筹码
-    public int table_init_chip = 0;             //初始化筹码
-    public int table_init_ante;                  //前注
-    public int[] table_bilnd ;                   //盲注，对德州扑克而言，这意味着大盲，数组意味着比赛场，如SNG
+    public long table_min_chip = 0;             //最小进入筹码
+    public long table_max_chip = 0;             //最大进入筹码
+    public long table_init_chip = 0;             //初始化筹码
+    public long table_init_ante;                  //前注
+    public long[] table_bilnd ;                   //盲注，对德州扑克而言，这意味着大盲，数组意味着比赛场，如SNG
     public int[] table_bilnd_time ;              //每个盲注持续时间
 
     public int table_action_timeout = 0;        //允许玩家执行动作对最大超时时间
@@ -45,19 +45,22 @@ public class Config {
     protected void initFileConfig(HashMap<String,Object> map){
     	if(null !=map){
     		
-    		game_id = CfgParser.getInt(map, "Game","game");
+    		game_id = CfgParser.getInt(map, "Game","game_id");
+    		game_level = CfgParser.getInt(map, "Game","game_level");
     		
     		table_count = CfgParser.getInt(map, "Game","table_count");
     		table_min_user = CfgParser.getInt(map, "Game","table_min_user");
     		table_max_user = CfgParser.getInt(map, "Game","table_max_user");
-    		table_init_chip = CfgParser.getInt(map, "Game","table_init_chip");
-    		table_init_ante = CfgParser.getInt(map, "Game","table_init_ante");
+    		table_min_chip = CfgParser.getLong(map, "Game","table_min_chip");
+    		table_max_chip = CfgParser.getLong(map, "Game","table_max_chip");
+    		table_init_chip = CfgParser.getLong(map, "Game","table_init_chip");
+    		table_init_ante = CfgParser.getLong(map, "Game","table_init_ante");
     		
         String val[]     = CfgParser.getStringArray(map,"Game","table_bilnd");
         if(null != val){
-        		table_bilnd = new int[val.length];
+        		table_bilnd = new long[val.length];
             for (int i = 0; i < val.length; i++) {
-            		table_bilnd[i] = Integer.valueOf(val[i]);
+            		table_bilnd[i] = Long.valueOf(val[i]);
             }
         }
             

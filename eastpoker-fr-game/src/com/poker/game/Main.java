@@ -41,11 +41,6 @@ public class Main {
     	libArgsConfig = new ArgsConfig();
     	libArgsConfig.initArgsConfig(args);
     	libArgsConfig.server_type = ServerIds.SERVER_GAME;
-    	
-    	//1.2 服务器配置初始化:解析文件配置
-        ServerConfig libServerConfig = new ServerConfig();
-        libServerConfig.initArgsConfig(libArgsConfig);
-        libServerConfig.initFileConfig("./conf/lib.server.config");
         
         //1.3 服务器配置初始化:作为客户端配置
         ClientConfig libClientConfig = new ClientConfig();
@@ -62,9 +57,9 @@ public class Main {
         mConfig.initFileConfig("./conf/server.config");
         
         Logger.v("libArgsConfig: "+ libArgsConfig.toString()+"\r\n");
-        Logger.v("libServerConfig: "+ libServerConfig.toString()+"\r\n");
         Logger.v("libClientConfig: "+ libClientConfig.toString()+"\r\n");
         Logger.v("libLogConfig: "+ libLogConfig.toString()+"\r\n");
+        Logger.v("mConfig: "+ mConfig.toString()+"\r\n");
         
         //----------------------------------------- 二、注册到关联服务器 ---------------------------------------
         register_monitor(mConfig);//注册到服务监听器
