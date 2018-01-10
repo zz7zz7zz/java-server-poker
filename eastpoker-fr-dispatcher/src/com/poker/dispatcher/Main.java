@@ -79,10 +79,22 @@ public class Main {
         unregister_monitor(mConfig);//反注册到服务监听器
     }
 
-    //---------------------------------------Monitor----------------------------------------------------
+    
+    //---------------------------------------Fields----------------------------------------------------
     public static ArgsConfig libArgsConfig;
     public static byte[] write_buff = new byte[16*1024];
+    public static MessageHandler mHander = new MessageHandler();
     
+    //---------------------------------------Logger----------------------------------------------------
+    public static LogListener mLogListener = new LogListener(){
+
+		@Override
+		public void onLog(String tag, String msg) {
+			Logger.v(msg);
+		}
+    };
+    
+    //---------------------------------------Monitor----------------------------------------------------
     public static void register_monitor(Config mConfig){
         Monitor.register2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
@@ -103,9 +115,7 @@ public class Main {
     	}
     }
     
-    //-------------------------------------------------------------------------------------------
-    
-    public static MessageHandler mHander = new MessageHandler();
+    //---------------------------------------Server: receive msg from client ----------------------------------------------------
     public static AbstractServerMessageProcessor mServerMessageProcessor = new AbstractServerMessageProcessor() {
 
         private ByteBuffer mWriteBuffer  = ByteBuffer.allocate(16*1024);
@@ -115,6 +125,11 @@ public class Main {
         protected void onReceiveMessage(AbstractServerClient client, Message msg){
 
         	try {
+        		//对数据进行拆包/组包过程
+        		int packetLength = DataPacket.getLength(msg.data);
+        		if(packetLength >= DataPacket.getHeaderLength()){
+        			
+        		}
         		
         		Logger.v(System.getProperty("line.separator"));
         		Logger.v("onReceiveMessage 0x" + Integer.toHexString(DataPacket.getCmd(msg.data, msg.offset)));
@@ -147,23 +162,14 @@ public class Main {
 
 		@Override
 		public void onClientEnter(AbstractServerClient client) {
-			Logger.v("onClientEnter " + client.mClientId);
+			Logger.v(client.toShortString("onClientEnter"));
 		}
 
 		@Override
 		public void onClientExit(AbstractServerClient client) {
-			Logger.v("onClientExit " + client.mClientId);
+			Logger.v(client.toShortString("onClientExit"));
 			mHander.exit(client);
 		}
     };
    
-    
-    
-    public static LogListener mLogListener = new LogListener(){
-
-		@Override
-		public void onLog(String tag, String msg) {
-			Logger.v(msg);
-		}
-    };
 }

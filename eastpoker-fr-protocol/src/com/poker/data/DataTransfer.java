@@ -27,8 +27,7 @@ public final class DataTransfer {
 	}
 	
 	public static int send2Gamer(byte[] writeBuff,int squenceId, byte[] data, int offset , int length,int src_server_type , int src_server_id , int dst_server_id,int gameGroup,int matchGroup){
-		send2Dispatcher(writeBuff,squenceId, DispatchCmd.CMD_DISPATCH, data, offset, length,  src_server_type, src_server_id, ServerIds.SERVER_GAME, dst_server_id,gameGroup,matchGroup);
-		return 1;
+		return send2Dispatcher(writeBuff,squenceId, DispatchCmd.CMD_DISPATCH, data, offset, length,  src_server_type, src_server_id, ServerIds.SERVER_GAME, dst_server_id,gameGroup,matchGroup);
 	}
 	
 	public static int send2GoldCoin(byte[] writeBuff,int squenceId, byte[] data, int offset , int length,int src_server_type , int src_server_id , int dst_server_id,int gameGroup,int matchGroup){
