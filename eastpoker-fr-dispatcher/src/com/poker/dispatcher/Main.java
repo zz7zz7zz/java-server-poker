@@ -254,12 +254,11 @@ public class Main {
 
 		@Override
 		public void onClientEnter(AbstractServerClient client) {
-			Logger.v(client.toShortString("onClientEnter"));
+
 		}
 
 		@Override
 		public void onClientExit(AbstractServerClient client) {
-			Logger.v(client.toShortString("onClientExit"));
 			mHander.exit(client);
 		}
 		
