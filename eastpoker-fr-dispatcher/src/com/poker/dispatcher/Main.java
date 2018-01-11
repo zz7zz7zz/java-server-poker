@@ -241,8 +241,7 @@ public class Main {
     			}
     		}
     		
-    		Logger.v("code "+ code +" full_packet_count " + full_packet_count + " half_packet_count " + half_packet_count);
-    		Logger.v(System.getProperty("line.separator"));
+    		Logger.v("code "+ code +" full_packet_count " + full_packet_count + " half_packet_count " + half_packet_count + System.getProperty("line.separator"));
         }
         
 		@Override
