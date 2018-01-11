@@ -85,7 +85,7 @@ public class Main {
     public static ArgsConfig libArgsConfig;
     public static byte[] write_buff = new byte[16*1024];
     public static ByteBuffer mWriteBuffer  = ByteBuffer.allocate(16*1024);
-    public static MessageHandler mHander = new MessageHandler();
+    public static MessageHandler mHandler = new MessageHandler();
     
     //---------------------------------------Logger----------------------------------------------------
     public static LogListener mLogListener = new LogListener(){
@@ -263,7 +263,7 @@ public class Main {
 
 		@Override
 		public void onClientExit(AbstractServerClient client) {
-			mHander.exit(client);
+			mHandler.exit(client);
 		}
 		
 		public void onHandleCmd(AbstractServerClient client, int cmd ,Message msg,int body_start,int body_length){
@@ -272,13 +272,13 @@ public class Main {
         		Logger.v("onReceiveMessage 0x" + Integer.toHexString(cmd));
         		
         		if(cmd == DispatchCmd.CMD_REGISTER){
-        			mHander.register(client, msg, body_start,body_length);
+        			mHandler.register(client, msg, body_start,body_length);
         		}else if(cmd == DispatchCmd.CMD_DISPATCH){
-        			mHander.dispatch(client, msg, body_start, body_length,mWriteBuffer,mServerMessageProcessor);
+        			mHandler.dispatch(client, msg, body_start, body_length,mWriteBuffer,mServerMessageProcessor);
         		}else if(cmd == DispatchCmd.CMD_DISPATCH_GAME_GROUP){
-        			mHander.dispatchGameGoup(client, msg, body_start, body_length, mWriteBuffer, mServerMessageProcessor);
+        			mHandler.dispatchGameGoup(client, msg, body_start, body_length, mWriteBuffer, mServerMessageProcessor);
         		}else if(cmd == DispatchCmd.CMD_DISPATCH_MATCH_GROUP){
-        			mHander.dispatchMatchGroup(client, msg, body_start, body_length, mWriteBuffer, mServerMessageProcessor);
+        			mHandler.dispatchMatchGroup(client, msg, body_start, body_length, mWriteBuffer, mServerMessageProcessor);
         		}else{
         			
         		}
