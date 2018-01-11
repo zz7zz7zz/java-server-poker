@@ -36,7 +36,6 @@ public class MessageHandler {
    //--------------------------------------------------------------------------------------------------------
     public void dispatch(AbstractServerClient client, Message msg, int body_start, int body_length, ByteBuffer mWriteBuffer,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,body_start,body_length);
-		System.out.println("DispatchPacket "+mDispatchPacket.toString());
 		int count = mDispatchPacket.getDispatchChainListCount();
 		if(count>0){
 			DispatchChain chain = mDispatchPacket.getDispatchChainList(count-1);

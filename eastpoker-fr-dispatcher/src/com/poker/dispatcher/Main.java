@@ -14,7 +14,6 @@ import com.open.net.server.object.ArgsConfig;
 import com.open.net.server.object.ServerConfig;
 import com.open.net.server.object.ServerLog;
 import com.open.net.server.object.ServerLog.LogListener;
-import com.open.net.server.pools.MessagePool;
 import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
@@ -213,7 +212,7 @@ public class Main {
 	            			int body_length     = DataPacket.getLength(client.mReceivingMsg.data, header_start)-header_length;
 	            			
         					int cmd = DataPacket.getCmd(client.mReceivingMsg.data, header_start);
-	            			onHandleCmd(client,cmd,msg,body_start,body_length);
+	            			onHandleCmd(client,cmd,client.mReceivingMsg,body_start,body_length);
 	            			
         					full_packet_count++;
         					
@@ -243,6 +242,7 @@ public class Main {
     		}
     		
     		Logger.v("code "+ code +" full_packet_count " + full_packet_count + " half_packet_count " + half_packet_count);
+    		Logger.v(System.getProperty("line.separator"));
         }
         
 		@Override
@@ -266,7 +266,7 @@ public class Main {
 		
 		public void onHandleCmd(AbstractServerClient client, int cmd ,Message msg,int body_start,int body_length){
         	try {
-        		Logger.v(System.getProperty("line.separator"));
+        		
         		Logger.v("onReceiveMessage 0x" + Integer.toHexString(cmd));
         		
         		if(cmd == DispatchCmd.CMD_REGISTER){
