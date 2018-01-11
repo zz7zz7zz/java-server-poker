@@ -140,22 +140,22 @@ public class Main {
 				int msg_offset = 0;
 				int header_length = DataPacket.getHeaderLength();
 				while(true){
-					int the_rest_msglength = msg.length -msg_offset ;
-					if(the_rest_msglength == 0){
+					int the_rest_msg_length = msg.length -msg_offset ;
+					if(the_rest_msg_length == 0){
 						code = 1;
 						break;
-					}else if(the_rest_msglength <= header_length){//说明还没有接收完完整的一个包头，继续读取
+					}else if(the_rest_msg_length <= header_length){//说明还没有接收完完整的一个包头，继续读取
 	    				client.mReceivingMsg = new Message();
-	    				System.arraycopy(msg.data,msg.offset+msg_offset,client.mReceivingMsg.data,client.mReceivingMsg.offset,the_rest_msglength);
-        				client.mReceivingMsg.length = the_rest_msglength;
+	    				System.arraycopy(msg.data,msg.offset+msg_offset,client.mReceivingMsg.data,client.mReceivingMsg.offset,the_rest_msg_length);
+        				client.mReceivingMsg.length = the_rest_msg_length;
         				
         				code = -101;//不足包头
         				half_packet_count++;
         				break;
-	    			}else if(the_rest_msglength > header_length){
+	    			}else if(the_rest_msg_length > header_length){
             			int header_start 	= msg.offset+ msg_offset;
 	    				int packetLength = DataPacket.getLength(msg.data,header_start);
-	            		if(the_rest_msglength >= packetLength){//说明可以凑成一个包
+	            		if(the_rest_msg_length >= packetLength){//说明可以凑成一个包
 
 	            			int body_start 		= header_start + header_length;
 	            			int body_length     = DataPacket.getLength(msg.data, header_start)-header_length;
@@ -167,7 +167,11 @@ public class Main {
 	            			full_packet_count++;
 	            			continue;
 	            		}else{//如果不足一个包
-		    				client.mReceivingMsg = MessageBuffer.getInstance().buildWithCapacity(16*1024,msg.data,msg.offset+msg_offset,the_rest_msglength);
+	            			int capacity = 16384;//16KB
+	            			if(the_rest_msg_length >= DataPacket.Header.OFFSET_SEQUENCEID){//可以读出包体的长度,尽量传递真实的长度
+	            				capacity = DataPacket.getLength(msg.data,msg.offset+msg_offset);
+	            			}
+		    				client.mReceivingMsg = MessageBuffer.getInstance().buildWithCapacity(capacity,msg.data,msg.offset+msg_offset,the_rest_msg_length);
 	        				
 	        				code = -102;//足包头，不足包体-->不足整包
 	        				half_packet_count++;

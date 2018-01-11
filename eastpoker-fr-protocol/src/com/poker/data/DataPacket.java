@@ -87,12 +87,12 @@ public class DataPacket {
         public byte     encrypt;
         public short    gid;
         
-        static final int OFFSET_LENGTH 		= 0;
-        static final int OFFSET_SEQUENCEID 	= 4;
-        static final int OFFSET_CMD 		= 8;
-        static final int OFFSET_VERSION 	= 12;
-        static final int OFFSET_ENCRYPT 	= 13;
-        static final int OFFSET_GID 		= 14;
+        public static final int OFFSET_LENGTH 		= 0;
+        public static final int OFFSET_SEQUENCEID 	= 4;
+        public static final int OFFSET_CMD 		= 8;
+        public static final int OFFSET_VERSION 	= 12;
+        public static final int OFFSET_ENCRYPT 	= 13;
+        public static final int OFFSET_GID 		= 14;
         
         //----------------------------------------------------------------------
         public void setLength(int length){
