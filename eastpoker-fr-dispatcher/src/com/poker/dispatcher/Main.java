@@ -131,8 +131,7 @@ public class Main {
         			
         		}
         		
-        		Logger.v(System.getProperty("line.separator"));
-        		Logger.v("onReceiveMessage 0x" + Integer.toHexString(DataPacket.getCmd(msg.data, msg.offset)));
+        		Logger.v(System.getProperty("line.separator")+"onReceiveMessage 0x" + Integer.toHexString(DataPacket.getCmd(msg.data, msg.offset)));
         		
         		int cmd = DataPacket.getCmd(msg.data, msg.offset);
         		if(cmd == DispatchCmd.CMD_REGISTER){
