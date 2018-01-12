@@ -8,28 +8,30 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.GClient;
 import com.open.net.client.impl.tcp.nio.NioClient;
 import com.open.net.client.message.Message;
+import com.open.net.client.message.MessageBuffer;
 import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.net.client.object.ClientConfig;
 import com.open.net.client.object.IConnectListener;
 import com.open.net.client.object.TcpAddress;
 import com.open.net.server.object.ArgsConfig;
-import com.open.net.server.object.ServerConfig;
 import com.open.net.server.object.ServerLog;
 import com.open.net.server.object.ServerLog.LogListener;
 import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
-import com.poker.base.Server;
+import com.poker.base.ServerIds;
+import com.poker.cmd.AllocatorCmd;
+import com.poker.cmd.DispatchCmd;
 import com.poker.cmd.LoginCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
 import com.poker.data.DataTransfer;
+import com.poker.handler.MessageHandler;
 import com.poker.protocols.Dispatcher;
 import com.poker.protocols.LoginResponse;
 import com.poker.protocols.Monitor;
 import com.poker.protocols.server.LoginProto;
-import com.poker.protocols.server.LoginResponseProto;
 
 /**
  * author       :   long
@@ -45,14 +47,9 @@ public class Main {
     	//1.1 服务器配置初始化:解析命令行参数
     	libArgsConfig = new ArgsConfig();
     	libArgsConfig.initArgsConfig(args);
-    	libArgsConfig.server_type = Server.SERVER_LOGIN;
-    	
-    	//1.2 服务器配置初始化:解析文件配置
-        ServerConfig libServerConfig = new ServerConfig();
-        libServerConfig.initArgsConfig(libArgsConfig);
-        libServerConfig.initFileConfig("./conf/lib.server.config");
+    	libArgsConfig.server_type = ServerIds.SERVER_LOGIN;
         
-        //1.3 服务器配置初始化:作为客户端配置
+        //1.32 服务器配置初始化:作为客户端配置
         ClientConfig libClientConfig = new ClientConfig();
         libClientConfig.initFileConfig("./conf/lib.client.config");
         GClient.init(libClientConfig);
@@ -63,17 +60,17 @@ public class Main {
         Logger.addFilterTraceElement(mLogListener.getClass().getName());
         
         //1.4 业务配置初始化
-        Config mConfig = new Config();
-        mConfig.initFileConfig("./conf/server.config");
+        Config mServerConfig = new Config();
+        mServerConfig.initFileConfig("./conf/server.config");
         
         Logger.v("libArgsConfig: "+ libArgsConfig.toString()+"\r\n");
-        Logger.v("libServerConfig: "+ libServerConfig.toString()+"\r\n");
         Logger.v("libClientConfig: "+ libClientConfig.toString()+"\r\n");
         Logger.v("libLogConfig: "+ libLogConfig.toString()+"\r\n");
+        Logger.v("mServerConfig: "+ mServerConfig.toString()+"\r\n");
         
         //----------------------------------------- 二、注册到关联服务器 ---------------------------------------
-        register_monitor(mConfig);//注册到服务监听器
-    	register_dispatcher(mConfig);//注册到Dispatcher
+        register_monitor(mServerConfig);//注册到服务监听器
+    	register_dispatcher(mServerConfig);//注册到Dispatcher
     	
         //----------------------------------------- 三、服务器初始化 ------------------------------------------
     	while(true){
@@ -85,14 +82,19 @@ public class Main {
 			}
     	}
         //----------------------------------------- 四、反注册关联服务器 ---------------------------------------
-        unregister_dispatcher(mConfig);//反注册到服务监听器
-        unregister_monitor(mConfig);//反注册到服务监听器
+        unregister_dispatcher(mServerConfig);//反注册到服务监听器
+        unregister_monitor(mServerConfig);//反注册到服务监听器
+        
+        //----------------------------------------- 五、最终退出程序 ---------------------------------------
+        System.exit(0);
     }
 
     //---------------------------------------Monitor----------------------------------------------------
     public static ArgsConfig libArgsConfig;
     public static byte[] write_buff = new byte[16*1024];
     public static byte[] write_buff_dispatcher = new byte[16*1024];
+    public static MessageHandler mHandler = new MessageHandler();
+    
     public static void register_monitor(Config mConfig){
         Monitor.register2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
@@ -165,85 +167,163 @@ public class Main {
 		}
 	};
 
-	public static HashMap<String, Long> uidMap = new HashMap<>();
-	public static int uid_auto_generator = 10000;
+
 	private static AbstractClientMessageProcessor mDisPatcherMessageProcessor =new AbstractClientMessageProcessor() {
 
 		@Override
 		public void onReceiveMessages(AbstractClient mClient, LinkedList<Message> list) {
 			for(int i = 0 ;i<list.size();i++){
 				Message msg = list.get(i);
-				int cmd = DataPacket.getCmd(msg.data, msg.offset);
-				int squenceId = DataPacket.getSequenceId(msg.data,msg.offset);
-				
-	        	String sCmd = Integer.toHexString(cmd);
-	        	Logger.v("onReceiveMessage mDisPatcherMessageProcessor 0x" + Integer.toHexString(DataPacket.getCmd(msg.data, msg.offset)));
-	        	System.out.println(String.format("onReceiveMessage 0x%s  squenceId %s",sCmd,squenceId));
-	        	Logger.v(String.format("onReceiveMessage 0x%s  squenceId %s",sCmd,squenceId));
-	        	
-	        	try {
-		        	if(cmd == LoginCmd.CMD_LOGIN){
-						LoginProto.Login loginRequest = LoginProto.Login.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length-DataPacket.getHeaderLength());
-						System.out.println("login "+loginRequest.toString());
-						
-						String uuid = loginRequest.getUuid();
-						long uid = 0;
-						Long uidObject = uidMap.get(uuid);
-						if(null == uidObject){
-							uid = uid_auto_generator;
-							uidMap.put(uuid, uid);
-							
-							uid_auto_generator++;
-						}else{
-							uid = uidObject;
-						}
-						
-						int length = LoginResponse.login(write_buff, squenceId, (int)uid);
-						length = ImplDataTransfer.send2Access(write_buff_dispatcher, squenceId, write_buff, 0, length);
-						mDisPatcherMessageProcessor.send(mClient, write_buff_dispatcher,0,length);
-		        	}
-					
-				} catch (InvalidProtocolBufferException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				onReceiveMessage(mClient,msg);
+			}
+		}
+		
+		protected void onReceiveMessage(AbstractClient client, Message msg){
+
+        	//过滤异常Message
+        	if(null == client || msg.length<=0){
+        		return;
+        	}
+        	
+    		//对数据进行拆包/组包过程
+        	int code = 0;
+        	int full_packet_count = 0;
+        	int half_packet_count = 0;
+        	//packet struct like this : |--head--|-----body-----|
+        	
+        	if(null == client.mReceivingMsg){
+				int msg_offset = 0;
+				int header_length = DataPacket.getHeaderLength();
+				while(true){
+					int the_rest_msg_length = msg.length -msg_offset ;
+					if(the_rest_msg_length == 0){
+						code = 1;
+						break;
+					}else if(the_rest_msg_length <= header_length){//说明还没有接收完完整的一个包头，继续读取
+            			int capacity = 16384;//16KB
+            			if(the_rest_msg_length >= DataPacket.Header.OFFSET_SEQUENCEID){//可以读出包体的长度,尽量传递真实的长度
+            				capacity = DataPacket.getLength(msg.data,msg.offset+msg_offset);
+            			}
+	    				client.mReceivingMsg = MessageBuffer.getInstance().buildWithCapacity(capacity,msg.data,msg.offset+msg_offset,the_rest_msg_length);
+	    				
+        				code = -101;//不足包头
+        				half_packet_count++;
+        				break;
+	    			}else if(the_rest_msg_length > header_length){
+            			int header_start 	= msg.offset+ msg_offset;
+	    				int packetLength = DataPacket.getLength(msg.data,header_start);
+	            		if(the_rest_msg_length >= packetLength){//说明可以凑成一个包
+
+	            			int body_start 		= header_start + header_length;
+	            			int body_length     = DataPacket.getLength(msg.data, header_start)-header_length;
+	            			
+	            			int cmd = DataPacket.getCmd(msg.data, header_start);
+	            			onHandleCmd(client,cmd,msg,header_start,header_length,body_start,body_length);
+	            			msg_offset += packetLength;
+	            			
+	            			full_packet_count++;
+	            			continue;
+	            		}else{//如果不足一个包
+	            			int capacity = 16384;//16KB
+	            			if(the_rest_msg_length >= DataPacket.Header.OFFSET_SEQUENCEID){//可以读出包体的长度,尽量传递真实的长度
+	            				capacity = DataPacket.getLength(msg.data,msg.offset+msg_offset);
+	            			}
+		    				client.mReceivingMsg = MessageBuffer.getInstance().buildWithCapacity(capacity,msg.data,msg.offset+msg_offset,the_rest_msg_length);
+	        				
+	        				code = -102;//足包头，不足包体-->不足整包
+	        				half_packet_count++;
+	        				break;
+	            		}
+	    			}
 				}
+        	}else{//说明有分包现象，只接收了部分包，未收到整包
+				int msg_offset = 0;
+				int header_length = DataPacket.getHeaderLength();
+    			while(true){
+    				int the_rest_msglength = msg.length -msg_offset ;
+    				if(the_rest_msglength == 0){
+    					code = 2;
+    					break;
+    				}
+    				
+    				if(client.mReceivingMsg.length < header_length){//说明还没有读取完完整的一个包头，继续读取
+        				int remain_header_length = header_length - client.mReceivingMsg.length;
+        				int real_read_remain_header_length = Math.min(remain_header_length, the_rest_msglength);
+        				if(real_read_remain_header_length >0){
+            				System.arraycopy(msg.data,msg.offset+msg_offset,client.mReceivingMsg.data,client.mReceivingMsg.offset+client.mReceivingMsg.length,real_read_remain_header_length);
+            				client.mReceivingMsg.length += real_read_remain_header_length;
+            				msg_offset += real_read_remain_header_length;
+        				}
+        			}
+        			
+        			if(client.mReceivingMsg.length >= header_length){//说明包头读完了，接着读取包体了
+        				int packetLength = DataPacket.getLength(client.mReceivingMsg.data,client.mReceivingMsg.offset);
+        				int remain_packet_length = packetLength - client.mReceivingMsg.length;
+        				int real_read_remain_packet_length = Math.min(remain_packet_length, the_rest_msglength);
+        				if(real_read_remain_packet_length >0){
+            				System.arraycopy(msg.data,msg.offset+msg_offset,client.mReceivingMsg.data,client.mReceivingMsg.offset+client.mReceivingMsg.length,real_read_remain_packet_length);
+            				client.mReceivingMsg.length += real_read_remain_packet_length;
+            				msg_offset += real_read_remain_packet_length;
+        				}
+        				
+        				if(client.mReceivingMsg.length == packetLength){//说明包完整了
+        					
+	            			int header_start 	= client.mReceivingMsg.offset;
+	            			int body_start 		= header_start + header_length;
+	            			int body_length     = DataPacket.getLength(client.mReceivingMsg.data, header_start)-header_length;
+	            			
+        					int cmd = DataPacket.getCmd(client.mReceivingMsg.data, header_start);
+	            			onHandleCmd(client,cmd,client.mReceivingMsg,header_start,header_length,body_start,body_length);
+	            			
+        					full_packet_count++;
+        					
+        					client.mReceivingMsg.length = 0;
+                			if(msg.length - msg_offset > 0){//说明需要继续接收,还有粘包现象
+                				continue;
+                			}else{//说明可以回收
+                				code = 3;
+                				MessageBuffer.getInstance().release(client.mReceivingMsg);
+                				client.mReceivingMsg = null;
+                				break;
+                			}
+        				}else if(client.mReceivingMsg.length < packetLength){//说明包还未完整
+            				code = -202;
+            				half_packet_count++;
+        					break;
+        				}else {//说明异常了，需要重连
+        					code = -203;
+        					break;
+        				}
+        			}else{
+        				code = -201;//不足包头
+        				half_packet_count++;
+        				break;
+        			}
+    			}
+    		}
+    		
+    		Logger.v("code "+ code +" full_packet_count " + full_packet_count + " half_packet_count " + half_packet_count + System.getProperty("line.separator"));
+        }
+		
+		@Override
+		public void send(AbstractClient mClient, byte[] src, int offset, int length) {
+			super.send(mClient, src, offset, length);
+			Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+		}
+		
+		public void onHandleCmd(AbstractClient client, int cmd ,Message msg,int header_start,int header_length,int body_start,int body_length){
+        	try {
+        		
+        		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(msg.data,header_start));
+        		
+	        	if(cmd == LoginCmd.CMD_LOGIN_REQUEST){
+	        		mHandler.login(client, write_buff_dispatcher, write_buff, msg, body_start, body_length, 1, mDisPatcherMessageProcessor);
+	        	}
+			} catch (InvalidProtocolBufferException e) {
+				e.printStackTrace();
 			}
 		}
 	};
-    
-    public static class ImplDataTransfer{
-    	
-    	public static int send2Access(byte[] writeBuff,int squenceId, byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2Access(writeBuff,squenceId,data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    	
-    	public static int send2Login(byte[] writeBuff,int squenceId, byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2Login(writeBuff,squenceId,data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    	
-    	public static int send2User(byte[] writeBuff,int squenceId , byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2User(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    	
-    	public static int send2Allocator(byte[] writeBuff,int squenceId , byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2Allocator(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    	
-    	public static int send2Gamer(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		DataTransfer.send2Gamer(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    		return 1;
-    	}
-    	
-    	public static int send2GoldCoin(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset ,int length){
-    		int dst_server_id = libArgsConfig.id;
-    		return DataTransfer.send2GoldCoin(writeBuff,squenceId, data,offset,length, libArgsConfig.server_type, libArgsConfig.id, dst_server_id);
-    	}
-    }
     
     public static LogListener mLogListener = new LogListener(){
 
