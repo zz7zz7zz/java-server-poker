@@ -149,10 +149,12 @@ public class Main {
 						code = 1;
 						break;
 					}else if(the_rest_msg_length <= header_length){//说明还没有接收完完整的一个包头，继续读取
-	    				client.mReceivingMsg = new Message();
-	    				System.arraycopy(msg.data,msg.offset+msg_offset,client.mReceivingMsg.data,client.mReceivingMsg.offset,the_rest_msg_length);
-        				client.mReceivingMsg.length = the_rest_msg_length;
-        				
+            			int capacity = 16384;//16KB
+            			if(the_rest_msg_length >= DataPacket.Header.OFFSET_SEQUENCEID){//可以读出包体的长度,尽量传递真实的长度
+            				capacity = DataPacket.getLength(msg.data,msg.offset+msg_offset);
+            			}
+	    				client.mReceivingMsg = MessageBuffer.getInstance().buildWithCapacity(capacity,msg.data,msg.offset+msg_offset,the_rest_msg_length);
+	    				
         				code = -101;//不足包头
         				half_packet_count++;
         				break;
