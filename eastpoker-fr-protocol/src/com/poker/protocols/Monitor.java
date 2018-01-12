@@ -17,7 +17,7 @@ public class Monitor {
 		
 		byte[] body = builder.build().toByteArray();
 		
-		return DataPacket.write(writeBuff, 2, MonitorCmd.CMD_REGISTER, (byte)0, (byte)0, (short)0, body,0,body.length);
+		return DataPacket.write(writeBuff, 2, MonitorCmd.CMD_MONITOR_REGISTER, (byte)0, (byte)0, (short)0, body,0,body.length);
 	}
 	
 	public static int unregister2Monitor(byte[] writeBuff,int type ,String name, int id, String host ,int port){
@@ -31,6 +31,6 @@ public class Monitor {
 
 		byte[] body = builder.build().toByteArray();
 		
-		return DataPacket.write(writeBuff, 2, MonitorCmd.CMD_UNREGISTER, (byte)0, (byte)0, (short)0, body,0,body.length);
+		return DataPacket.write(writeBuff, 2, MonitorCmd.CMD_MONITOR_UNREGISTER, (byte)0, (byte)0, (short)0, body,0,body.length);
 	}
 }

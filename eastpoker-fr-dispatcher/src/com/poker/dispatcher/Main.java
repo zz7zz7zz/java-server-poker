@@ -272,15 +272,15 @@ public class Main {
 		public void onHandleCmd(AbstractServerClient client, int cmd ,Message msg,int body_start,int body_length){
         	try {
         		
-        		Logger.v("onReceiveMessage 0x" + Integer.toHexString(cmd) + " cmdName " + DispatchCmd.getCmdString(cmd));
+        		Logger.v("onReceiveMessage cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd));
         		
-        		if(cmd == DispatchCmd.CMD_REGISTER){
+        		if(cmd == DispatchCmd.CMD_DISPATCH_REGISTER){
         			mHandler.register(client, msg, body_start,body_length);
-        		}else if(cmd == DispatchCmd.CMD_DISPATCH){
+        		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA){
         			mHandler.dispatch(client, msg, body_start, body_length,mWriteBuffer,mServerMessageProcessor);
-        		}else if(cmd == DispatchCmd.CMD_DISPATCH_GAME_GROUP){
+        		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA_GAME_GROUP){
         			mHandler.dispatchGameGoup(client, msg, body_start, body_length, mWriteBuffer, mServerMessageProcessor);
-        		}else if(cmd == DispatchCmd.CMD_DISPATCH_MATCH_GROUP){
+        		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA_MATCH_GROUP){
         			mHandler.dispatchMatchGroup(client, msg, body_start, body_length, mWriteBuffer, mServerMessageProcessor);
         		}else{
         			

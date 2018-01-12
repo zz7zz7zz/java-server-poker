@@ -313,11 +313,11 @@ public class Main {
         		
         		Logger.v("onReceiveMessage 0x" + Integer.toHexString(cmd));
         		
-	        	if(cmd == AllocatorCmd.CMD_REPORT_ROOMINFO){
+	        	if(cmd == AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO){
 	        		mHandler.on_report_roominfo(client,msg);
-	        	}else if(cmd == AllocatorCmd.CMD_GET_ROOMINFO){
+	        	}else if(cmd == AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){
 	        		mHandler.on_get_roominfo(client,msg);
-	        	}else if(cmd == AllocatorCmd.CMD_UPDATE_ROOMINFO){
+	        	}else if(cmd == AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_UPDATE_ROOMINFO){
 	        		mHandler.on_update_roominfo(client,msg);
 	        	}
 			} catch (InvalidProtocolBufferException e) {

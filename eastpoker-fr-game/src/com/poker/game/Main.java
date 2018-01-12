@@ -190,7 +190,7 @@ public class Main {
 		        	System.out.println(String.format("onReceiveMessage mDisPatcherMessageProcessor 0x%s  squenceId %s",sCmd,squenceId));
 		        	Logger.v(String.format("onReceiveMessage mDisPatcherMessageProcessor 0x%s  squenceId %s",sCmd,squenceId));
 		        	
-		        	if(cmd == AllocatorCmd.CMD_GET_ROOMINFO){
+		        	if(cmd == AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){
 		        		mHandler.on_get_roominfo(mClient,write_buff_dispatcher,write_buf,1,mDisPatcherMessageProcessor,mConfig,mRoom);
 		        	}
 	        	}catch(Exception e){
