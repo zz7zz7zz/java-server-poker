@@ -78,6 +78,9 @@ public class Main {
         
         //----------------------------------------- 四、反注册关联服务器 ---------------------------------------
         unregister_monitor(mConfig);//反注册到服务监听器
+        
+        //----------------------------------------- 五、最终退出程序 ---------------------------------------
+        System.exit(0);
     }
 
     
@@ -269,7 +272,7 @@ public class Main {
 		public void onHandleCmd(AbstractServerClient client, int cmd ,Message msg,int body_start,int body_length){
         	try {
         		
-        		Logger.v("onReceiveMessage 0x" + Integer.toHexString(cmd));
+        		Logger.v("onReceiveMessage 0x" + Integer.toHexString(cmd) + " cmdName " + DispatchCmd.getCmdString(cmd));
         		
         		if(cmd == DispatchCmd.CMD_REGISTER){
         			mHandler.register(client, msg, body_start,body_length);
