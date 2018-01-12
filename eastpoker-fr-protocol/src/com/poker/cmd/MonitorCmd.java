@@ -8,4 +8,13 @@ public final class MonitorCmd {
 	
 	public static final int CMD_UNREGISTER  = (ServerIds.SERVER_MONITOR <<16) + 2;//0x10002
 	
+	//------------------------------------------------------------------------------------------
+	public static String getCmdString(int cmd){
+		if(cmd == CMD_REGISTER){
+			return "CMD_REGISTER";
+		}else if(cmd == CMD_UNREGISTER){
+			return "CMD_UNREGISTER";
+		}
+		return "UNKNOWN";
+	}
 }
