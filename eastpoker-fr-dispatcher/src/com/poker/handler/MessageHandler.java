@@ -67,7 +67,7 @@ public class MessageHandler {
 
     public void dispatchGameGoup(AbstractServerClient client, Message msg, int body_start, int body_length, ByteBuffer mWriteBuffer,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,body_start,body_length);
-		System.out.println("DispatchPacket "+mDispatchPacket.toString());
+
 		int count = mDispatchPacket.getDispatchChainListCount();
 		if(count>0){
 			DispatchChain chain = mDispatchPacket.getDispatchChainList(count-1);
@@ -90,7 +90,7 @@ public class MessageHandler {
     
     public void dispatchMatchGroup(AbstractServerClient client, Message msg, int body_start, int body_length,ByteBuffer mWriteBuffer,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
     	DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,body_start,body_length);
-		System.out.println("DispatchPacket "+mDispatchPacket.toString());
+
 		int count = mDispatchPacket.getDispatchChainListCount();
 		if(count>0){
 			DispatchChain chain = mDispatchPacket.getDispatchChainList(count-1);
@@ -254,9 +254,7 @@ public class MessageHandler {
     public void logServer(){
 		//打印所有的服务
     	logServer("---server ",serverList);
-    	
     	logServer("---gameGroup ",gameGroupList);
-    	
     	logServer("---matchGroup ",matchGroupList);
     }
     
