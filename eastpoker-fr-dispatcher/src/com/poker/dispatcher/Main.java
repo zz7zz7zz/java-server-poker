@@ -52,15 +52,16 @@ public class Main {
         Logger.addFilterTraceElement(mLogListener.getClass().getName());
         
         //1.4 业务配置初始化
-        Config mConfig = new Config();
-        mConfig.initFileConfig("./conf/server.config");
+        Config mServerConfig = new Config();
+        mServerConfig.initFileConfig("./conf/server.config");
         
-        Logger.v("libArgsConfig: "+ libArgsConfig.toString()+"\r\n");
+        Logger.v("libArgsConfig  : "+ libArgsConfig.toString()+"\r\n");
         Logger.v("libServerConfig: "+ libServerConfig.toString()+"\r\n");
-        Logger.v("libLogConfig: "+ libLogConfig.toString()+"\r\n");
+        Logger.v("libLogConfig   : "+ libLogConfig.toString()+"\r\n");
+        Logger.v("mServerConfig  : "+ mServerConfig.toString()+"\r\n");
         
         //----------------------------------------- 二、注册到关联服务器 ---------------------------------------
-        register_monitor(mConfig);//注册到服务监听器
+        register_monitor(mServerConfig);//注册到服务监听器
     	
         //----------------------------------------- 三、服务器初始化 ------------------------------------------
     	Logger.v("-------Server------start---------");
@@ -77,7 +78,7 @@ public class Main {
         Logger.v("-------Server------end---------");
         
         //----------------------------------------- 四、反注册关联服务器 ---------------------------------------
-        unregister_monitor(mConfig);//反注册到服务监听器
+        unregister_monitor(mServerConfig);//反注册到服务监听器
         
         //----------------------------------------- 五、最终退出程序 ---------------------------------------
         System.exit(0);

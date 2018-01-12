@@ -1,5 +1,6 @@
 package com.poker.common.config;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import com.open.net.client.object.UdpAddress;
@@ -31,4 +32,9 @@ public class Config {
             }
        }
     }
+
+	@Override
+	public String toString() {
+		return "Config [monitor_net_udp=" + Arrays.toString(monitor_net_udp) + "]";
+	}
 }
