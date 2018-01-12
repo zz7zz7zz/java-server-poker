@@ -14,7 +14,6 @@ import com.open.net.client.object.IConnectListener;
 import com.open.net.client.object.TcpAddress;
 import com.open.net.client.message.MessageBuffer;
 import com.open.net.server.object.ArgsConfig;
-import com.open.net.server.object.ServerConfig;
 import com.open.net.server.object.ServerLog;
 import com.open.net.server.object.ServerLog.LogListener;
 import com.open.net.server.utils.NetUtil;
@@ -22,6 +21,7 @@ import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
 import com.poker.base.ServerIds;
 import com.poker.cmd.AllocatorCmd;
+import com.poker.cmd.DispatchCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
 import com.poker.handler.MessageHandler;
@@ -44,11 +44,6 @@ public class Main {
     	libArgsConfig = new ArgsConfig();
     	libArgsConfig.initArgsConfig(args);
     	libArgsConfig.server_type = ServerIds.SERVER_ALLOCATOR;
-    	
-    	//1.2 服务器配置初始化:解析文件配置
-        ServerConfig libServerConfig = new ServerConfig();
-        libServerConfig.initArgsConfig(libArgsConfig);
-        libServerConfig.initFileConfig("./conf/lib.server.config");
         
         //1.3 服务器配置初始化:作为客户端配置
         ClientConfig libClientConfig = new ClientConfig();
@@ -61,17 +56,17 @@ public class Main {
         Logger.addFilterTraceElement(mLogListener.getClass().getName());
         
         //1.4 业务配置初始化
-        mConfig = new Config();
-        mConfig.initFileConfig("./conf/server.config");
+        mServerConfig = new Config();
+        mServerConfig.initFileConfig("./conf/server.config");
         
         Logger.v("libArgsConfig: "+ libArgsConfig.toString()+"\r\n");
-        Logger.v("libServerConfig: "+ libServerConfig.toString()+"\r\n");
         Logger.v("libClientConfig: "+ libClientConfig.toString()+"\r\n");
         Logger.v("libLogConfig: "+ libLogConfig.toString()+"\r\n");
+        Logger.v("mServerConfig: "+ mServerConfig.toString()+"\r\n");
         
         //----------------------------------------- 二、注册到关联服务器 ---------------------------------------
-        register_monitor(mConfig);//注册到服务监听器
-    	register_dispatcher(mConfig);//注册到Dispatcher
+        register_monitor(mServerConfig);//注册到服务监听器
+    	register_dispatcher(mServerConfig);//注册到Dispatcher
     	
         //----------------------------------------- 三、服务器初始化 ------------------------------------------
     	while(true){
@@ -83,15 +78,20 @@ public class Main {
 			}
     	}
         //----------------------------------------- 四、反注册关联服务器 ---------------------------------------
-        unregister_dispatcher(mConfig);//反注册到服务监听器
-        unregister_monitor(mConfig);//反注册到服务监听器
+        unregister_dispatcher(mServerConfig);//反注册到服务监听器
+        unregister_monitor(mServerConfig);//反注册到服务监听器
+        
+        //----------------------------------------- 五、最终退出程序 ---------------------------------------
+        System.exit(0);
     }
 
     //---------------------------------------Monitor----------------------------------------------------
     public static ArgsConfig libArgsConfig;
-    public static Config mConfig;
+    public static Config mServerConfig;
     public static byte[] write_buff = new byte[16*1024];
     public static byte[] write_buff_2 = new byte[16*1024];
+    public static NioClient [] dispatcher;
+    
     public static void register_monitor(Config mConfig){
         Monitor.register2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
@@ -133,8 +133,6 @@ public class Main {
     		}
     	}
     }
-    
-    public static NioClient [] dispatcher;
     
 	private static IConnectListener mDisPatcherConnectResultListener = new IConnectListener() {
 		@Override
@@ -221,7 +219,7 @@ public class Main {
 		            			int body_length     = DataPacket.getLength(msg.data, header_start)-header_length;
 		            			
 		            			int cmd = DataPacket.getCmd(msg.data, header_start);
-		            			onHandleCmd(client,cmd,msg,body_start,body_length);
+		            			onHandleCmd(client,cmd,msg,header_start,header_length,body_start,body_length);
 		            			msg_offset += packetLength;
 		            			
 		            			full_packet_count++;
@@ -276,7 +274,7 @@ public class Main {
 		            			int body_length     = DataPacket.getLength(client.mReceivingMsg.data, header_start)-header_length;
 		            			
 	        					int cmd = DataPacket.getCmd(client.mReceivingMsg.data, header_start);
-		            			onHandleCmd(client,cmd,client.mReceivingMsg,body_start,body_length);
+		            			onHandleCmd(client,cmd,client.mReceivingMsg,header_start,header_length,body_start,body_length);
 		            			
 	        					full_packet_count++;
 	        					
@@ -308,10 +306,10 @@ public class Main {
 	    		Logger.v("code "+ code +" full_packet_count " + full_packet_count + " half_packet_count " + half_packet_count + System.getProperty("line.separator"));
 	        }
 		 
-		public void onHandleCmd(AbstractClient client, int cmd ,Message msg,int body_start,int body_length){
+		 public void onHandleCmd(AbstractClient client, int cmd ,Message msg,int header_start,int header_length,int body_start,int body_length){
         	try {
         		
-        		Logger.v("onReceiveMessage 0x" + Integer.toHexString(cmd));
+        		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(msg.data,header_start));
         		
 	        	if(cmd == AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO){
 	        		mHandler.on_report_roominfo(client,msg);
