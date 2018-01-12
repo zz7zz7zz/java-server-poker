@@ -312,8 +312,13 @@ public class Main {
     		Logger.v("code "+ code +" full_packet_count " + full_packet_count + " half_packet_count " + half_packet_count + System.getProperty("line.separator"));
         }
 		
-		
-		 public void onHandleCmd(AbstractClient client, int cmd ,Message msg,int header_start,int header_length,int body_start,int body_length){
+		@Override
+		public void send(AbstractClient mClient, byte[] src, int offset, int length) {
+			super.send(mClient, src, offset, length);
+			Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+		}
+
+		public void onHandleCmd(AbstractClient client, int cmd ,Message msg,int header_start,int header_length,int body_start,int body_length){
 	        	try {
 	        		
 	        		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(msg.data,header_start));
