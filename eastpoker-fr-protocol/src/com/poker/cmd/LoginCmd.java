@@ -12,10 +12,10 @@ public final class LoginCmd {
 	//------------------------------------------------------------------------------------------
 	public static String getCmdString(int cmd){
 		if(cmd == CMD_LOGIN){
-			return "CMD_LOGIN";
+			return "cmd_login";
 		}else if(cmd == CMD_LOGIN_RESPONSE){
-			return "CMD_LOGIN_RESPONSE";
+			return "cmd_login_response";
 		}
-		return "UNKNOWN";
+		return "unknown";
 	}
 }

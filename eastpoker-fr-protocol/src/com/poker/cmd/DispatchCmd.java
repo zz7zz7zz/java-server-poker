@@ -14,17 +14,17 @@ public final class DispatchCmd {
 	//------------------------------------------------------------------------------------------
 	public static String getCmdString(int cmd){
 		if(cmd == CMD_REGISTER){
-			return "CMD_REGISTER";
+			return "cmd_register";
 		}else if(cmd == CMD_UNREGISTER){
-			return "CMD_UNREGISTER";
+			return "cmd_unregister";
 		}else if(cmd == CMD_DISPATCH){
-			return "CMD_DISPATCH";
+			return "cmd_dispatch";
 		}else if(cmd == CMD_DISPATCH_GAME_GROUP){
-			return "CMD_DISPATCH_GAME_GROUP";
+			return "cmd_dispatch_game_group";
 		}else if(cmd == CMD_DISPATCH_MATCH_GROUP){
-			return "CMD_DISPATCH_MATCH_GROUP";
+			return "cmd_dispatch_match_group";
 		}
-		return "UNKNOWN";
+		return "unknown";
 	}
 	
 }

@@ -13,13 +13,13 @@ public final class AllocatorCmd {
 	//------------------------------------------------------------------------------------------
 	public static String getCmdString(int cmd){
 		if(cmd == CMD_REPORT_ROOMINFO){
-			return "CMD_REPORT_ROOMINFO";
+			return "cmd_report_roominfo";
 		}else if(cmd == CMD_GET_ROOMINFO){
-			return "CMD_GET_ROOMINFO";
+			return "cmd_get_roominfo";
 		}else if(cmd == CMD_UPDATE_ROOMINFO){
-			return "CMD_UPDATE_ROOMINFO";
+			return "cmd_update_roominfo";
 		}
-		return "UNKNOWN";
+		return "unknown";
 	}
 	
 }

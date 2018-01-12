@@ -9,9 +9,9 @@ public final class AccessCmd {
 	//------------------------------------------------------------------------------------------
 	public static String getCmdString(int cmd){
 		if(cmd == CMD_CLIENT_HEAR_BEAT){
-			return "CMD_CLIENT_HEAR_BEAT";
+			return "cmd_client_hear_beat";
 		}
-		return "UNKNOWN";
+		return "unknown";
 	}
 	
 }

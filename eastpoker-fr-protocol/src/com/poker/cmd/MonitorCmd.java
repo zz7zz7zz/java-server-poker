@@ -11,10 +11,10 @@ public final class MonitorCmd {
 	//------------------------------------------------------------------------------------------
 	public static String getCmdString(int cmd){
 		if(cmd == CMD_REGISTER){
-			return "CMD_REGISTER";
+			return "cmd_register";
 		}else if(cmd == CMD_UNREGISTER){
-			return "CMD_UNREGISTER";
+			return "cmd_unregister";
 		}
-		return "UNKNOWN";
+		return "unknown";
 	}
 }
