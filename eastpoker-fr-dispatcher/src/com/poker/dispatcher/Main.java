@@ -165,7 +165,7 @@ public class Main {
 	            			int body_length     = DataPacket.getLength(msg.data, header_start)-header_length;
 	            			
 	            			int cmd = DataPacket.getCmd(msg.data, header_start);
-	            			onHandleCmd(client,cmd,msg,body_start,body_length);
+	            			onHandleCmd(client,cmd,msg,header_start,header_length,body_start,body_length);
 	            			msg_offset += packetLength;
 	            			
 	            			full_packet_count++;
@@ -220,7 +220,7 @@ public class Main {
 	            			int body_length     = DataPacket.getLength(client.mReceivingMsg.data, header_start)-header_length;
 	            			
         					int cmd = DataPacket.getCmd(client.mReceivingMsg.data, header_start);
-	            			onHandleCmd(client,cmd,client.mReceivingMsg,body_start,body_length);
+	            			onHandleCmd(client,cmd,client.mReceivingMsg,header_start,header_length,body_start,body_length);
 	            			
         					full_packet_count++;
         					
@@ -270,10 +270,30 @@ public class Main {
 			mHandler.exit(client);
 		}
 		
-		public void onHandleCmd(AbstractServerClient client, int cmd ,Message msg,int body_start,int body_length){
+		
+		
+		@Override
+		public void unicast(AbstractServerClient client, byte[] src, int offset, int length) {
+			super.unicast(client, src, offset, length);
+			Logger.v("output_packet_unicast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+		}
+
+		@Override
+		public void multicast(AbstractServerClient[] clients, byte[] src, int offset, int length) {
+			super.multicast(clients, src, offset, length);
+			Logger.v("output_packet_multicast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+		}
+
+		@Override
+		public void broadcast(byte[] src, int offset, int length) {
+			super.broadcast(src, offset, length);
+			Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+		}
+
+		public void onHandleCmd(AbstractServerClient client, int cmd ,Message msg,int header_start,int header_length,int body_start,int body_length){
         	try {
         		
-        		Logger.v("onReceiveMessage cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd));
+        		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(msg.data,header_start));
         		
         		if(cmd == DispatchCmd.CMD_DISPATCH_REGISTER){
         			mHandler.register(client, msg, body_start,body_length);
