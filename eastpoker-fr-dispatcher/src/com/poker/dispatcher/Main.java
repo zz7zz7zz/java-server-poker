@@ -57,7 +57,6 @@ public class Main {
         Logger.v("libLogConfig   : "+ libLogConfig.toString()+"\r\n");
         Logger.v("mServerConfig  : "+ mServerConfig.toString()+"\r\n");
         
-
         //----------------------------------------- 二、注册到关联服务器 ---------------------------------------
         register_monitor(mServerConfig);//注册到服务监听器
     	

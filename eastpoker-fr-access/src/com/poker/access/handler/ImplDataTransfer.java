@@ -1,4 +1,4 @@
-package com.poker.server;
+package com.poker.access.handler;
 
 import com.poker.access.Main;
 import com.poker.data.DataTransfer;
