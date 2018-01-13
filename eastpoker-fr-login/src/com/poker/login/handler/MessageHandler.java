@@ -1,4 +1,4 @@
-package com.poker.handler;
+package com.poker.login.handler;
 
 import java.util.HashMap;
 
@@ -8,7 +8,6 @@ import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.poker.protocols.LoginResponse;
 import com.poker.protocols.server.LoginProto;
-import com.poker.server.ImplDataTransfer;
 
 public class MessageHandler {
 

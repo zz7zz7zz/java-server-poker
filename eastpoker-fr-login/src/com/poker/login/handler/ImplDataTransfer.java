@@ -1,4 +1,4 @@
-package com.poker.server;
+package com.poker.login.handler;
 
 import com.poker.login.Main;
 import com.poker.data.DataTransfer;

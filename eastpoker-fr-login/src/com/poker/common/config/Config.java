@@ -1,5 +1,6 @@
 package com.poker.common.config;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import com.open.net.client.object.TcpAddress;
@@ -58,4 +59,11 @@ public class Config {
             }
        }
     }
+
+	@Override
+	public String toString() {
+		return "Config [dispatcher_net_tcp=" + Arrays.toString(dispatcher_net_tcp) + ", dispatcher_net_udp="
+				+ Arrays.toString(dispatcher_net_udp) + ", monitor_net_udp=" + Arrays.toString(monitor_net_udp) + "]";
+	}
+    
 }
