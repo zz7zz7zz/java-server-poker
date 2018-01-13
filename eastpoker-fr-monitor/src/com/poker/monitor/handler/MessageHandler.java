@@ -1,4 +1,4 @@
-package com.poker.handler;
+package com.poker.monitor.handler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,16 +10,17 @@ import com.open.net.server.message.Message;
 import com.open.net.server.object.AbstractServerClient;
 import com.open.net.server.utils.TextUtils;
 import com.open.util.log.Logger;
+import com.poker.cmd.MonitorCmd;
 import com.poker.data.DataPacket;
-
 import com.poker.protocols.server.ServerProto.Server;
 
 public class MessageHandler {
 
     public HashMap<Integer, ArrayList<AbstractServerClient>> serverOnlineList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
- 
+
+	
     public void register(AbstractServerClient client, Message msg, int body_start, int body_length) throws InvalidProtocolBufferException{
-    	Server enterServer = Server.parseFrom(msg.data,msg.offset + DataPacket.getHeaderLength(),msg.length - DataPacket.getHeaderLength());
+    	Server enterServer = Server.parseFrom(msg.data,body_start,body_length);
 		
 		boolean add = true;
 		ArrayList<AbstractServerClient> clientArray = serverOnlineList.get(enterServer.getType());
