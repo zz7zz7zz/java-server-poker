@@ -1,4 +1,4 @@
-package com.poker.server;
+package com.poker.allocator.handler;
 
 import com.poker.allocator.Main;
 import com.poker.data.DataTransfer;
