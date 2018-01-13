@@ -39,7 +39,7 @@ public class Main {
     	libArgsConfig.initArgsConfig(args);
     	libArgsConfig.server_type = ServerIds.SERVER_LOGIN;
         
-        //1.32 服务器配置初始化:作为客户端配置
+        //1.2 服务器配置初始化:作为客户端配置
         ClientConfig libClientConfig = new ClientConfig();
         libClientConfig.initFileConfig("./conf/lib.client.config");
         GClient.init(libClientConfig);
