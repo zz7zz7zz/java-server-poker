@@ -1,4 +1,4 @@
-package com.poker.server;
+package com.poker.game.handler;
 
 import com.poker.game.Main;
 import com.poker.data.DataTransfer;
@@ -21,7 +21,7 @@ public class ImplDataTransfer{
 	}
 	
 	public static int send2Allocator(byte[] writeBuff,int squenceId , byte[] data, int offset ,int length){
-		int dst_server_id = Main.mConfig.game_id;
+		int dst_server_id = Main.mServerConfig.game_id;
 		return DataTransfer.send2Allocator(writeBuff,squenceId, data,offset,length, Main.libArgsConfig.server_type, Main.libArgsConfig.id, dst_server_id,-1,-1);
 	}
 	

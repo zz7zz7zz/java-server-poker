@@ -86,8 +86,8 @@ public class Main {
     //---------------------------------------Fields----------------------------------------------------
     public static ArgsConfig libArgsConfig;
     public static Config mServerConfig;
-    public static byte[] write_buff;
     public static NioClient [] dispatcher;
+    public static byte[] write_buff;
 	private static ClientMessageProcessor mClientMessageProcessor = new ClientMessageProcessor(new MessageHandler());
 	
     //---------------------------------------Logger----------------------------------------------------

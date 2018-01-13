@@ -1,4 +1,4 @@
-package com.poker.handler;
+package com.poker.game.handler;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.object.AbstractClient;
@@ -10,7 +10,6 @@ import com.poker.games.Room;
 import com.poker.games.Table;
 import com.poker.protocols.server.GameServerProto;
 import com.poker.protocols.server.GameTableProto;
-import com.poker.server.ImplDataTransfer;
 
 
 
