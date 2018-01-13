@@ -1,6 +1,5 @@
 package com.poker.dispatcher.handler;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,9 +31,9 @@ public class MessageHandler {
 		
 		logServer();
     }
-    
+
    //--------------------------------------------------------------------------------------------------------
-    public void dispatch(AbstractServerClient client, Message msg, int body_start, int body_length, ByteBuffer mWriteBuffer,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
+    public void dispatch(AbstractServerClient client, Message msg, int body_start, int body_length, byte[] write_buff,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,body_start,body_length);
 		int count = mDispatchPacket.getDispatchChainListCount();
 		if(count>0){
@@ -57,15 +56,13 @@ public class MessageHandler {
 			Logger.v(String.format("dispatch %d %d %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),chain.getDstServerType(),chain.getDstServerId(),(null != server) ? 1 : 0));
 			
 			if(null != server){
-				mWriteBuffer.clear();
-				mDispatchPacket.getData().copyTo(mWriteBuffer);
-				mWriteBuffer.flip();
-				mServerMessageProcessor.unicast(server, mWriteBuffer.array(),0,mWriteBuffer.remaining());
+				mDispatchPacket.getData().copyTo(write_buff, 0);
+				mServerMessageProcessor.unicast(server, write_buff,0,mDispatchPacket.getData().size());
 			}
 		}
     }
 
-    public void dispatchGameGoup(AbstractServerClient client, Message msg, int body_start, int body_length, ByteBuffer mWriteBuffer,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
+    public void dispatchGameGoup(AbstractServerClient client, Message msg, int body_start, int body_length, byte[] write_buff,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,body_start,body_length);
 
 		int count = mDispatchPacket.getDispatchChainListCount();
@@ -79,16 +76,15 @@ public class MessageHandler {
         		for(AbstractServerClient server:gameGroupArray){
         			Server attachObj = (Server) server.getAttachment();
         			Logger.v(String.format("dispatch_game_group %d %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),attachObj.getType(),attachObj.getId()));
-    				mWriteBuffer.clear();
-    				mDispatchPacket.getData().copyTo(mWriteBuffer);
-    				mWriteBuffer.flip();
-    				mServerMessageProcessor.unicast(server, mWriteBuffer.array(),0,mWriteBuffer.remaining());
+        			
+    				mDispatchPacket.getData().copyTo(write_buff, 0);
+    				mServerMessageProcessor.unicast(server, write_buff,0,mDispatchPacket.getData().size());
         		}
     		}
 		}
     }
     
-    public void dispatchMatchGroup(AbstractServerClient client, Message msg, int body_start, int body_length,ByteBuffer mWriteBuffer,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
+    public void dispatchMatchGroup(AbstractServerClient client, Message msg, int body_start, int body_length,byte[] write_buff,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
     	DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,body_start,body_length);
 
 		int count = mDispatchPacket.getDispatchChainListCount();
@@ -102,10 +98,9 @@ public class MessageHandler {
         		for(AbstractServerClient server:matchGroupArray){
         			Server attachObj = (Server) server.getAttachment();
         			Logger.v(String.format("dispatch_match_group %d %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),attachObj.getType(),attachObj.getId()));
-    				mWriteBuffer.clear();
-    				mDispatchPacket.getData().copyTo(mWriteBuffer);
-    				mWriteBuffer.flip();
-    				mServerMessageProcessor.unicast(server, mWriteBuffer.array(),0,mWriteBuffer.remaining());
+        			
+    				mDispatchPacket.getData().copyTo(write_buff, 0);
+    				mServerMessageProcessor.unicast(server, write_buff,0,mDispatchPacket.getData().size());
         		}
     		}
 		}

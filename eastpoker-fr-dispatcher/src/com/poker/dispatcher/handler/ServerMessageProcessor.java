@@ -1,7 +1,5 @@
 package com.poker.dispatcher.handler;
 
-import java.nio.ByteBuffer;
-
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.server.message.Message;
 import com.open.net.server.message.MessageBuffer;
@@ -15,12 +13,12 @@ import com.poker.dispatcher.handler.MessageHandler;
 public class ServerMessageProcessor extends AbstractServerMessageProcessor{
 
 	public MessageHandler mHandler;
-    public ByteBuffer mWriteBuffer;
+    public byte[] write_buff;
     
-	public ServerMessageProcessor(MessageHandler mHandler, ByteBuffer mWriteBuffer) {
+	public ServerMessageProcessor(MessageHandler mHandler, byte[] writeBuffer) {
 		super();
 		this.mHandler = mHandler;
-		this.mWriteBuffer = mWriteBuffer;
+		this.write_buff = writeBuffer;
 	}
 
 	protected void onReceiveMessage(AbstractServerClient client, Message msg){
@@ -194,11 +192,11 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
     		if(cmd == DispatchCmd.CMD_DISPATCH_REGISTER){
     			mHandler.register(client, msg, body_start,body_length);
     		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA){
-    			mHandler.dispatch(client, msg, body_start, body_length,mWriteBuffer,this);
+    			mHandler.dispatch(client, msg, body_start, body_length,write_buff,this);
     		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA_GAME_GROUP){
-    			mHandler.dispatchGameGoup(client, msg, body_start, body_length, mWriteBuffer, this);
+    			mHandler.dispatchGameGoup(client, msg, body_start, body_length, write_buff, this);
     		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA_MATCH_GROUP){
-    			mHandler.dispatchMatchGroup(client, msg, body_start, body_length, mWriteBuffer, this);
+    			mHandler.dispatchMatchGroup(client, msg, body_start, body_length, write_buff, this);
     		}else{
     			
     		}

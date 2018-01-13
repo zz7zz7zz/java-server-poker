@@ -54,6 +54,9 @@ public class Main {
         mServerConfig = new Config();
         mServerConfig.initFileConfig("./conf/server.config");
         
+        //-----------------------------------------初始化全局属性-----------------------------------------------
+        initGlobalFields(libClientConfig.packet_max_length_tcp);
+        
         Logger.v("libArgsConfig: "+ libArgsConfig.toString()+"\r\n");
         Logger.v("libClientConfig: "+ libClientConfig.toString()+"\r\n");
         Logger.v("libLogConfig: "+ libLogConfig.toString()+"\r\n");
@@ -83,7 +86,7 @@ public class Main {
     //---------------------------------------Fields----------------------------------------------------
     public static ArgsConfig libArgsConfig;
     public static Config mServerConfig;
-    public static byte[] write_buff = new byte[16*1024];
+    public static byte[] write_buff;
     public static NioClient [] dispatcher;
 	private static ClientMessageProcessor mClientMessageProcessor = new ClientMessageProcessor(new MessageHandler());
 	
@@ -95,6 +98,11 @@ public class Main {
 			Logger.v(msg);
 		}
     };
+    
+    //---------------------------------------初始化全局对象----------------------------------------------------
+    private static void initGlobalFields(int packet_max_length_tcp){
+    	write_buff = new byte[packet_max_length_tcp];
+    }
     
     //---------------------------------------Monitor----------------------------------------------------
     public static void register_monitor(Config mConfig){

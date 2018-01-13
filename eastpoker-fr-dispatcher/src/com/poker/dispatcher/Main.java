@@ -1,7 +1,6 @@
 package com.poker.dispatcher;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import com.open.net.server.GServer;
 import com.open.net.server.impl.tcp.nio.NioServer;
@@ -50,11 +49,15 @@ public class Main {
         Config mServerConfig = new Config();
         mServerConfig.initFileConfig("./conf/server.config");
         
+        //-----------------------------------------初始化全局属性-----------------------------------------------
+        initGlobalFields(libServerConfig.packet_max_length_tcp);
+        
         Logger.v("libArgsConfig  : "+ libArgsConfig.toString()+"\r\n");
         Logger.v("libServerConfig: "+ libServerConfig.toString()+"\r\n");
         Logger.v("libLogConfig   : "+ libLogConfig.toString()+"\r\n");
         Logger.v("mServerConfig  : "+ mServerConfig.toString()+"\r\n");
         
+
         //----------------------------------------- 二、注册到关联服务器 ---------------------------------------
         register_monitor(mServerConfig);//注册到服务监听器
     	
@@ -65,7 +68,7 @@ public class Main {
             GServer.init(libServerConfig, com.open.net.server.impl.tcp.nio.NioClient.class);
             
             //3.2 服务器初始化
-            NioServer mNioServer = new NioServer(libServerConfig,new ServerMessageProcessor(new MessageHandler(),mWriteBuffer),mLogListener);
+            NioServer mNioServer = new NioServer(libServerConfig,new ServerMessageProcessor(new MessageHandler(),write_buff),mLogListener);
             mNioServer.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -82,8 +85,7 @@ public class Main {
     
     //---------------------------------------Fields----------------------------------------------------
     public static ArgsConfig libArgsConfig;
-    public static byte[] write_buff = new byte[16*1024];
-    public static ByteBuffer mWriteBuffer  = ByteBuffer.allocate(16*1024);
+    private static byte[] write_buff ;
     
     //---------------------------------------Logger----------------------------------------------------
     public static LogListener mLogListener = new LogListener(){
@@ -93,6 +95,11 @@ public class Main {
 			Logger.v(msg);
 		}
     };
+    
+    //---------------------------------------初始化全局对象----------------------------------------------------
+    private static void initGlobalFields(int packet_max_length_tcp){
+    	write_buff = new byte[packet_max_length_tcp];
+    }
     
     //---------------------------------------Monitor----------------------------------------------------
     public static void register_monitor(Config mConfig){
