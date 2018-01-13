@@ -1,4 +1,4 @@
-package com.poker.handler;
+package com.poker.dispatcher.handler;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
