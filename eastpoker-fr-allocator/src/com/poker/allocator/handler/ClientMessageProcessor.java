@@ -9,7 +9,6 @@ import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.util.log.Logger;
 import com.poker.cmd.AllocatorCmd;
-import com.poker.cmd.DispatchCmd;
 import com.poker.data.DataPacket;
 
 public class ClientMessageProcessor extends AbstractClientMessageProcessor {
@@ -166,7 +165,7 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
 	 public void dispatchMessage(AbstractClient client, int cmd ,Message msg,int header_start,int header_length,int body_start,int body_length){
     	try {
     		
-    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(msg.data,header_start));
+    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + AllocatorCmd.getCmdString(cmd) + " length " + DataPacket.getLength(msg.data,header_start));
     		
         	if(cmd == AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO){
         		mHandler.on_report_roominfo(client,msg,body_start,body_length);
