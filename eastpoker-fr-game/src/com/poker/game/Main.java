@@ -18,7 +18,7 @@ import com.poker.base.ServerIds;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
 import com.poker.game.handler.ClientMessageProcessor;
-import com.poker.game.handler.MessageHandler;
+import com.poker.game.handler.ClientMessageHandler;
 import com.poker.games.Room;
 import com.poker.protocols.Dispatcher;
 import com.poker.protocols.Monitor;
@@ -89,7 +89,7 @@ public class Main {
     public static NioClient [] dispatcher;
     public static byte[] write_buff ;
     public static byte[] write_buff_dispatcher ;
-    public static MessageHandler mHandler = new MessageHandler();
+    public static ClientMessageHandler mHandler = new ClientMessageHandler();
 	private static ClientMessageProcessor mClientMessageProcessor = new ClientMessageProcessor(mHandler);
 	
     public static Room mRoom;

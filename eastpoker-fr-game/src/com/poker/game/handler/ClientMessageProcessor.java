@@ -15,9 +15,9 @@ import com.poker.game.Main;
 
 public class ClientMessageProcessor extends AbstractClientMessageProcessor {
 
-	private MessageHandler mHandler;
+	private ClientMessageHandler mHandler;
 	
-	public ClientMessageProcessor(MessageHandler mHandler) {
+	public ClientMessageProcessor(ClientMessageHandler mHandler) {
 		super();
 		this.mHandler = mHandler;
 	}

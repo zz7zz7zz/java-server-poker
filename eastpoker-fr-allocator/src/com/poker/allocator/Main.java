@@ -16,7 +16,7 @@ import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
 import com.poker.allocator.handler.ClientMessageProcessor;
-import com.poker.allocator.handler.MessageHandler;
+import com.poker.allocator.handler.ClientMessageHandler;
 import com.poker.base.ServerIds;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
@@ -88,7 +88,7 @@ public class Main {
     public static Config mServerConfig;
     public static NioClient [] dispatcher;
     public static byte[] write_buff;
-	private static ClientMessageProcessor mClientMessageProcessor = new ClientMessageProcessor(new MessageHandler());
+	private static ClientMessageProcessor mClientMessageProcessor = new ClientMessageProcessor(new ClientMessageHandler());
 	
     //---------------------------------------Logger----------------------------------------------------
     public static LogListener mLogListener = new LogListener(){

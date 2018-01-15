@@ -13,7 +13,7 @@ import com.poker.protocols.server.GameServerProto.GameServer;
 import com.poker.protocols.server.GameTableProto.GameTable;
 
 
-public class MessageHandler {
+public class ClientMessageHandler {
 	
 	//game_id -> Servers
 	//Servers -> level-sever

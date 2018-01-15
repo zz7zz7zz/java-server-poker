@@ -15,7 +15,7 @@ import com.poker.protocols.server.DispatchChainProto.DispatchChain;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 import com.poker.protocols.server.ServerProto.Server;
 
-public class MessageHandler {
+public class ServerMessageHandler {
 
     public HashMap<Integer, ArrayList<AbstractServerClient>> serverList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
     public HashMap<Integer, ArrayList<AbstractServerClient>> gameGroupList = new HashMap<Integer, ArrayList<AbstractServerClient>>();

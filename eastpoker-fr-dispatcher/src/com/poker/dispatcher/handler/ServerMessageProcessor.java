@@ -8,14 +8,14 @@ import com.open.net.server.object.AbstractServerMessageProcessor;
 import com.open.util.log.Logger;
 import com.poker.cmd.DispatchCmd;
 import com.poker.data.DataPacket;
-import com.poker.dispatcher.handler.MessageHandler;
+import com.poker.dispatcher.handler.ServerMessageHandler;
 
 public class ServerMessageProcessor extends AbstractServerMessageProcessor{
 
-	public MessageHandler mHandler;
+	public ServerMessageHandler mHandler;
     public byte[] write_buff;
     
-	public ServerMessageProcessor(MessageHandler mHandler, byte[] writeBuffer) {
+	public ServerMessageProcessor(ServerMessageHandler mHandler, byte[] writeBuffer) {
 		super();
 		this.mHandler = mHandler;
 		this.write_buff = writeBuffer;

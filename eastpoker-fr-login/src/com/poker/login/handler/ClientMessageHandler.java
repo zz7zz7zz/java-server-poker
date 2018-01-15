@@ -9,7 +9,7 @@ import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.poker.protocols.LoginResponse;
 import com.poker.protocols.server.LoginProto;
 
-public class MessageHandler {
+public class ClientMessageHandler {
 
 	public static HashMap<String, Long> uidMap = new HashMap<>();
 	public static int uid_auto_generator = 10000;

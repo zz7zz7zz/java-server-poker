@@ -14,7 +14,7 @@ import com.open.util.log.base.LogConfig;
 import com.poker.base.ServerIds;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
-import com.poker.dispatcher.handler.MessageHandler;
+import com.poker.dispatcher.handler.ServerMessageHandler;
 import com.poker.dispatcher.handler.ServerMessageProcessor;
 import com.poker.protocols.Monitor;
 
@@ -67,7 +67,7 @@ public class Main {
             GServer.init(libServerConfig, com.open.net.server.impl.tcp.nio.NioClient.class);
             
             //3.2 服务器初始化
-            NioServer mNioServer = new NioServer(libServerConfig,new ServerMessageProcessor(new MessageHandler(),write_buff),mLogListener);
+            NioServer mNioServer = new NioServer(libServerConfig,new ServerMessageProcessor(new ServerMessageHandler(),write_buff),mLogListener);
             mNioServer.start();
         } catch (IOException e) {
             e.printStackTrace();

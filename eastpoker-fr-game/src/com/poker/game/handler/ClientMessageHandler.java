@@ -13,7 +13,7 @@ import com.poker.protocols.server.GameTableProto;
 
 
 
-public class MessageHandler {
+public class ClientMessageHandler {
 	
 	boolean isReported = false;
 	public int report_roominfo(AbstractClient client,byte[] write_buff_dispatcher,byte[] write_buf, int squenceId,AbstractClientMessageProcessor sender,Config config){

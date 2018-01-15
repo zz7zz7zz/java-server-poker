@@ -11,9 +11,9 @@ import com.poker.data.DataPacket;
 
 public class ServerMessageProcessor extends AbstractServerMessageProcessor{
 
-	public MessageHandler mHandler;
+	public ClientMessageHandler mHandler;
 	
-	public ServerMessageProcessor(MessageHandler mHandler) {
+	public ServerMessageProcessor(ClientMessageHandler mHandler) {
 		super();
 		this.mHandler = mHandler;
 	}

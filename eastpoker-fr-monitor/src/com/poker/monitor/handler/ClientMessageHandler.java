@@ -12,7 +12,7 @@ import com.open.net.server.utils.TextUtils;
 import com.open.util.log.Logger;
 import com.poker.protocols.server.ServerProto.Server;
 
-public class MessageHandler {
+public class ClientMessageHandler {
 
     public HashMap<Integer, ArrayList<AbstractServerClient>> serverOnlineList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
 
