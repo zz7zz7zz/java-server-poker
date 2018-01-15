@@ -8,164 +8,143 @@ package com.poker.data;
 
 public class DataPacket {
 
+	public static final byte   PACKET_FLAG          		= (byte)'G';
+	public static final byte   PACKET_VERSION          		= 1;
+	public static final byte[] PACKET_HEADER_EXTEND 		= new byte[0];
+	
     public static int write(byte[] writeBuff, int squenceId, int cmd , byte version, byte encrypt ,short gid, byte[] body,int bodyOffset,int bodyLength){
+    	return write(writeBuff,squenceId,cmd,PACKET_FLAG,version,encrypt,PACKET_HEADER_EXTEND,gid,body,bodyOffset,bodyLength);
+    }
+    
+    public static int write(byte[] writeBuff, int squenceId, int cmd ,byte flag ,byte version, byte encrypt,byte[] packet_header_extend ,short gid, byte[] body,int bodyOffset,int bodyLength){
     	
-    	DataConverter.putInt(writeBuff,   Header.OFFSET_LENGTH,	Header.HEADER_LENGTH + body.length);
-        DataConverter.putInt(writeBuff,   Header.OFFSET_SEQUENCEID,squenceId);
-        DataConverter.putInt(writeBuff,   Header.OFFSET_CMD,cmd);
-        DataConverter.putByte(writeBuff,  Header.OFFSET_VERSION,version);
-        DataConverter.putByte(writeBuff,  Header.OFFSET_ENCRYPT,encrypt);
-        DataConverter.putShort(writeBuff, Header.OFFSET_GID,gid);
+    	byte packet_header_extend_length	= (byte)packet_header_extend.length;				//包头，扩展长度
+    	int  packet_header_length   		= Header.HEADER_BASE_LENGTH + packet_header_extend_length; //包头，长度
+    	
+    	int  packet_ength 		 			= packet_header_length + body.length;//完整包长度
+    	
+    	//组装包头
+    	DataConverter.putInt(writeBuff,   Header.HEADER_OFFSET_LENGTH,	packet_ength);
+        DataConverter.putInt(writeBuff,   Header.HEADER_OFFSET_SEQUENCEID,squenceId);
+        DataConverter.putInt(writeBuff,   Header.HEADER_OFFSET_CMD,cmd);
         
-        DataConverter.putByte(writeBuff, Header.HEADER_LENGTH,body,bodyOffset,bodyLength);
+        DataConverter.putByte(writeBuff,  Header.HEADER_OFFSET_FLAG, flag);
+        DataConverter.putByte(writeBuff,  Header.HEADER_OFFSET_VERSION,version);
+        DataConverter.putByte(writeBuff,  Header.HEADER_OFFSET_ENCRYPT,encrypt);
+        DataConverter.putByte(writeBuff,  Header.HEADER_OFFSET_EXTEND,packet_header_extend_length);
         
-        return Header.HEADER_LENGTH + body.length;
+        DataConverter.putShort(writeBuff, Header.HEADER_OFFSET_GID,gid);
+        
+    	//组装扩展包头
+        DataConverter.putByte(writeBuff, Header.HEADER_BASE_LENGTH, packet_header_extend, 0, packet_header_extend_length);
+        
+        //组装包体
+        DataConverter.putByte(writeBuff, packet_header_length,body,bodyOffset,bodyLength);
+        
+        return packet_ength;
     }
     
-  //----------------------------------------------------------------------
-    public static int getHeaderLength(){
-    	return Header.HEADER_LENGTH;
-    }
-    
+  //----------------------------------------------------------------------    
     public static int getLength(byte[] buff){
         return getLength(buff, 0);
     }
     
-    public static int getLength(byte[] buff,int offset){
-        return DataConverter.getInt(buff, offset+Header.OFFSET_LENGTH);
+    public static int getLength(byte[] buff,int header_start_offset){
+        return DataConverter.getInt(buff, header_start_offset+Header.HEADER_OFFSET_LENGTH);
     }
 
     public static int getSequenceId(byte[] buff){
         return getSequenceId(buff,0);
     }
     
-    public static int getSequenceId(byte[] buff,int offset){
-        return DataConverter.getInt(buff, offset+Header.OFFSET_SEQUENCEID);
+    public static int getSequenceId(byte[] buff,int header_start_offset){
+        return DataConverter.getInt(buff, header_start_offset+Header.HEADER_OFFSET_SEQUENCEID);
     }
     
     public static int getCmd(byte[] buff){
         return getCmd(buff,0);
     }
     
-    public static int getCmd(byte[] buff,int offset){
-    	return DataConverter.getInt(buff, offset + Header.OFFSET_CMD);
+    public static int getCmd(byte[] buff,int header_start_offset){
+    	return DataConverter.getInt(buff, header_start_offset + Header.HEADER_OFFSET_CMD);
+    }
+    
+    public static byte getFlag(byte[] buff){
+        return getFlag(buff,0);
+    }
+    
+    public static byte getFlag(byte[] buff,int header_start_offset){
+    	return DataConverter.getByte(buff, header_start_offset+Header.HEADER_OFFSET_FLAG);
     }
     
     public static byte getVersion(byte[] buff){
         return getVersion(buff,0);
     }
     
-    public static byte getVersion(byte[] buff,int offset){
-    	return DataConverter.getByte(buff, offset+Header.OFFSET_VERSION);
+    public static byte getVersion(byte[] buff,int header_start_offset){
+    	return DataConverter.getByte(buff, header_start_offset+Header.HEADER_OFFSET_VERSION);
     }
 
     public static byte getEncrypt(byte[] buff){
         return getEncrypt(buff,0);
     }
     
-    public static byte getEncrypt(byte[] buff,int offset){
-    	return DataConverter.getByte(buff, offset+Header.OFFSET_ENCRYPT);
+    public static byte getEncrypt(byte[] buff,int header_start_offset){
+    	return DataConverter.getByte(buff, header_start_offset+Header.HEADER_OFFSET_ENCRYPT);
     }
 
+    public static int getHeaderLength(byte[] buff,int header_start_offset){
+    	return getBaseHeaderLength() + getExtendHeaderLength(buff,header_start_offset);
+    }
+    
+    public static int getBaseHeaderLength(){
+    	return Header.HEADER_BASE_LENGTH;
+    }
+    
+    public static int getExtendHeaderLength(byte[] buff){
+    	return getExtendHeaderLength(buff,0);
+    }
+    
+    public static byte getExtendHeaderLength(byte[] buff,int header_start_offset){
+    	return DataConverter.getByte(buff, header_start_offset + Header.HEADER_OFFSET_EXTEND);
+    }
+    
     public static short getGid(byte[] buff){
         return getGid(buff,0);
     }
     
-    public static short getGid(byte[] buff,int offset){
-    	return DataConverter.getShort(buff, offset+Header.OFFSET_GID);
+    public static short getGid(byte[] buff,int header_start_offset){
+    	return DataConverter.getShort(buff, header_start_offset+Header.HEADER_OFFSET_GID);
     }
     
     //---------------------------------------------------------------------------------------------
     public static final class Header {
 
-    	public static final int HEADER_LENGTH = 16;
+        //-----------------------包头的基本长度----------------------
+    	public static final int HEADER_BASE_LENGTH = 18;
 
-        public int      length;//包体长度，包含包头+包体
-        public int      sequenceId;//流水id
-        public int      cmd;   //命令字
-        public byte     version = 1;
-        public byte     encrypt;
-        public short    gid;
+        //-----------------------各个属性在包头中的偏移量----------------------
+        public static final int HEADER_OFFSET_LENGTH 		= 0;
+        public static final int HEADER_OFFSET_SEQUENCEID 	= 4;
+        public static final int HEADER_OFFSET_CMD 			= 8;
+        public static final int HEADER_OFFSET_FLAG 		    = 12;
+        public static final int HEADER_OFFSET_VERSION 		= 13;
+        public static final int HEADER_OFFSET_ENCRYPT 		= 14;
+        public static final int HEADER_OFFSET_EXTEND 		= 15;
+        public static final int HEADER_OFFSET_GID 			= 16;
         
-        public static final int OFFSET_LENGTH 		= 0;
-        public static final int OFFSET_SEQUENCEID 	= 4;
-        public static final int OFFSET_CMD 		= 8;
-        public static final int OFFSET_VERSION 	= 12;
-        public static final int OFFSET_ENCRYPT 	= 13;
-        public static final int OFFSET_GID 		= 14;
+        //-----------------------包头各个属性定义----------------------
+        public int      length;    		//包体长度（包含包头+包体）   长度:4
+        public int      sequenceId;		//流水id                  长度:4
+        public int      cmd;       		//命令字                                     长度:4
         
-        //----------------------------------------------------------------------
-        public void setLength(int length){
-            this.length = length;
-        }
-
-        public void setSequenceId(short sequenceId){
-            this.sequenceId = sequenceId;
-        }  
+        public byte     flag;      		//标识  (比如写死'g')       长度:1                               
+        public byte     version ;	    //包头版本                                 长度:1
+        public byte     encrypt;		//是否加密                                 长度:1
+        public byte     extend;         //扩展包头长度                          长度:1
         
-        public void setCmd(int cmd){
-            this.cmd = cmd;
-        }
+        public short    gid;			//游戏id                  长度:2   
         
-        public void setVersion(byte version){
-            this.version = version;
-        }
-
-        public void setEncrypt(boolean isEncrypt){
-            this.encrypt = (byte)(isEncrypt ? 1 : 0);
-        }
-
-        public void setGid(short gid){
-            this.gid = gid;
-        }
-        
-        //----------------------------------------------------------------------
-        public int setLength(byte[] buff){
-            return setLength(buff, 0);
-        }
-
-        public int setLength(byte[] buff,int offset){
-            return DataConverter.putInt(buff,offset+ OFFSET_LENGTH,this.length);
-        }
-        
-        public int setSequenceId(byte[] buff){
-            return setSequenceId(buff, 0);
-        }
-        
-        public int setSequenceId(byte[] buff,int offset){
-            return DataConverter.putInt(buff, offset+OFFSET_SEQUENCEID,this.sequenceId);
-        }
-        
-        public int setCmd(byte[] buff){
-        	return setCmd(buff, 0);
-        }
-        
-        public int setCmd(byte[] buff,int offset){
-        	return DataConverter.putInt(buff, offset+OFFSET_CMD,this.cmd);
-        }
-        
-        public int setVersion(byte[] buff){
-        	return setVersion(buff, 0);
-        }
-        
-        public int setVersion(byte[] buff,int offset){
-        	return DataConverter.putByte(buff, offset+OFFSET_VERSION,this.version);
-        }
-
-        public int setEncrypt(byte[] buff){
-        	return setEncrypt(buff, 0);
-        }
-        
-        public int setEncrypt(byte[] buff,int offset){
-        	return DataConverter.putByte(buff, offset+OFFSET_ENCRYPT,this.encrypt);
-        }
-
-        public int setGid(byte[] buff){
-        	return setGid(buff, 0);
-        }
-        
-        public int setGid(byte[] buff,int offset){
-        	return DataConverter.putShort(buff, offset+OFFSET_GID,this.gid);
-        }
+        //--------------------------------------------------------------
     }
 }
