@@ -8,9 +8,9 @@ import java.util.List;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.message.Message;
 import com.open.net.client.object.AbstractClient;
-import com.poker.protocols.server.GameServerProto;
-import com.poker.protocols.server.GameServerProto.GameServer;
-import com.poker.protocols.server.GameTableProto.GameTable;
+import com.poker.protocols.game.GameServerProto;
+import com.poker.protocols.game.GameServerProto.GameServer;
+import com.poker.protocols.game.GameTableProto.GameTable;
 
 
 public class ClientMessageHandler {
