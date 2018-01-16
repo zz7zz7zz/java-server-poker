@@ -1,12 +1,10 @@
-package com.poker.protocols;
+package com.poker.protocols.login;
 
 import com.poker.cmd.LoginCmd;
 import com.poker.data.DataPacket;
-import com.poker.protocols.server.LoginResponseProto;
 
-public class LoginResponse {
-	
-	public static int login(byte[] writeBuff,int squenceId,int uid){
+public class LoginServer {
+	public static int login_response(byte[] writeBuff,int squenceId,int uid){
 		
 		LoginResponseProto.LoginResponse.Builder builder = LoginResponseProto.LoginResponse.newBuilder();
 		builder.setUid(uid);

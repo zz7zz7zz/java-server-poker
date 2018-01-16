@@ -4,17 +4,17 @@ import java.io.IOException;
 
 import com.google.protobuf.ByteString;
 import com.poker.protocols.im.ImMessageProto;
+import com.poker.protocols.login.LoginRequestProto;
+import com.poker.protocols.login.LoginResponseProto;
 import com.poker.protocols.server.DispatchChainProto;
 import com.poker.protocols.server.DispatchPacketProto;
-import com.poker.protocols.server.LoginProto;
-import com.poker.protocols.server.LoginResponseProto;
 import com.poker.protocols.server.ServerProto;
 
 public class Main {
 
 	public static void main(String []argc){
-//		testLogin();
-		testLoginResponse();
+		testLogin();
+//		testLoginResponse();
 //		testDispatchReg();
 //		testDispatch();
 		//testImMessage();
@@ -107,13 +107,13 @@ public class Main {
 	public static void testLogin(){
 		
 		// 按照定义的数据结构，创建一个对象
-		LoginProto.Login.Builder builder = LoginProto.Login.newBuilder();
+		LoginRequestProto.LoginRequest.Builder builder = LoginRequestProto.LoginRequest.newBuilder();
 		builder.setUuid("10001");
 		builder.setUid(1);
 		
 		// 将数据写到输出流，如网络输出流，这里就用ByteArrayOutputStream来代替 
 		ByteArrayOutputStream output = new ByteArrayOutputStream(16*1024);
-		LoginProto.Login obj = builder.build();
+		LoginRequestProto.LoginRequest obj = builder.build();
 		try {
 			obj.writeTo(output);
 			//op.write(obj.toByteArray())
@@ -131,7 +131,7 @@ public class Main {
 		// 接收到流并读取，如网络输入流，这里用ByteArrayInputStream来代替  
 //        ByteArrayInputStream input = new ByteArrayInputStream(byteArray);
         try {
-        	LoginProto.Login readObj = LoginProto.Login.parseFrom(byteArray,0,byteArray.length);
+        	LoginRequestProto.LoginRequest readObj = LoginRequestProto.LoginRequest.parseFrom(byteArray,0,byteArray.length);
 			
 			System.out.println(" input length " + byteArray.length + " toString " + readObj.toString());
 		} catch (IOException e) {

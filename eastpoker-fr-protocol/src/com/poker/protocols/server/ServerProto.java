@@ -6,124 +6,98 @@ package com.poker.protocols.server;
 public final class ServerProto {
   private ServerProto() {}
   public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistry registry) {
+      com.google.protobuf.ExtensionRegistryLite registry) {
   }
-  public interface ServerOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
 
-    // optional int32 type = 1;
+  public static void registerAllExtensions(
+      com.google.protobuf.ExtensionRegistry registry) {
+    registerAllExtensions(
+        (com.google.protobuf.ExtensionRegistryLite) registry);
+  }
+  public interface ServerOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:Server)
+      com.google.protobuf.MessageOrBuilder {
+
     /**
-     * <code>optional int32 type = 1;</code>
-     */
-    boolean hasType();
-    /**
-     * <code>optional int32 type = 1;</code>
+     * <code>int32 type = 1;</code>
      */
     int getType();
 
-    // optional string name = 2;
     /**
-     * <code>optional string name = 2;</code>
-     */
-    boolean hasName();
-    /**
-     * <code>optional string name = 2;</code>
+     * <code>string name = 2;</code>
      */
     java.lang.String getName();
     /**
-     * <code>optional string name = 2;</code>
+     * <code>string name = 2;</code>
      */
     com.google.protobuf.ByteString
         getNameBytes();
 
-    // optional int32 id = 3;
     /**
-     * <code>optional int32 id = 3;</code>
-     */
-    boolean hasId();
-    /**
-     * <code>optional int32 id = 3;</code>
+     * <code>int32 id = 3;</code>
      */
     int getId();
 
-    // optional string host = 4;
     /**
-     * <code>optional string host = 4;</code>
-     */
-    boolean hasHost();
-    /**
-     * <code>optional string host = 4;</code>
+     * <code>string host = 4;</code>
      */
     java.lang.String getHost();
     /**
-     * <code>optional string host = 4;</code>
+     * <code>string host = 4;</code>
      */
     com.google.protobuf.ByteString
         getHostBytes();
 
-    // optional int32 port = 5;
     /**
-     * <code>optional int32 port = 5;</code>
-     */
-    boolean hasPort();
-    /**
-     * <code>optional int32 port = 5;</code>
+     * <code>int32 port = 5;</code>
      */
     int getPort();
 
-    // optional int32 game_group = 6;
     /**
-     * <code>optional int32 game_group = 6;</code>
-     */
-    boolean hasGameGroup();
-    /**
-     * <code>optional int32 game_group = 6;</code>
+     * <code>int32 game_group = 6;</code>
      */
     int getGameGroup();
 
-    // optional int32 match_group = 7;
     /**
-     * <code>optional int32 match_group = 7;</code>
-     */
-    boolean hasMatchGroup();
-    /**
-     * <code>optional int32 match_group = 7;</code>
+     * <code>int32 match_group = 7;</code>
      */
     int getMatchGroup();
   }
   /**
    * Protobuf type {@code Server}
    */
-  public static final class Server extends
-      com.google.protobuf.GeneratedMessage
-      implements ServerOrBuilder {
+  public  static final class Server extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:Server)
+      ServerOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use Server.newBuilder() to construct.
-    private Server(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private Server(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
-      this.unknownFields = builder.getUnknownFields();
     }
-    private Server(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final Server defaultInstance;
-    public static Server getDefaultInstance() {
-      return defaultInstance;
-    }
-
-    public Server getDefaultInstanceForType() {
-      return defaultInstance;
+    private Server() {
+      type_ = 0;
+      name_ = "";
+      id_ = 0;
+      host_ = "";
+      port_ = 0;
+      gameGroup_ = 0;
+      matchGroup_ = 0;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
+    getUnknownFields() {
       return this.unknownFields;
     }
     private Server(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -136,44 +110,46 @@ public final class ServerProto {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
                 done = true;
               }
               break;
             }
             case 8: {
-              bitField0_ |= 0x00000001;
+
               type_ = input.readInt32();
               break;
             }
             case 18: {
-              bitField0_ |= 0x00000002;
-              name_ = input.readBytes();
+              java.lang.String s = input.readStringRequireUtf8();
+
+              name_ = s;
               break;
             }
             case 24: {
-              bitField0_ |= 0x00000004;
+
               id_ = input.readInt32();
               break;
             }
             case 34: {
-              bitField0_ |= 0x00000008;
-              host_ = input.readBytes();
+              java.lang.String s = input.readStringRequireUtf8();
+
+              host_ = s;
               break;
             }
             case 40: {
-              bitField0_ |= 0x00000010;
+
               port_ = input.readInt32();
               break;
             }
             case 48: {
-              bitField0_ |= 0x00000020;
+
               gameGroup_ = input.readInt32();
               break;
             }
             case 56: {
-              bitField0_ |= 0x00000040;
+
               matchGroup_ = input.readInt32();
               break;
             }
@@ -183,7 +159,7 @@ public final class ServerProto {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
+            e).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -194,56 +170,26 @@ public final class ServerProto {
       return com.poker.protocols.server.ServerProto.internal_static_Server_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return com.poker.protocols.server.ServerProto.internal_static_Server_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               com.poker.protocols.server.ServerProto.Server.class, com.poker.protocols.server.ServerProto.Server.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<Server> PARSER =
-        new com.google.protobuf.AbstractParser<Server>() {
-      public Server parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Server(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<Server> getParserForType() {
-      return PARSER;
-    }
-
-    private int bitField0_;
-    // optional int32 type = 1;
     public static final int TYPE_FIELD_NUMBER = 1;
     private int type_;
     /**
-     * <code>optional int32 type = 1;</code>
-     */
-    public boolean hasType() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    /**
-     * <code>optional int32 type = 1;</code>
+     * <code>int32 type = 1;</code>
      */
     public int getType() {
       return type_;
     }
 
-    // optional string name = 2;
     public static final int NAME_FIELD_NUMBER = 2;
-    private java.lang.Object name_;
+    private volatile java.lang.Object name_;
     /**
-     * <code>optional string name = 2;</code>
-     */
-    public boolean hasName() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    /**
-     * <code>optional string name = 2;</code>
+     * <code>string name = 2;</code>
      */
     public java.lang.String getName() {
       java.lang.Object ref = name_;
@@ -253,14 +199,12 @@ public final class ServerProto {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          name_ = s;
-        }
+        name_ = s;
         return s;
       }
     }
     /**
-     * <code>optional string name = 2;</code>
+     * <code>string name = 2;</code>
      */
     public com.google.protobuf.ByteString
         getNameBytes() {
@@ -276,33 +220,19 @@ public final class ServerProto {
       }
     }
 
-    // optional int32 id = 3;
     public static final int ID_FIELD_NUMBER = 3;
     private int id_;
     /**
-     * <code>optional int32 id = 3;</code>
-     */
-    public boolean hasId() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>optional int32 id = 3;</code>
+     * <code>int32 id = 3;</code>
      */
     public int getId() {
       return id_;
     }
 
-    // optional string host = 4;
     public static final int HOST_FIELD_NUMBER = 4;
-    private java.lang.Object host_;
+    private volatile java.lang.Object host_;
     /**
-     * <code>optional string host = 4;</code>
-     */
-    public boolean hasHost() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>optional string host = 4;</code>
+     * <code>string host = 4;</code>
      */
     public java.lang.String getHost() {
       java.lang.Object ref = host_;
@@ -312,14 +242,12 @@ public final class ServerProto {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          host_ = s;
-        }
+        host_ = s;
         return s;
       }
     }
     /**
-     * <code>optional string host = 4;</code>
+     * <code>string host = 4;</code>
      */
     public com.google.protobuf.ByteString
         getHostBytes() {
@@ -335,67 +263,38 @@ public final class ServerProto {
       }
     }
 
-    // optional int32 port = 5;
     public static final int PORT_FIELD_NUMBER = 5;
     private int port_;
     /**
-     * <code>optional int32 port = 5;</code>
-     */
-    public boolean hasPort() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
-    }
-    /**
-     * <code>optional int32 port = 5;</code>
+     * <code>int32 port = 5;</code>
      */
     public int getPort() {
       return port_;
     }
 
-    // optional int32 game_group = 6;
     public static final int GAME_GROUP_FIELD_NUMBER = 6;
     private int gameGroup_;
     /**
-     * <code>optional int32 game_group = 6;</code>
-     */
-    public boolean hasGameGroup() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
-    }
-    /**
-     * <code>optional int32 game_group = 6;</code>
+     * <code>int32 game_group = 6;</code>
      */
     public int getGameGroup() {
       return gameGroup_;
     }
 
-    // optional int32 match_group = 7;
     public static final int MATCH_GROUP_FIELD_NUMBER = 7;
     private int matchGroup_;
     /**
-     * <code>optional int32 match_group = 7;</code>
-     */
-    public boolean hasMatchGroup() {
-      return ((bitField0_ & 0x00000040) == 0x00000040);
-    }
-    /**
-     * <code>optional int32 match_group = 7;</code>
+     * <code>int32 match_group = 7;</code>
      */
     public int getMatchGroup() {
       return matchGroup_;
     }
 
-    private void initFields() {
-      type_ = 0;
-      name_ = "";
-      id_ = 0;
-      host_ = "";
-      port_ = 0;
-      gameGroup_ = 0;
-      matchGroup_ = 0;
-    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       memoizedIsInitialized = 1;
       return true;
@@ -403,154 +302,220 @@ public final class ServerProto {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+      if (type_ != 0) {
         output.writeInt32(1, type_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getNameBytes());
+      if (!getNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, name_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      if (id_ != 0) {
         output.writeInt32(3, id_);
       }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeBytes(4, getHostBytes());
+      if (!getHostBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, host_);
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (port_ != 0) {
         output.writeInt32(5, port_);
       }
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      if (gameGroup_ != 0) {
         output.writeInt32(6, gameGroup_);
       }
-      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+      if (matchGroup_ != 0) {
         output.writeInt32(7, matchGroup_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
-    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSerializedSize;
+      int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+      if (type_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(1, type_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, getNameBytes());
+      if (!getNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, name_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      if (id_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(3, id_);
       }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(4, getHostBytes());
+      if (!getHostBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, host_);
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (port_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(5, port_);
       }
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      if (gameGroup_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(6, gameGroup_);
       }
-      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+      if (matchGroup_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(7, matchGroup_);
       }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.poker.protocols.server.ServerProto.Server)) {
+        return super.equals(obj);
+      }
+      com.poker.protocols.server.ServerProto.Server other = (com.poker.protocols.server.ServerProto.Server) obj;
+
+      boolean result = true;
+      result = result && (getType()
+          == other.getType());
+      result = result && getName()
+          .equals(other.getName());
+      result = result && (getId()
+          == other.getId());
+      result = result && getHost()
+          .equals(other.getHost());
+      result = result && (getPort()
+          == other.getPort());
+      result = result && (getGameGroup()
+          == other.getGameGroup());
+      result = result && (getMatchGroup()
+          == other.getMatchGroup());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
     }
 
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getType();
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + getId();
+      hash = (37 * hash) + HOST_FIELD_NUMBER;
+      hash = (53 * hash) + getHost().hashCode();
+      hash = (37 * hash) + PORT_FIELD_NUMBER;
+      hash = (53 * hash) + getPort();
+      hash = (37 * hash) + GAME_GROUP_FIELD_NUMBER;
+      hash = (53 * hash) + getGameGroup();
+      hash = (37 * hash) + MATCH_GROUP_FIELD_NUMBER;
+      hash = (53 * hash) + getMatchGroup();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.poker.protocols.server.ServerProto.Server parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.poker.protocols.server.ServerProto.Server parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static com.poker.protocols.server.ServerProto.Server parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    //------------------------start-----------------------------
-    public static com.poker.protocols.server.ServerProto.Server parseFrom(byte[] data,int offset,int length)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return PARSER.parseFrom(data,offset,length);
-    }
-    //------------------------end-----------------------------
     public static com.poker.protocols.server.ServerProto.Server parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    //------------------------start-----------------------------
-    public static com.poker.protocols.server.ServerProto.Server parseFrom(
-    		byte[] data,int offset,int length,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return PARSER.parseFrom(data,offset,length, extensionRegistry);
-        }
-    //------------------------end-----------------------------
     public static com.poker.protocols.server.ServerProto.Server parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
+    //-----------------------------------------------------
+    public static com.poker.protocols.server.ServerProto.Server parseFrom(byte[] data,int offset ,int length)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return PARSER.parseFrom(data,offset,length);
+        }
+    //-----------------------------------------------------
     public static com.poker.protocols.server.ServerProto.Server parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
+    //-----------------------------------------------------
+    public static com.poker.protocols.server.ServerProto.Server parseFrom(
+    		byte[] data,int offset ,int length,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return PARSER.parseFrom(data,offset,length, extensionRegistry);
+        }
+   //-----------------------------------------------------
     public static com.poker.protocols.server.ServerProto.Server parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static com.poker.protocols.server.ServerProto.Server parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static com.poker.protocols.server.ServerProto.Server parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
     }
     public static com.poker.protocols.server.ServerProto.Server parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static com.poker.protocols.server.ServerProto.Server parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static com.poker.protocols.server.ServerProto.Server parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(com.poker.protocols.server.ServerProto.Server prototype) {
-      return newBuilder().mergeFrom(prototype);
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
     }
-    public Builder toBuilder() { return newBuilder(this); }
+    public static Builder newBuilder(com.poker.protocols.server.ServerProto.Server prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -558,14 +523,15 @@ public final class ServerProto {
      * Protobuf type {@code Server}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements com.poker.protocols.server.ServerProto.ServerOrBuilder {
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:Server)
+        com.poker.protocols.server.ServerProto.ServerOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return com.poker.protocols.server.ServerProto.internal_static_Server_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return com.poker.protocols.server.ServerProto.internal_static_Server_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -578,39 +544,32 @@ public final class ServerProto {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
         }
       }
-      private static Builder create() {
-        return new Builder();
-      }
-
       public Builder clear() {
         super.clear();
         type_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        name_ = "";
-        bitField0_ = (bitField0_ & ~0x00000002);
-        id_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000004);
-        host_ = "";
-        bitField0_ = (bitField0_ & ~0x00000008);
-        port_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000010);
-        gameGroup_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000020);
-        matchGroup_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000040);
-        return this;
-      }
 
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
+        name_ = "";
+
+        id_ = 0;
+
+        host_ = "";
+
+        port_ = 0;
+
+        gameGroup_ = 0;
+
+        matchGroup_ = 0;
+
+        return this;
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -632,41 +591,43 @@ public final class ServerProto {
 
       public com.poker.protocols.server.ServerProto.Server buildPartial() {
         com.poker.protocols.server.ServerProto.Server result = new com.poker.protocols.server.ServerProto.Server(this);
-        int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-          to_bitField0_ |= 0x00000001;
-        }
         result.type_ = type_;
-        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-          to_bitField0_ |= 0x00000002;
-        }
         result.name_ = name_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
         result.id_ = id_;
-        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-          to_bitField0_ |= 0x00000008;
-        }
         result.host_ = host_;
-        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-          to_bitField0_ |= 0x00000010;
-        }
         result.port_ = port_;
-        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-          to_bitField0_ |= 0x00000020;
-        }
         result.gameGroup_ = gameGroup_;
-        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
-          to_bitField0_ |= 0x00000040;
-        }
         result.matchGroup_ = matchGroup_;
-        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
 
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.poker.protocols.server.ServerProto.Server) {
           return mergeFrom((com.poker.protocols.server.ServerProto.Server)other);
@@ -678,32 +639,31 @@ public final class ServerProto {
 
       public Builder mergeFrom(com.poker.protocols.server.ServerProto.Server other) {
         if (other == com.poker.protocols.server.ServerProto.Server.getDefaultInstance()) return this;
-        if (other.hasType()) {
+        if (other.getType() != 0) {
           setType(other.getType());
         }
-        if (other.hasName()) {
-          bitField0_ |= 0x00000002;
+        if (!other.getName().isEmpty()) {
           name_ = other.name_;
           onChanged();
         }
-        if (other.hasId()) {
+        if (other.getId() != 0) {
           setId(other.getId());
         }
-        if (other.hasHost()) {
-          bitField0_ |= 0x00000008;
+        if (!other.getHost().isEmpty()) {
           host_ = other.host_;
           onChanged();
         }
-        if (other.hasPort()) {
+        if (other.getPort() != 0) {
           setPort(other.getPort());
         }
-        if (other.hasGameGroup()) {
+        if (other.getGameGroup() != 0) {
           setGameGroup(other.getGameGroup());
         }
-        if (other.hasMatchGroup()) {
+        if (other.getMatchGroup() != 0) {
           setMatchGroup(other.getMatchGroup());
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
         return this;
       }
 
@@ -720,7 +680,7 @@ public final class ServerProto {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (com.poker.protocols.server.ServerProto.Server) e.getUnfinishedMessage();
-          throw e;
+          throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -728,57 +688,43 @@ public final class ServerProto {
         }
         return this;
       }
-      private int bitField0_;
 
-      // optional int32 type = 1;
       private int type_ ;
       /**
-       * <code>optional int32 type = 1;</code>
-       */
-      public boolean hasType() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      /**
-       * <code>optional int32 type = 1;</code>
+       * <code>int32 type = 1;</code>
        */
       public int getType() {
         return type_;
       }
       /**
-       * <code>optional int32 type = 1;</code>
+       * <code>int32 type = 1;</code>
        */
       public Builder setType(int value) {
-        bitField0_ |= 0x00000001;
+        
         type_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 type = 1;</code>
+       * <code>int32 type = 1;</code>
        */
       public Builder clearType() {
-        bitField0_ = (bitField0_ & ~0x00000001);
+        
         type_ = 0;
         onChanged();
         return this;
       }
 
-      // optional string name = 2;
       private java.lang.Object name_ = "";
       /**
-       * <code>optional string name = 2;</code>
-       */
-      public boolean hasName() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      /**
-       * <code>optional string name = 2;</code>
+       * <code>string name = 2;</code>
        */
       public java.lang.String getName() {
         java.lang.Object ref = name_;
         if (!(ref instanceof java.lang.String)) {
-          java.lang.String s = ((com.google.protobuf.ByteString) ref)
-              .toStringUtf8();
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
           name_ = s;
           return s;
         } else {
@@ -786,7 +732,7 @@ public final class ServerProto {
         }
       }
       /**
-       * <code>optional string name = 2;</code>
+       * <code>string name = 2;</code>
        */
       public com.google.protobuf.ByteString
           getNameBytes() {
@@ -802,90 +748,78 @@ public final class ServerProto {
         }
       }
       /**
-       * <code>optional string name = 2;</code>
+       * <code>string name = 2;</code>
        */
       public Builder setName(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  
         name_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional string name = 2;</code>
+       * <code>string name = 2;</code>
        */
       public Builder clearName() {
-        bitField0_ = (bitField0_ & ~0x00000002);
+        
         name_ = getDefaultInstance().getName();
         onChanged();
         return this;
       }
       /**
-       * <code>optional string name = 2;</code>
+       * <code>string name = 2;</code>
        */
       public Builder setNameBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  checkByteStringIsUtf8(value);
+        
         name_ = value;
         onChanged();
         return this;
       }
 
-      // optional int32 id = 3;
       private int id_ ;
       /**
-       * <code>optional int32 id = 3;</code>
-       */
-      public boolean hasId() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional int32 id = 3;</code>
+       * <code>int32 id = 3;</code>
        */
       public int getId() {
         return id_;
       }
       /**
-       * <code>optional int32 id = 3;</code>
+       * <code>int32 id = 3;</code>
        */
       public Builder setId(int value) {
-        bitField0_ |= 0x00000004;
+        
         id_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 id = 3;</code>
+       * <code>int32 id = 3;</code>
        */
       public Builder clearId() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        
         id_ = 0;
         onChanged();
         return this;
       }
 
-      // optional string host = 4;
       private java.lang.Object host_ = "";
       /**
-       * <code>optional string host = 4;</code>
-       */
-      public boolean hasHost() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
-      }
-      /**
-       * <code>optional string host = 4;</code>
+       * <code>string host = 4;</code>
        */
       public java.lang.String getHost() {
         java.lang.Object ref = host_;
         if (!(ref instanceof java.lang.String)) {
-          java.lang.String s = ((com.google.protobuf.ByteString) ref)
-              .toStringUtf8();
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
           host_ = s;
           return s;
         } else {
@@ -893,7 +827,7 @@ public final class ServerProto {
         }
       }
       /**
-       * <code>optional string host = 4;</code>
+       * <code>string host = 4;</code>
        */
       public com.google.protobuf.ByteString
           getHostBytes() {
@@ -909,162 +843,179 @@ public final class ServerProto {
         }
       }
       /**
-       * <code>optional string host = 4;</code>
+       * <code>string host = 4;</code>
        */
       public Builder setHost(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000008;
+  
         host_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional string host = 4;</code>
+       * <code>string host = 4;</code>
        */
       public Builder clearHost() {
-        bitField0_ = (bitField0_ & ~0x00000008);
+        
         host_ = getDefaultInstance().getHost();
         onChanged();
         return this;
       }
       /**
-       * <code>optional string host = 4;</code>
+       * <code>string host = 4;</code>
        */
       public Builder setHostBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000008;
+  checkByteStringIsUtf8(value);
+        
         host_ = value;
         onChanged();
         return this;
       }
 
-      // optional int32 port = 5;
       private int port_ ;
       /**
-       * <code>optional int32 port = 5;</code>
-       */
-      public boolean hasPort() {
-        return ((bitField0_ & 0x00000010) == 0x00000010);
-      }
-      /**
-       * <code>optional int32 port = 5;</code>
+       * <code>int32 port = 5;</code>
        */
       public int getPort() {
         return port_;
       }
       /**
-       * <code>optional int32 port = 5;</code>
+       * <code>int32 port = 5;</code>
        */
       public Builder setPort(int value) {
-        bitField0_ |= 0x00000010;
+        
         port_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 port = 5;</code>
+       * <code>int32 port = 5;</code>
        */
       public Builder clearPort() {
-        bitField0_ = (bitField0_ & ~0x00000010);
+        
         port_ = 0;
         onChanged();
         return this;
       }
 
-      // optional int32 game_group = 6;
       private int gameGroup_ ;
       /**
-       * <code>optional int32 game_group = 6;</code>
-       */
-      public boolean hasGameGroup() {
-        return ((bitField0_ & 0x00000020) == 0x00000020);
-      }
-      /**
-       * <code>optional int32 game_group = 6;</code>
+       * <code>int32 game_group = 6;</code>
        */
       public int getGameGroup() {
         return gameGroup_;
       }
       /**
-       * <code>optional int32 game_group = 6;</code>
+       * <code>int32 game_group = 6;</code>
        */
       public Builder setGameGroup(int value) {
-        bitField0_ |= 0x00000020;
+        
         gameGroup_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 game_group = 6;</code>
+       * <code>int32 game_group = 6;</code>
        */
       public Builder clearGameGroup() {
-        bitField0_ = (bitField0_ & ~0x00000020);
+        
         gameGroup_ = 0;
         onChanged();
         return this;
       }
 
-      // optional int32 match_group = 7;
       private int matchGroup_ ;
       /**
-       * <code>optional int32 match_group = 7;</code>
-       */
-      public boolean hasMatchGroup() {
-        return ((bitField0_ & 0x00000040) == 0x00000040);
-      }
-      /**
-       * <code>optional int32 match_group = 7;</code>
+       * <code>int32 match_group = 7;</code>
        */
       public int getMatchGroup() {
         return matchGroup_;
       }
       /**
-       * <code>optional int32 match_group = 7;</code>
+       * <code>int32 match_group = 7;</code>
        */
       public Builder setMatchGroup(int value) {
-        bitField0_ |= 0x00000040;
+        
         matchGroup_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 match_group = 7;</code>
+       * <code>int32 match_group = 7;</code>
        */
       public Builder clearMatchGroup() {
-        bitField0_ = (bitField0_ & ~0x00000040);
+        
         matchGroup_ = 0;
         onChanged();
         return this;
       }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
 
       // @@protoc_insertion_point(builder_scope:Server)
     }
 
+    // @@protoc_insertion_point(class_scope:Server)
+    private static final com.poker.protocols.server.ServerProto.Server DEFAULT_INSTANCE;
     static {
-      defaultInstance = new Server(true);
-      defaultInstance.initFields();
+      DEFAULT_INSTANCE = new com.poker.protocols.server.ServerProto.Server();
     }
 
-    // @@protoc_insertion_point(class_scope:Server)
+    public static com.poker.protocols.server.ServerProto.Server getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Server>
+        PARSER = new com.google.protobuf.AbstractParser<Server>() {
+      public Server parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Server(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<Server> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Server> getParserForType() {
+      return PARSER;
+    }
+
+    public com.poker.protocols.server.ServerProto.Server getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_Server_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_Server_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
     return descriptor;
   }
-  private static com.google.protobuf.Descriptors.FileDescriptor
+  private static  com.google.protobuf.Descriptors.FileDescriptor
       descriptor;
   static {
     java.lang.String[] descriptorData = {
@@ -1073,26 +1024,26 @@ public final class ServerProto {
       "ame\030\002 \001(\t\022\n\n\002id\030\003 \001(\005\022\014\n\004host\030\004 \001(\t\022\014\n\004p" +
       "ort\030\005 \001(\005\022\022\n\ngame_group\030\006 \001(\005\022\023\n\013match_g" +
       "roup\030\007 \001(\005B)\n\032com.poker.protocols.server" +
-      "B\013ServerProto"
+      "B\013ServerProtob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-      new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
-        public com.google.protobuf.ExtensionRegistry assignDescriptors(
-            com.google.protobuf.Descriptors.FileDescriptor root) {
-          descriptor = root;
-          internal_static_Server_descriptor =
-            getDescriptor().getMessageTypes().get(0);
-          internal_static_Server_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_Server_descriptor,
-              new java.lang.String[] { "Type", "Name", "Id", "Host", "Port", "GameGroup", "MatchGroup", });
-          return null;
-        }
-      };
+        new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
+          public com.google.protobuf.ExtensionRegistry assignDescriptors(
+              com.google.protobuf.Descriptors.FileDescriptor root) {
+            descriptor = root;
+            return null;
+          }
+        };
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
+    internal_static_Server_descriptor =
+      getDescriptor().getMessageTypes().get(0);
+    internal_static_Server_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_Server_descriptor,
+        new java.lang.String[] { "Type", "Name", "Id", "Host", "Port", "GameGroup", "MatchGroup", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

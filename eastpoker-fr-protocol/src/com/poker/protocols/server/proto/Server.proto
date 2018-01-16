@@ -1,13 +1,16 @@
-// protoc --java_out=./src ./src/com/poker/protocols/server/proto/Server.proto 
+syntax="proto3";
+
 option java_package = "com.poker.protocols.server";
 option java_outer_classname = "ServerProto";
 
 message Server{
-	optional int32  type  = 1;
-	optional string name  = 2;
-	optional int32  id    = 3;
-	optional string host  = 4;
-	optional int32  port  = 5;
-	optional int32  game_group  = 6;
-	optional int32  match_group = 7;
+	int32  type  = 1;
+	string name  = 2;
+	int32  id    = 3;
+	string host  = 4;
+	int32  port  = 5;
+	int32  game_group  = 6;
+	int32  match_group = 7;
 }
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/server/proto/Server.proto 

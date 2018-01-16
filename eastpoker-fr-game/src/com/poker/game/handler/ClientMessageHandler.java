@@ -8,8 +8,9 @@ import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
 import com.poker.games.Room;
 import com.poker.games.Table;
-import com.poker.protocols.server.GameServerProto;
-import com.poker.protocols.server.GameTableProto;
+import com.poker.protocols.game.GameServerProto;
+import com.poker.protocols.game.GameTableProto;
+
 
 
 

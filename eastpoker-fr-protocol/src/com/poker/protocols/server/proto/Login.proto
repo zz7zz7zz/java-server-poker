@@ -1,8 +1,0 @@
-// protoc --java_out=./src ./src/com/poker/protocols/server/proto/Login.proto 
-option java_package = "com.poker.protocols.server";
-option java_outer_classname = "LoginProto";
-
-message Login{
-	required string uuid  = 1;
-	optional int32  uid   = 2;
-}

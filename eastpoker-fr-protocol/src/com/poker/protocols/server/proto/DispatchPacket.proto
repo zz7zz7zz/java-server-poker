@@ -1,4 +1,5 @@
-// protoc --java_out=./src ./src/com/poker/protocols/server/proto/DispatchChain.proto ./src/com/poker/protocols/server/proto/DispatchPacket.proto
+syntax="proto3";
+
 package com.poker.protocols.server.proto; 
 
 import "src/com/poker/protocols/server/proto/DispatchChain.proto";
@@ -7,7 +8,9 @@ option java_package = "com.poker.protocols.server";
 option java_outer_classname = "DispatchPacketProto";
  
 message DispatchPacket{
-	required int32         sequenceId  = 1;
-	required bytes    data  = 2;
+	int32         sequenceId  = 1;
+	bytes    data  = 2;
 	repeated DispatchChain dispatchChainList = 3;   
 }
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/server/proto/DispatchChain.proto ./src/com/poker/protocols/server/proto/DispatchPacket.proto

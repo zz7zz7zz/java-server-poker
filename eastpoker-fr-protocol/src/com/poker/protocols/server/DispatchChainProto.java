@@ -6,104 +6,82 @@ package com.poker.protocols.server;
 public final class DispatchChainProto {
   private DispatchChainProto() {}
   public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistry registry) {
+      com.google.protobuf.ExtensionRegistryLite registry) {
   }
-  public interface DispatchChainOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
 
-    // optional int32 src_server_type = 1;
+  public static void registerAllExtensions(
+      com.google.protobuf.ExtensionRegistry registry) {
+    registerAllExtensions(
+        (com.google.protobuf.ExtensionRegistryLite) registry);
+  }
+  public interface DispatchChainOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:com.poker.protocols.server.proto.DispatchChain)
+      com.google.protobuf.MessageOrBuilder {
+
     /**
-     * <code>optional int32 src_server_type = 1;</code>
-     */
-    boolean hasSrcServerType();
-    /**
-     * <code>optional int32 src_server_type = 1;</code>
+     * <code>int32 src_server_type = 1;</code>
      */
     int getSrcServerType();
 
-    // optional int32 src_server_id = 2;
     /**
-     * <code>optional int32 src_server_id = 2;</code>
-     */
-    boolean hasSrcServerId();
-    /**
-     * <code>optional int32 src_server_id = 2;</code>
+     * <code>int32 src_server_id = 2;</code>
      */
     int getSrcServerId();
 
-    // optional int32 dst_server_type = 3;
     /**
-     * <code>optional int32 dst_server_type = 3;</code>
-     */
-    boolean hasDstServerType();
-    /**
-     * <code>optional int32 dst_server_type = 3;</code>
+     * <code>int32 dst_server_type = 3;</code>
      */
     int getDstServerType();
 
-    // optional int32 dst_server_id = 4;
     /**
-     * <code>optional int32 dst_server_id = 4;</code>
-     */
-    boolean hasDstServerId();
-    /**
-     * <code>optional int32 dst_server_id = 4;</code>
+     * <code>int32 dst_server_id = 4;</code>
      */
     int getDstServerId();
 
-    // optional int32 dst_game_group = 5;
     /**
-     * <code>optional int32 dst_game_group = 5;</code>
-     */
-    boolean hasDstGameGroup();
-    /**
-     * <code>optional int32 dst_game_group = 5;</code>
+     * <code>int32 dst_game_group = 5;</code>
      */
     int getDstGameGroup();
 
-    // optional int32 dst_match_group = 6;
     /**
-     * <code>optional int32 dst_match_group = 6;</code>
-     */
-    boolean hasDstMatchGroup();
-    /**
-     * <code>optional int32 dst_match_group = 6;</code>
+     * <code>int32 dst_match_group = 6;</code>
      */
     int getDstMatchGroup();
   }
   /**
    * Protobuf type {@code com.poker.protocols.server.proto.DispatchChain}
    */
-  public static final class DispatchChain extends
-      com.google.protobuf.GeneratedMessage
-      implements DispatchChainOrBuilder {
+  public  static final class DispatchChain extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:com.poker.protocols.server.proto.DispatchChain)
+      DispatchChainOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use DispatchChain.newBuilder() to construct.
-    private DispatchChain(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private DispatchChain(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
-      this.unknownFields = builder.getUnknownFields();
     }
-    private DispatchChain(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final DispatchChain defaultInstance;
-    public static DispatchChain getDefaultInstance() {
-      return defaultInstance;
-    }
-
-    public DispatchChain getDefaultInstanceForType() {
-      return defaultInstance;
+    private DispatchChain() {
+      srcServerType_ = 0;
+      srcServerId_ = 0;
+      dstServerType_ = 0;
+      dstServerId_ = 0;
+      dstGameGroup_ = 0;
+      dstMatchGroup_ = 0;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
+    getUnknownFields() {
       return this.unknownFields;
     }
     private DispatchChain(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -116,39 +94,39 @@ public final class DispatchChainProto {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
                 done = true;
               }
               break;
             }
             case 8: {
-              bitField0_ |= 0x00000001;
+
               srcServerType_ = input.readInt32();
               break;
             }
             case 16: {
-              bitField0_ |= 0x00000002;
+
               srcServerId_ = input.readInt32();
               break;
             }
             case 24: {
-              bitField0_ |= 0x00000004;
+
               dstServerType_ = input.readInt32();
               break;
             }
             case 32: {
-              bitField0_ |= 0x00000008;
+
               dstServerId_ = input.readInt32();
               break;
             }
             case 40: {
-              bitField0_ |= 0x00000010;
+
               dstGameGroup_ = input.readInt32();
               break;
             }
             case 48: {
-              bitField0_ |= 0x00000020;
+
               dstMatchGroup_ = input.readInt32();
               break;
             }
@@ -158,7 +136,7 @@ public final class DispatchChainProto {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
+            e).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -169,137 +147,72 @@ public final class DispatchChainProto {
       return com.poker.protocols.server.DispatchChainProto.internal_static_com_poker_protocols_server_proto_DispatchChain_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return com.poker.protocols.server.DispatchChainProto.internal_static_com_poker_protocols_server_proto_DispatchChain_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               com.poker.protocols.server.DispatchChainProto.DispatchChain.class, com.poker.protocols.server.DispatchChainProto.DispatchChain.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<DispatchChain> PARSER =
-        new com.google.protobuf.AbstractParser<DispatchChain>() {
-      public DispatchChain parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new DispatchChain(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<DispatchChain> getParserForType() {
-      return PARSER;
-    }
-
-    private int bitField0_;
-    // optional int32 src_server_type = 1;
     public static final int SRC_SERVER_TYPE_FIELD_NUMBER = 1;
     private int srcServerType_;
     /**
-     * <code>optional int32 src_server_type = 1;</code>
-     */
-    public boolean hasSrcServerType() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    /**
-     * <code>optional int32 src_server_type = 1;</code>
+     * <code>int32 src_server_type = 1;</code>
      */
     public int getSrcServerType() {
       return srcServerType_;
     }
 
-    // optional int32 src_server_id = 2;
     public static final int SRC_SERVER_ID_FIELD_NUMBER = 2;
     private int srcServerId_;
     /**
-     * <code>optional int32 src_server_id = 2;</code>
-     */
-    public boolean hasSrcServerId() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    /**
-     * <code>optional int32 src_server_id = 2;</code>
+     * <code>int32 src_server_id = 2;</code>
      */
     public int getSrcServerId() {
       return srcServerId_;
     }
 
-    // optional int32 dst_server_type = 3;
     public static final int DST_SERVER_TYPE_FIELD_NUMBER = 3;
     private int dstServerType_;
     /**
-     * <code>optional int32 dst_server_type = 3;</code>
-     */
-    public boolean hasDstServerType() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>optional int32 dst_server_type = 3;</code>
+     * <code>int32 dst_server_type = 3;</code>
      */
     public int getDstServerType() {
       return dstServerType_;
     }
 
-    // optional int32 dst_server_id = 4;
     public static final int DST_SERVER_ID_FIELD_NUMBER = 4;
     private int dstServerId_;
     /**
-     * <code>optional int32 dst_server_id = 4;</code>
-     */
-    public boolean hasDstServerId() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>optional int32 dst_server_id = 4;</code>
+     * <code>int32 dst_server_id = 4;</code>
      */
     public int getDstServerId() {
       return dstServerId_;
     }
 
-    // optional int32 dst_game_group = 5;
     public static final int DST_GAME_GROUP_FIELD_NUMBER = 5;
     private int dstGameGroup_;
     /**
-     * <code>optional int32 dst_game_group = 5;</code>
-     */
-    public boolean hasDstGameGroup() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
-    }
-    /**
-     * <code>optional int32 dst_game_group = 5;</code>
+     * <code>int32 dst_game_group = 5;</code>
      */
     public int getDstGameGroup() {
       return dstGameGroup_;
     }
 
-    // optional int32 dst_match_group = 6;
     public static final int DST_MATCH_GROUP_FIELD_NUMBER = 6;
     private int dstMatchGroup_;
     /**
-     * <code>optional int32 dst_match_group = 6;</code>
-     */
-    public boolean hasDstMatchGroup() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
-    }
-    /**
-     * <code>optional int32 dst_match_group = 6;</code>
+     * <code>int32 dst_match_group = 6;</code>
      */
     public int getDstMatchGroup() {
       return dstMatchGroup_;
     }
 
-    private void initFields() {
-      srcServerType_ = 0;
-      srcServerId_ = 0;
-      dstServerType_ = 0;
-      dstServerId_ = 0;
-      dstGameGroup_ = 0;
-      dstMatchGroup_ = 0;
-    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       memoizedIsInitialized = 1;
       return true;
@@ -307,70 +220,123 @@ public final class DispatchChainProto {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+      if (srcServerType_ != 0) {
         output.writeInt32(1, srcServerType_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (srcServerId_ != 0) {
         output.writeInt32(2, srcServerId_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      if (dstServerType_ != 0) {
         output.writeInt32(3, dstServerType_);
       }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      if (dstServerId_ != 0) {
         output.writeInt32(4, dstServerId_);
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (dstGameGroup_ != 0) {
         output.writeInt32(5, dstGameGroup_);
       }
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      if (dstMatchGroup_ != 0) {
         output.writeInt32(6, dstMatchGroup_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
-    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSerializedSize;
+      int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+      if (srcServerType_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(1, srcServerType_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (srcServerId_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(2, srcServerId_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      if (dstServerType_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(3, dstServerType_);
       }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      if (dstServerId_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(4, dstServerId_);
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (dstGameGroup_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(5, dstGameGroup_);
       }
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      if (dstMatchGroup_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(6, dstMatchGroup_);
       }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.poker.protocols.server.DispatchChainProto.DispatchChain)) {
+        return super.equals(obj);
+      }
+      com.poker.protocols.server.DispatchChainProto.DispatchChain other = (com.poker.protocols.server.DispatchChainProto.DispatchChain) obj;
+
+      boolean result = true;
+      result = result && (getSrcServerType()
+          == other.getSrcServerType());
+      result = result && (getSrcServerId()
+          == other.getSrcServerId());
+      result = result && (getDstServerType()
+          == other.getDstServerType());
+      result = result && (getDstServerId()
+          == other.getDstServerId());
+      result = result && (getDstGameGroup()
+          == other.getDstGameGroup());
+      result = result && (getDstMatchGroup()
+          == other.getDstMatchGroup());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
     }
 
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + SRC_SERVER_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getSrcServerType();
+      hash = (37 * hash) + SRC_SERVER_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getSrcServerId();
+      hash = (37 * hash) + DST_SERVER_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getDstServerType();
+      hash = (37 * hash) + DST_SERVER_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getDstServerId();
+      hash = (37 * hash) + DST_GAME_GROUP_FIELD_NUMBER;
+      hash = (53 * hash) + getDstGameGroup();
+      hash = (37 * hash) + DST_MATCH_GROUP_FIELD_NUMBER;
+      hash = (53 * hash) + getDstMatchGroup();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.poker.protocols.server.DispatchChainProto.DispatchChain parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.poker.protocols.server.DispatchChainProto.DispatchChain parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static com.poker.protocols.server.DispatchChainProto.DispatchChain parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -408,46 +374,57 @@ public final class DispatchChainProto {
    //-----------------------------------------------------
     public static com.poker.protocols.server.DispatchChainProto.DispatchChain parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static com.poker.protocols.server.DispatchChainProto.DispatchChain parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static com.poker.protocols.server.DispatchChainProto.DispatchChain parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
     }
     public static com.poker.protocols.server.DispatchChainProto.DispatchChain parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static com.poker.protocols.server.DispatchChainProto.DispatchChain parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static com.poker.protocols.server.DispatchChainProto.DispatchChain parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(com.poker.protocols.server.DispatchChainProto.DispatchChain prototype) {
-      return newBuilder().mergeFrom(prototype);
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
     }
-    public Builder toBuilder() { return newBuilder(this); }
+    public static Builder newBuilder(com.poker.protocols.server.DispatchChainProto.DispatchChain prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -455,14 +432,15 @@ public final class DispatchChainProto {
      * Protobuf type {@code com.poker.protocols.server.proto.DispatchChain}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements com.poker.protocols.server.DispatchChainProto.DispatchChainOrBuilder {
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:com.poker.protocols.server.proto.DispatchChain)
+        com.poker.protocols.server.DispatchChainProto.DispatchChainOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return com.poker.protocols.server.DispatchChainProto.internal_static_com_poker_protocols_server_proto_DispatchChain_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return com.poker.protocols.server.DispatchChainProto.internal_static_com_poker_protocols_server_proto_DispatchChain_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -475,37 +453,30 @@ public final class DispatchChainProto {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
         }
       }
-      private static Builder create() {
-        return new Builder();
-      }
-
       public Builder clear() {
         super.clear();
         srcServerType_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        srcServerId_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000002);
-        dstServerType_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000004);
-        dstServerId_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000008);
-        dstGameGroup_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000010);
-        dstMatchGroup_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000020);
-        return this;
-      }
 
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
+        srcServerId_ = 0;
+
+        dstServerType_ = 0;
+
+        dstServerId_ = 0;
+
+        dstGameGroup_ = 0;
+
+        dstMatchGroup_ = 0;
+
+        return this;
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -527,37 +498,42 @@ public final class DispatchChainProto {
 
       public com.poker.protocols.server.DispatchChainProto.DispatchChain buildPartial() {
         com.poker.protocols.server.DispatchChainProto.DispatchChain result = new com.poker.protocols.server.DispatchChainProto.DispatchChain(this);
-        int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-          to_bitField0_ |= 0x00000001;
-        }
         result.srcServerType_ = srcServerType_;
-        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-          to_bitField0_ |= 0x00000002;
-        }
         result.srcServerId_ = srcServerId_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
         result.dstServerType_ = dstServerType_;
-        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-          to_bitField0_ |= 0x00000008;
-        }
         result.dstServerId_ = dstServerId_;
-        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-          to_bitField0_ |= 0x00000010;
-        }
         result.dstGameGroup_ = dstGameGroup_;
-        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-          to_bitField0_ |= 0x00000020;
-        }
         result.dstMatchGroup_ = dstMatchGroup_;
-        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
 
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.poker.protocols.server.DispatchChainProto.DispatchChain) {
           return mergeFrom((com.poker.protocols.server.DispatchChainProto.DispatchChain)other);
@@ -569,25 +545,26 @@ public final class DispatchChainProto {
 
       public Builder mergeFrom(com.poker.protocols.server.DispatchChainProto.DispatchChain other) {
         if (other == com.poker.protocols.server.DispatchChainProto.DispatchChain.getDefaultInstance()) return this;
-        if (other.hasSrcServerType()) {
+        if (other.getSrcServerType() != 0) {
           setSrcServerType(other.getSrcServerType());
         }
-        if (other.hasSrcServerId()) {
+        if (other.getSrcServerId() != 0) {
           setSrcServerId(other.getSrcServerId());
         }
-        if (other.hasDstServerType()) {
+        if (other.getDstServerType() != 0) {
           setDstServerType(other.getDstServerType());
         }
-        if (other.hasDstServerId()) {
+        if (other.getDstServerId() != 0) {
           setDstServerId(other.getDstServerId());
         }
-        if (other.hasDstGameGroup()) {
+        if (other.getDstGameGroup() != 0) {
           setDstGameGroup(other.getDstGameGroup());
         }
-        if (other.hasDstMatchGroup()) {
+        if (other.getDstMatchGroup() != 0) {
           setDstMatchGroup(other.getDstMatchGroup());
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
         return this;
       }
 
@@ -604,7 +581,7 @@ public final class DispatchChainProto {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (com.poker.protocols.server.DispatchChainProto.DispatchChain) e.getUnfinishedMessage();
-          throw e;
+          throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -612,228 +589,222 @@ public final class DispatchChainProto {
         }
         return this;
       }
-      private int bitField0_;
 
-      // optional int32 src_server_type = 1;
       private int srcServerType_ ;
       /**
-       * <code>optional int32 src_server_type = 1;</code>
-       */
-      public boolean hasSrcServerType() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      /**
-       * <code>optional int32 src_server_type = 1;</code>
+       * <code>int32 src_server_type = 1;</code>
        */
       public int getSrcServerType() {
         return srcServerType_;
       }
       /**
-       * <code>optional int32 src_server_type = 1;</code>
+       * <code>int32 src_server_type = 1;</code>
        */
       public Builder setSrcServerType(int value) {
-        bitField0_ |= 0x00000001;
+        
         srcServerType_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 src_server_type = 1;</code>
+       * <code>int32 src_server_type = 1;</code>
        */
       public Builder clearSrcServerType() {
-        bitField0_ = (bitField0_ & ~0x00000001);
+        
         srcServerType_ = 0;
         onChanged();
         return this;
       }
 
-      // optional int32 src_server_id = 2;
       private int srcServerId_ ;
       /**
-       * <code>optional int32 src_server_id = 2;</code>
-       */
-      public boolean hasSrcServerId() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      /**
-       * <code>optional int32 src_server_id = 2;</code>
+       * <code>int32 src_server_id = 2;</code>
        */
       public int getSrcServerId() {
         return srcServerId_;
       }
       /**
-       * <code>optional int32 src_server_id = 2;</code>
+       * <code>int32 src_server_id = 2;</code>
        */
       public Builder setSrcServerId(int value) {
-        bitField0_ |= 0x00000002;
+        
         srcServerId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 src_server_id = 2;</code>
+       * <code>int32 src_server_id = 2;</code>
        */
       public Builder clearSrcServerId() {
-        bitField0_ = (bitField0_ & ~0x00000002);
+        
         srcServerId_ = 0;
         onChanged();
         return this;
       }
 
-      // optional int32 dst_server_type = 3;
       private int dstServerType_ ;
       /**
-       * <code>optional int32 dst_server_type = 3;</code>
-       */
-      public boolean hasDstServerType() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional int32 dst_server_type = 3;</code>
+       * <code>int32 dst_server_type = 3;</code>
        */
       public int getDstServerType() {
         return dstServerType_;
       }
       /**
-       * <code>optional int32 dst_server_type = 3;</code>
+       * <code>int32 dst_server_type = 3;</code>
        */
       public Builder setDstServerType(int value) {
-        bitField0_ |= 0x00000004;
+        
         dstServerType_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 dst_server_type = 3;</code>
+       * <code>int32 dst_server_type = 3;</code>
        */
       public Builder clearDstServerType() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        
         dstServerType_ = 0;
         onChanged();
         return this;
       }
 
-      // optional int32 dst_server_id = 4;
       private int dstServerId_ ;
       /**
-       * <code>optional int32 dst_server_id = 4;</code>
-       */
-      public boolean hasDstServerId() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
-      }
-      /**
-       * <code>optional int32 dst_server_id = 4;</code>
+       * <code>int32 dst_server_id = 4;</code>
        */
       public int getDstServerId() {
         return dstServerId_;
       }
       /**
-       * <code>optional int32 dst_server_id = 4;</code>
+       * <code>int32 dst_server_id = 4;</code>
        */
       public Builder setDstServerId(int value) {
-        bitField0_ |= 0x00000008;
+        
         dstServerId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 dst_server_id = 4;</code>
+       * <code>int32 dst_server_id = 4;</code>
        */
       public Builder clearDstServerId() {
-        bitField0_ = (bitField0_ & ~0x00000008);
+        
         dstServerId_ = 0;
         onChanged();
         return this;
       }
 
-      // optional int32 dst_game_group = 5;
       private int dstGameGroup_ ;
       /**
-       * <code>optional int32 dst_game_group = 5;</code>
-       */
-      public boolean hasDstGameGroup() {
-        return ((bitField0_ & 0x00000010) == 0x00000010);
-      }
-      /**
-       * <code>optional int32 dst_game_group = 5;</code>
+       * <code>int32 dst_game_group = 5;</code>
        */
       public int getDstGameGroup() {
         return dstGameGroup_;
       }
       /**
-       * <code>optional int32 dst_game_group = 5;</code>
+       * <code>int32 dst_game_group = 5;</code>
        */
       public Builder setDstGameGroup(int value) {
-        bitField0_ |= 0x00000010;
+        
         dstGameGroup_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 dst_game_group = 5;</code>
+       * <code>int32 dst_game_group = 5;</code>
        */
       public Builder clearDstGameGroup() {
-        bitField0_ = (bitField0_ & ~0x00000010);
+        
         dstGameGroup_ = 0;
         onChanged();
         return this;
       }
 
-      // optional int32 dst_match_group = 6;
       private int dstMatchGroup_ ;
       /**
-       * <code>optional int32 dst_match_group = 6;</code>
-       */
-      public boolean hasDstMatchGroup() {
-        return ((bitField0_ & 0x00000020) == 0x00000020);
-      }
-      /**
-       * <code>optional int32 dst_match_group = 6;</code>
+       * <code>int32 dst_match_group = 6;</code>
        */
       public int getDstMatchGroup() {
         return dstMatchGroup_;
       }
       /**
-       * <code>optional int32 dst_match_group = 6;</code>
+       * <code>int32 dst_match_group = 6;</code>
        */
       public Builder setDstMatchGroup(int value) {
-        bitField0_ |= 0x00000020;
+        
         dstMatchGroup_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 dst_match_group = 6;</code>
+       * <code>int32 dst_match_group = 6;</code>
        */
       public Builder clearDstMatchGroup() {
-        bitField0_ = (bitField0_ & ~0x00000020);
+        
         dstMatchGroup_ = 0;
         onChanged();
         return this;
       }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
 
       // @@protoc_insertion_point(builder_scope:com.poker.protocols.server.proto.DispatchChain)
     }
 
+    // @@protoc_insertion_point(class_scope:com.poker.protocols.server.proto.DispatchChain)
+    private static final com.poker.protocols.server.DispatchChainProto.DispatchChain DEFAULT_INSTANCE;
     static {
-      defaultInstance = new DispatchChain(true);
-      defaultInstance.initFields();
+      DEFAULT_INSTANCE = new com.poker.protocols.server.DispatchChainProto.DispatchChain();
     }
 
-    // @@protoc_insertion_point(class_scope:com.poker.protocols.server.proto.DispatchChain)
+    public static com.poker.protocols.server.DispatchChainProto.DispatchChain getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<DispatchChain>
+        PARSER = new com.google.protobuf.AbstractParser<DispatchChain>() {
+      public DispatchChain parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new DispatchChain(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<DispatchChain> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<DispatchChain> getParserForType() {
+      return PARSER;
+    }
+
+    public com.poker.protocols.server.DispatchChainProto.DispatchChain getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_com_poker_protocols_server_proto_DispatchChain_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_com_poker_protocols_server_proto_DispatchChain_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
     return descriptor;
   }
-  private static com.google.protobuf.Descriptors.FileDescriptor
+  private static  com.google.protobuf.Descriptors.FileDescriptor
       descriptor;
   static {
     java.lang.String[] descriptorData = {
@@ -844,26 +815,26 @@ public final class DispatchChainProto {
       "\n\017dst_server_type\030\003 \001(\005\022\025\n\rdst_server_id" +
       "\030\004 \001(\005\022\026\n\016dst_game_group\030\005 \001(\005\022\027\n\017dst_ma" +
       "tch_group\030\006 \001(\005B0\n\032com.poker.protocols.s" +
-      "erverB\022DispatchChainProto"
+      "erverB\022DispatchChainProtob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-      new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
-        public com.google.protobuf.ExtensionRegistry assignDescriptors(
-            com.google.protobuf.Descriptors.FileDescriptor root) {
-          descriptor = root;
-          internal_static_com_poker_protocols_server_proto_DispatchChain_descriptor =
-            getDescriptor().getMessageTypes().get(0);
-          internal_static_com_poker_protocols_server_proto_DispatchChain_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_com_poker_protocols_server_proto_DispatchChain_descriptor,
-              new java.lang.String[] { "SrcServerType", "SrcServerId", "DstServerType", "DstServerId", "DstGameGroup", "DstMatchGroup", });
-          return null;
-        }
-      };
+        new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
+          public com.google.protobuf.ExtensionRegistry assignDescriptors(
+              com.google.protobuf.Descriptors.FileDescriptor root) {
+            descriptor = root;
+            return null;
+          }
+        };
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
+    internal_static_com_poker_protocols_server_proto_DispatchChain_descriptor =
+      getDescriptor().getMessageTypes().get(0);
+    internal_static_com_poker_protocols_server_proto_DispatchChain_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_com_poker_protocols_server_proto_DispatchChain_descriptor,
+        new java.lang.String[] { "SrcServerType", "SrcServerId", "DstServerType", "DstServerId", "DstGameGroup", "DstMatchGroup", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -1,0 +1,11 @@
+syntax="proto3";
+
+option java_package = "com.poker.protocols.login";
+option java_outer_classname = "LoginRequestProto";
+
+message LoginRequest{
+	string uuid  = 1;
+	int32  uid   = 2;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/login/proto/LoginRequest.proto 

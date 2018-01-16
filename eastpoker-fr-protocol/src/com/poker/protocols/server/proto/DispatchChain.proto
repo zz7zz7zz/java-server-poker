@@ -1,14 +1,17 @@
-// protoc --java_out=./src ./src/com/poker/protocols/server/proto/DispatchChain.proto 
+syntax="proto3";
+
 package com.poker.protocols.server.proto; 
 
 option java_package = "com.poker.protocols.server";
 option java_outer_classname = "DispatchChainProto";
 
 message DispatchChain{
-	optional int32  src_server_type  = 1;
-	optional int32  src_server_id    = 2;
-	optional int32  dst_server_type  = 3;
-	optional int32  dst_server_id    = 4;
-	optional int32  dst_game_group   = 5;
-	optional int32  dst_match_group  = 6;
+	int32  src_server_type  = 1;
+	int32  src_server_id    = 2;
+	int32  dst_server_type  = 3;
+	int32  dst_server_id    = 4;
+	int32  dst_game_group   = 5;
+	int32  dst_match_group  = 6;
 }
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/server/proto/DispatchChain.proto 
