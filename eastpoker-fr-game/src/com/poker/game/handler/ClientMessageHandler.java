@@ -28,7 +28,7 @@ public class ClientMessageHandler {
 			builder.setTableMaxUser(config.table_max_user);
 			
 			byte[] body = builder.build().toByteArray();
-			int length = DataPacket.write(write_buf, squenceId, AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO, (byte)0, (byte)0, (short)0, body,0,body.length);
+			int length = DataPacket.write(write_buf, squenceId, AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO, (byte)0, body,0,body.length);
 			
 			length =  ImplDataTransfer.send2Allocator(write_buff_dispatcher, squenceId, write_buf, 0, length);
 			sender.send(client, write_buff_dispatcher, 0, length);
@@ -52,7 +52,7 @@ public class ClientMessageHandler {
 		}
 		
 		byte[] body = builder.build().toByteArray();
-		int length = DataPacket.write(write_buf, squenceId, AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO, (byte)0, (byte)0, (short)0, body,0,body.length);
+		int length = DataPacket.write(write_buf, squenceId, AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO, (byte)0,body,0,body.length);
 		
 		length = ImplDataTransfer.send2Allocator(write_buff_dispatcher, squenceId, write_buf, 0, length);
 		sender.send(client, write_buff_dispatcher, 0, length);
