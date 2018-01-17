@@ -1,5 +1,6 @@
 package com.poker.games;
 
+
 public abstract class AbstractGame {
 	
 	public void onUserEnter(User mUser){
@@ -27,6 +28,6 @@ public abstract class AbstractGame {
 	};
 	
 	//------------------------------------子游戏必需实现的业务逻辑------------------------------------
-	protected abstract void onReceiveCmd(User mUser, int cmd, byte[] data, int offset, int length);
+	protected abstract void dispatchTableMessage(int cmd, byte[] data, int header_start, int header_length, int body_start,int body_length);
 
 }

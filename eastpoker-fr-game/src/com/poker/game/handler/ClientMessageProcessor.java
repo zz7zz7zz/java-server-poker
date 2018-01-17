@@ -10,7 +10,6 @@ import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.util.log.Logger;
 import com.poker.cmd.AllocatorCmd;
 import com.poker.cmd.DispatchCmd;
-import com.poker.cmd.GameCmd;
 import com.poker.data.DataPacket;
 import com.poker.game.Main;
 
@@ -260,22 +259,11 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
      		int cmd = DataPacket.getCmd(msg.data, header_start);
     		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(msg.data,header_start));
     		
+    		//先判断游戏外逻辑，再判断游戏内逻辑
         	if(cmd == AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){
-        		
         		mHandler.on_get_roominfo(client,Main.write_buff_dispatcher,Main.write_buff,1,this,Main.mServerConfig,Main.mRoom);
-        		
-        	}else if(cmd == GameCmd.CMD_USER_ENTER){
-        		
-        	}else if(cmd == GameCmd.CMD_USER_EXIT){
-        		
-        	}else if(cmd == GameCmd.CMD_USER_READY){
-        		
-        	}else if(cmd == GameCmd.CMD_USER_OFFLINE){
-        		
-        	}else if(cmd == GameCmd.CMD_KICK_USER){
-        		
-        	}else if(cmd == GameCmd.CMD_ONLOOKERS){
-        		
+        	}else{
+        		Main.mRoom.dispatchRoomMessage(cmd, msg.data, header_start, header_length, body_start, body_length);
         	}
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();

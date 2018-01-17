@@ -36,7 +36,8 @@ public class GImpl extends AbstractGame {
 	}
 
 	@Override
-	protected void onReceiveCmd(User mUser, int cmd, byte[] data, int offset, int length) {
+	protected void dispatchTableMessage(int cmd, byte[] data, int header_start, int header_length, int body_start,int body_length) {
+		// TODO Auto-generated method stub
 		
 	}
 	
