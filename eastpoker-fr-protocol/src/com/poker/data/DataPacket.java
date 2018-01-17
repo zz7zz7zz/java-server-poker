@@ -11,12 +11,19 @@ public class DataPacket {
 	public static final byte   PACKET_FLAG          		= (byte)'G';
 	public static final byte   PACKET_VERSION          		= 1;
 	public static final byte[] PACKET_HEADER_EXTEND 		= new byte[0];
+	public static final byte[] PACKET_HEADER_EXTEND_FORGAME = new byte[6];//可将gameId和tableId封装在扩展包头中
 	
-    public static int write(byte[] writeBuff, int squenceId, int cmd , byte version, byte encrypt ,short gid, byte[] body,int bodyOffset,int bodyLength){
-    	return write(writeBuff,squenceId,cmd,PACKET_FLAG,version,encrypt,PACKET_HEADER_EXTEND,gid,body,bodyOffset,bodyLength);
+    public static int write(byte[] writeBuff, int squenceId, int cmd , byte encrypt, byte[] body,int bodyOffset,int bodyLength){
+    	return write(writeBuff,squenceId,cmd,PACKET_FLAG,PACKET_VERSION,encrypt,PACKET_HEADER_EXTEND,body,bodyOffset,bodyLength);
     }
     
-    public static int write(byte[] writeBuff, int squenceId, int cmd ,byte flag ,byte version, byte encrypt,byte[] packet_header_extend ,short gid, byte[] body,int bodyOffset,int bodyLength){
+    public static int writeGame(short gameId,int tableId,byte[] writeBuff, int squenceId, int cmd , byte encrypt, byte[] body,int bodyOffset,int bodyLength){
+    	DataConverter.putShort(PACKET_HEADER_EXTEND_FORGAME, 0, gameId);
+    	DataConverter.putInt(PACKET_HEADER_EXTEND_FORGAME, 2, tableId);
+    	return write(writeBuff,squenceId,cmd,PACKET_FLAG,PACKET_VERSION,encrypt,PACKET_HEADER_EXTEND_FORGAME,body,bodyOffset,bodyLength);
+    }
+    
+    private static int write(byte[] writeBuff, int squenceId, int cmd ,byte flag ,byte version, byte encrypt,byte[] packet_header_extend, byte[] body,int bodyOffset,int bodyLength){
     	
     	byte packet_header_extend_length	= (byte)packet_header_extend.length;				//包头，扩展长度
     	int  packet_header_length   		= Header.HEADER_BASE_LENGTH + packet_header_extend_length; //包头，长度
@@ -32,8 +39,6 @@ public class DataPacket {
         DataConverter.putByte(writeBuff,  Header.HEADER_OFFSET_VERSION,version);
         DataConverter.putByte(writeBuff,  Header.HEADER_OFFSET_ENCRYPT,encrypt);
         DataConverter.putByte(writeBuff,  Header.HEADER_OFFSET_EXTEND,packet_header_extend_length);
-        
-        DataConverter.putShort(writeBuff, Header.HEADER_OFFSET_GID,gid);
         
     	//组装扩展包头
         DataConverter.putByte(writeBuff, Header.HEADER_BASE_LENGTH, packet_header_extend, 0, packet_header_extend_length);
@@ -114,24 +119,34 @@ public class DataPacket {
     }
     
     public static short getGid(byte[] buff,int header_start_offset){
-    	return DataConverter.getShort(buff, header_start_offset+Header.HEADER_OFFSET_GID);
+    	return DataConverter.getShort(buff, header_start_offset+Header.HEADER_OFFSET_EXTEND_GID);
     }
     
+    public static int getTid(byte[] buff){
+        return getTid(buff,0);
+    }
+    
+    public static int getTid(byte[] buff,int header_start_offset){
+    	return DataConverter.getInt(buff, header_start_offset+Header.HEADER_OFFSET_EXTEND_TID);
+    }
     //---------------------------------------------------------------------------------------------
     public static final class Header {
 
         //-----------------------包头的基本长度----------------------
-    	public static final int HEADER_BASE_LENGTH = 18;
+    	public static final int HEADER_BASE_LENGTH = 16;
 
         //-----------------------各个属性在包头中的偏移量----------------------
         public static final int HEADER_OFFSET_LENGTH 		= 0;
         public static final int HEADER_OFFSET_SEQUENCEID 	= 4;
         public static final int HEADER_OFFSET_CMD 			= 8;
+        
         public static final int HEADER_OFFSET_FLAG 		    = 12;
         public static final int HEADER_OFFSET_VERSION 		= 13;
         public static final int HEADER_OFFSET_ENCRYPT 		= 14;
         public static final int HEADER_OFFSET_EXTEND 		= 15;
-        public static final int HEADER_OFFSET_GID 			= 16;
+        
+        public static final int HEADER_OFFSET_EXTEND_GID 	= HEADER_BASE_LENGTH;
+        public static final int HEADER_OFFSET_EXTEND_TID 	= HEADER_BASE_LENGTH+2;
         
         //-----------------------包头各个属性定义----------------------
         public int      length;    		//包体长度（包含包头+包体）   长度:4
@@ -143,7 +158,8 @@ public class DataPacket {
         public byte     encrypt;		//是否加密                                 长度:1
         public byte     extend;         //扩展包头长度                          长度:1
         
-        public short    gid;			//游戏id                  长度:2   
+        public short    extend_gid;		//游戏id                  长度:2
+        public int      extend_tid;     //桌子id                  长度:4
         
         //--------------------------------------------------------------
     }

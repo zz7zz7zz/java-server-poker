@@ -11,6 +11,6 @@ public class LoginServer {
 	
 		byte[] body = builder.build().toByteArray();
 		
-		return DataPacket.write(writeBuff, squenceId, LoginCmd.CMD_LOGIN_RESPONSE, (byte)0, (byte)0, (short)0, body,0,body.length);
+		return DataPacket.write(writeBuff, squenceId, LoginCmd.CMD_LOGIN_RESPONSE, (byte)0, body,0,body.length);
 	}
 }

@@ -62,13 +62,13 @@ public final class DataTransfer {
 		DispatchPacketProto.DispatchPacket dispatchPacket = builder.build();
 		byte[] body = dispatchPacket.toByteArray();
 		
-		return DataPacket.write(writeBuff, squenceId, cmd, (byte)0, (byte)0, (short)0, body,0,body.length);
+		return DataPacket.write(writeBuff, squenceId, cmd, (byte)0, body,0,body.length);
 	}
 
 	//---------------------------------------------------------------------------------------------------
 	//直发
 	public static int send2Client(byte[] writeBuff,int squenceId, int cmd , byte[] data, int offset , int length){
-		return DataPacket.write(writeBuff, squenceId, cmd, (byte)0, (byte)0, (short)0, data,offset,length);
+		return DataPacket.write(writeBuff, squenceId, cmd, (byte)0, data,offset,length);
 	}
 	
 }

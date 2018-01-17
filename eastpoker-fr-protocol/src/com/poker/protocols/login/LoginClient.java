@@ -21,6 +21,6 @@ public class LoginClient {
 	
 		byte[] body = builder.build().toByteArray();
 		
-		return DataPacket.write(writeBuff, squenceId, LoginCmd.CMD_LOGIN_REQUEST, (byte)0, (byte)0, (short)0, body,0,body.length);
+		return DataPacket.write(writeBuff, squenceId, LoginCmd.CMD_LOGIN_REQUEST, (byte)0, body,0,body.length);
 	}
 }

@@ -27,7 +27,7 @@ public class Dispatcher {
 		}
 		byte[] body = builder.build().toByteArray();
 		
-		return DataPacket.write(writeBuff, 1, DispatchCmd.CMD_DISPATCH_REGISTER, (byte)0, (byte)0, (short)0, body,0,body.length);
+		return DataPacket.write(writeBuff, 1, DispatchCmd.CMD_DISPATCH_REGISTER, (byte)0, body,0,body.length);
 	}
 	
 	public static int unregister2Dispatcher(byte[] writeBuff,int type ,String name, int id, String host ,int port){
@@ -53,6 +53,6 @@ public class Dispatcher {
 		
 		byte[] body = builder.build().toByteArray();
 		
-		return DataPacket.write(writeBuff, 1, DispatchCmd.CMD_DISPATCH_UNREGISTER, (byte)0, (byte)0, (short)0, body,0,body.length);
+		return DataPacket.write(writeBuff, 2, DispatchCmd.CMD_DISPATCH_UNREGISTER, (byte)0, body,0,body.length);
 	}
 }
