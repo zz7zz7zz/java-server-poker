@@ -19,9 +19,9 @@ public final class LoginResponseProto {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 uid = 1;</code>
+     * <code>int64 uid = 1;</code>
      */
-    int getUid();
+    long getUid();
   }
   /**
    * Protobuf type {@code LoginResponse}
@@ -36,7 +36,7 @@ public final class LoginResponseProto {
       super(builder);
     }
     private LoginResponse() {
-      uid_ = 0;
+      uid_ = 0L;
     }
 
     @java.lang.Override
@@ -72,7 +72,7 @@ public final class LoginResponseProto {
             }
             case 8: {
 
-              uid_ = input.readInt32();
+              uid_ = input.readInt64();
               break;
             }
           }
@@ -100,11 +100,11 @@ public final class LoginResponseProto {
     }
 
     public static final int UID_FIELD_NUMBER = 1;
-    private int uid_;
+    private long uid_;
     /**
-     * <code>int32 uid = 1;</code>
+     * <code>int64 uid = 1;</code>
      */
-    public int getUid() {
+    public long getUid() {
       return uid_;
     }
 
@@ -120,8 +120,8 @@ public final class LoginResponseProto {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (uid_ != 0) {
-        output.writeInt32(1, uid_);
+      if (uid_ != 0L) {
+        output.writeInt64(1, uid_);
       }
       unknownFields.writeTo(output);
     }
@@ -131,9 +131,9 @@ public final class LoginResponseProto {
       if (size != -1) return size;
 
       size = 0;
-      if (uid_ != 0) {
+      if (uid_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, uid_);
+          .computeInt64Size(1, uid_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -165,7 +165,8 @@ public final class LoginResponseProto {
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + UID_FIELD_NUMBER;
-      hash = (53 * hash) + getUid();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getUid());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -309,7 +310,7 @@ public final class LoginResponseProto {
       }
       public Builder clear() {
         super.clear();
-        uid_ = 0;
+        uid_ = 0L;
 
         return this;
       }
@@ -375,7 +376,7 @@ public final class LoginResponseProto {
 
       public Builder mergeFrom(com.poker.protocols.login.LoginResponseProto.LoginResponse other) {
         if (other == com.poker.protocols.login.LoginResponseProto.LoginResponse.getDefaultInstance()) return this;
-        if (other.getUid() != 0) {
+        if (other.getUid() != 0L) {
           setUid(other.getUid());
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -405,28 +406,28 @@ public final class LoginResponseProto {
         return this;
       }
 
-      private int uid_ ;
+      private long uid_ ;
       /**
-       * <code>int32 uid = 1;</code>
+       * <code>int64 uid = 1;</code>
        */
-      public int getUid() {
+      public long getUid() {
         return uid_;
       }
       /**
-       * <code>int32 uid = 1;</code>
+       * <code>int64 uid = 1;</code>
        */
-      public Builder setUid(int value) {
+      public Builder setUid(long value) {
         
         uid_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 uid = 1;</code>
+       * <code>int64 uid = 1;</code>
        */
       public Builder clearUid() {
         
-        uid_ = 0;
+        uid_ = 0L;
         onChanged();
         return this;
       }
@@ -495,7 +496,7 @@ public final class LoginResponseProto {
     java.lang.String[] descriptorData = {
       "\n7src/com/poker/protocols/login/proto/Lo" +
       "ginResponse.proto\"\034\n\rLoginResponse\022\013\n\003ui" +
-      "d\030\001 \001(\005B/\n\031com.poker.protocols.loginB\022Lo" +
+      "d\030\001 \001(\003B/\n\031com.poker.protocols.loginB\022Lo" +
       "ginResponseProtob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
