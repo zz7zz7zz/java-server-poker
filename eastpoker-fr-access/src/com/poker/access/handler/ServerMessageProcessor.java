@@ -84,7 +84,7 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
             			int body_start 		= header_start  + header_length;
             			int body_length     = packet_length - header_length;
             			
-            			dispatchMessage(client,msg,header_start,header_length,body_start,body_length);
+            			dispatchMessage(client,msg.data,header_start,header_length,body_start,body_length);
             			
             			msg_offset += packet_length;
             			msg_length -= packet_length;
@@ -191,7 +191,7 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
             			int body_start 		= header_start 	+ header_length;
             			int body_length     = packet_length - header_length;
             			
-            			dispatchMessage(client,client.mReceivingMsg,header_start,header_length,body_start,body_length);
+            			dispatchMessage(client,client.mReceivingMsg.data,header_start,header_length,body_start,body_length);
             			
     					full_packet_count++;
     					
@@ -275,20 +275,20 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
 	}
 	
 	//-----------------------------------------------------------------------------------------------------------------------------------
-	public void dispatchMessage(AbstractServerClient client ,Message msg,int header_start,int header_length,int body_start,int body_length){
-		int cmd   = DataPacket.getCmd(msg.data, header_start);
-		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(msg.data,header_start));
-		
+	public void dispatchMessage(AbstractServerClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
+		int cmd   = DataPacket.getCmd(data, header_start);
 		int server = cmd >> 16;
-      	int squenceId = DataPacket.getSequenceId(msg.data,msg.offset);
+      	int squenceId = DataPacket.getSequenceId(data,header_start);
+      	
+      	Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
       	
       	//如果Server大于0，则将数据转发至对应的server
       	if(server > 0){
       		int length = 0;
       		if(server == ServerIds.SERVER_LOGIN){
-      			length = ImplDataTransfer.send2Login(write_buff, squenceId, msg.data,msg.offset,msg.length);
+      			length = ImplDataTransfer.send2Login(write_buff, squenceId, data,header_start,header_length + body_length);
       		}else if(server == ServerIds.SERVER_USER){
-      			length = ImplDataTransfer.send2User(write_buff, squenceId, msg.data,msg.offset,msg.length);
+      			length = ImplDataTransfer.send2User(write_buff, squenceId, data,header_start,header_length + body_length);
       		}
       		
       		Main.dispatchIndex = (Main.dispatchIndex+1) % Main.dispatcher.length;

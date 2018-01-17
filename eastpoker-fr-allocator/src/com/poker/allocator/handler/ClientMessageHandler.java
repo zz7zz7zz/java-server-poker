@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.open.net.client.message.Message;
 import com.open.net.client.object.AbstractClient;
 import com.poker.protocols.game.GameServerProto;
 import com.poker.protocols.game.GameServerProto.GameServer;
@@ -57,9 +56,9 @@ public class ClientMessageHandler {
 		}
     }
     
-	public void on_report_roominfo(AbstractClient mClient , Message msg, int body_start, int body_length) throws InvalidProtocolBufferException{
+	public void on_report_roominfo(AbstractClient mClient , byte[] data, int body_start, int body_length) throws InvalidProtocolBufferException{
     	
-		GameServer mServer = GameServer.parseFrom(msg.data,body_start,body_length);
+		GameServer mServer = GameServer.parseFrom(data,body_start,body_length);
 
     	//找gameid->(level-gameSers)
 		int game_id = mServer.getGameId();
@@ -131,8 +130,8 @@ public class ClientMessageHandler {
 		System.out.println(game_server_map);
 	}
 	
-	public void on_get_roominfo(AbstractClient mClient , Message msg, int body_start, int body_length) throws InvalidProtocolBufferException{
-    	GameServerProto.GameServer mServer = GameServerProto.GameServer.parseFrom(msg.data,body_start,body_length);
+	public void on_get_roominfo(AbstractClient mClient , byte[] data, int body_start, int body_length) throws InvalidProtocolBufferException{
+    	GameServerProto.GameServer mServer = GameServerProto.GameServer.parseFrom(data,body_start,body_length);
     	
     	//找gameid->(level-gameSers)
 		int game_id = mServer.getGameId();
@@ -211,7 +210,7 @@ public class ClientMessageHandler {
 		}
 	}
 	
-	public void on_update_roominfo(AbstractClient mClient , Message msg, int body_start, int body_length) throws InvalidProtocolBufferException{
+	public void on_update_roominfo(AbstractClient mClient ,byte[] data, int body_start, int body_length) throws InvalidProtocolBufferException{
     	
 	}
 }

@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.open.net.server.message.Message;
 import com.open.net.server.object.AbstractServerClient;
 import com.open.net.server.utils.TextUtils;
 import com.open.util.log.Logger;
@@ -17,8 +16,8 @@ public class ClientMessageHandler {
     public HashMap<Integer, ArrayList<AbstractServerClient>> serverOnlineList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
 
 	
-    public void register(AbstractServerClient client, Message msg, int body_start, int body_length) throws InvalidProtocolBufferException{
-    	Server enterServer = Server.parseFrom(msg.data,body_start,body_length);
+    public void register(AbstractServerClient client, byte[] data, int body_start, int body_length) throws InvalidProtocolBufferException{
+    	Server enterServer = Server.parseFrom(data,body_start,body_length);
 		
 		boolean add = true;
 		ArrayList<AbstractServerClient> clientArray = serverOnlineList.get(enterServer.getType());

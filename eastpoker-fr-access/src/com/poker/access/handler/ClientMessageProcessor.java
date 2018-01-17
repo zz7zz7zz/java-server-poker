@@ -92,7 +92,7 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
             			int body_start 		= header_start  + header_length;
             			int body_length     = packet_length - header_length;
             			
-            			dispatchMessage(client,msg,header_start,header_length,body_start,body_length);
+            			dispatchMessage(client,msg.data,header_start,header_length,body_start,body_length);
             			
             			msg_offset += packet_length;
             			msg_length -= packet_length;
@@ -199,7 +199,7 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
             			int body_start 		= header_start 	+ header_length;
             			int body_length     = packet_length - header_length;
             			
-            			dispatchMessage(client,client.mReceivingMsg,header_start,header_length,body_start,body_length);
+            			dispatchMessage(client,client.mReceivingMsg.data,header_start,header_length,body_start,body_length);
             			
     					full_packet_count++;
     					
@@ -254,12 +254,12 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
 	}
 		
 	private static ByteBuffer mWriteBuffer  = ByteBuffer.allocate(16*1024);
-	public void dispatchMessage(AbstractClient client ,Message msg,int header_start,int header_length,int body_start,int body_length){
-    		int cmd   = DataPacket.getCmd(msg.data, header_start);
-		 	Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(msg.data,header_start));
+	public void dispatchMessage(AbstractClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
+    		int cmd   = DataPacket.getCmd(data, header_start);
+		 	Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
 //        	mServerMessageProcessor.unicast(client, src, offset, length);
         	mWriteBuffer.clear();
-            mWriteBuffer.put(msg.data,msg.offset,msg.length);
+            mWriteBuffer.put(data,header_start,header_length + body_length);
             mWriteBuffer.flip();
 //        unicast(client,mWriteBuffer.array(),0,response.length);
             Main.mServerMessageProcessor.broadcast(mWriteBuffer.array(),0,mWriteBuffer.remaining());

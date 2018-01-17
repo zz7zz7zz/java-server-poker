@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.open.net.server.message.Message;
 import com.open.net.server.object.AbstractServerClient;
 import com.open.net.server.object.AbstractServerMessageProcessor;
 import com.open.net.server.utils.TextUtils;
@@ -22,9 +21,9 @@ public class ServerMessageHandler {
     public HashMap<Integer, ArrayList<AbstractServerClient>> matchGroupList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
     
     //--------------------------------------------------------------------------------------------------------
-    public void register(AbstractServerClient client, Message msg, int body_start, int body_length) throws InvalidProtocolBufferException{
+    public void register(AbstractServerClient client, byte[] data, int body_start, int body_length) throws InvalidProtocolBufferException{
     	
-    	Server mServer = Server.parseFrom(msg.data,body_start,body_length);
+    	Server mServer = Server.parseFrom(data,body_start,body_length);
 		addServer(client, mServer);
 		addGameGroup(client, mServer);
 		addMatchGroup(client, mServer);
@@ -33,8 +32,8 @@ public class ServerMessageHandler {
     }
 
    //--------------------------------------------------------------------------------------------------------
-    public void dispatch(AbstractServerClient client, Message msg, int body_start, int body_length, byte[] write_buff,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
-		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,body_start,body_length);
+    public void dispatch(AbstractServerClient client, byte[] data, int body_start, int body_length, byte[] write_buff,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
+		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
 		int count = mDispatchPacket.getDispatchChainListCount();
 		if(count>0){
 			DispatchChain chain = mDispatchPacket.getDispatchChainList(count-1);
@@ -62,8 +61,8 @@ public class ServerMessageHandler {
 		}
     }
 
-    public void dispatchGameGoup(AbstractServerClient client, Message msg, int body_start, int body_length, byte[] write_buff,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
-		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,body_start,body_length);
+    public void dispatchGameGoup(AbstractServerClient client, byte[] data, int body_start, int body_length, byte[] write_buff,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
+		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
 
 		int count = mDispatchPacket.getDispatchChainListCount();
 		if(count>0){
@@ -84,8 +83,8 @@ public class ServerMessageHandler {
 		}
     }
     
-    public void dispatchMatchGroup(AbstractServerClient client, Message msg, int body_start, int body_length,byte[] write_buff,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
-    	DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(msg.data,body_start,body_length);
+    public void dispatchMatchGroup(AbstractServerClient client, byte[] data, int body_start, int body_length,byte[] write_buff,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
+    	DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
 
 		int count = mDispatchPacket.getDispatchChainListCount();
 		if(count>0){

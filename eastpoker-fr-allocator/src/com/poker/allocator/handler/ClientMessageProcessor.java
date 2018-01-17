@@ -91,7 +91,7 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
             			int body_start 		= header_start  + header_length;
             			int body_length     = packet_length - header_length;
             			
-            			dispatchMessage(client,msg,header_start,header_length,body_start,body_length);
+            			dispatchMessage(client,msg.data,header_start,header_length,body_start,body_length);
             			
             			msg_offset += packet_length;
             			msg_length -= packet_length;
@@ -198,7 +198,7 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
             			int body_start 		= header_start 	+ header_length;
             			int body_length     = packet_length - header_length;
             			
-            			dispatchMessage(client,client.mReceivingMsg,header_start,header_length,body_start,body_length);
+            			dispatchMessage(client,client.mReceivingMsg.data,header_start,header_length,body_start,body_length);
             			
     					full_packet_count++;
     					
@@ -252,17 +252,17 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
 		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
 	}
 		
-	public void dispatchMessage(AbstractClient client ,Message msg,int header_start,int header_length,int body_start,int body_length){
+	public void dispatchMessage(AbstractClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
     	try {
-    		int cmd   = DataPacket.getCmd(msg.data, header_start);
-    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + AllocatorCmd.getCmdString(cmd) + " length " + DataPacket.getLength(msg.data,header_start));
+    		int cmd   = DataPacket.getCmd(data, header_start);
+    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + AllocatorCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
     		
         	if(cmd == AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO){
-        		mHandler.on_report_roominfo(client,msg,body_start,body_length);
+        		mHandler.on_report_roominfo(client,data,body_start,body_length);
         	}else if(cmd == AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){
-        		mHandler.on_get_roominfo(client,msg,body_start,body_length);
+        		mHandler.on_get_roominfo(client,data,body_start,body_length);
         	}else if(cmd == AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_UPDATE_ROOMINFO){
-        		mHandler.on_update_roominfo(client,msg,body_start,body_length);
+        		mHandler.on_update_roominfo(client,data,body_start,body_length);
         	}
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();

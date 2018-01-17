@@ -92,7 +92,7 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
             			int body_start 		= header_start  + header_length;
             			int body_length     = packet_length - header_length;
             			
-            			dispatchMessage(client,msg,header_start,header_length,body_start,body_length);
+            			dispatchMessage(client,msg.data,header_start,header_length,body_start,body_length);
             			
             			msg_offset += packet_length;
             			msg_length -= packet_length;
@@ -199,7 +199,7 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
             			int body_start 		= header_start 	+ header_length;
             			int body_length     = packet_length - header_length;
             			
-            			dispatchMessage(client,client.mReceivingMsg,header_start,header_length,body_start,body_length);
+            			dispatchMessage(client,client.mReceivingMsg.data,header_start,header_length,body_start,body_length);
             			
     					full_packet_count++;
     					
@@ -253,13 +253,13 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
 		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
 	}
 		
-	public void dispatchMessage(AbstractClient client ,Message msg,int header_start,int header_length,int body_start,int body_length){
+	public void dispatchMessage(AbstractClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
     	try {
-    		int cmd   = DataPacket.getCmd(msg.data, header_start);
-    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + LoginCmd.getCmdString(cmd) + " length " + DataPacket.getLength(msg.data,header_start));
+    		int cmd   = DataPacket.getCmd(data, header_start);
+    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + LoginCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
     		
         	if(cmd == LoginCmd.CMD_LOGIN_REQUEST){
-        		mHandler.login(client, Main.write_buff_dispatcher, Main.write_buff, msg, body_start, body_length, 1, this);
+        		mHandler.login(client, Main.write_buff_dispatcher, Main.write_buff, data, body_start, body_length, 1, this);
         	}
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();

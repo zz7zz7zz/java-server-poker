@@ -83,7 +83,7 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
             			int body_start 		= header_start  + header_length;
             			int body_length     = packet_length - header_length;
             			
-            			dispatchMessage(client,msg,header_start,header_length,body_start,body_length);
+            			dispatchMessage(client,msg.data,header_start,header_length,body_start,body_length);
             			
             			msg_offset += packet_length;
             			msg_length -= packet_length;
@@ -190,7 +190,7 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
             			int body_start 		= header_start 	+ header_length;
             			int body_length     = packet_length - header_length;
             			
-            			dispatchMessage(client,client.mReceivingMsg,header_start,header_length,body_start,body_length);
+            			dispatchMessage(client,client.mReceivingMsg.data,header_start,header_length,body_start,body_length);
             			
     					full_packet_count++;
     					
@@ -274,19 +274,19 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
 	}
 	
 	//-----------------------------------------------------------------------------------------------------------------------------------
-	public void dispatchMessage(AbstractServerClient client ,Message msg,int header_start,int header_length,int body_start,int body_length){
+	public void dispatchMessage(AbstractServerClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
     	try {
-    		int cmd   = DataPacket.getCmd(msg.data, header_start);
-    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(msg.data,header_start));
+    		int cmd   = DataPacket.getCmd(data, header_start);
+    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
     		
     		if(cmd == DispatchCmd.CMD_DISPATCH_REGISTER){
-    			mHandler.register(client, msg, body_start,body_length);
+    			mHandler.register(client, data, body_start,body_length);
     		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA){
-    			mHandler.dispatch(client, msg, body_start, body_length,write_buff,this);
+    			mHandler.dispatch(client, data, body_start, body_length,write_buff,this);
     		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA_GAME_GROUP){
-    			mHandler.dispatchGameGoup(client, msg, body_start, body_length, write_buff, this);
+    			mHandler.dispatchGameGoup(client, data, body_start, body_length, write_buff, this);
     		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA_MATCH_GROUP){
-    			mHandler.dispatchMatchGroup(client, msg, body_start, body_length, write_buff, this);
+    			mHandler.dispatchMatchGroup(client, data, body_start, body_length, write_buff, this);
     		}else{
     			
     		}

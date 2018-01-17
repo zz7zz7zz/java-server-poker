@@ -93,7 +93,7 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
             			int body_start 		= header_start  + header_length;
             			int body_length     = packet_length - header_length;
             			
-            			dispatchMessage(client,msg,header_start,header_length,body_start,body_length);
+            			dispatchMessage(client,msg.data,header_start,header_length,body_start,body_length);
             			
             			msg_offset += packet_length;
             			msg_length -= packet_length;
@@ -200,7 +200,7 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
             			int body_start 		= header_start 	+ header_length;
             			int body_length     = packet_length - header_length;
             			
-            			dispatchMessage(client,client.mReceivingMsg,header_start,header_length,body_start,body_length);
+            			dispatchMessage(client,client.mReceivingMsg.data,header_start,header_length,body_start,body_length);
             			
     					full_packet_count++;
     					
@@ -254,16 +254,16 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
 		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
 	}
 		
-	 public void dispatchMessage(AbstractClient client,Message msg,int header_start,int header_length,int body_start,int body_length){
+	 public void dispatchMessage(AbstractClient client,byte[] data,int header_start,int header_length,int body_start,int body_length){
      	try {
-     		int cmd = DataPacket.getCmd(msg.data, header_start);
-    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(msg.data,header_start));
+     		int cmd = DataPacket.getCmd(data, header_start);
+    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
     		
     		//先判断游戏外逻辑，再判断游戏内逻辑
         	if(cmd == AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){
         		mHandler.on_get_roominfo(client,Main.write_buff_dispatcher,Main.write_buff,1,this,Main.mServerConfig,Main.mRoom);
         	}else{
-        		Main.mRoom.dispatchRoomMessage(cmd, msg.data, header_start, header_length, body_start, body_length);
+        		Main.mRoom.dispatchRoomMessage(cmd, data, header_start, header_length, body_start, body_length);
         	}
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();

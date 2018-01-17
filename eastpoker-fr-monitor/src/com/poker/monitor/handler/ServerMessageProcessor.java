@@ -80,7 +80,7 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
             			int body_start 		= header_start  + header_length;
             			int body_length     = packet_length - header_length;
             			
-            			dispatchMessage(client,msg,header_start,header_length,body_start,body_length);
+            			dispatchMessage(client,msg.data,header_start,header_length,body_start,body_length);
             			
             			msg_offset += packet_length;
             			msg_length -= packet_length;
@@ -187,7 +187,7 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
             			int body_start 		= header_start 	+ header_length;
             			int body_length     = packet_length - header_length;
             			
-            			dispatchMessage(client,client.mReceivingMsg,header_start,header_length,body_start,body_length);
+            			dispatchMessage(client,client.mReceivingMsg.data,header_start,header_length,body_start,body_length);
             			
     					full_packet_count++;
     					
@@ -270,13 +270,13 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
 	}
 	
 	//-----------------------------------------------------------------------------------------------------------------------------------
-	public void dispatchMessage(AbstractServerClient client ,Message msg,int header_start,int header_length,int body_start,int body_length){
+	public void dispatchMessage(AbstractServerClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
     	try {
-    		int cmd   = DataPacket.getCmd(msg.data, header_start);
-    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + MonitorCmd.getCmdString(cmd) + " length " + DataPacket.getLength(msg.data,header_start));
+    		int cmd   = DataPacket.getCmd(data, header_start);
+    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + MonitorCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
     		
     		if(cmd == MonitorCmd.CMD_MONITOR_REGISTER){
-    			mHandler.register(client, msg, body_start,body_length);
+    			mHandler.register(client, data, body_start,body_length);
     		}
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();
