@@ -29,9 +29,9 @@ public class Config {
     public long table_min_chip = 0;             //最小进入筹码
     public long table_max_chip = 0;             //最大进入筹码
     public long table_init_chip = 0;             //初始化筹码
-    public long table_init_ante;                  //前注
-    public long[] table_bilnd ;                   //盲注，对德州扑克而言，这意味着大盲，数组意味着比赛场，如SNG
-    public int[] table_bilnd_time ;              //每个盲注持续时间
+    public long[] table_ante;                  	//前注;数组意味着比赛场，如SNG
+    public long[] table_blind ;                 //大盲注;数组意味着比赛场，如SNG
+    public int[] table_blind_time ;             //每个盲注持续时间;数组意味着比赛场，如SNG
 
     public int table_action_timeout = 0;        //允许玩家执行动作对最大超时时间
     
@@ -54,23 +54,30 @@ public class Config {
     		table_min_chip = CfgParser.getLong(map, "Game","table_min_chip");
     		table_max_chip = CfgParser.getLong(map, "Game","table_max_chip");
     		table_init_chip = CfgParser.getLong(map, "Game","table_init_chip");
-    		table_init_ante = CfgParser.getLong(map, "Game","table_init_ante");
     		
-        String val[]     = CfgParser.getStringArray(map,"Game","table_bilnd");
-        if(null != val){
-        		table_bilnd = new long[val.length];
-            for (int i = 0; i < val.length; i++) {
-            		table_bilnd[i] = Long.valueOf(val[i]);
-            }
-        }
-            
-        val    = CfgParser.getStringArray(map,"Game","table_bilnd_time");
-        if(null != val){
-        		table_bilnd_time = new int[val.length];
-            for (int i = 0; i < val.length; i++) {
-            		table_bilnd_time[i] = Integer.valueOf(val[i]);
-            }
-        }
+	        String val[]     = CfgParser.getStringArray(map,"Game","table_blind");
+	        if(null != val){
+	        		table_blind = new long[val.length];
+	            for (int i = 0; i < val.length; i++) {
+	            		table_blind[i] = Long.valueOf(val[i]);
+	            }
+	        }
+	            
+	        val    = CfgParser.getStringArray(map,"Game","table_blind_time");
+	        if(null != val){
+	        		table_blind_time = new int[val.length];
+	            for (int i = 0; i < val.length; i++) {
+	            		table_blind_time[i] = Integer.valueOf(val[i]);
+	            }
+	        }
+	        
+	        val    = CfgParser.getStringArray(map,"Game","table_ante");
+	        if(null != val){
+	        	table_ante = new long[val.length];
+	            for (int i = 0; i < val.length; i++) {
+	            	table_ante[i] = Integer.valueOf(val[i]);
+	            }
+	        }
         
     		table_action_timeout = CfgParser.getInt(map, "Game","table_action_timeout");
     		
@@ -113,12 +120,12 @@ public class Config {
 	public String toString() {
 		return "Config [dispatcher_net_tcp=" + Arrays.toString(dispatcher_net_tcp) + ", dispatcher_net_udp="
 				+ Arrays.toString(dispatcher_net_udp) + ", monitor_net_udp=" + Arrays.toString(monitor_net_udp)
-				+ ", game_id=" + game_id + ", game_level=" + game_level + ", table_count=" + table_count
-				+ ", table_min_user=" + table_min_user + ", table_max_user=" + table_max_user + ", table_min_chip="
-				+ table_min_chip + ", table_max_chip=" + table_max_chip + ", table_init_chip=" + table_init_chip
-				+ ", table_init_ante=" + table_init_ante + ", table_bilnd=" + Arrays.toString(table_bilnd)
-				+ ", table_bilnd_time=" + Arrays.toString(table_bilnd_time) + ", table_action_timeout="
-				+ table_action_timeout + "]";
+				+ ", server_id=" + server_id + ", game_id=" + game_id + ", game_level=" + game_level + ", table_count="
+				+ table_count + ", table_min_user=" + table_min_user + ", table_max_user=" + table_max_user
+				+ ", table_min_chip=" + table_min_chip + ", table_max_chip=" + table_max_chip + ", table_init_chip="
+				+ table_init_chip + ", table_ante=" + Arrays.toString(table_ante) + ", table_blind="
+				+ Arrays.toString(table_blind) + ", table_blind_time=" + Arrays.toString(table_blind_time)
+				+ ", table_action_timeout=" + table_action_timeout + "]";
 	}
     
 }
