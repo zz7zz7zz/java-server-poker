@@ -10,7 +10,7 @@ message BlindConfig{
 	int64  blind  			=2; //大盲注;数组意味着比赛场，如SNG
 	int32  blind_time  		=3;//每个盲注持续时间;数组意味着比赛场，如SNG
 }
-
+//游戏开始
 message TexasGameStart{
 	int32  action_timeout       = 1;//操作超时时间
 	repeated BlindConfig config = 2;

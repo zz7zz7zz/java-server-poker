@@ -1,0 +1,19 @@
+syntax="proto3";
+
+package com.poker.protocols.texaspoker.proto; 
+
+option java_package = "com.poker.protocols.texaspoker";
+option java_outer_classname = "TexasGameDealProto";
+
+message UserCard{
+	int64  			uid	  =1;
+	repeated int32  cards =2;
+}
+
+//游戏发牌
+message TexasGameDeal{
+	int32  sb_uid       		 = 1;//小盲uid
+	repeated UserCard mUserCards = 2;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameDeal.proto 
