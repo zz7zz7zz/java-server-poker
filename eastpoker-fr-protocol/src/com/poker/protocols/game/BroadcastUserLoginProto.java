@@ -19,25 +19,25 @@ public final class BroadcastUserLoginProto {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
      */
     java.util.List<com.poker.protocols.game.GameUserProto.GameUser> 
         getUsersList();
     /**
-     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
      */
     com.poker.protocols.game.GameUserProto.GameUser getUsers(int index);
     /**
-     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
      */
     int getUsersCount();
     /**
-     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
      */
     java.util.List<? extends com.poker.protocols.game.GameUserProto.GameUserOrBuilder> 
         getUsersOrBuilderList();
     /**
-     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
      */
     com.poker.protocols.game.GameUserProto.GameUserOrBuilder getUsersOrBuilder(
         int index);
@@ -89,7 +89,7 @@ public final class BroadcastUserLoginProto {
               }
               break;
             }
-            case 18: {
+            case 10: {
               if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
                 users_ = new java.util.ArrayList<com.poker.protocols.game.GameUserProto.GameUser>();
                 mutable_bitField0_ |= 0x00000001;
@@ -125,35 +125,35 @@ public final class BroadcastUserLoginProto {
               com.poker.protocols.game.BroadcastUserLoginProto.BroadcastUserLogin.class, com.poker.protocols.game.BroadcastUserLoginProto.BroadcastUserLogin.Builder.class);
     }
 
-    public static final int USERS_FIELD_NUMBER = 2;
+    public static final int USERS_FIELD_NUMBER = 1;
     private java.util.List<com.poker.protocols.game.GameUserProto.GameUser> users_;
     /**
-     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
      */
     public java.util.List<com.poker.protocols.game.GameUserProto.GameUser> getUsersList() {
       return users_;
     }
     /**
-     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
      */
     public java.util.List<? extends com.poker.protocols.game.GameUserProto.GameUserOrBuilder> 
         getUsersOrBuilderList() {
       return users_;
     }
     /**
-     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
      */
     public int getUsersCount() {
       return users_.size();
     }
     /**
-     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
      */
     public com.poker.protocols.game.GameUserProto.GameUser getUsers(int index) {
       return users_.get(index);
     }
     /**
-     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+     * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
      */
     public com.poker.protocols.game.GameUserProto.GameUserOrBuilder getUsersOrBuilder(
         int index) {
@@ -173,7 +173,7 @@ public final class BroadcastUserLoginProto {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       for (int i = 0; i < users_.size(); i++) {
-        output.writeMessage(2, users_.get(i));
+        output.writeMessage(1, users_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -185,7 +185,7 @@ public final class BroadcastUserLoginProto {
       size = 0;
       for (int i = 0; i < users_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, users_.get(i));
+          .computeMessageSize(1, users_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -510,7 +510,7 @@ public final class BroadcastUserLoginProto {
           com.poker.protocols.game.GameUserProto.GameUser, com.poker.protocols.game.GameUserProto.GameUser.Builder, com.poker.protocols.game.GameUserProto.GameUserOrBuilder> usersBuilder_;
 
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public java.util.List<com.poker.protocols.game.GameUserProto.GameUser> getUsersList() {
         if (usersBuilder_ == null) {
@@ -520,7 +520,7 @@ public final class BroadcastUserLoginProto {
         }
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public int getUsersCount() {
         if (usersBuilder_ == null) {
@@ -530,7 +530,7 @@ public final class BroadcastUserLoginProto {
         }
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public com.poker.protocols.game.GameUserProto.GameUser getUsers(int index) {
         if (usersBuilder_ == null) {
@@ -540,7 +540,7 @@ public final class BroadcastUserLoginProto {
         }
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public Builder setUsers(
           int index, com.poker.protocols.game.GameUserProto.GameUser value) {
@@ -557,7 +557,7 @@ public final class BroadcastUserLoginProto {
         return this;
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public Builder setUsers(
           int index, com.poker.protocols.game.GameUserProto.GameUser.Builder builderForValue) {
@@ -571,7 +571,7 @@ public final class BroadcastUserLoginProto {
         return this;
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public Builder addUsers(com.poker.protocols.game.GameUserProto.GameUser value) {
         if (usersBuilder_ == null) {
@@ -587,7 +587,7 @@ public final class BroadcastUserLoginProto {
         return this;
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public Builder addUsers(
           int index, com.poker.protocols.game.GameUserProto.GameUser value) {
@@ -604,7 +604,7 @@ public final class BroadcastUserLoginProto {
         return this;
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public Builder addUsers(
           com.poker.protocols.game.GameUserProto.GameUser.Builder builderForValue) {
@@ -618,7 +618,7 @@ public final class BroadcastUserLoginProto {
         return this;
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public Builder addUsers(
           int index, com.poker.protocols.game.GameUserProto.GameUser.Builder builderForValue) {
@@ -632,7 +632,7 @@ public final class BroadcastUserLoginProto {
         return this;
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public Builder addAllUsers(
           java.lang.Iterable<? extends com.poker.protocols.game.GameUserProto.GameUser> values) {
@@ -647,7 +647,7 @@ public final class BroadcastUserLoginProto {
         return this;
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public Builder clearUsers() {
         if (usersBuilder_ == null) {
@@ -660,7 +660,7 @@ public final class BroadcastUserLoginProto {
         return this;
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public Builder removeUsers(int index) {
         if (usersBuilder_ == null) {
@@ -673,14 +673,14 @@ public final class BroadcastUserLoginProto {
         return this;
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public com.poker.protocols.game.GameUserProto.GameUser.Builder getUsersBuilder(
           int index) {
         return getUsersFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public com.poker.protocols.game.GameUserProto.GameUserOrBuilder getUsersOrBuilder(
           int index) {
@@ -690,7 +690,7 @@ public final class BroadcastUserLoginProto {
         }
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public java.util.List<? extends com.poker.protocols.game.GameUserProto.GameUserOrBuilder> 
            getUsersOrBuilderList() {
@@ -701,14 +701,14 @@ public final class BroadcastUserLoginProto {
         }
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public com.poker.protocols.game.GameUserProto.GameUser.Builder addUsersBuilder() {
         return getUsersFieldBuilder().addBuilder(
             com.poker.protocols.game.GameUserProto.GameUser.getDefaultInstance());
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public com.poker.protocols.game.GameUserProto.GameUser.Builder addUsersBuilder(
           int index) {
@@ -716,7 +716,7 @@ public final class BroadcastUserLoginProto {
             index, com.poker.protocols.game.GameUserProto.GameUser.getDefaultInstance());
       }
       /**
-       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 2;</code>
+       * <code>repeated .com.poker.protocols.game.proto.GameUser users = 1;</code>
        */
       public java.util.List<com.poker.protocols.game.GameUserProto.GameUser.Builder> 
            getUsersBuilderList() {
@@ -803,7 +803,7 @@ public final class BroadcastUserLoginProto {
       "adcastUserLogin.proto\022\036com.poker.protoco" +
       "ls.game.proto\0321src/com/poker/protocols/g" +
       "ame/proto/GameUser.proto\"M\n\022BroadcastUse" +
-      "rLogin\0227\n\005users\030\002 \003(\0132(.com.poker.protoc" +
+      "rLogin\0227\n\005users\030\001 \003(\0132(.com.poker.protoc" +
       "ols.game.proto.GameUserB3\n\030com.poker.pro" +
       "tocols.gameB\027BroadcastUserLoginProtob\006pr" +
       "oto3"
