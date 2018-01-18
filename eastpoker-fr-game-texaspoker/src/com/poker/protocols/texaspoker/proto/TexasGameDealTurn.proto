@@ -1,0 +1,12 @@
+syntax="proto3";
+
+package com.poker.protocols.texaspoker.proto; 
+
+option java_package = "com.poker.protocols.texaspoker";
+option java_outer_classname = "TexasGameDealTurnProto";
+
+message TexasGameDealTurn{
+	repeated int32  cards =2;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameDealTurn.proto 
