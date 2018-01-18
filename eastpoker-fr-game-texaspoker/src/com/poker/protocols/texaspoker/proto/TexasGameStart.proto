@@ -6,13 +6,13 @@ option java_package = "com.poker.protocols.texaspoker";
 option java_outer_classname = "TexasGameStartProto";
 
 message BlindConfig{
-	int64  ante  			=1;
-	int64  blind  			=2;
-	int32  blind_time  		=3;
+	int64  ante  			=1;//前注;数组意味着比赛场，如SNG
+	int64  blind  			=2; //大盲注;数组意味着比赛场，如SNG
+	int32  blind_time  		=3;//每个盲注持续时间;数组意味着比赛场，如SNG
 }
 
 message TexasGameStart{
-	int32  action_timeout       = 1;
+	int32  action_timeout       = 1;//操作超时时间
 	repeated BlindConfig config = 2;
 }
 
