@@ -1,0 +1,36 @@
+syntax="proto3";
+
+package com.poker.protocols.texaspoker.proto; 
+
+import "com.poker.protocols.texaspoker.proto/TexasGameStart.proto";
+
+option java_package = "com.poker.protocols.texaspoker";
+option java_outer_classname = "TexasGameReconnectProto";
+
+message User{
+
+	int64  uid  		     = 1;
+	string nick_name      = 2;
+	string head_portrait = 3;
+	int64  chip 		     = 4;
+	int32  level         = 5;
+	int32  seatId        = 6;
+}
+
+//游戏重连
+message TexasGameReconnect{
+	repeated TexasGameStart.BlindConfig config = 1;
+	int32  action_timeout       				  = 2;//操作超时时间
+	
+	repeated  User  mUsers                     = 3;//台上的用户属性
+		
+	int32  sb_uid   				              = 4;//小盲uid
+	
+	repeated int32  cards 		              = 5;//底牌
+	repeated int32  cards_flop 	              = 6;//底牌
+	repeated int32  cards_trun 	              = 7;//转牌
+	repeated int32  cards_river               =  8;//河牌
+	
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameReconnect.proto 
