@@ -13,11 +13,19 @@ message TexasGameAction{
 	    RAISE 	= 3;
 	  }
   
+  	//当前操作者操作结果
 	int32   seatId  		= 1;
 	Operate operate 		= 2;
 	int64   chip    		= 3;
 	int64   remaining_chip  = 4;
 	int64   round_chip      = 5;
+	
+	//下一个操作者操作需求
+	int32   next_op_seatId  		= 6;
+	int64   next_op_call_chip 		= 7;
+	int64   next_op_min_raise_chip 	= 8;
+	int64   next_op_max_raise_chip 	= 9;
+	int64   max_round_chip 			= 10;
 }
 
 // protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameAction.proto 

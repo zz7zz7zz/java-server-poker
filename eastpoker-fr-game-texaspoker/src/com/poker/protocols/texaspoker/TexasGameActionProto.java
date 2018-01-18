@@ -19,6 +19,10 @@ public final class TexasGameActionProto {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     *当前操作者操作结果
+     * </pre>
+     *
      * <code>int32 seatId = 1;</code>
      */
     int getSeatId();
@@ -46,6 +50,35 @@ public final class TexasGameActionProto {
      * <code>int64 round_chip = 5;</code>
      */
     long getRoundChip();
+
+    /**
+     * <pre>
+     *下一个操作者操作需求
+     * </pre>
+     *
+     * <code>int32 next_op_seatId = 6;</code>
+     */
+    int getNextOpSeatId();
+
+    /**
+     * <code>int64 next_op_call_chip = 7;</code>
+     */
+    long getNextOpCallChip();
+
+    /**
+     * <code>int64 next_op_min_raise_chip = 8;</code>
+     */
+    long getNextOpMinRaiseChip();
+
+    /**
+     * <code>int64 next_op_max_raise_chip = 9;</code>
+     */
+    long getNextOpMaxRaiseChip();
+
+    /**
+     * <code>int64 max_round_chip = 10;</code>
+     */
+    long getMaxRoundChip();
   }
   /**
    * Protobuf type {@code com.poker.protocols.texaspoker.proto.TexasGameAction}
@@ -65,6 +98,11 @@ public final class TexasGameActionProto {
       chip_ = 0L;
       remainingChip_ = 0L;
       roundChip_ = 0L;
+      nextOpSeatId_ = 0;
+      nextOpCallChip_ = 0L;
+      nextOpMinRaiseChip_ = 0L;
+      nextOpMaxRaiseChip_ = 0L;
+      maxRoundChip_ = 0L;
     }
 
     @java.lang.Override
@@ -122,6 +160,31 @@ public final class TexasGameActionProto {
             case 40: {
 
               roundChip_ = input.readInt64();
+              break;
+            }
+            case 48: {
+
+              nextOpSeatId_ = input.readInt32();
+              break;
+            }
+            case 56: {
+
+              nextOpCallChip_ = input.readInt64();
+              break;
+            }
+            case 64: {
+
+              nextOpMinRaiseChip_ = input.readInt64();
+              break;
+            }
+            case 72: {
+
+              nextOpMaxRaiseChip_ = input.readInt64();
+              break;
+            }
+            case 80: {
+
+              maxRoundChip_ = input.readInt64();
               break;
             }
           }
@@ -267,6 +330,10 @@ public final class TexasGameActionProto {
     public static final int SEATID_FIELD_NUMBER = 1;
     private int seatId_;
     /**
+     * <pre>
+     *当前操作者操作结果
+     * </pre>
+     *
      * <code>int32 seatId = 1;</code>
      */
     public int getSeatId() {
@@ -316,6 +383,55 @@ public final class TexasGameActionProto {
       return roundChip_;
     }
 
+    public static final int NEXT_OP_SEATID_FIELD_NUMBER = 6;
+    private int nextOpSeatId_;
+    /**
+     * <pre>
+     *下一个操作者操作需求
+     * </pre>
+     *
+     * <code>int32 next_op_seatId = 6;</code>
+     */
+    public int getNextOpSeatId() {
+      return nextOpSeatId_;
+    }
+
+    public static final int NEXT_OP_CALL_CHIP_FIELD_NUMBER = 7;
+    private long nextOpCallChip_;
+    /**
+     * <code>int64 next_op_call_chip = 7;</code>
+     */
+    public long getNextOpCallChip() {
+      return nextOpCallChip_;
+    }
+
+    public static final int NEXT_OP_MIN_RAISE_CHIP_FIELD_NUMBER = 8;
+    private long nextOpMinRaiseChip_;
+    /**
+     * <code>int64 next_op_min_raise_chip = 8;</code>
+     */
+    public long getNextOpMinRaiseChip() {
+      return nextOpMinRaiseChip_;
+    }
+
+    public static final int NEXT_OP_MAX_RAISE_CHIP_FIELD_NUMBER = 9;
+    private long nextOpMaxRaiseChip_;
+    /**
+     * <code>int64 next_op_max_raise_chip = 9;</code>
+     */
+    public long getNextOpMaxRaiseChip() {
+      return nextOpMaxRaiseChip_;
+    }
+
+    public static final int MAX_ROUND_CHIP_FIELD_NUMBER = 10;
+    private long maxRoundChip_;
+    /**
+     * <code>int64 max_round_chip = 10;</code>
+     */
+    public long getMaxRoundChip() {
+      return maxRoundChip_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -342,6 +458,21 @@ public final class TexasGameActionProto {
       }
       if (roundChip_ != 0L) {
         output.writeInt64(5, roundChip_);
+      }
+      if (nextOpSeatId_ != 0) {
+        output.writeInt32(6, nextOpSeatId_);
+      }
+      if (nextOpCallChip_ != 0L) {
+        output.writeInt64(7, nextOpCallChip_);
+      }
+      if (nextOpMinRaiseChip_ != 0L) {
+        output.writeInt64(8, nextOpMinRaiseChip_);
+      }
+      if (nextOpMaxRaiseChip_ != 0L) {
+        output.writeInt64(9, nextOpMaxRaiseChip_);
+      }
+      if (maxRoundChip_ != 0L) {
+        output.writeInt64(10, maxRoundChip_);
       }
       unknownFields.writeTo(output);
     }
@@ -371,6 +502,26 @@ public final class TexasGameActionProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(5, roundChip_);
       }
+      if (nextOpSeatId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(6, nextOpSeatId_);
+      }
+      if (nextOpCallChip_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(7, nextOpCallChip_);
+      }
+      if (nextOpMinRaiseChip_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(8, nextOpMinRaiseChip_);
+      }
+      if (nextOpMaxRaiseChip_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(9, nextOpMaxRaiseChip_);
+      }
+      if (maxRoundChip_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(10, maxRoundChip_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -396,6 +547,16 @@ public final class TexasGameActionProto {
           == other.getRemainingChip());
       result = result && (getRoundChip()
           == other.getRoundChip());
+      result = result && (getNextOpSeatId()
+          == other.getNextOpSeatId());
+      result = result && (getNextOpCallChip()
+          == other.getNextOpCallChip());
+      result = result && (getNextOpMinRaiseChip()
+          == other.getNextOpMinRaiseChip());
+      result = result && (getNextOpMaxRaiseChip()
+          == other.getNextOpMaxRaiseChip());
+      result = result && (getMaxRoundChip()
+          == other.getMaxRoundChip());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -420,6 +581,20 @@ public final class TexasGameActionProto {
       hash = (37 * hash) + ROUND_CHIP_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getRoundChip());
+      hash = (37 * hash) + NEXT_OP_SEATID_FIELD_NUMBER;
+      hash = (53 * hash) + getNextOpSeatId();
+      hash = (37 * hash) + NEXT_OP_CALL_CHIP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getNextOpCallChip());
+      hash = (37 * hash) + NEXT_OP_MIN_RAISE_CHIP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getNextOpMinRaiseChip());
+      hash = (37 * hash) + NEXT_OP_MAX_RAISE_CHIP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getNextOpMaxRaiseChip());
+      hash = (37 * hash) + MAX_ROUND_CHIP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getMaxRoundChip());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -573,6 +748,16 @@ public final class TexasGameActionProto {
 
         roundChip_ = 0L;
 
+        nextOpSeatId_ = 0;
+
+        nextOpCallChip_ = 0L;
+
+        nextOpMinRaiseChip_ = 0L;
+
+        nextOpMaxRaiseChip_ = 0L;
+
+        maxRoundChip_ = 0L;
+
         return this;
       }
 
@@ -600,6 +785,11 @@ public final class TexasGameActionProto {
         result.chip_ = chip_;
         result.remainingChip_ = remainingChip_;
         result.roundChip_ = roundChip_;
+        result.nextOpSeatId_ = nextOpSeatId_;
+        result.nextOpCallChip_ = nextOpCallChip_;
+        result.nextOpMinRaiseChip_ = nextOpMinRaiseChip_;
+        result.nextOpMaxRaiseChip_ = nextOpMaxRaiseChip_;
+        result.maxRoundChip_ = maxRoundChip_;
         onBuilt();
         return result;
       }
@@ -656,6 +846,21 @@ public final class TexasGameActionProto {
         if (other.getRoundChip() != 0L) {
           setRoundChip(other.getRoundChip());
         }
+        if (other.getNextOpSeatId() != 0) {
+          setNextOpSeatId(other.getNextOpSeatId());
+        }
+        if (other.getNextOpCallChip() != 0L) {
+          setNextOpCallChip(other.getNextOpCallChip());
+        }
+        if (other.getNextOpMinRaiseChip() != 0L) {
+          setNextOpMinRaiseChip(other.getNextOpMinRaiseChip());
+        }
+        if (other.getNextOpMaxRaiseChip() != 0L) {
+          setNextOpMaxRaiseChip(other.getNextOpMaxRaiseChip());
+        }
+        if (other.getMaxRoundChip() != 0L) {
+          setMaxRoundChip(other.getMaxRoundChip());
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -685,12 +890,20 @@ public final class TexasGameActionProto {
 
       private int seatId_ ;
       /**
+       * <pre>
+       *当前操作者操作结果
+       * </pre>
+       *
        * <code>int32 seatId = 1;</code>
        */
       public int getSeatId() {
         return seatId_;
       }
       /**
+       * <pre>
+       *当前操作者操作结果
+       * </pre>
+       *
        * <code>int32 seatId = 1;</code>
        */
       public Builder setSeatId(int value) {
@@ -700,6 +913,10 @@ public final class TexasGameActionProto {
         return this;
       }
       /**
+       * <pre>
+       *当前操作者操作结果
+       * </pre>
+       *
        * <code>int32 seatId = 1;</code>
        */
       public Builder clearSeatId() {
@@ -830,6 +1047,148 @@ public final class TexasGameActionProto {
         onChanged();
         return this;
       }
+
+      private int nextOpSeatId_ ;
+      /**
+       * <pre>
+       *下一个操作者操作需求
+       * </pre>
+       *
+       * <code>int32 next_op_seatId = 6;</code>
+       */
+      public int getNextOpSeatId() {
+        return nextOpSeatId_;
+      }
+      /**
+       * <pre>
+       *下一个操作者操作需求
+       * </pre>
+       *
+       * <code>int32 next_op_seatId = 6;</code>
+       */
+      public Builder setNextOpSeatId(int value) {
+        
+        nextOpSeatId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *下一个操作者操作需求
+       * </pre>
+       *
+       * <code>int32 next_op_seatId = 6;</code>
+       */
+      public Builder clearNextOpSeatId() {
+        
+        nextOpSeatId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long nextOpCallChip_ ;
+      /**
+       * <code>int64 next_op_call_chip = 7;</code>
+       */
+      public long getNextOpCallChip() {
+        return nextOpCallChip_;
+      }
+      /**
+       * <code>int64 next_op_call_chip = 7;</code>
+       */
+      public Builder setNextOpCallChip(long value) {
+        
+        nextOpCallChip_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 next_op_call_chip = 7;</code>
+       */
+      public Builder clearNextOpCallChip() {
+        
+        nextOpCallChip_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long nextOpMinRaiseChip_ ;
+      /**
+       * <code>int64 next_op_min_raise_chip = 8;</code>
+       */
+      public long getNextOpMinRaiseChip() {
+        return nextOpMinRaiseChip_;
+      }
+      /**
+       * <code>int64 next_op_min_raise_chip = 8;</code>
+       */
+      public Builder setNextOpMinRaiseChip(long value) {
+        
+        nextOpMinRaiseChip_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 next_op_min_raise_chip = 8;</code>
+       */
+      public Builder clearNextOpMinRaiseChip() {
+        
+        nextOpMinRaiseChip_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long nextOpMaxRaiseChip_ ;
+      /**
+       * <code>int64 next_op_max_raise_chip = 9;</code>
+       */
+      public long getNextOpMaxRaiseChip() {
+        return nextOpMaxRaiseChip_;
+      }
+      /**
+       * <code>int64 next_op_max_raise_chip = 9;</code>
+       */
+      public Builder setNextOpMaxRaiseChip(long value) {
+        
+        nextOpMaxRaiseChip_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 next_op_max_raise_chip = 9;</code>
+       */
+      public Builder clearNextOpMaxRaiseChip() {
+        
+        nextOpMaxRaiseChip_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long maxRoundChip_ ;
+      /**
+       * <code>int64 max_round_chip = 10;</code>
+       */
+      public long getMaxRoundChip() {
+        return maxRoundChip_;
+      }
+      /**
+       * <code>int64 max_round_chip = 10;</code>
+       */
+      public Builder setMaxRoundChip(long value) {
+        
+        maxRoundChip_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 max_round_chip = 10;</code>
+       */
+      public Builder clearMaxRoundChip() {
+        
+        maxRoundChip_ = 0L;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
@@ -895,14 +1254,18 @@ public final class TexasGameActionProto {
     java.lang.String[] descriptorData = {
       "\n>src/com/poker/protocols/texaspoker/pro" +
       "to/TexasGameAction.proto\022$com.poker.prot" +
-      "ocols.texaspoker.proto\"\340\001\n\017TexasGameActi" +
+      "ocols.texaspoker.proto\"\353\002\n\017TexasGameActi" +
       "on\022\016\n\006seatId\030\001 \001(\005\022N\n\007operate\030\002 \001(\0162=.co" +
       "m.poker.protocols.texaspoker.proto.Texas" +
       "GameAction.Operate\022\014\n\004chip\030\003 \001(\003\022\026\n\016rema" +
-      "ining_chip\030\004 \001(\003\022\022\n\nround_chip\030\005 \001(\003\"3\n\007" +
-      "Operate\022\010\n\004FOLD\020\000\022\t\n\005CHECK\020\001\022\010\n\004CALL\020\002\022\t" +
-      "\n\005RAISE\020\003B6\n\036com.poker.protocols.texaspo" +
-      "kerB\024TexasGameActionProtob\006proto3"
+      "ining_chip\030\004 \001(\003\022\022\n\nround_chip\030\005 \001(\003\022\026\n\016" +
+      "next_op_seatId\030\006 \001(\005\022\031\n\021next_op_call_chi" +
+      "p\030\007 \001(\003\022\036\n\026next_op_min_raise_chip\030\010 \001(\003\022" +
+      "\036\n\026next_op_max_raise_chip\030\t \001(\003\022\026\n\016max_r" +
+      "ound_chip\030\n \001(\003\"3\n\007Operate\022\010\n\004FOLD\020\000\022\t\n\005" +
+      "CHECK\020\001\022\010\n\004CALL\020\002\022\t\n\005RAISE\020\003B6\n\036com.poke" +
+      "r.protocols.texaspokerB\024TexasGameActionP" +
+      "rotob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -921,7 +1284,7 @@ public final class TexasGameActionProto {
     internal_static_com_poker_protocols_texaspoker_proto_TexasGameAction_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_poker_protocols_texaspoker_proto_TexasGameAction_descriptor,
-        new java.lang.String[] { "SeatId", "Operate", "Chip", "RemainingChip", "RoundChip", });
+        new java.lang.String[] { "SeatId", "Operate", "Chip", "RemainingChip", "RoundChip", "NextOpSeatId", "NextOpCallChip", "NextOpMinRaiseChip", "NextOpMaxRaiseChip", "MaxRoundChip", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
