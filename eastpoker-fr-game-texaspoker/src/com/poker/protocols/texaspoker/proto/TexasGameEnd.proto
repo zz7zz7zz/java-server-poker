@@ -1,0 +1,21 @@
+syntax="proto3";
+
+package com.poker.protocols.texaspoker.proto; 
+
+option java_package = "com.poker.protocols.texaspoker";
+option java_outer_classname = "TexasGameEndProto";
+
+message Result{
+	int32  seateId   		= 1;
+	int32  card_result   	= 2;
+	repeated int32  cards 	= 3;
+	
+	int64 chip 				= 4;
+	int64 win_chip 			= 5;
+}
+
+message TexasGameEnd{
+	repeated Result mResults = 1;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameEnd.proto 
