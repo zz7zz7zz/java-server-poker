@@ -1,0 +1,23 @@
+syntax="proto3";
+
+package com.poker.protocols.texaspoker.proto; 
+
+option java_package = "com.poker.protocols.texaspoker";
+option java_outer_classname = "TexasGameActionProto";
+
+message TexasGameAction{
+	enum Operate {
+	    FOLD 	= 0;
+	    CHECK 	= 1;
+	    CALL 	= 2;
+	    RAISE 	= 3;
+	  }
+  
+	int32   seatId  		= 1;
+	Operate operate 		= 2;
+	int64   chip    		= 3;
+	int64   remaining_chip  = 4;
+	int64   round_chip      = 5;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameAction.proto 
