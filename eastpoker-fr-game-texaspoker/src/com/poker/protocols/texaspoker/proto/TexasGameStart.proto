@@ -1,0 +1,19 @@
+syntax="proto3";
+
+package com.poker.protocols.texaspoker.proto; 
+
+option java_package = "com.poker.protocols.texaspoker";
+option java_outer_classname = "TexasGameStartProto";
+
+message BlindConfig{
+	int64  ante  			=1;
+	int64  blind  			=2;
+	int32  blind_time  		=3;
+}
+
+message TexasGameStart{
+	int32  action_timeout       = 1;
+	repeated BlindConfig config = 2;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameStart.proto 
