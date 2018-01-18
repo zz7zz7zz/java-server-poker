@@ -1,0 +1,17 @@
+syntax="proto3";
+
+package com.poker.protocols.texaspoker.proto; 
+
+option java_package = "com.poker.protocols.texaspoker";
+option java_outer_classname = "TexasGameShowHandProto";
+
+message UserCard{
+	int32  sb_uid   = 1;//小盲uid
+	repeated int32  cards =2;//底牌
+}
+
+message TexasGameShowHand{
+	repeated UserCard mUserCards = 1;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameShowHand.proto 

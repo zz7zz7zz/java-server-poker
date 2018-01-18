@@ -16,10 +16,8 @@ public class GCmd {
 	public int CMD_SERVER_DEAL_RIVER   					= 0x2005; //发河牌
 
 	public int CMD_SERVER_BROADCAST_WHO_ACTION_WAHT 	= 0x2006; //广播 谁做了什么操作,下一个操作者是谁
-	public int CMD_SERVER_BROADCAST_SHOW_HAND 			= 0x2007; //广播 谁秀牌
-	public int CMD_SERVER_BROADCAST_ALL_SHOW_HAND 		= 0x2008; //广播 集体秀牌
+	public int CMD_SERVER_BROADCAST_SHOW_HAND 			= 0x2007; //广播 秀牌
 
-	public int CMD_SERVER_RECONNECT 	    			= 0x2009; //客户端请求重连
-	
-	public int CMD_SERVER_GAME_END 	    				= 0x2010; //游戏结束，进行结算
+	public int CMD_SERVER_RECONNECT 	    			= 0x2008; //客户端请求重连
+	public int CMD_SERVER_GAME_END 	    				= 0x2009; //游戏结束，进行结算
 }
