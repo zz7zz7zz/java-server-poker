@@ -24,27 +24,37 @@ public final class GameUserProto {
     long getUid();
 
     /**
-     * <code>string head_portrait = 2;</code>
+     * <code>string nick_name = 2;</code>
+     */
+    java.lang.String getNickName();
+    /**
+     * <code>string nick_name = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getNickNameBytes();
+
+    /**
+     * <code>string head_portrait = 3;</code>
      */
     java.lang.String getHeadPortrait();
     /**
-     * <code>string head_portrait = 2;</code>
+     * <code>string head_portrait = 3;</code>
      */
     com.google.protobuf.ByteString
         getHeadPortraitBytes();
 
     /**
-     * <code>int64 chip = 3;</code>
+     * <code>int64 chip = 4;</code>
      */
     long getChip();
 
     /**
-     * <code>int32 level = 4;</code>
+     * <code>int32 level = 5;</code>
      */
     int getLevel();
 
     /**
-     * <code>int32 seatId = 5;</code>
+     * <code>int32 seatId = 6;</code>
      */
     int getSeatId();
   }
@@ -62,6 +72,7 @@ public final class GameUserProto {
     }
     private GameUser() {
       uid_ = 0L;
+      nickName_ = "";
       headPortrait_ = "";
       chip_ = 0L;
       level_ = 0;
@@ -107,20 +118,26 @@ public final class GameUserProto {
             case 18: {
               java.lang.String s = input.readStringRequireUtf8();
 
-              headPortrait_ = s;
+              nickName_ = s;
               break;
             }
-            case 24: {
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
 
-              chip_ = input.readInt64();
+              headPortrait_ = s;
               break;
             }
             case 32: {
 
-              level_ = input.readInt32();
+              chip_ = input.readInt64();
               break;
             }
             case 40: {
+
+              level_ = input.readInt32();
+              break;
+            }
+            case 48: {
 
               seatId_ = input.readInt32();
               break;
@@ -158,10 +175,44 @@ public final class GameUserProto {
       return uid_;
     }
 
-    public static final int HEAD_PORTRAIT_FIELD_NUMBER = 2;
+    public static final int NICK_NAME_FIELD_NUMBER = 2;
+    private volatile java.lang.Object nickName_;
+    /**
+     * <code>string nick_name = 2;</code>
+     */
+    public java.lang.String getNickName() {
+      java.lang.Object ref = nickName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        nickName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string nick_name = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getNickNameBytes() {
+      java.lang.Object ref = nickName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        nickName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int HEAD_PORTRAIT_FIELD_NUMBER = 3;
     private volatile java.lang.Object headPortrait_;
     /**
-     * <code>string head_portrait = 2;</code>
+     * <code>string head_portrait = 3;</code>
      */
     public java.lang.String getHeadPortrait() {
       java.lang.Object ref = headPortrait_;
@@ -176,7 +227,7 @@ public final class GameUserProto {
       }
     }
     /**
-     * <code>string head_portrait = 2;</code>
+     * <code>string head_portrait = 3;</code>
      */
     public com.google.protobuf.ByteString
         getHeadPortraitBytes() {
@@ -192,28 +243,28 @@ public final class GameUserProto {
       }
     }
 
-    public static final int CHIP_FIELD_NUMBER = 3;
+    public static final int CHIP_FIELD_NUMBER = 4;
     private long chip_;
     /**
-     * <code>int64 chip = 3;</code>
+     * <code>int64 chip = 4;</code>
      */
     public long getChip() {
       return chip_;
     }
 
-    public static final int LEVEL_FIELD_NUMBER = 4;
+    public static final int LEVEL_FIELD_NUMBER = 5;
     private int level_;
     /**
-     * <code>int32 level = 4;</code>
+     * <code>int32 level = 5;</code>
      */
     public int getLevel() {
       return level_;
     }
 
-    public static final int SEATID_FIELD_NUMBER = 5;
+    public static final int SEATID_FIELD_NUMBER = 6;
     private int seatId_;
     /**
-     * <code>int32 seatId = 5;</code>
+     * <code>int32 seatId = 6;</code>
      */
     public int getSeatId() {
       return seatId_;
@@ -234,17 +285,20 @@ public final class GameUserProto {
       if (uid_ != 0L) {
         output.writeInt64(1, uid_);
       }
+      if (!getNickNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, nickName_);
+      }
       if (!getHeadPortraitBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, headPortrait_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, headPortrait_);
       }
       if (chip_ != 0L) {
-        output.writeInt64(3, chip_);
+        output.writeInt64(4, chip_);
       }
       if (level_ != 0) {
-        output.writeInt32(4, level_);
+        output.writeInt32(5, level_);
       }
       if (seatId_ != 0) {
-        output.writeInt32(5, seatId_);
+        output.writeInt32(6, seatId_);
       }
       unknownFields.writeTo(output);
     }
@@ -258,20 +312,23 @@ public final class GameUserProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(1, uid_);
       }
+      if (!getNickNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, nickName_);
+      }
       if (!getHeadPortraitBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, headPortrait_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, headPortrait_);
       }
       if (chip_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(3, chip_);
+          .computeInt64Size(4, chip_);
       }
       if (level_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(4, level_);
+          .computeInt32Size(5, level_);
       }
       if (seatId_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(5, seatId_);
+          .computeInt32Size(6, seatId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -291,6 +348,8 @@ public final class GameUserProto {
       boolean result = true;
       result = result && (getUid()
           == other.getUid());
+      result = result && getNickName()
+          .equals(other.getNickName());
       result = result && getHeadPortrait()
           .equals(other.getHeadPortrait());
       result = result && (getChip()
@@ -313,6 +372,8 @@ public final class GameUserProto {
       hash = (37 * hash) + UID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getUid());
+      hash = (37 * hash) + NICK_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getNickName().hashCode();
       hash = (37 * hash) + HEAD_PORTRAIT_FIELD_NUMBER;
       hash = (53 * hash) + getHeadPortrait().hashCode();
       hash = (37 * hash) + CHIP_FIELD_NUMBER;
@@ -467,6 +528,8 @@ public final class GameUserProto {
         super.clear();
         uid_ = 0L;
 
+        nickName_ = "";
+
         headPortrait_ = "";
 
         chip_ = 0L;
@@ -498,6 +561,7 @@ public final class GameUserProto {
       public com.poker.protocols.game.GameUserProto.GameUser buildPartial() {
         com.poker.protocols.game.GameUserProto.GameUser result = new com.poker.protocols.game.GameUserProto.GameUser(this);
         result.uid_ = uid_;
+        result.nickName_ = nickName_;
         result.headPortrait_ = headPortrait_;
         result.chip_ = chip_;
         result.level_ = level_;
@@ -545,6 +609,10 @@ public final class GameUserProto {
         if (other == com.poker.protocols.game.GameUserProto.GameUser.getDefaultInstance()) return this;
         if (other.getUid() != 0L) {
           setUid(other.getUid());
+        }
+        if (!other.getNickName().isEmpty()) {
+          nickName_ = other.nickName_;
+          onChanged();
         }
         if (!other.getHeadPortrait().isEmpty()) {
           headPortrait_ = other.headPortrait_;
@@ -612,9 +680,78 @@ public final class GameUserProto {
         return this;
       }
 
+      private java.lang.Object nickName_ = "";
+      /**
+       * <code>string nick_name = 2;</code>
+       */
+      public java.lang.String getNickName() {
+        java.lang.Object ref = nickName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          nickName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string nick_name = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getNickNameBytes() {
+        java.lang.Object ref = nickName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          nickName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string nick_name = 2;</code>
+       */
+      public Builder setNickName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        nickName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string nick_name = 2;</code>
+       */
+      public Builder clearNickName() {
+        
+        nickName_ = getDefaultInstance().getNickName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string nick_name = 2;</code>
+       */
+      public Builder setNickNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        nickName_ = value;
+        onChanged();
+        return this;
+      }
+
       private java.lang.Object headPortrait_ = "";
       /**
-       * <code>string head_portrait = 2;</code>
+       * <code>string head_portrait = 3;</code>
        */
       public java.lang.String getHeadPortrait() {
         java.lang.Object ref = headPortrait_;
@@ -629,7 +766,7 @@ public final class GameUserProto {
         }
       }
       /**
-       * <code>string head_portrait = 2;</code>
+       * <code>string head_portrait = 3;</code>
        */
       public com.google.protobuf.ByteString
           getHeadPortraitBytes() {
@@ -645,7 +782,7 @@ public final class GameUserProto {
         }
       }
       /**
-       * <code>string head_portrait = 2;</code>
+       * <code>string head_portrait = 3;</code>
        */
       public Builder setHeadPortrait(
           java.lang.String value) {
@@ -658,7 +795,7 @@ public final class GameUserProto {
         return this;
       }
       /**
-       * <code>string head_portrait = 2;</code>
+       * <code>string head_portrait = 3;</code>
        */
       public Builder clearHeadPortrait() {
         
@@ -667,7 +804,7 @@ public final class GameUserProto {
         return this;
       }
       /**
-       * <code>string head_portrait = 2;</code>
+       * <code>string head_portrait = 3;</code>
        */
       public Builder setHeadPortraitBytes(
           com.google.protobuf.ByteString value) {
@@ -683,13 +820,13 @@ public final class GameUserProto {
 
       private long chip_ ;
       /**
-       * <code>int64 chip = 3;</code>
+       * <code>int64 chip = 4;</code>
        */
       public long getChip() {
         return chip_;
       }
       /**
-       * <code>int64 chip = 3;</code>
+       * <code>int64 chip = 4;</code>
        */
       public Builder setChip(long value) {
         
@@ -698,7 +835,7 @@ public final class GameUserProto {
         return this;
       }
       /**
-       * <code>int64 chip = 3;</code>
+       * <code>int64 chip = 4;</code>
        */
       public Builder clearChip() {
         
@@ -709,13 +846,13 @@ public final class GameUserProto {
 
       private int level_ ;
       /**
-       * <code>int32 level = 4;</code>
+       * <code>int32 level = 5;</code>
        */
       public int getLevel() {
         return level_;
       }
       /**
-       * <code>int32 level = 4;</code>
+       * <code>int32 level = 5;</code>
        */
       public Builder setLevel(int value) {
         
@@ -724,7 +861,7 @@ public final class GameUserProto {
         return this;
       }
       /**
-       * <code>int32 level = 4;</code>
+       * <code>int32 level = 5;</code>
        */
       public Builder clearLevel() {
         
@@ -735,13 +872,13 @@ public final class GameUserProto {
 
       private int seatId_ ;
       /**
-       * <code>int32 seatId = 5;</code>
+       * <code>int32 seatId = 6;</code>
        */
       public int getSeatId() {
         return seatId_;
       }
       /**
-       * <code>int32 seatId = 5;</code>
+       * <code>int32 seatId = 6;</code>
        */
       public Builder setSeatId(int value) {
         
@@ -750,7 +887,7 @@ public final class GameUserProto {
         return this;
       }
       /**
-       * <code>int32 seatId = 5;</code>
+       * <code>int32 seatId = 6;</code>
        */
       public Builder clearSeatId() {
         
@@ -823,10 +960,11 @@ public final class GameUserProto {
     java.lang.String[] descriptorData = {
       "\n1src/com/poker/protocols/game/proto/Gam" +
       "eUser.proto\022\036com.poker.protocols.game.pr" +
-      "oto\"[\n\010GameUser\022\013\n\003uid\030\001 \001(\003\022\025\n\rhead_por" +
-      "trait\030\002 \001(\t\022\014\n\004chip\030\003 \001(\003\022\r\n\005level\030\004 \001(\005" +
-      "\022\016\n\006seatId\030\005 \001(\005B)\n\030com.poker.protocols." +
-      "gameB\rGameUserProtob\006proto3"
+      "oto\"n\n\010GameUser\022\013\n\003uid\030\001 \001(\003\022\021\n\tnick_nam" +
+      "e\030\002 \001(\t\022\025\n\rhead_portrait\030\003 \001(\t\022\014\n\004chip\030\004" +
+      " \001(\003\022\r\n\005level\030\005 \001(\005\022\016\n\006seatId\030\006 \001(\005B)\n\030c" +
+      "om.poker.protocols.gameB\rGameUserProtob\006" +
+      "proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -845,7 +983,7 @@ public final class GameUserProto {
     internal_static_com_poker_protocols_game_proto_GameUser_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_poker_protocols_game_proto_GameUser_descriptor,
-        new java.lang.String[] { "Uid", "HeadPortrait", "Chip", "Level", "SeatId", });
+        new java.lang.String[] { "Uid", "NickName", "HeadPortrait", "Chip", "Level", "SeatId", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
