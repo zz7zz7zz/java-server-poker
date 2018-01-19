@@ -1,0 +1,17 @@
+syntax="proto3";
+
+package com.poker.protocols.texaspoker.proto; 
+
+import "src/com/poker/protocols/texaspoker/proto/TexasGameAction.proto";
+
+option java_package = "com.poker.protocols.texaspoker";
+option java_outer_classname = "TexasGameActionRequestProto";
+
+message TexasGameActionRequest{
+  	//当前操作者操作结果
+	int32   seatId  					= 1;
+	TexasGameAction.Operate operate 	= 2;
+	int64   chip    					= 3;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameActionRequest.proto 

@@ -2,6 +2,7 @@ package com.poker.games.impl;
 
 import com.poker.games.AbstractGame;
 import com.poker.games.User;
+import com.poker.games.impl.handler.GCmd;
 
 /**
  * 具体游戏的实现类
@@ -37,8 +38,9 @@ public class GImpl extends AbstractGame {
 
 	@Override
 	protected void dispatchTableMessage(int cmd, byte[] data, int header_start, int header_length, int body_start,int body_length) {
-		// TODO Auto-generated method stub
-		
+		if(cmd == GCmd.CMD_SERVER_BROADCAST_SHOW_HAND){
+			
+		}
 	}
 	
 }
