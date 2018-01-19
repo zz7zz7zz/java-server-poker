@@ -15,6 +15,7 @@ import com.poker.protocols.texaspoker.TexasGameDealTurnProto.TexasGameDealTurn;
 import com.poker.protocols.texaspoker.TexasGameEndProto.Result;
 import com.poker.protocols.texaspoker.TexasGameEndProto.TexasGameEnd;
 import com.poker.protocols.texaspoker.TexasGameReconnectProto.TexasGameReconnect;
+import com.poker.protocols.texaspoker.TexasGameReconnectProto.User;
 import com.poker.protocols.texaspoker.TexasGameShowHandProto.TexasGameShowHand;
 import com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard;
 
@@ -133,8 +134,61 @@ public class TexasGameServer {
 		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_BROADCAST_SHOW_HAND, (byte)0, body,0,body.length);
 	}
 	
-	public static int reconnect(byte[] writeBuff,int squenceId,String uid,Table table){
+	public static int reconnect(byte[] writeBuff,int squenceId,String uid,Table table, GameConfig mGameConfig){
 		TexasGameReconnect.Builder builder = TexasGameReconnect.newBuilder();
+		
+		Config.Builder configBuilder = Config.newBuilder();
+		configBuilder.setLevel(mGameConfig.level);
+		configBuilder.setLevelName(mGameConfig.level_name);
+		configBuilder.setMaxUser(mGameConfig.table_max_user);
+		configBuilder.setMaxChip(mGameConfig.table_max_chip);
+		int size = mGameConfig.table_ante.length;
+		for(int i = 0;i<size;i++){
+			configBuilder.addAnte(mGameConfig.table_ante[i]);
+			configBuilder.addBlind(mGameConfig.table_blind[i]);
+			configBuilder.addBlindTime(mGameConfig.table_blind_time[i]);
+		}
+		
+		builder.setConfig(configBuilder);
+		
+		
+		for(int i = 0;i<table.users.length;i++){
+			User.Builder userBuilder = User.newBuilder();
+			userBuilder.setUid(1000);
+			userBuilder.setSeatId(i);
+			userBuilder.setNickName("name");
+			userBuilder.setHeadPortrait("www.baidu.com/logo.png");
+			userBuilder.setChip(100);
+			userBuilder.setLevel(1);
+			userBuilder.setOperate(Operate.CALL);
+			userBuilder.setRoundChip(200);
+			builder.addMUsers(userBuilder);
+		}
+		
+		builder.setTableStatus(1);
+		builder.setSbSeatId(1);
+		builder.setSbSeatId(1);
+		builder.setBtnSeatId(1);
+		
+		
+		builder.addCards(1);
+		builder.addCards(1);
+		
+		builder.addCardsFlop(1);
+		builder.addCardsFlop(1);
+		builder.addCardsFlop(1);
+		
+		builder.addCardsTrun(1);
+		
+		builder.addCardsRiver(1);
+		
+		builder.setNextOpSeatId(1);
+		builder.setNextOpMinRaiseChip(200);
+		builder.setNextOpMaxRaiseChip(500);
+		builder.setNextOpCallChip(300);
+		builder.setMaxRoundChip(5000);
+		
+		builder.setRestActionTimeout(10);
 		
 		byte[] body = builder.build().toByteArray();
 
