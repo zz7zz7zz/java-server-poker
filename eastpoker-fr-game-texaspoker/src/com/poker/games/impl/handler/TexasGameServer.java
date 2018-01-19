@@ -4,7 +4,11 @@ package com.poker.games.impl.handler;
 import com.poker.data.DataPacket;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.protocols.texaspoker.TexasGameStartProto.TexasGameStart;
-import com.poker.protocols.texaspoker.TexasGameStartProto.Config;;
+import com.poker.protocols.texaspoker.TexasGameStartProto.Config;
+import com.poker.protocols.texaspoker.TexasGameDealFlopProto.TexasGameDealFlop;
+import com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop;
+import com.poker.protocols.texaspoker.TexasGameDealRiverProto.TexasGameDealRiver;
+import com.poker.protocols.texaspoker.TexasGameDealTurnProto.TexasGameDealTurn;;
 
 public class TexasGameServer {
 	
@@ -33,5 +37,54 @@ public class TexasGameServer {
 
 		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_GAME_START, (byte)0, body,0,body.length);
 	}
+	
+	public static int dealPreFlop(byte[] writeBuff,int squenceId,byte[] cards){
+		
+		TexasGameDealPreFlop.Builder builder = TexasGameDealPreFlop.newBuilder();
+		for(int i = 0;i<cards.length;i++){
+			builder.addCards(cards[i]);
+		}
+		
+		byte[] body = builder.build().toByteArray();
+
+		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_DEAL_PREFLOP, (byte)0, body,0,body.length);
+	}
+	
+	public static int dealFlop(byte[] writeBuff,int squenceId,byte[] cards){
+		
+		TexasGameDealFlop.Builder builder = TexasGameDealFlop.newBuilder();
+		for(int i = 0;i<cards.length;i++){
+			builder.addCards(cards[i]);
+		}
+		
+		byte[] body = builder.build().toByteArray();
+
+		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_DEAL_FLOP, (byte)0, body,0,body.length);
+	}
+	
+	public static int dealTrun(byte[] writeBuff,int squenceId,byte[] cards){
+		
+		TexasGameDealTurn.Builder builder = TexasGameDealTurn.newBuilder();
+		for(int i = 0;i<cards.length;i++){
+			builder.addCards(cards[i]);
+		}
+		
+		byte[] body = builder.build().toByteArray();
+
+		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_DEAL_TURN, (byte)0, body,0,body.length);
+	}
+	
+	public static int dealRiver(byte[] writeBuff,int squenceId,byte[] cards){
+		
+		TexasGameDealRiver.Builder builder = TexasGameDealRiver.newBuilder();
+		for(int i = 0;i<cards.length;i++){
+			builder.addCards(cards[i]);
+		}
+		
+		byte[] body = builder.build().toByteArray();
+
+		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_DEAL_RIVER, (byte)0, body,0,body.length);
+	}
+	
 	
 }
