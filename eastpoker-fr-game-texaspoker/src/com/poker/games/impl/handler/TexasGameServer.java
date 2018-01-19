@@ -6,6 +6,8 @@ import com.poker.games.Table;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.protocols.texaspoker.TexasGameStartProto.TexasGameStart;
 import com.poker.protocols.texaspoker.TexasGameStartProto.Config;
+import com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction;
+import com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate;
 import com.poker.protocols.texaspoker.TexasGameDealFlopProto.TexasGameDealFlop;
 import com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop;
 import com.poker.protocols.texaspoker.TexasGameDealRiverProto.TexasGameDealRiver;
@@ -92,6 +94,26 @@ public class TexasGameServer {
 		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_DEAL_RIVER, (byte)0, body,0,body.length);
 	}
 	
+	public static int broadcastUserAction(byte[] writeBuff,int squenceId,String uid,Table table) {
+		
+		TexasGameAction.Builder builder = TexasGameAction.newBuilder();
+		builder.setSeatId(0);
+		builder.setOperate(Operate.CALL);
+		builder.setChip(100);
+		builder.setRemainingChip(1000);
+		builder.setRoundChip(888);
+		
+		builder.setNextOpSeatId(1);
+		builder.setNextOpMinRaiseChip(200);
+		builder.setNextOpMaxRaiseChip(500);
+		builder.setNextOpCallChip(300);
+		builder.setMaxRoundChip(5000);
+		
+		byte[] body = builder.build().toByteArray();
+
+		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, (byte)0, body,0,body.length);
+	}
+	
 	public static int showHand(byte[] writeBuff,int squenceId,String uid,Table table){
 		
 		TexasGameShowHand.Builder builder = TexasGameShowHand.newBuilder();
@@ -116,7 +138,7 @@ public class TexasGameServer {
 		
 		byte[] body = builder.build().toByteArray();
 
-		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_GAME_END, (byte)0, body,0,body.length);
+		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_RECONNECT, (byte)0, body,0,body.length);
 	}
 	
 	public static int end(byte[] writeBuff,int squenceId,String uid,Table table){
