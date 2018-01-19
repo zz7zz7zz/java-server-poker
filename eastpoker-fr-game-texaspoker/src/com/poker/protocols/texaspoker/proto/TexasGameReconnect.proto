@@ -2,7 +2,8 @@ syntax="proto3";
 
 package com.poker.protocols.texaspoker.proto; 
 
-import "com.poker.protocols.texaspoker.proto/TexasGameStart.proto";
+import "src/com/poker/protocols/texaspoker/proto/TexasGameStart.proto";
+import "src/com/poker/protocols/texaspoker/proto/TexasGameAction.proto";
 
 option java_package = "com.poker.protocols.texaspoker";
 option java_outer_classname = "TexasGameReconnectProto";
@@ -10,27 +11,50 @@ option java_outer_classname = "TexasGameReconnectProto";
 message User{
 
 	int64  uid  		     = 1;
-	string nick_name      = 2;
-	string head_portrait = 3;
+	string nick_name      	 = 2;
+	string head_portrait 	 = 3;
 	int64  chip 		     = 4;
-	int32  level         = 5;
-	int32  seatId        = 6;
+	int32  level             = 5;
+	int32  seatId            = 6;
+	
+	TexasGameAction.Operate  operate         = 7;
+	int64  round_chip        = 8;  
 }
 
 //游戏重连
 message TexasGameReconnect{
-	repeated TexasGameStart.BlindConfig config = 1;
-	int32  action_timeout       				  = 2;//操作超时时间
 	
-	repeated  User  mUsers                     = 3;//台上的用户属性
-		
-	int32  sb_uid   				              = 4;//小盲uid
+	//配置信息
+	Config config 	= 1;//桌子配置
 	
-	repeated int32  cards 		              = 5;//底牌
-	repeated int32  cards_flop 	              = 6;//底牌
-	repeated int32  cards_trun 	              = 7;//转牌
-	repeated int32  cards_river               =  8;//河牌
+	//其中自己的用户信息包含以下信息
+	//int32  seatId            		= 2;
+	//Operate  operate         		= 3;
+	//int64  chip 		     		= 4;
+	//int64  round_chip        		= 5;  
 	
+	//自己的用户信息以及其它用户信息
+	repeated  User  mUsers          = 2;//台上的其它用户属性
+	
+	//桌子信息
+	int32  table_status             = 3;//桌子状态	
+	int32  sb_seatId   				= 4;//小盲桌位id
+	int32  bb_seatId   				= 5;//大盲桌位id
+	int32  btn_seatId   			= 6;//按钮位桌位id
+	
+	repeated int32  cards 		    = 7;//底牌
+	repeated int32  cards_flop 	    = 8;//底牌
+	repeated int32  cards_trun 	    = 9;//转牌
+	repeated int32  cards_river     = 10;//河牌
+	
+	//当前操作人信息
+	int32   next_op_seatId  		= 11;
+	int64   next_op_call_chip 		= 12;
+	int64   next_op_min_raise_chip 	= 13;
+	int64   next_op_max_raise_chip 	= 14;
+	int64   max_round_chip 			= 15;
+	
+	int32   rest_action_timeout     = 16;//剩余的操作超时时间
 }
 
 // protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameReconnect.proto 
