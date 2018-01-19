@@ -1,16 +1,16 @@
 package com.poker.games.impl;
 
-import com.poker.games.AbstractGame;
+import com.poker.games.Table;
 import com.poker.games.User;
 import com.poker.games.impl.handler.GCmd;
 
-/**
- * 具体游戏的实现类
- * @author Administrator
- * 2018年1月15日
- */
-public class GImpl extends AbstractGame {
+public class GTable extends Table {
 
+	public GTable(int table_max_user) {
+		super(table_max_user);
+		// TODO Auto-generated constructor stub
+	}
+	
 	@Override
 	public void onUserEnter(User mUser) {
 		super.onUserEnter(mUser);
@@ -42,5 +42,5 @@ public class GImpl extends AbstractGame {
 			
 		}
 	}
-	
+
 }
