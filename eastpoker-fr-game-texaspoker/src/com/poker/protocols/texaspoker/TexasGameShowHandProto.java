@@ -20,12 +20,12 @@ public final class TexasGameShowHandProto {
 
     /**
      * <pre>
-     *小盲uid
+     *位置id
      * </pre>
      *
-     * <code>int32 sb_uid = 1;</code>
+     * <code>int32 seateId = 1;</code>
      */
-    int getSbUid();
+    int getSeateId();
 
     /**
      * <pre>
@@ -65,7 +65,7 @@ public final class TexasGameShowHandProto {
       super(builder);
     }
     private UserCard() {
-      sbUid_ = 0;
+      seateId_ = 0;
       cards_ = java.util.Collections.emptyList();
     }
 
@@ -102,7 +102,7 @@ public final class TexasGameShowHandProto {
             }
             case 8: {
 
-              sbUid_ = input.readInt32();
+              seateId_ = input.readInt32();
               break;
             }
             case 16: {
@@ -154,17 +154,17 @@ public final class TexasGameShowHandProto {
     }
 
     private int bitField0_;
-    public static final int SB_UID_FIELD_NUMBER = 1;
-    private int sbUid_;
+    public static final int SEATEID_FIELD_NUMBER = 1;
+    private int seateId_;
     /**
      * <pre>
-     *小盲uid
+     *位置id
      * </pre>
      *
-     * <code>int32 sb_uid = 1;</code>
+     * <code>int32 seateId = 1;</code>
      */
-    public int getSbUid() {
-      return sbUid_;
+    public int getSeateId() {
+      return seateId_;
     }
 
     public static final int CARDS_FIELD_NUMBER = 2;
@@ -215,8 +215,8 @@ public final class TexasGameShowHandProto {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      if (sbUid_ != 0) {
-        output.writeInt32(1, sbUid_);
+      if (seateId_ != 0) {
+        output.writeInt32(1, seateId_);
       }
       if (getCardsList().size() > 0) {
         output.writeUInt32NoTag(18);
@@ -233,9 +233,9 @@ public final class TexasGameShowHandProto {
       if (size != -1) return size;
 
       size = 0;
-      if (sbUid_ != 0) {
+      if (seateId_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, sbUid_);
+          .computeInt32Size(1, seateId_);
       }
       {
         int dataSize = 0;
@@ -267,8 +267,8 @@ public final class TexasGameShowHandProto {
       com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard other = (com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard) obj;
 
       boolean result = true;
-      result = result && (getSbUid()
-          == other.getSbUid());
+      result = result && (getSeateId()
+          == other.getSeateId());
       result = result && getCardsList()
           .equals(other.getCardsList());
       result = result && unknownFields.equals(other.unknownFields);
@@ -282,8 +282,8 @@ public final class TexasGameShowHandProto {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + SB_UID_FIELD_NUMBER;
-      hash = (53 * hash) + getSbUid();
+      hash = (37 * hash) + SEATEID_FIELD_NUMBER;
+      hash = (53 * hash) + getSeateId();
       if (getCardsCount() > 0) {
         hash = (37 * hash) + CARDS_FIELD_NUMBER;
         hash = (53 * hash) + getCardsList().hashCode();
@@ -431,7 +431,7 @@ public final class TexasGameShowHandProto {
       }
       public Builder clear() {
         super.clear();
-        sbUid_ = 0;
+        seateId_ = 0;
 
         cards_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -459,7 +459,7 @@ public final class TexasGameShowHandProto {
         com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard result = new com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
-        result.sbUid_ = sbUid_;
+        result.seateId_ = seateId_;
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
           cards_ = java.util.Collections.unmodifiableList(cards_);
           bitField0_ = (bitField0_ & ~0x00000002);
@@ -507,8 +507,8 @@ public final class TexasGameShowHandProto {
 
       public Builder mergeFrom(com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard other) {
         if (other == com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard.getDefaultInstance()) return this;
-        if (other.getSbUid() != 0) {
-          setSbUid(other.getSbUid());
+        if (other.getSeateId() != 0) {
+          setSeateId(other.getSeateId());
         }
         if (!other.cards_.isEmpty()) {
           if (cards_.isEmpty()) {
@@ -548,40 +548,40 @@ public final class TexasGameShowHandProto {
       }
       private int bitField0_;
 
-      private int sbUid_ ;
+      private int seateId_ ;
       /**
        * <pre>
-       *小盲uid
+       *位置id
        * </pre>
        *
-       * <code>int32 sb_uid = 1;</code>
+       * <code>int32 seateId = 1;</code>
        */
-      public int getSbUid() {
-        return sbUid_;
+      public int getSeateId() {
+        return seateId_;
       }
       /**
        * <pre>
-       *小盲uid
+       *位置id
        * </pre>
        *
-       * <code>int32 sb_uid = 1;</code>
+       * <code>int32 seateId = 1;</code>
        */
-      public Builder setSbUid(int value) {
+      public Builder setSeateId(int value) {
         
-        sbUid_ = value;
+        seateId_ = value;
         onChanged();
         return this;
       }
       /**
        * <pre>
-       *小盲uid
+       *位置id
        * </pre>
        *
-       * <code>int32 sb_uid = 1;</code>
+       * <code>int32 seateId = 1;</code>
        */
-      public Builder clearSbUid() {
+      public Builder clearSeateId() {
         
-        sbUid_ = 0;
+        seateId_ = 0;
         onChanged();
         return this;
       }
@@ -1520,12 +1520,12 @@ public final class TexasGameShowHandProto {
     java.lang.String[] descriptorData = {
       "\n@src/com/poker/protocols/texaspoker/pro" +
       "to/TexasGameShowHand.proto\022$com.poker.pr" +
-      "otocols.texaspoker.proto\")\n\010UserCard\022\016\n\006" +
-      "sb_uid\030\001 \001(\005\022\r\n\005cards\030\002 \003(\005\"W\n\021TexasGame" +
-      "ShowHand\022B\n\nmUserCards\030\001 \003(\0132..com.poker" +
-      ".protocols.texaspoker.proto.UserCardB8\n\036" +
-      "com.poker.protocols.texaspokerB\026TexasGam" +
-      "eShowHandProtob\006proto3"
+      "otocols.texaspoker.proto\"*\n\010UserCard\022\017\n\007" +
+      "seateId\030\001 \001(\005\022\r\n\005cards\030\002 \003(\005\"W\n\021TexasGam" +
+      "eShowHand\022B\n\nmUserCards\030\001 \003(\0132..com.poke" +
+      "r.protocols.texaspoker.proto.UserCardB8\n" +
+      "\036com.poker.protocols.texaspokerB\026TexasGa" +
+      "meShowHandProtob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1544,7 +1544,7 @@ public final class TexasGameShowHandProto {
     internal_static_com_poker_protocols_texaspoker_proto_UserCard_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_poker_protocols_texaspoker_proto_UserCard_descriptor,
-        new java.lang.String[] { "SbUid", "Cards", });
+        new java.lang.String[] { "SeateId", "Cards", });
     internal_static_com_poker_protocols_texaspoker_proto_TexasGameShowHand_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_com_poker_protocols_texaspoker_proto_TexasGameShowHand_fieldAccessorTable = new

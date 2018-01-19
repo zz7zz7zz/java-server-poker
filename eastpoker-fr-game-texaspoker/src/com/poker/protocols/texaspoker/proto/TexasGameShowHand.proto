@@ -6,7 +6,7 @@ option java_package = "com.poker.protocols.texaspoker";
 option java_outer_classname = "TexasGameShowHandProto";
 
 message UserCard{
-	int32  sb_uid   = 1;//小盲uid
+	int32  seateId   = 1;//位置id
 	repeated int32  cards =2;//底牌
 }
 
