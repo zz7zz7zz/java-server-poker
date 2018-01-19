@@ -20,15 +20,6 @@ public final class TexasGameDealPreFlopProto {
 
     /**
      * <pre>
-     *小盲uid
-     * </pre>
-     *
-     * <code>int32 sb_uid = 1;</code>
-     */
-    int getSbUid();
-
-    /**
-     * <pre>
      *底牌
      * </pre>
      *
@@ -69,7 +60,6 @@ public final class TexasGameDealPreFlopProto {
       super(builder);
     }
     private TexasGameDealPreFlop() {
-      sbUid_ = 0;
       cards_ = java.util.Collections.emptyList();
     }
 
@@ -104,15 +94,10 @@ public final class TexasGameDealPreFlopProto {
               }
               break;
             }
-            case 8: {
-
-              sbUid_ = input.readInt32();
-              break;
-            }
             case 16: {
-              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
                 cards_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000002;
+                mutable_bitField0_ |= 0x00000001;
               }
               cards_.add(input.readInt32());
               break;
@@ -120,9 +105,9 @@ public final class TexasGameDealPreFlopProto {
             case 18: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001) && input.getBytesUntilLimit() > 0) {
                 cards_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000002;
+                mutable_bitField0_ |= 0x00000001;
               }
               while (input.getBytesUntilLimit() > 0) {
                 cards_.add(input.readInt32());
@@ -138,7 +123,7 @@ public final class TexasGameDealPreFlopProto {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           cards_ = java.util.Collections.unmodifiableList(cards_);
         }
         this.unknownFields = unknownFields.build();
@@ -155,20 +140,6 @@ public final class TexasGameDealPreFlopProto {
       return com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.internal_static_com_poker_protocols_texaspoker_proto_TexasGameDealPreFlop_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop.class, com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop.Builder.class);
-    }
-
-    private int bitField0_;
-    public static final int SB_UID_FIELD_NUMBER = 1;
-    private int sbUid_;
-    /**
-     * <pre>
-     *小盲uid
-     * </pre>
-     *
-     * <code>int32 sb_uid = 1;</code>
-     */
-    public int getSbUid() {
-      return sbUid_;
     }
 
     public static final int CARDS_FIELD_NUMBER = 2;
@@ -219,9 +190,6 @@ public final class TexasGameDealPreFlopProto {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      if (sbUid_ != 0) {
-        output.writeInt32(1, sbUid_);
-      }
       if (getCardsList().size() > 0) {
         output.writeUInt32NoTag(18);
         output.writeUInt32NoTag(cardsMemoizedSerializedSize);
@@ -237,10 +205,6 @@ public final class TexasGameDealPreFlopProto {
       if (size != -1) return size;
 
       size = 0;
-      if (sbUid_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, sbUid_);
-      }
       {
         int dataSize = 0;
         for (int i = 0; i < cards_.size(); i++) {
@@ -271,8 +235,6 @@ public final class TexasGameDealPreFlopProto {
       com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop other = (com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop) obj;
 
       boolean result = true;
-      result = result && (getSbUid()
-          == other.getSbUid());
       result = result && getCardsList()
           .equals(other.getCardsList());
       result = result && unknownFields.equals(other.unknownFields);
@@ -286,8 +248,6 @@ public final class TexasGameDealPreFlopProto {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + SB_UID_FIELD_NUMBER;
-      hash = (53 * hash) + getSbUid();
       if (getCardsCount() > 0) {
         hash = (37 * hash) + CARDS_FIELD_NUMBER;
         hash = (53 * hash) + getCardsList().hashCode();
@@ -323,7 +283,7 @@ public final class TexasGameDealPreFlopProto {
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-  //-----------------------------------------------------
+    //-----------------------------------------------------
     public static com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop parseFrom(byte[] data,int offset ,int length)
             throws com.google.protobuf.InvalidProtocolBufferException {
           return PARSER.parseFrom(data,offset,length);
@@ -335,7 +295,7 @@ public final class TexasGameDealPreFlopProto {
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-  //-----------------------------------------------------
+    //-----------------------------------------------------
     public static com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop parseFrom(
     		byte[] data,int offset ,int length,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -439,10 +399,8 @@ public final class TexasGameDealPreFlopProto {
       }
       public Builder clear() {
         super.clear();
-        sbUid_ = 0;
-
         cards_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -466,14 +424,11 @@ public final class TexasGameDealPreFlopProto {
       public com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop buildPartial() {
         com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop result = new com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop(this);
         int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        result.sbUid_ = sbUid_;
-        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
           cards_ = java.util.Collections.unmodifiableList(cards_);
-          bitField0_ = (bitField0_ & ~0x00000002);
+          bitField0_ = (bitField0_ & ~0x00000001);
         }
         result.cards_ = cards_;
-        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -515,13 +470,10 @@ public final class TexasGameDealPreFlopProto {
 
       public Builder mergeFrom(com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop other) {
         if (other == com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop.getDefaultInstance()) return this;
-        if (other.getSbUid() != 0) {
-          setSbUid(other.getSbUid());
-        }
         if (!other.cards_.isEmpty()) {
           if (cards_.isEmpty()) {
             cards_ = other.cards_;
-            bitField0_ = (bitField0_ & ~0x00000002);
+            bitField0_ = (bitField0_ & ~0x00000001);
           } else {
             ensureCardsIsMutable();
             cards_.addAll(other.cards_);
@@ -556,49 +508,11 @@ public final class TexasGameDealPreFlopProto {
       }
       private int bitField0_;
 
-      private int sbUid_ ;
-      /**
-       * <pre>
-       *小盲uid
-       * </pre>
-       *
-       * <code>int32 sb_uid = 1;</code>
-       */
-      public int getSbUid() {
-        return sbUid_;
-      }
-      /**
-       * <pre>
-       *小盲uid
-       * </pre>
-       *
-       * <code>int32 sb_uid = 1;</code>
-       */
-      public Builder setSbUid(int value) {
-        
-        sbUid_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       *小盲uid
-       * </pre>
-       *
-       * <code>int32 sb_uid = 1;</code>
-       */
-      public Builder clearSbUid() {
-        
-        sbUid_ = 0;
-        onChanged();
-        return this;
-      }
-
       private java.util.List<java.lang.Integer> cards_ = java.util.Collections.emptyList();
       private void ensureCardsIsMutable() {
-        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
           cards_ = new java.util.ArrayList<java.lang.Integer>(cards_);
-          bitField0_ |= 0x00000002;
+          bitField0_ |= 0x00000001;
          }
       }
       /**
@@ -683,7 +597,7 @@ public final class TexasGameDealPreFlopProto {
        */
       public Builder clearCards() {
         cards_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -752,10 +666,10 @@ public final class TexasGameDealPreFlopProto {
     java.lang.String[] descriptorData = {
       "\nCsrc/com/poker/protocols/texaspoker/pro" +
       "to/TexasGameDealPreFlop.proto\022$com.poker" +
-      ".protocols.texaspoker.proto\"5\n\024TexasGame" +
-      "DealPreFlop\022\016\n\006sb_uid\030\001 \001(\005\022\r\n\005cards\030\002 \003" +
-      "(\005B;\n\036com.poker.protocols.texaspokerB\031Te" +
-      "xasGameDealPreFlopProtob\006proto3"
+      ".protocols.texaspoker.proto\"%\n\024TexasGame" +
+      "DealPreFlop\022\r\n\005cards\030\002 \003(\005B;\n\036com.poker." +
+      "protocols.texaspokerB\031TexasGameDealPreFl" +
+      "opProtob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -774,7 +688,7 @@ public final class TexasGameDealPreFlopProto {
     internal_static_com_poker_protocols_texaspoker_proto_TexasGameDealPreFlop_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_poker_protocols_texaspoker_proto_TexasGameDealPreFlop_descriptor,
-        new java.lang.String[] { "SbUid", "Cards", });
+        new java.lang.String[] { "Cards", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

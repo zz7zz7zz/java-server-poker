@@ -5,15 +5,24 @@ package com.poker.protocols.texaspoker.proto;
 option java_package = "com.poker.protocols.texaspoker";
 option java_outer_classname = "TexasGameStartProto";
 
-message BlindConfig{
-	int64  ante  			=1;//前注;数组意味着比赛场，如SNG
-	int64  blind  			=2; //大盲注;数组意味着比赛场，如SNG
-	int32  blind_time  		=3;//每个盲注持续时间;数组意味着比赛场，如SNG
+message Config{
+	int32  level      		 	= 1;//房间等级
+	string level_name       	= 2;//房间等级名称
+	int32  max_user       		= 3;//每台桌子对最大玩家数量
+	int64  max_chip 			= 4;//最大进入筹码
+	
+	repeated int64  ante  		= 5;//前注;数组意味着比赛场，如SNG
+	repeated int64  blind  		= 6; //大盲注;数组意味着比赛场，如SNG
+	repeated int32  blind_time  = 7;//每个盲注持续时间;数组意味着比赛场，如SNG
+	
+	int32  action_timeout       = 8;//操作超时时间
 }
 //游戏开始
 message TexasGameStart{
-	int32  action_timeout       = 1;//操作超时时间
-	repeated BlindConfig config = 2;
+	Config config 		= 1;//配置
+	int32  sb_seatId    = 2;//小盲桌位id
+	int32  bb_seatId   	= 3;//大盲桌位id
+	int32  btn_seatId   = 4;//按钮位桌位id
 }
 
 // protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameStart.proto 

@@ -7,7 +7,6 @@ option java_outer_classname = "TexasGameDealPreFlopProto";
 
 //游戏发牌
 message TexasGameDealPreFlop{
-	int32  sb_uid   = 1;//小盲uid
 	repeated int32  cards =2;//底牌
 }
 
