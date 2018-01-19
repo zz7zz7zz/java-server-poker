@@ -2,13 +2,14 @@ package com.poker.games.impl.handler;
 
 
 import com.poker.data.DataPacket;
+import com.poker.games.Table;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.protocols.texaspoker.TexasGameStartProto.TexasGameStart;
 import com.poker.protocols.texaspoker.TexasGameStartProto.Config;
 import com.poker.protocols.texaspoker.TexasGameDealFlopProto.TexasGameDealFlop;
 import com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop;
 import com.poker.protocols.texaspoker.TexasGameDealRiverProto.TexasGameDealRiver;
-import com.poker.protocols.texaspoker.TexasGameDealTurnProto.TexasGameDealTurn;;
+import com.poker.protocols.texaspoker.TexasGameDealTurnProto.TexasGameDealTurn;
 
 public class TexasGameServer {
 	
@@ -86,5 +87,30 @@ public class TexasGameServer {
 		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_DEAL_RIVER, (byte)0, body,0,body.length);
 	}
 	
+	public static int showHand(byte[] writeBuff,int squenceId,String uid,Table table){
+		
+//		TexasGameShowHand.Builder builder = TexasGameShowHand.newBuilder();
+//		for(int i = 0;i<table.users.length;i++){
+//			if(null == table.users[i]){
+//				continue;
+//			}
+//			UserCard.Builder usercardBuilder =  UserCard.newBuilder();
+//			usercardBuilder.setSeateId(table.users[i].seatId);
+////			usercardBuilder.addCards(table.users[i])
+//			builder.addMUserCards(usercardBuilder);
+//		}
+//		
+//		byte[] body = builder.build().toByteArray();
+//
+//		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_BROADCAST_SHOW_HAND, (byte)0, body,0,body.length);
+		return 0;
+	}
 	
+	public static int reconnect(byte[] writeBuff,int squenceId,String uid,Table table){
+		return 0;
+	}
+	
+	public static int end(byte[] writeBuff,int squenceId,String uid,Table table){
+		return 0;
+	}
 }
