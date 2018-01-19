@@ -10,6 +10,11 @@ import com.poker.protocols.texaspoker.TexasGameDealFlopProto.TexasGameDealFlop;
 import com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop;
 import com.poker.protocols.texaspoker.TexasGameDealRiverProto.TexasGameDealRiver;
 import com.poker.protocols.texaspoker.TexasGameDealTurnProto.TexasGameDealTurn;
+import com.poker.protocols.texaspoker.TexasGameEndProto.Result;
+import com.poker.protocols.texaspoker.TexasGameEndProto.TexasGameEnd;
+import com.poker.protocols.texaspoker.TexasGameReconnectProto.TexasGameReconnect;
+import com.poker.protocols.texaspoker.TexasGameShowHandProto.TexasGameShowHand;
+import com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard;
 
 public class TexasGameServer {
 	
@@ -89,28 +94,50 @@ public class TexasGameServer {
 	
 	public static int showHand(byte[] writeBuff,int squenceId,String uid,Table table){
 		
-//		TexasGameShowHand.Builder builder = TexasGameShowHand.newBuilder();
-//		for(int i = 0;i<table.users.length;i++){
-//			if(null == table.users[i]){
-//				continue;
-//			}
-//			UserCard.Builder usercardBuilder =  UserCard.newBuilder();
-//			usercardBuilder.setSeateId(table.users[i].seatId);
-////			usercardBuilder.addCards(table.users[i])
-//			builder.addMUserCards(usercardBuilder);
-//		}
+		TexasGameShowHand.Builder builder = TexasGameShowHand.newBuilder();
+		for(int i = 0;i<table.users.length;i++){
+			if(null == table.users[i]){
+				continue;
+			}
+			UserCard.Builder usercardBuilder =  UserCard.newBuilder();
+			usercardBuilder.setSeateId(table.users[i].seatId);
+			usercardBuilder.addCards(1);
+			usercardBuilder.addCards(2);
+			builder.addMUserCards(usercardBuilder);
+		}
 //		
-//		byte[] body = builder.build().toByteArray();
-//
-//		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_BROADCAST_SHOW_HAND, (byte)0, body,0,body.length);
-		return 0;
+		byte[] body = builder.build().toByteArray();
+
+		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_BROADCAST_SHOW_HAND, (byte)0, body,0,body.length);
 	}
 	
 	public static int reconnect(byte[] writeBuff,int squenceId,String uid,Table table){
-		return 0;
+		TexasGameReconnect.Builder builder = TexasGameReconnect.newBuilder();
+		
+		byte[] body = builder.build().toByteArray();
+
+		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_GAME_END, (byte)0, body,0,body.length);
 	}
 	
 	public static int end(byte[] writeBuff,int squenceId,String uid,Table table){
-		return 0;
+		TexasGameEnd.Builder builder = TexasGameEnd.newBuilder();
+		for(int i = 0;i<table.users.length;i++){
+			if(null == table.users[i]){
+				continue;
+			}
+			Result.Builder resultBuilder = Result.newBuilder();
+			resultBuilder.setSeateId(table.users[i].seatId);
+			resultBuilder.setCardResult(0);
+			for(int j=0;j<5;j++) {
+				resultBuilder.addCards(i);
+			}
+			resultBuilder.setChip(0);
+			resultBuilder.setWinChip(0);
+			builder.addMResults(resultBuilder);
+		}
+		
+		byte[] body = builder.build().toByteArray();
+
+		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_GAME_END, (byte)0, body,0,body.length);
 	}
 }
