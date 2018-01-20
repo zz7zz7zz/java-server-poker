@@ -16,7 +16,7 @@ public class ImplDataTransfer{
 	}
 	
 	public static int send2User(byte[] writeBuff,int squenceId , byte[] data, int offset ,int length){
-		int dst_server_id = Main.libArgsConfig.id;
+		int dst_server_id = Main.libArgsConfig.id; 
 		return DataTransfer.send2User(writeBuff,squenceId, data,offset,length, Main.libArgsConfig.server_type, Main.libArgsConfig.id, dst_server_id,-1,-1);
 	}
 	

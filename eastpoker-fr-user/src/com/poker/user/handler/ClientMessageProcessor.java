@@ -260,6 +260,7 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
     		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + LoginCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
     		
         	if(cmd == UserCmd.CMD_LOGIN_GAME){
+        		
         		mHandler.login_game(client, Main.write_buff_dispatcher, Main.write_buff, data, body_start, body_length, 1, this);
         	}
 		} catch (InvalidProtocolBufferException e) {
