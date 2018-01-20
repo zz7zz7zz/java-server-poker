@@ -1,29 +1,29 @@
-nohup java -jar UserServer.jar -n 'Login' -i 0 -p 10020 > UserServer_0.out &
+nohup java -jar User.jar -n 'User' -i 0 -p 10030 > User_0.out &
 sleep 3
 
-nohup java -jar UserServer.jar -n 'Login' -i 1 -p 10021 > UserServer_1.out &
+nohup java -jar User.jar -n 'User' -i 1 -p 10031 > User_1.out &
 sleep 3
 
-nohup java -jar UserServer.jar -n 'Login' -i 2 -p 10022 > UserServer_2.out &
+nohup java -jar User.jar -n 'User' -i 2 -p 10032 > User_2.out &
 sleep 3
 
-nohup java -jar UserServer.jar -n 'Login' -i 3 -p 10023 > UserServer_3.out &
+nohup java -jar User.jar -n 'User' -i 3 -p 10033 > User_3.out &
 sleep 3
 
-nohup java -jar UserServer.jar -n 'Login' -i 4 -p 10024 > UserServer_4.out &
+nohup java -jar User.jar -n 'User' -i 4 -p 10034 > User_4.out &
 sleep 3
 
-nohup java -jar UserServer.jar -n 'Login' -i 5 -p 10025 > UserServer_5.out &
+nohup java -jar User.jar -n 'User' -i 5 -p 10035 > User_5.out &
 sleep 3
 
-nohup java -jar UserServer.jar -n 'Login' -i 6 -p 10026 > UserServer_6.out &
+nohup java -jar User.jar -n 'User' -i 6 -p 10036 > User_6.out &
 sleep 3
 
-nohup java -jar UserServer.jar -n 'Login' -i 7 -p 10027 > UserServer_7.out &
+nohup java -jar User.jar -n 'User' -i 7 -p 10037 > User_7.out &
 sleep 3
 
-nohup java -jar UserServer.jar -n 'Login' -i 8 -p 10028 > UserServer_8.out &
+nohup java -jar User.jar -n 'User' -i 8 -p 10038 > User_8.out &
 sleep 3
 
-nohup java -jar UserServer.jar -n 'Login' -i 9 -p 10029 > UserServer_9.out &
+nohup java -jar User.jar -n 'User' -i 9 -p 10039 > User_9.out &
 sleep 3
