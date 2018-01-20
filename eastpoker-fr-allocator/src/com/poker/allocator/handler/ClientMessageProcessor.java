@@ -265,7 +265,9 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
         	}else if(cmd == AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_UPDATE_ROOMINFO){
         		mHandler.on_update_roominfo(client,data,body_start,body_length);
         	}else if(cmd == AllocatorCmd.CMD_LOGIN_GAME){
+        		
         		mHandler.on_login_game(client, Main.write_buff_dispatcher, Main.write_buff, data, body_start, body_length, 1, this);
+        	
         	}
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();
