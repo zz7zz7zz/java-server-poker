@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="libs/open.net.server.jar"/>
 	<classpathentry kind="lib" path="libs/protobuf-java-3.5.1.jar"/>
 	<classpathentry kind="lib" path="libs/protocol.jar"/>
+	<classpathentry kind="lib" path="libs/game.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
