@@ -2,11 +2,12 @@ package com.poker.games;
 
 public abstract class Table {
 	
-	public int tableId;
-	public User[] users;
+	public final int tableId;
+	public final User[] users;
 	public int count;
 	
-	public Table(int table_max_user) {
+	public Table(int tableId , int table_max_user) {
+		this.tableId = tableId;
 		users = new User[table_max_user];
 		count=0;
 	}
@@ -15,21 +16,21 @@ public abstract class Table {
 		return count;
 	}
 	
-	public void userChangeSeat(User user,int new_seatId){
+	public int userChangeSeat(User user,int new_seatId){
 		
 		//新座位无效
 		if(new_seatId <0 || new_seatId>=users.length){
-			return;
+			return -1;
 		}
 		
 		//已经是该座位了
 		if(user.seatId == new_seatId){
-			return;
+			return -2;
 		}
 		
 		//新座位已经有其它人了
 		if(null != users[new_seatId]){
-			return;
+			return -3;
 		}
 		
 		
@@ -40,13 +41,14 @@ public abstract class Table {
 			users[new_seatId] = user;
 			count++;
 		}
+		return 1;
 	}
 	
 	
-	public void userEnter(User user){
+	public int userEnter(User user){
 		for (User u : users) {
 			if(null != u && u == user){
-				return;
+				return -1;
 			}
 		}
 		
@@ -57,42 +59,44 @@ public abstract class Table {
 				break;
 			}
 		}
+		return 1;
 	}
 	
-	public void userExit(User user){
+	public int userExit(User user){
 		for (User u : users) {
 			if(null != u && u == user){
 				count--;
-				return;
+				return 1;
 			}
 		}
+		return -1;
 	}
 	
 	//---------------------------------------------------------------------
-	public void onUserEnter(User mUser){
-		
+	public int onUserEnter(User mUser){
+		return -1;
 	};
 	
-	public void onUserExit(User mUser){
-		
+	public int onUserExit(User mUser){
+		return -1;
 	};
 	
-	public void onUserReady(User mUser){
-		
+	public int onUserReady(User mUser){
+		return -1;
 	};
 	
-	public void onUserOffline(User mUser){
-		
+	public int onUserOffline(User mUser){
+		return -1;
 	};
 	
-	public void onKickUser(User mUser , User kickedUser){
-		
+	public int onKickUser(User mUser , User kickedUser){
+		return -1;
 	};
 	
-	public void onSendCmd(int cmd, byte[] data, int offset, int length){
-		
-	};
+	public int onSendCmd(int cmd, byte[] data, int offset, int length){
+		return -1;
+	}
 	
 	//------------------------------------子游戏必需实现的业务逻辑------------------------------------
-	protected abstract void dispatchTableMessage(int cmd, byte[] data, int header_start, int header_length, int body_start,int body_length);
+	protected abstract int dispatchTableMessage(int cmd, byte[] data, int header_start, int header_length, int body_start,int body_length);
 }

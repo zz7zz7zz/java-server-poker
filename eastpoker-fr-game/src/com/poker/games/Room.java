@@ -13,7 +13,8 @@ public class Room {
 		
 		mTables = new Table[mConfig.table_count];
 		for(int i=0;i<mConfig.table_count;i++){
-			mTables[i] = new GTable(mConfig.table_max_user);
+			int tableId = (mConfig.server_id << 16) + i;
+			mTables[i] = new GTable(tableId,mConfig.table_max_user);
 		}
 		
 		//预先分配1/4桌子数目的用户，每次增长1/4桌子数目的用户
@@ -23,8 +24,15 @@ public class Room {
 
 	//---------------------------------------------------------------
 	public void dispatchRoomMessage(int cmd , byte[] data,int header_start,int header_length,int body_start,int body_length){
-		Table mTable = null ;
-		if(cmd == GameCmd.CMD_USER_ENTER){
+		int uid = 0;
+		int tableid = 0;
+		int tableIndex = tableid>>16;
+		Table mTable = mTables[tableIndex];
+		if(null == mTable){
+			return;
+		}
+		
+		if(cmd == GameCmd.CMD_LOGIN_GAME || cmd == GameCmd.CMD_USER_ENTER){
 			User mUser = UserPool.get();
 			mTable.onUserEnter(mUser);
     	}else if(cmd == GameCmd.CMD_USER_EXIT){
