@@ -88,6 +88,7 @@ public class Main {
     public static Config mServerConfig;
     public static NioClient [] dispatcher;
     public static byte[] write_buff;
+    public static byte[] write_buff_dispatcher;
 	private static ClientMessageProcessor mClientMessageProcessor = new ClientMessageProcessor(new ClientMessageHandler());
 	
     //---------------------------------------Logger----------------------------------------------------
@@ -102,6 +103,7 @@ public class Main {
     //---------------------------------------初始化全局对象----------------------------------------------------
     private static void initGlobalFields(int packet_max_length_tcp){
     	write_buff = new byte[packet_max_length_tcp];
+    	write_buff_dispatcher = new byte[packet_max_length_tcp];
     }
     
     //---------------------------------------Monitor----------------------------------------------------

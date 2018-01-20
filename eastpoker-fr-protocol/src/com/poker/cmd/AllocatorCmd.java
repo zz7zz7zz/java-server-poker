@@ -9,7 +9,7 @@ public final class AllocatorCmd {
 	
 	public static final int CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO = (ServerIds.SERVER_ALLOCATOR <<16) + 3;   //0x60002,上报桌子信息
 	
-	
+	public static final int CMD_LOGIN_GAME = (ServerIds.SERVER_ALLOCATOR <<16) + 0x1001;   //0x61001登录游戏
 	
 	//------------------------------------------------------------------------------------------
 	public static String getCmdString(int cmd){
