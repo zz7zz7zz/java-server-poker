@@ -1,0 +1,11 @@
+syntax="proto3";
+
+option java_package = "com.poker.protocols.server";
+option java_outer_classname = "ErrorProto";
+
+message Error{
+	int32  err_code  = 1;
+	string err_msg   = 2;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/server/proto/Error.proto 
