@@ -1,6 +1,5 @@
 package com.poker.games.impl.config;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 import com.open.net.client.utils.CfgParser;
@@ -147,13 +146,24 @@ public class CardConfig {
 		return 0;
 	}
 	
+	public String card2String(byte[] cards) {
+		if(null !=cards && cards.length >0) {
+			StringBuilder sb = new StringBuilder(12);
+			for(int i=0;i<cards.length;i++) {
+				sb.append(CardUtil.formatCard(cards[i]));
+			}
+			return sb.toString();
+		}
+		return "";
+	}
+	
 	@Override
 	public String toString() {
-		return "CardConfig [user0=" + Arrays.toString(user0) + ", user1=" + Arrays.toString(user1) + ", user2="
-				+ Arrays.toString(user2) + ", user3=" + Arrays.toString(user3) + ", user4=" + Arrays.toString(user4)
-				+ ", user5=" + Arrays.toString(user5) + ", user6=" + Arrays.toString(user6) + ", user7="
-				+ Arrays.toString(user7) + ", user8=" + Arrays.toString(user8) + ", flop=" + Arrays.toString(flop)
-				+ ", turn=" + Arrays.toString(turn) + ", river=" + Arrays.toString(river) + "]";
+		return "CardConfig [user0=" + card2String(user1) + ", user1=" + card2String(user1) + ", user2="
+				+ card2String(user2) + ", user3=" + card2String(user3) + ", user4=" + card2String(user4)
+				+ ", user5=" + card2String(user5) + ", user6=" + card2String(user6) + ", user7="
+				+ card2String(user7) + ", user8=" + card2String(user8) + ", flop=" + card2String(flop)
+				+ ", turn=" + card2String(turn) + ", river=" + card2String(river) + "]";
 	}   
 	
 	public static void main(String arg[]) {
