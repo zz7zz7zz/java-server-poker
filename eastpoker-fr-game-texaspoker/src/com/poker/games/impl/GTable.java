@@ -146,7 +146,7 @@ public class GTable extends Table {
 			for(int j=0;j<river.length;j++) {
 				river[j]=mCardConfig.river[j];
     			}
-		}else {
+		}else { 
 			long t = System.currentTimeMillis();//获得当前时间的毫秒数
 	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
 	        
