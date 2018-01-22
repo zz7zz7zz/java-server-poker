@@ -154,4 +154,11 @@ public class CardConfig {
 				+ Arrays.toString(user7) + ", user8=" + Arrays.toString(user8) + ", flop=" + Arrays.toString(flop)
 				+ ", turn=" + Arrays.toString(turn) + ", river=" + Arrays.toString(river) + "]";
 	}   
+	
+	public static void main(String arg[]) {
+		CardConfig mCardConfig = new CardConfig();
+		mCardConfig.initFileConfig("./conf-game/card.config");
+		
+		System.out.println(mCardConfig);
+	}
 }
