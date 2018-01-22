@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import com.open.net.client.utils.CfgParser;
 import com.open.net.client.utils.TextUtils;
+import com.poker.games.impl.CardUtil;
 
 
 
@@ -160,5 +161,8 @@ public class CardConfig {
 		mCardConfig.initFileConfig("./conf-game/card.config");
 		
 		System.out.println(mCardConfig);
+		
+		System.out.println(String.format("♠\u2660 ♥\u2665 ♣\u2663  ♦\u2666", 6));
+		System.out.println(CardUtil.formatCard((byte)0x0e)+CardUtil.formatCard((byte)0x1b));
 	}
 }
