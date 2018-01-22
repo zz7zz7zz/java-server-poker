@@ -10,6 +10,8 @@ import com.poker.games.impl.CardUtil;
 
 public class CardConfig {
 
+	public boolean isEnable = false;
+	
 	public byte[] user0;
 	public byte[] user1;
 	public byte[] user2;
@@ -34,6 +36,8 @@ public class CardConfig {
     //-------------------------------------------------------------------------------------------
     protected void initFileConfig(HashMap<String,Object> map){
     	if(null !=map){
+    		
+    		isEnable = CfgParser.getBoolean(map, "Card","isEnable");
     		
     		String[] val = CfgParser.getStringArray(map,"Card","user0");
     		if(null != val){
@@ -159,7 +163,7 @@ public class CardConfig {
 	
 	@Override
 	public String toString() {
-		return "CardConfig [user0=" + card2String(user1) + ", user1=" + card2String(user1) + ", user2="
+		return "CardConfig [isEnable=" +isEnable+ ",user0=" + card2String(user1) + ", user1=" + card2String(user1) + ", user2="
 				+ card2String(user2) + ", user3=" + card2String(user3) + ", user4=" + card2String(user4)
 				+ ", user5=" + card2String(user5) + ", user6=" + card2String(user6) + ", user7="
 				+ card2String(user7) + ", user8=" + card2String(user8) + ", flop=" + card2String(flop)
