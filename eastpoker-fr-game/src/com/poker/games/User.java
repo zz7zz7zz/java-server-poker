@@ -10,6 +10,11 @@ public class User {
 	
 	public int seatId = -1;//座位id
 	
+	public int tid;
+	public int accessId = -1;
+	public boolean isOffline;
+	public boolean isReady;
+	
 	public void reset(){
 		uid = 0;
 		chip = 0;

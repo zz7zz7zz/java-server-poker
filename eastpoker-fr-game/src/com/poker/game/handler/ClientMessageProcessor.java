@@ -15,13 +15,16 @@ import com.poker.game.Main;
 
 public class ClientMessageProcessor extends AbstractClientMessageProcessor {
 
-	private ClientMessageHandler mHandler;
+    public byte[] write_buff ;
+    public byte[] write_buff_dispatcher ;
+    public ClientMessageHandler mHandler;
 	
-	public ClientMessageProcessor(ClientMessageHandler mHandler) {
+	public ClientMessageProcessor(byte[] write_buff, byte[] write_buff_dispatcher, ClientMessageHandler mHandler) {
 		super();
+		this.write_buff = write_buff;
+		this.write_buff_dispatcher = write_buff_dispatcher;
 		this.mHandler = mHandler;
 	}
-
 
 	@Override
 	public void onReceiveMessages(AbstractClient mClient, LinkedList<Message> list) {
@@ -261,7 +264,7 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
     		
     		//先判断游戏外逻辑，再判断游戏内逻辑
         	if(cmd == AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){
-        		mHandler.on_get_roominfo(client,Main.write_buff_dispatcher,Main.write_buff,1,this,Main.mServerConfig,Main.mRoom);
+        		mHandler.on_get_roominfo(client,write_buff_dispatcher,write_buff,1,this,Main.mServerConfig,Main.mRoom);
         	}else{
         		Main.mRoom.dispatchRoomMessage(cmd, data, header_start, header_length, body_start, body_length);
         	}

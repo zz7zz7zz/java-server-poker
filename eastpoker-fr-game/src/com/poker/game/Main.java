@@ -89,8 +89,8 @@ public class Main {
     public static NioClient [] dispatcher;
     public static byte[] write_buff ;
     public static byte[] write_buff_dispatcher ;
-    public static ClientMessageHandler mHandler = new ClientMessageHandler();
-	private static ClientMessageProcessor mClientMessageProcessor = new ClientMessageProcessor(mHandler);
+    public static ClientMessageHandler mHandler;
+    public static ClientMessageProcessor mClientMessageProcessor ;
 	
     public static Room mRoom;
 	
@@ -107,7 +107,9 @@ public class Main {
     private static void initGlobalFields(int packet_max_length_tcp){
     	write_buff = new byte[packet_max_length_tcp];
     	write_buff_dispatcher = new byte[packet_max_length_tcp];
-    	
+    	mHandler = new ClientMessageHandler();
+    	mClientMessageProcessor = new ClientMessageProcessor(write_buff,write_buff_dispatcher,mHandler);
+    	 
         mRoom = new Room(mServerConfig);
     }
     
@@ -184,4 +186,6 @@ public class Main {
 			}
 		}
 	};
+	
+	
 }

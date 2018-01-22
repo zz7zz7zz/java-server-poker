@@ -24,17 +24,19 @@ public final class UserPool {
     }
 
     //取
-    public static final User get(){
+    public static final User get(long uid){
         if(mQueen.isEmpty()){
             for(int i =0;i<GROWTH;i++){
             	 mQueen.add(new User());
             }
         }
-        return mQueen.poll();
+        User ret= mQueen.poll();
+        ret.uid = uid;
+        return ret;
     }
 
     //回收
-    public static final void put(User obj){
+    public static final void release(User obj){
         if(null != obj){
             obj.reset();
             mQueen.add(obj);
