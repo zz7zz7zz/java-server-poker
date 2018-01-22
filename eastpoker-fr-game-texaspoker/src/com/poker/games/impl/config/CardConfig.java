@@ -12,15 +12,7 @@ public class CardConfig {
 
 	public boolean isEnable = false;
 	
-	public byte[] user0;
-	public byte[] user1;
-	public byte[] user2;
-	public byte[] user3;
-	public byte[] user4;
-	public byte[] user5;
-	public byte[] user6;
-	public byte[] user7;
-	public byte[] user8;
+	public byte[][] user_cards=new byte[9][2];
 	
 	public byte[] flop;
 	public byte[] turn;
@@ -41,74 +33,74 @@ public class CardConfig {
     		
     		String[] val = CfgParser.getStringArray(map,"Card","user0");
     		if(null != val){
-        		user0 = new byte[val.length];
+        		user_cards[0] = new byte[val.length];
                 for (int i = 0; i < val.length; i++) {
-                	user0[i] = s2int(val[i]);
+                	user_cards[0][i] = s2int(val[i]);
                 }
     		}
 
     		val = CfgParser.getStringArray(map,"Card","user1");
     		if(null != val){
-        		user1 = new byte[val.length];
+    			user_cards[1] = new byte[val.length];
                 for (int i = 0; i < val.length; i++) {
-                	user1[i] = s2int(val[i]);
+                	user_cards[1][i] = s2int(val[i]);
                 }
     		}
 
     		 
     		val = CfgParser.getStringArray(map,"Card","user2");
     		if(null != val){
-    			user2 = new byte[val.length];
+    			user_cards[2] = new byte[val.length];
                 for (int i = 0; i < val.length; i++) {
-                	user2[i] = s2int(val[i]);
+                	user_cards[2][i] = s2int(val[i]);
                 }
     		}
     		
     		val = CfgParser.getStringArray(map,"Card","user3");
     		if(null != val){
-    			user3 = new byte[val.length];
+    			user_cards[3] = new byte[val.length];
                 for (int i = 0; i < val.length; i++) {
-                	user3[i] = s2int(val[i]);
+                	user_cards[3][i] = s2int(val[i]);
                 }
     		}
     		
     		val = CfgParser.getStringArray(map,"Card","user4");
     		if(null != val){
-    			user4 = new byte[val.length];
+    			user_cards[4] = new byte[val.length];
                 for (int i = 0; i < val.length; i++) {
-                	user4[i] = s2int(val[i]);
+                	user_cards[4][i] = s2int(val[i]);
                 }
     		}
     		
     		val = CfgParser.getStringArray(map,"Card","user5");
     		if(null != val){
-    			user5 = new byte[val.length];
+    			user_cards[5] = new byte[val.length];
                 for (int i = 0; i < val.length; i++) {
-                	user5[i] = s2int(val[i]);
+                	user_cards[5][i] = s2int(val[i]);
                 }
     		}
     		
     		val = CfgParser.getStringArray(map,"Card","user6");
     		if(null != val){
-    			user6 = new byte[val.length];
+    			user_cards[6] = new byte[val.length];
                 for (int i = 0; i < val.length; i++) {
-                	user6[i] = s2int(val[i]);
+                	user_cards[6][i] = s2int(val[i]);
                 }
     		}
     		
     		val = CfgParser.getStringArray(map,"Card","user7");
     		if(null != val){
-    			user7 = new byte[val.length];
+    			user_cards[7] = new byte[val.length];
                 for (int i = 0; i < val.length; i++) {
-                	user7[i] = s2int(val[i]);
+                	user_cards[7][i] = s2int(val[i]);
                 }
     		}
     		
     		val = CfgParser.getStringArray(map,"Card","user8");
     		if(null != val){
-    			user8 = new byte[val.length];
+    			user_cards[8] = new byte[val.length];
                 for (int i = 0; i < val.length; i++) {
-                	user8[i] = s2int(val[i]);
+                	user_cards[8][i] = s2int(val[i]);
                 }
     		}
     		
@@ -163,10 +155,10 @@ public class CardConfig {
 	
 	@Override
 	public String toString() {
-		return "CardConfig [isEnable=" +isEnable+ ",user0=" + card2String(user1) + ", user1=" + card2String(user1) + ", user2="
-				+ card2String(user2) + ", user3=" + card2String(user3) + ", user4=" + card2String(user4)
-				+ ", user5=" + card2String(user5) + ", user6=" + card2String(user6) + ", user7="
-				+ card2String(user7) + ", user8=" + card2String(user8) + ", flop=" + card2String(flop)
+		return "CardConfig [isEnable=" +isEnable+ ",user0=" + card2String(user_cards[0]) + ", user1=" + card2String(user_cards[1]) + ", user2="
+				+ card2String(user_cards[2]) + ", user3=" + card2String(user_cards[3]) + ", user4=" + card2String(user_cards[4])
+				+ ", user5=" + card2String(user_cards[5]) + ", user6=" + card2String(user_cards[6]) + ", user7="
+				+ card2String(user_cards[7]) + ", user8=" + card2String(user_cards[8]) + ", flop=" + card2String(flop)
 				+ ", turn=" + card2String(turn) + ", river=" + card2String(river) + "]";
 	}   
 	
