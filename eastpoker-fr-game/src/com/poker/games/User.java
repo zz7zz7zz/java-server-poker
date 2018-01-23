@@ -12,7 +12,7 @@ public class User {
 	
 	public int tid;
 	public int accessId = -1;
-	public boolean isOffline;
+	public int onLineStatus;
 	public boolean isReady;
 	
 	public void reset(){

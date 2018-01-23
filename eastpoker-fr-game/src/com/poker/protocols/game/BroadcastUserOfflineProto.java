@@ -22,6 +22,11 @@ public final class BroadcastUserOfflineProto {
      * <code>int64 uid = 1;</code>
      */
     long getUid();
+
+    /**
+     * <code>int32 status = 2;</code>
+     */
+    int getStatus();
   }
   /**
    * Protobuf type {@code com.poker.protocols.game.proto.BroadcastUserOffline}
@@ -37,6 +42,7 @@ public final class BroadcastUserOfflineProto {
     }
     private BroadcastUserOffline() {
       uid_ = 0L;
+      status_ = 0;
     }
 
     @java.lang.Override
@@ -75,6 +81,11 @@ public final class BroadcastUserOfflineProto {
               uid_ = input.readInt64();
               break;
             }
+            case 16: {
+
+              status_ = input.readInt32();
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -108,6 +119,15 @@ public final class BroadcastUserOfflineProto {
       return uid_;
     }
 
+    public static final int STATUS_FIELD_NUMBER = 2;
+    private int status_;
+    /**
+     * <code>int32 status = 2;</code>
+     */
+    public int getStatus() {
+      return status_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -123,6 +143,9 @@ public final class BroadcastUserOfflineProto {
       if (uid_ != 0L) {
         output.writeInt64(1, uid_);
       }
+      if (status_ != 0) {
+        output.writeInt32(2, status_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -134,6 +157,10 @@ public final class BroadcastUserOfflineProto {
       if (uid_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(1, uid_);
+      }
+      if (status_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, status_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -153,6 +180,8 @@ public final class BroadcastUserOfflineProto {
       boolean result = true;
       result = result && (getUid()
           == other.getUid());
+      result = result && (getStatus()
+          == other.getStatus());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -167,6 +196,8 @@ public final class BroadcastUserOfflineProto {
       hash = (37 * hash) + UID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getUid());
+      hash = (37 * hash) + STATUS_FIELD_NUMBER;
+      hash = (53 * hash) + getStatus();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -312,6 +343,8 @@ public final class BroadcastUserOfflineProto {
         super.clear();
         uid_ = 0L;
 
+        status_ = 0;
+
         return this;
       }
 
@@ -335,6 +368,7 @@ public final class BroadcastUserOfflineProto {
       public com.poker.protocols.game.BroadcastUserOfflineProto.BroadcastUserOffline buildPartial() {
         com.poker.protocols.game.BroadcastUserOfflineProto.BroadcastUserOffline result = new com.poker.protocols.game.BroadcastUserOfflineProto.BroadcastUserOffline(this);
         result.uid_ = uid_;
+        result.status_ = status_;
         onBuilt();
         return result;
       }
@@ -378,6 +412,9 @@ public final class BroadcastUserOfflineProto {
         if (other == com.poker.protocols.game.BroadcastUserOfflineProto.BroadcastUserOffline.getDefaultInstance()) return this;
         if (other.getUid() != 0L) {
           setUid(other.getUid());
+        }
+        if (other.getStatus() != 0) {
+          setStatus(other.getStatus());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -428,6 +465,32 @@ public final class BroadcastUserOfflineProto {
       public Builder clearUid() {
         
         uid_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private int status_ ;
+      /**
+       * <code>int32 status = 2;</code>
+       */
+      public int getStatus() {
+        return status_;
+      }
+      /**
+       * <code>int32 status = 2;</code>
+       */
+      public Builder setStatus(int value) {
+        
+        status_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 status = 2;</code>
+       */
+      public Builder clearStatus() {
+        
+        status_ = 0;
         onChanged();
         return this;
       }
@@ -496,9 +559,10 @@ public final class BroadcastUserOfflineProto {
     java.lang.String[] descriptorData = {
       "\n=src/com/poker/protocols/game/proto/Bro" +
       "adcastUserOffline.proto\022\036com.poker.proto" +
-      "cols.game.proto\"#\n\024BroadcastUserOffline\022" +
-      "\013\n\003uid\030\001 \001(\003B5\n\030com.poker.protocols.game" +
-      "B\031BroadcastUserOfflineProtob\006proto3"
+      "cols.game.proto\"3\n\024BroadcastUserOffline\022" +
+      "\013\n\003uid\030\001 \001(\003\022\016\n\006status\030\002 \001(\005B5\n\030com.poke" +
+      "r.protocols.gameB\031BroadcastUserOfflinePr" +
+      "otob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -517,7 +581,7 @@ public final class BroadcastUserOfflineProto {
     internal_static_com_poker_protocols_game_proto_BroadcastUserOffline_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_poker_protocols_game_proto_BroadcastUserOffline_descriptor,
-        new java.lang.String[] { "Uid", });
+        new java.lang.String[] { "Uid", "Status", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

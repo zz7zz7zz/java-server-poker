@@ -128,7 +128,7 @@ public abstract class Table {
 	public int userOffline(User user){
 		for (int i = 0; i < users.length; i++) {
 			if(null != users[i] && users[i].uid == user.uid){
-				users[i].isOffline = true;
+				users[i].onLineStatus = 0;
 				users[i].accessId = -1;
 				return 1;
 			}

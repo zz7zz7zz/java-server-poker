@@ -170,5 +170,12 @@ public class CardConfig {
 		
 		System.out.println(String.format("♠\u2660 ♥\u2665 ♣\u2663  ♦\u2666", 6));
 		System.out.println(CardUtil.formatCard((byte)0x0e)+CardUtil.formatCard((byte)0x1b));
+		
+		System.out.println((0x3 >>2) ==1);
+		System.out.println((0x3 >>1) ==1);
+		System.out.println((0x3 >>0 & 01) == 0x1);
+		System.out.println((Integer.toHexString(1<<1)));
+		System.out.println((Long.toHexString(Long.MAX_VALUE)));
+		System.out.println(-1%6);
 	}
 }
