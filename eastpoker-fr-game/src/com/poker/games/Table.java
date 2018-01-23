@@ -186,10 +186,12 @@ public abstract class Table {
 	
 	protected void startGame(){
 		table_status = TableStatus.TABLE_STATUS_PLAY;
+		//更新用户游戏状态
 	}
 	
 	protected void stopGame(){
 		table_status = TableStatus.TABLE_STATUS_STOP;
+		//更新用户游戏状态
 	}
 	
 	
