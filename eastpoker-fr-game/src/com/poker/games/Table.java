@@ -1,6 +1,8 @@
 package com.poker.games;
 
 import com.poker.cmd.SystemCmd;
+import com.poker.common.config.Config;
+import com.poker.data.DataPacket;
 import com.poker.game.Main;
 import com.poker.game.handler.ImplDataTransfer;
 import com.poker.protocols.server.ErrorServer;
@@ -8,9 +10,21 @@ import com.poker.protocols.server.ErrorServer;
 public abstract class Table {
 	
 	public final int tableId;
-	public final int table_max_user;
+	public TableStatus table_status;
+	
+	public Config mConfig;
 	public final User[] users;
 	public int count;
+
+	public enum TableStatus{
+		TABLE_STATUS_PLAY(1),
+		TABLE_STATUS_STOP(2);
+		
+		int code;
+        private TableStatus(int code) {
+            this.code = code;
+        }
+	}
 	
 	enum LoginRet{
 		LOGIN_SUCCESS(1),
@@ -33,10 +47,10 @@ public abstract class Table {
         }
 	}
 	
-	public Table(int tableId , int table_max_user) {
+	public Table(int tableId , Config mConfig) {
 		this.tableId = tableId;
-		this.table_max_user = table_max_user;
-		users = new User[table_max_user];
+		this.mConfig = mConfig;
+		users = new User[mConfig.table_max_user];
 		count=0;
 	}
 
@@ -132,9 +146,7 @@ public abstract class Table {
 			onTableUserReLogin(mUser);
 			return 1;
 		}else if(ret == LoginRet.LOGIN_FAILED_FULL){
-			int length = ErrorServer.error(Main.write_buff, 0, SystemCmd.ERR_CODE_LOGIN_FAILED_TABLE_FULL,"");
-			length =  ImplDataTransfer.send2Allocator(Main.write_buff_dispatcher, 0, Main.write_buff, 0, length);
-			Main.mClientMessageProcessor.send(Main.dispatcher[0], Main.write_buff_dispatcher, 0, length);
+			send2Access(SystemCmd.CMD_ERR,0,ErrorServer.error(SystemCmd.ERR_CODE_LOGIN_FAILED_TABLE_FULL,""));
 			return 0;
 		}
 		return 0;
@@ -170,6 +182,24 @@ public abstract class Table {
 	
 	public int onSendCmd(int cmd, byte[] data, int offset, int length){
 		return -1;
+	}
+	
+	protected void startGame(){
+		table_status = TableStatus.TABLE_STATUS_PLAY;
+	}
+	
+	protected void stopGame(){
+		table_status = TableStatus.TABLE_STATUS_STOP;
+	}
+	
+
+	public void send2Access(int cmd,int squenceId ,byte[] body){
+		this.send2Access(cmd, squenceId, body, 0, body.length);
+	}
+	public void send2Access(int cmd,int squenceId ,byte[] body,int offset ,int length){
+		int size = DataPacket.write(Main.write_buff, squenceId, cmd, (byte)0, body,offset,length);
+		size =  ImplDataTransfer.send2Allocator(Main.write_buff_dispatcher, 0, Main.write_buff, 0, size);
+		Main.mClientMessageProcessor.send(Main.dispatcher[0], Main.write_buff_dispatcher, 0, size);
 	}
 	
 	//------------------------------------子游戏必需实现的业务逻辑------------------------------------

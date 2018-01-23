@@ -8,6 +8,7 @@ import com.poker.games.User;
 import com.poker.games.impl.GUser.GStatus;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
+import com.poker.games.impl.handler.GCmd;
 import com.poker.games.impl.handler.TexasGameServer;
 public class GTable extends Table {
 	
@@ -52,7 +53,11 @@ public class GTable extends Table {
 
 	@Override
 	protected int onTableUserReLogin(User mUser) {
-		// TODO Auto-generated method stub
+		if(table_status == TableStatus.TABLE_STATUS_PLAY){
+			squenceId++;
+			send2Access(GCmd.CMD_SERVER_RECONNECT, squenceId, TexasGameServer.reconnect(this,mGameConfig));
+			return 0;
+		}
 		return 0;
 	}
 
@@ -144,7 +149,8 @@ public class GTable extends Table {
     	}
     	
     	//3.发送游戏开始数据
-    	TexasGameServer.start(null, squenceId++, sb_seatid, bb_seatid, btn_seateId, mGameConfig);
+    	squenceId++;
+    	send2Access(GCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.start(sb_seatid, bb_seatid, btn_seateId, mGameConfig));
 	}
 	
 	public void dealPreFlop() {
@@ -185,16 +191,18 @@ public class GTable extends Table {
 	        }
 		}
 		
-		 for(int i =0;i<gGsers.length;i++) {
+		for(int i =0;i<gGsers.length;i++) {
      		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.GStatus_PLAY) {
      			continue;
      		}
      		
      		GUser user = gGsers[i];
-    		TexasGameServer.dealPreFlop(null, squenceId, user.handCard);
-	     }
-
-			TexasGameServer.broadcastUserAction(null, squenceId, 0, null);
+     		squenceId++;
+        	send2Access(GCmd.CMD_SERVER_DEAL_PREFLOP, squenceId, TexasGameServer.dealPreFlop( user.handCard));
+	    }
+		 
+  		squenceId++;
+  		send2Access(GCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction());
 	}
 	
 	public void dealFlop() {
@@ -219,9 +227,11 @@ public class GTable extends Table {
     		}
 		}
 		
-		TexasGameServer.dealFlop(null, squenceId, flop);
+		squenceId++;
+		send2Access(GCmd.CMD_SERVER_DEAL_FLOP, squenceId, TexasGameServer.dealFlop(flop));
 		
-		TexasGameServer.broadcastUserAction(null, squenceId, 0, null);
+		squenceId++;
+		send2Access(GCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction());
 	}
 	
 	public void dealTrun() {
@@ -246,9 +256,11 @@ public class GTable extends Table {
     		}
 		}
 		
-		TexasGameServer.dealFlop(null, squenceId, turn);
+		squenceId++;
+		send2Access(GCmd.CMD_SERVER_DEAL_TURN, squenceId, TexasGameServer.dealTrun(turn));
 		
-		TexasGameServer.broadcastUserAction(null, squenceId, 0, null);
+		squenceId++;
+		send2Access(GCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction());
 	}
 	
 	public void dealRiver() {
@@ -273,16 +285,23 @@ public class GTable extends Table {
     		}
 		}
 		
-		TexasGameServer.dealFlop(null, squenceId, river);
+		squenceId++;
+		send2Access(GCmd.CMD_SERVER_DEAL_RIVER, squenceId,TexasGameServer.dealRiver(river));
 		
-		TexasGameServer.broadcastUserAction(null, squenceId, 0, null);
+		squenceId++;
+		send2Access(GCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction());
 	}
 	
 	public void showHands() {
-		TexasGameServer.showHand(null, squenceId, 0, this);
+		squenceId++;
+		send2Access(GCmd.CMD_SERVER_BROADCAST_SHOW_HAND, squenceId, TexasGameServer.showHand(this));
 	}
 	
 	public void stopGame() {
+		squenceId++;
+		send2Access(GCmd.CMD_SERVER_GAME_END, squenceId, TexasGameServer.end(this));
+		
+		//--------------------------------------------------------------------------------
 		cardFlags |= Long.MAX_VALUE;
 		
 		GUser[] gGsers=(GUser[])users;

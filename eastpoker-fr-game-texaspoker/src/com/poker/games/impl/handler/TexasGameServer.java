@@ -1,7 +1,6 @@
 package com.poker.games.impl.handler;
 
 
-import com.poker.data.DataPacket;
 import com.poker.games.Table;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.protocols.texaspoker.TexasGameStartProto.TexasGameStart;
@@ -21,7 +20,7 @@ import com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard;
 
 public class TexasGameServer {
 	
-	public static int start(byte[] writeBuff,int squenceId,int sb_seatid,int bb_seatid,int btn_seateId, GameConfig mGameConfig){
+	public static byte[] start(int sb_seatid,int bb_seatid,int btn_seateId, GameConfig mGameConfig){
 		
 		TexasGameStart.Builder builder = TexasGameStart.newBuilder();
 		builder.setSbSeatId(sb_seatid);
@@ -43,11 +42,10 @@ public class TexasGameServer {
 		builder.setConfig(configBuilder);
 		
 		byte[] body = builder.build().toByteArray();
-
-		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_GAME_START, (byte)0, body,0,body.length);
+		return body;
 	}
 	
-	public static int dealPreFlop(byte[] writeBuff,int squenceId,byte[] cards){
+	public static byte[] dealPreFlop(byte[] cards){
 		
 		TexasGameDealPreFlop.Builder builder = TexasGameDealPreFlop.newBuilder();
 		for(int i = 0;i<cards.length;i++){
@@ -55,11 +53,11 @@ public class TexasGameServer {
 		}
 		
 		byte[] body = builder.build().toByteArray();
-
-		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_DEAL_PREFLOP, (byte)0, body,0,body.length);
+		return body;
+//		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_DEAL_PREFLOP, (byte)0, body,0,body.length);
 	}
 	
-	public static int dealFlop(byte[] writeBuff,int squenceId,byte[] cards){
+	public static byte[] dealFlop(byte[] cards){
 		
 		TexasGameDealFlop.Builder builder = TexasGameDealFlop.newBuilder();
 		for(int i = 0;i<cards.length;i++){
@@ -67,11 +65,10 @@ public class TexasGameServer {
 		}
 		
 		byte[] body = builder.build().toByteArray();
-
-		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_DEAL_FLOP, (byte)0, body,0,body.length);
+		return body;
 	}
 	
-	public static int dealTrun(byte[] writeBuff,int squenceId,byte[] cards){
+	public static byte[] dealTrun(byte[] cards){
 		
 		TexasGameDealTurn.Builder builder = TexasGameDealTurn.newBuilder();
 		for(int i = 0;i<cards.length;i++){
@@ -79,11 +76,10 @@ public class TexasGameServer {
 		}
 		
 		byte[] body = builder.build().toByteArray();
-
-		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_DEAL_TURN, (byte)0, body,0,body.length);
+		return body;
 	}
 	
-	public static int dealRiver(byte[] writeBuff,int squenceId,byte[] cards){
+	public static byte[] dealRiver(byte[] cards){
 		
 		TexasGameDealRiver.Builder builder = TexasGameDealRiver.newBuilder();
 		for(int i = 0;i<cards.length;i++){
@@ -91,11 +87,10 @@ public class TexasGameServer {
 		}
 		
 		byte[] body = builder.build().toByteArray();
-
-		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_DEAL_RIVER, (byte)0, body,0,body.length);
+		return body;
 	}
 	
-	public static int broadcastUserAction(byte[] writeBuff,int squenceId,long uid,Table table) {
+	public static byte[] broadcastUserAction() {
 		
 		TexasGameAction.Builder builder = TexasGameAction.newBuilder();
 		builder.setSeatId(0);
@@ -111,11 +106,10 @@ public class TexasGameServer {
 		builder.setMaxRoundChip(5000);
 		
 		byte[] body = builder.build().toByteArray();
-
-		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, (byte)0, body,0,body.length);
+		return body;
 	}
 	
-	public static int showHand(byte[] writeBuff,int squenceId,long uid,Table table){
+	public static byte[] showHand(Table table){
 		
 		TexasGameShowHand.Builder builder = TexasGameShowHand.newBuilder();
 		for(int i = 0;i<table.users.length;i++){
@@ -128,13 +122,12 @@ public class TexasGameServer {
 			usercardBuilder.addCards(2);
 			builder.addMUserCards(usercardBuilder);
 		}
-//		
+	
 		byte[] body = builder.build().toByteArray();
-
-		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_BROADCAST_SHOW_HAND, (byte)0, body,0,body.length);
+		return body;
 	}
 	
-	public static int reconnect(byte[] writeBuff,int squenceId,long uid,Table table, GameConfig mGameConfig){
+	public static byte[] reconnect(Table table, GameConfig mGameConfig){
 		TexasGameReconnect.Builder builder = TexasGameReconnect.newBuilder();
 		
 		Config.Builder configBuilder = Config.newBuilder();
@@ -191,11 +184,10 @@ public class TexasGameServer {
 		builder.setRestActionTimeout(10);
 		
 		byte[] body = builder.build().toByteArray();
-
-		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_RECONNECT, (byte)0, body,0,body.length);
+		return body;
 	}
 	
-	public static int end(byte[] writeBuff,int squenceId,String uid,Table table){
+	public static byte[] end(Table table){
 		TexasGameEnd.Builder builder = TexasGameEnd.newBuilder();
 		for(int i = 0;i<table.users.length;i++){
 			if(null == table.users[i]){
@@ -213,7 +205,6 @@ public class TexasGameServer {
 		}
 		
 		byte[] body = builder.build().toByteArray();
-
-		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_GAME_END, (byte)0, body,0,body.length);
+		return body;
 	}
 }
