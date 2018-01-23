@@ -8,9 +8,11 @@ import com.poker.games.impl.config.CardConfig;
 public class GTable extends Table {
 	public CardConfig mCardConfig;
 	
+	public long   cardFlags = Long.MAX_VALUE;
 	public byte[] flop=new byte[3];
 	public byte[] turn=new byte[1];
 	public byte[] river=new byte[1];
+	
 	
 	public GTable(int tableId, int table_max_user,CardConfig mCardConfig) {
 		super(tableId, table_max_user);
@@ -78,14 +80,14 @@ public class GTable extends Table {
 		if(mCardConfig.isEnable) {
 	        GUser[] gGsers=(GUser[])users;
 	        for(int i =0;i<gGsers.length;i++) {
-	        		if(null ==gGsers[i]) {
-	        			continue;
-	        		}
-	        		
-	        		GUser user = gGsers[i];
-	        		for(int j=0;j<user.handCard.length;j++) {
-	        			user.handCard[j]=mCardConfig.user_cards[i][j];
-	        		}
+        		if(null ==gGsers[i]) {
+        			continue;
+        		}
+        		
+        		GUser user = gGsers[i];
+        		for(int j=0;j<user.handCard.length;j++) {
+        			user.handCard[j]=mCardConfig.user_cards[i][j];
+        		}
 	        }
 		}else {
 	        long t = System.currentTimeMillis();//获得当前时间的毫秒数
@@ -93,16 +95,23 @@ public class GTable extends Table {
 	        
 	        GUser[] gGsers=(GUser[])users;
 	        for(int i =0;i<gGsers.length;i++) {
-	        		if(null ==gGsers[i]) {
-	        			continue;
-	        		}
-	        		
-	        		GUser user = gGsers[i];
-	        		for(int j=0;j<user.handCard.length;j++) {
-	        			int cardIndex= rd.nextInt(GData.POKER_ARRAY.length);
-	        			//判断该位是否被拿取过了,再赋值
-	        			user.handCard[j]=GData.POKER_ARRAY[cardIndex];
-	        		}
+        		if(null ==gGsers[i]) {
+        			continue;
+        		}
+        		
+        		GUser user = gGsers[i];
+        		for(int j=0;j<user.handCard.length;j++) {
+        			int cardIndex;
+        			while(true){
+        				cardIndex= rd.nextInt(GData.POKER_ARRAY.length);
+    	    			//判断该位是否被拿取过了,再赋值
+    	    			if(((cardFlags >>(cardIndex)) & 0x1) == 0x1){
+    	    				user.handCard[j]=GData.POKER_ARRAY[cardIndex];
+    		    			cardFlags &= ~(1<<cardIndex);
+    		    			break;
+    	    			}
+        			}
+        		}
 	        }
 		}
 	}
@@ -115,12 +124,18 @@ public class GTable extends Table {
 		}else {
 			long t = System.currentTimeMillis();//获得当前时间的毫秒数
 	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
-	        
-	    		for(int j=0;j<flop.length;j++) {
-	    			int cardIndex= rd.nextInt(GData.POKER_ARRAY.length);
+    		for(int j=0;j<flop.length;j++) {
+    			int cardIndex;
+    			while(true){
+    				cardIndex= rd.nextInt(GData.POKER_ARRAY.length);
 	    			//判断该位是否被拿取过了,再赋值
-	    			flop[j]=GData.POKER_ARRAY[cardIndex];
-	    		}
+	    			if(((cardFlags >>(cardIndex)) & 0x1) == 0x1){
+	    				flop[j]=GData.POKER_ARRAY[cardIndex];
+		    			cardFlags &= ~(1<<cardIndex);
+		    			break;
+	    			}
+    			}
+    		}
 		}
 	}
 	
@@ -132,12 +147,18 @@ public class GTable extends Table {
 		}else {
 			long t = System.currentTimeMillis();//获得当前时间的毫秒数
 	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
-	        
-	    		for(int j=0;j<turn.length;j++) {
-	    			int cardIndex= rd.nextInt(GData.POKER_ARRAY.length);
+    		for(int j=0;j<turn.length;j++) {
+    			int cardIndex;
+    			while(true){
+    				cardIndex= rd.nextInt(GData.POKER_ARRAY.length);
 	    			//判断该位是否被拿取过了,再赋值
-	    			turn[j]=GData.POKER_ARRAY[cardIndex];
-	    		}
+	    			if(((cardFlags >>(cardIndex)) & 0x1) == 0x1){
+		    			turn[j]=GData.POKER_ARRAY[cardIndex];
+		    			cardFlags &= ~(1<<cardIndex);
+		    			break;
+	    			}
+    			}
+    		}
 		}
 	}
 	
@@ -149,16 +170,22 @@ public class GTable extends Table {
 		}else { 
 			long t = System.currentTimeMillis();//获得当前时间的毫秒数
 	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
-	        
-	    		for(int j=0;j<river.length;j++) {
-	    			int cardIndex= rd.nextInt(GData.POKER_ARRAY.length);
+    		for(int j=0;j<river.length;j++) {
+    			int cardIndex;
+    			while(true){
+    				cardIndex= rd.nextInt(GData.POKER_ARRAY.length);
 	    			//判断该位是否被拿取过了,再赋值
-	    			river[j]=GData.POKER_ARRAY[cardIndex];
-	    		}
+	    			if(((cardFlags >>(cardIndex)) & 0x1) == 0x1){
+	    				river[j]=GData.POKER_ARRAY[cardIndex];
+		    			cardFlags &= ~(1<<cardIndex);
+		    			break;
+	    			}
+    			}
+    		}
 		}
 	}
 	
 	public void endGame() {
-		
+		cardFlags |= Long.MAX_VALUE;
 	}
 }
