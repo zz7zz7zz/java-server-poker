@@ -1,0 +1,14 @@
+syntax="proto3";
+
+package com.poker.protocols.game.proto; 
+
+import "src/com/poker/protocols/game/proto/GameUser.proto";
+
+option java_package = "com.poker.protocols.game";
+option java_outer_classname = "BroadcastUserReadyProto";
+
+message BroadcastUserReady{
+	repeated GameUser users = 1;   
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/game/proto/BroadcastUserReady.proto

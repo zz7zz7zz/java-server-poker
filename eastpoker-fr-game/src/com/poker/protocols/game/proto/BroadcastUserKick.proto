@@ -1,0 +1,14 @@
+syntax="proto3";
+
+package com.poker.protocols.game.proto; 
+
+option java_package = "com.poker.protocols.game";
+option java_outer_classname = "BroadcastUserKickProto";
+
+message BroadcastUserKick{
+	int64  uid  		 = 1;//踢人用户
+	int64  kicked_uid    = 2;//被踢用户
+	int64  reason  		 = 3;//被踢原因
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/game/proto/BroadcastUserKick.proto
