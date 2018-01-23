@@ -192,7 +192,7 @@ public abstract class Table {
 		table_status = TableStatus.TABLE_STATUS_STOP;
 	}
 	
-
+	
 	public void send2Access(int cmd,int squenceId ,byte[] body){
 		this.send2Access(cmd, squenceId, body, 0, body.length);
 	}
@@ -200,6 +200,19 @@ public abstract class Table {
 		int size = DataPacket.write(Main.write_buff, squenceId, cmd, (byte)0, body,offset,length);
 		size =  ImplDataTransfer.send2Allocator(Main.write_buff_dispatcher, 0, Main.write_buff, 0, size);
 		Main.mClientMessageProcessor.send(Main.dispatcher[0], Main.write_buff_dispatcher, 0, size);
+	}
+	
+	public void broadcast(int cmd,int squenceId ,byte[] body) {
+		this.broadcast(cmd, squenceId, body, null);
+	}
+	
+	public void broadcast(int cmd,int squenceId ,byte[] body,User user) {
+		for(int i =0 ;i<users.length;i++){
+			User mUser = users[i];
+			if(null != mUser && mUser != user){
+				send2Access(cmd,squenceId,body);
+			}
+		}
 	}
 	
 	//------------------------------------子游戏必需实现的业务逻辑------------------------------------
