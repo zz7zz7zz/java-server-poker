@@ -95,7 +95,7 @@ public class TexasGameServer {
 		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_DEAL_RIVER, (byte)0, body,0,body.length);
 	}
 	
-	public static int broadcastUserAction(byte[] writeBuff,int squenceId,String uid,Table table) {
+	public static int broadcastUserAction(byte[] writeBuff,int squenceId,long uid,Table table) {
 		
 		TexasGameAction.Builder builder = TexasGameAction.newBuilder();
 		builder.setSeatId(0);
@@ -115,7 +115,7 @@ public class TexasGameServer {
 		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, (byte)0, body,0,body.length);
 	}
 	
-	public static int showHand(byte[] writeBuff,int squenceId,String uid,Table table){
+	public static int showHand(byte[] writeBuff,int squenceId,long uid,Table table){
 		
 		TexasGameShowHand.Builder builder = TexasGameShowHand.newBuilder();
 		for(int i = 0;i<table.users.length;i++){
@@ -134,7 +134,7 @@ public class TexasGameServer {
 		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_BROADCAST_SHOW_HAND, (byte)0, body,0,body.length);
 	}
 	
-	public static int reconnect(byte[] writeBuff,int squenceId,String uid,Table table, GameConfig mGameConfig){
+	public static int reconnect(byte[] writeBuff,int squenceId,long uid,Table table, GameConfig mGameConfig){
 		TexasGameReconnect.Builder builder = TexasGameReconnect.newBuilder();
 		
 		Config.Builder configBuilder = Config.newBuilder();

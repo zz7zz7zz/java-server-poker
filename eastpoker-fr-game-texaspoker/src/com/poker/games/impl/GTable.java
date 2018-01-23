@@ -2,20 +2,33 @@ package com.poker.games.impl;
 
 import java.util.Random;
 
+import com.poker.common.config.Config;
 import com.poker.games.Table;
 import com.poker.games.User;
+import com.poker.games.impl.GUser.GStatus;
 import com.poker.games.impl.config.CardConfig;
+import com.poker.games.impl.config.GameConfig;
+import com.poker.games.impl.handler.TexasGameServer;
 public class GTable extends Table {
+	
+	public GameConfig mGameConfig;
 	public CardConfig mCardConfig;
 	
 	public long   cardFlags = Long.MAX_VALUE;
+	
+	public int squenceId = 0;
+	
+	public int sb_seatid = -1;
+	public int bb_seatid = -1;
+	public int btn_seateId =-1;
+	
 	public byte[] flop=new byte[3];
 	public byte[] turn=new byte[1];
 	public byte[] river=new byte[1];
 	
 	
-	public GTable(int tableId, int table_max_user,CardConfig mCardConfig) {
-		super(tableId, table_max_user);
+	public GTable(int tableId, Config mConfig,GameConfig mGameConfig,CardConfig mCardConfig) {
+		super(tableId, mConfig);
 		this.mCardConfig = mCardConfig;
 	}
 
@@ -26,7 +39,10 @@ public class GTable extends Table {
 		//2.对桌子上的用户广播谁进来类
 		
 		//3.判断游戏谁否可以开始了
-		if(getUserCount()>=table_max_user) {
+		if(table_status == TableStatus.TABLE_STATUS_PLAY){
+			return 0;
+		}
+		if(getUserCount()>=this.mConfig.table_max_user) {
 			startGame();
 		}
 		return 0;
@@ -73,14 +89,70 @@ public class GTable extends Table {
 
 	//-------------------------------------------------------
 	public void startGame() {
+		super.startGame();
 		
+        //1.设置每个玩家的游戏状态
+		int play_user_count = 0;
+		GUser[] gGsers=(GUser[])users;
+        for(int i =0;i<gGsers.length;i++) {
+    		if(null ==gGsers[i]) {
+    			continue;
+    		}
+    		gGsers[i].play_status = GStatus.GStatus_PLAY;
+    		play_user_count++;
+        }
+        
+        if(play_user_count<this.mConfig.table_min_user){
+        	stopGame();
+        	return;
+        }
+        
+        //2.找出小盲，大盲位，按钮位
+        int next_seatId_index;
+        if(sb_seatid == -1){//说明是游戏刚开始，没有持续
+			long t = System.currentTimeMillis();//获得当前时间的毫秒数
+	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
+	        next_seatId_index = rd.nextInt(this.mConfig.table_max_user);
+        }else{//说明是游戏持续
+        	next_seatId_index = sb_seatid+1;
+        }
+        
+    	for(int i = 0 ;i<this.mConfig.table_max_user;i++){
+    		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
+        	if(null != gGsers[r_next_seatId_index] && gGsers[r_next_seatId_index].play_status == GStatus.GStatus_PLAY){
+        		sb_seatid = r_next_seatId_index;
+        		break;
+        	}
+    	}
+
+    	next_seatId_index = (sb_seatid+1)%this.mConfig.table_max_user;
+    	for(int i = 0 ;i<this.mConfig.table_max_user;i++){
+    		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
+        	if(null != gGsers[r_next_seatId_index] && gGsers[r_next_seatId_index].play_status == GStatus.GStatus_PLAY){
+        		bb_seatid = r_next_seatId_index;
+        		break;
+        	}
+    	}
+    	
+    	next_seatId_index = (sb_seatid-1)%this.mConfig.table_max_user;
+    	for(int i = 0 ;i<this.mConfig.table_max_user;i++){
+    		int r_next_seatId_index = (next_seatId_index - i + this.mConfig.table_max_user)%this.mConfig.table_max_user;
+        	if(null != gGsers[r_next_seatId_index] && gGsers[r_next_seatId_index].play_status == GStatus.GStatus_PLAY){
+        		btn_seateId = r_next_seatId_index;
+        		break;
+        	}
+    	}
+    	
+    	//3.发送游戏开始数据
+    	TexasGameServer.start(null, squenceId++, sb_seatid, bb_seatid, btn_seateId, mGameConfig);
 	}
 	
 	public void dealPreFlop() {
+        GUser[] gGsers=(GUser[])users;
+        
 		if(mCardConfig.isEnable) {
-	        GUser[] gGsers=(GUser[])users;
 	        for(int i =0;i<gGsers.length;i++) {
-        		if(null ==gGsers[i]) {
+        		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.GStatus_PLAY) {
         			continue;
         		}
         		
@@ -92,10 +164,8 @@ public class GTable extends Table {
 		}else {
 	        long t = System.currentTimeMillis();//获得当前时间的毫秒数
 	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
-	        
-	        GUser[] gGsers=(GUser[])users;
 	        for(int i =0;i<gGsers.length;i++) {
-        		if(null ==gGsers[i]) {
+        		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.GStatus_PLAY) {
         			continue;
         		}
         		
@@ -114,6 +184,17 @@ public class GTable extends Table {
         		}
 	        }
 		}
+		
+		 for(int i =0;i<gGsers.length;i++) {
+     		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.GStatus_PLAY) {
+     			continue;
+     		}
+     		
+     		GUser user = gGsers[i];
+    		TexasGameServer.dealPreFlop(null, squenceId, user.handCard);
+	     }
+
+			TexasGameServer.broadcastUserAction(null, squenceId, 0, null);
 	}
 	
 	public void dealFlop() {
@@ -137,6 +218,10 @@ public class GTable extends Table {
     			}
     		}
 		}
+		
+		TexasGameServer.dealFlop(null, squenceId, flop);
+		
+		TexasGameServer.broadcastUserAction(null, squenceId, 0, null);
 	}
 	
 	public void dealTrun() {
@@ -160,6 +245,10 @@ public class GTable extends Table {
     			}
     		}
 		}
+		
+		TexasGameServer.dealFlop(null, squenceId, turn);
+		
+		TexasGameServer.broadcastUserAction(null, squenceId, 0, null);
 	}
 	
 	public void dealRiver() {
@@ -183,9 +272,27 @@ public class GTable extends Table {
     			}
     		}
 		}
+		
+		TexasGameServer.dealFlop(null, squenceId, river);
+		
+		TexasGameServer.broadcastUserAction(null, squenceId, 0, null);
 	}
 	
-	public void endGame() {
+	public void showHands() {
+		TexasGameServer.showHand(null, squenceId, 0, this);
+	}
+	
+	public void stopGame() {
 		cardFlags |= Long.MAX_VALUE;
+		
+		GUser[] gGsers=(GUser[])users;
+        for(int i =0;i<gGsers.length;i++) {
+    		if(null ==gGsers[i]) {
+    			continue;
+    		}
+    		gGsers[i].clear();
+        }
+        
+		super.stopGame();
 	}
 }
