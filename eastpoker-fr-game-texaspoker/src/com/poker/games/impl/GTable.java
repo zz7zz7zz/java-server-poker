@@ -2,6 +2,7 @@ package com.poker.games.impl;
 
 import java.util.Random;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.poker.common.config.Config;
 import com.poker.game.handler.GameBaseServer;
 import com.poker.games.GBaseCmd;
@@ -12,6 +13,7 @@ import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.games.impl.handler.GCmd;
 import com.poker.games.impl.handler.TexasGameServer;
+import com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction;
 
 public class GTable extends Table {
 	
@@ -30,6 +32,26 @@ public class GTable extends Table {
 	public byte[] turn=new byte[1];
 	public byte[] river=new byte[1];
 	
+	public int action_seatid = -1;
+	public int action_set = 0;
+	
+	public GStep step;
+	enum GStep{
+		GStep_preflop(1),
+		GStep_flop(2),
+		GStep_trun(3),
+		GStep_river(4),
+		GStep_showhand(5);
+		
+		int code;
+        private GStep(int code) {
+            this.code = code;
+        }
+	}
+	
+	public final int ACTION_CHECK = 0x1;
+	public final int ACTION_CALL  = 0x2;
+	public final int ACTION_RAISE = 0x4;
 	
 	public GTable(int tableId, Config mConfig,GameConfig mGameConfig,CardConfig mCardConfig) {
 		super(tableId, mConfig);
@@ -91,9 +113,11 @@ public class GTable extends Table {
 	}
 	
 	@Override
-	protected int dispatchTableMessage(int cmd, byte[] data, int header_start, int header_length, int body_start,
+	protected int dispatchTableMessage(User mUser,int cmd, byte[] data, int header_start, int header_length, int body_start,
 			int body_length) {
-		// TODO Auto-generated method stub
+		if(cmd == GCmd.CMD_CLIENT_WHO_ACTION_WHAT) {
+			action(mUser,data, body_start, body_length);
+		}
 		return 0;
 	}
 
@@ -206,8 +230,11 @@ public class GTable extends Table {
         	send2Access(GCmd.CMD_SERVER_DEAL_PREFLOP, squenceId, TexasGameServer.dealPreFlop( user.handCard));
 	    }
 		 
+  		step = GStep.GStep_preflop;
+  		
   		squenceId++;
   		broadcast(GCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction());
+  		
 	}
 	
 	public void dealFlop() {
@@ -231,7 +258,8 @@ public class GTable extends Table {
     			}
     		}
 		}
-		
+  		step = GStep.GStep_flop;
+  		
 		squenceId++;
 		broadcast(GCmd.CMD_SERVER_DEAL_FLOP, squenceId, TexasGameServer.dealFlop(flop));
 		
@@ -260,7 +288,8 @@ public class GTable extends Table {
     			}
     		}
 		}
-		
+  		step = GStep.GStep_trun;
+  		
 		squenceId++;
 		broadcast(GCmd.CMD_SERVER_DEAL_TURN, squenceId, TexasGameServer.dealTrun(turn));
 		
@@ -289,7 +318,8 @@ public class GTable extends Table {
     			}
     		}
 		}
-		
+  		step = GStep.GStep_river;
+  		
 		squenceId++;
 		broadcast(GCmd.CMD_SERVER_DEAL_RIVER, squenceId,TexasGameServer.dealRiver(river));
 		
@@ -297,7 +327,43 @@ public class GTable extends Table {
 		broadcast(GCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction());
 	}
 	
+	public void action(User mUser,byte[] data, int body_start, int body_length) {
+		TexasGameAction action = null;
+		try {
+			action = TexasGameAction.parseFrom(data, body_start, body_length);
+		} catch (InvalidProtocolBufferException e) {
+			e.printStackTrace();
+		}
+		
+		if(action == null) {
+			return;
+		}
+		
+		if(action.getSeatId() != action_seatid) {
+			return;
+		}
+		
+		//判断操作是否合理
+		if((action_set & action.getOperateValue()) <=0) {
+			return;
+		}
+		
+		if(action.getOperateValue()>mUser.chip) {
+			return;
+		}
+		
+		//如果有下注行为，则建立一个pot
+		
+		
+		//寻找下一个操作seatid
+		
+	}
+	
+	
+	
 	public void showHands() {
+  		step = GStep.GStep_showhand;
+  		
 		squenceId++;
 		broadcast(GCmd.CMD_SERVER_BROADCAST_SHOW_HAND, squenceId, TexasGameServer.showHand(this));
 	}

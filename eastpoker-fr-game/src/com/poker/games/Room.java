@@ -85,7 +85,7 @@ public class Room {
         	}else if(cmd == GameCmd.CMD_KICK_USER){
         		mTable.onKickUser(mUser, null);;
         	}else{
-        		mTable.dispatchTableMessage(cmd, data, header_start, header_length, body_start, body_length);
+        		mTable.dispatchTableMessage(mUser,cmd, data, header_start, header_length, body_start, body_length);
         	}
     	}
 	}

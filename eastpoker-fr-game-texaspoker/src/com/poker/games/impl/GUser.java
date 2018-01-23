@@ -20,6 +20,7 @@ public class GUser extends User {
 	
 	public byte[] handCard=new byte[2];
 	public GStatus play_status;
+	public int action_type;
 	
 	public void reset(){
 		super.reset();
