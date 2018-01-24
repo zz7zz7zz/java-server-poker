@@ -13,8 +13,10 @@ message DispatchChain{
 	int32  dst_game_group   = 5;
 	int32  dst_match_group  = 6;
 	
-	int64  uid;
-	int32  cmd;
+	int64  uid = 7;
+	int32  cmd = 8;
+	
+	int32 dispatch_type = 9;
 }
 
 // protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/server/proto/DispatchChain.proto 
