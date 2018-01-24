@@ -224,4 +224,5 @@ public abstract class Table {
 	protected abstract int onTableUserOffline(User mUser);//用户掉线
 	protected abstract int onTableUserReady(User mUser);//用户准备
 	protected abstract int dispatchTableMessage(User mUser,int cmd, byte[] data, int header_start, int header_length, int body_start,int body_length);
+	protected abstract int onTimeOut();
 }

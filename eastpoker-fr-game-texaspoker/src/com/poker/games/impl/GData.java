@@ -13,4 +13,30 @@ public class GData {
 		    0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x3a,0x3b,0x3c,0x3d,0x3e,	//方块 2 - A diamonds
 		    
 	};
+	
+	enum GStep{
+		GStep_preflop(1),
+		GStep_flop(2),
+		GStep_trun(3),
+		GStep_river(4),
+		GStep_showhand(5);
+		
+		int code;
+        private GStep(int code) {
+            this.code = code;
+        }
+	}
+	
+	
+	enum GStatus{
+		GStatus_PLAY(1),
+		GStatus_UNPLAY_SITDOWN(2),
+		GStatus_UNPLAY_ONLOOKERS(3),
+		GStatus_UNPLAY_WAIT(4);
+		
+		int code;
+        private GStatus(int code) {
+            this.code = code;
+        }
+	}
 }

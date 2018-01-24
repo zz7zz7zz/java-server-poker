@@ -2,6 +2,7 @@ package com.poker.games.impl.handler;
 
 
 import com.poker.games.Table;
+import com.poker.games.impl.GUser;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.protocols.texaspoker.TexasGameStartProto.TexasGameStart;
 import com.poker.protocols.texaspoker.TexasGameStartProto.Config;
@@ -90,21 +91,28 @@ public class TexasGameServer {
 		return body;
 	}
 	
-	public static byte[] broadcastUserAction() {
+	public static byte[] broadcastUserAction(GUser mUser ,
+			
+			long max_round_chip,int op_seate_id ,long op_min_raise_chip,long op_max_raise_chip,long op_call_chip) {
 		
+		//上一个操作者
 		TexasGameAction.Builder builder = TexasGameAction.newBuilder();
-		builder.setSeatId(0);
-		builder.setOperate(Operate.CALL);
-		builder.setChip(100);
-		builder.setRemainingChip(1000);
-		builder.setRoundChip(888);
+		if(null != mUser) {
+			builder.setSeatId(mUser.seatId);
+			builder.setOperate(mUser.action_type);
+			builder.setChip(mUser.chip);
+			builder.setRemainingChip(mUser.chip);
+			builder.setRoundChip(mUser.round_chip);
+		}
+
+		builder.setMaxRoundChip(max_round_chip);
 		
-		builder.setNextOpSeatId(1);
-		builder.setNextOpMinRaiseChip(200);
-		builder.setNextOpMaxRaiseChip(500);
-		builder.setNextOpCallChip(300);
-		builder.setMaxRoundChip(5000);
-		
+		//下一个操作者
+		builder.setNextOpSeatId(op_seate_id);
+		builder.setNextOpCallChip(op_call_chip);
+		builder.setNextOpMinRaiseChip(op_min_raise_chip);
+		builder.setNextOpMaxRaiseChip(op_max_raise_chip);
+
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
