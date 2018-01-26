@@ -53,6 +53,7 @@ public class Main {
         //1.4 业务配置初始化
         mServerConfig = new Config();
         mServerConfig.initFileConfig("./conf/server.config");
+        mServerConfig.server_id = libArgsConfig.id;
         
         //-----------------------------------------初始化全局属性-----------------------------------------------
         initGlobalFields(libClientConfig.packet_max_length_tcp);
@@ -165,7 +166,7 @@ public class Main {
 			mClientMessageProcessor.send(client,write_buff,0,length);
 			
 			//上报桌子信息
-			mHandler.report_roominfo(client,write_buff_dispatcher, write_buff, 1, mClientMessageProcessor, mServerConfig);
+			mHandler.report_roominfo(client,write_buff_dispatcher, 1, mClientMessageProcessor, mServerConfig);
 		}
 
 		@Override

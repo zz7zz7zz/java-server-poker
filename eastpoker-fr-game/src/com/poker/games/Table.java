@@ -1,8 +1,11 @@
 package com.poker.games;
 
+import com.poker.cmd.AllocatorCmd;
 import com.poker.cmd.SystemCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
+import com.poker.data.DataTransfer;
+import com.poker.data.DistapchType;
 import com.poker.game.Main;
 import com.poker.game.handler.ImplDataTransfer;
 import com.poker.protocols.server.ErrorServer;
@@ -146,7 +149,7 @@ public abstract class Table {
 			onTableUserReLogin(mUser);
 			return 1;
 		}else if(ret == LoginRet.LOGIN_FAILED_FULL){
-			send2Access(SystemCmd.CMD_ERR,0,ErrorServer.error(SystemCmd.ERR_CODE_LOGIN_FAILED_TABLE_FULL,""));
+			send2Access(mUser,SystemCmd.CMD_ERR,0,ErrorServer.error(SystemCmd.ERR_CODE_LOGIN_FAILED_TABLE_FULL,""));
 			return 0;
 		}
 		return 0;
@@ -195,16 +198,18 @@ public abstract class Table {
 	}
 	
 	
-	public void send2Access(int cmd,int squenceId ,byte[] body){
-		this.send2Access(cmd, squenceId, body, 0, body.length);
+	public void send2Access(User user,int cmd,int squenceId ,byte[] body){
+		this.send2Access(user,cmd, squenceId, body, 0, body.length);
 	}
-	public void send2Access(int cmd,int squenceId ,byte[] body,int offset ,int length){
-		int size = DataPacket.write(Main.write_buff, squenceId, cmd, (byte)0, body,offset,length);
-		size =  ImplDataTransfer.send2Allocator(Main.write_buff_dispatcher, 0, Main.write_buff, 0, size);
+	public int send2Access(User user,int cmd,int squenceId ,byte[] body,int offset ,int length){
+		int dst_server_id = user.accessId;
+		int dispatch_type = DistapchType.TYPE_P2P;
+		int size =  DataTransfer.send2Access(Main.write_buff_dispatcher,squenceId,user.uid,cmd,dispatch_type, body,0,body.length, Main.libArgsConfig.server_type, Main.libArgsConfig.id, dst_server_id,-1,-1);
 		Main.mClientMessageProcessor.send(Main.dispatcher[0], Main.write_buff_dispatcher, 0, size);
+		return 1;
 	}
 	
-	public void broadcast(int cmd,int squenceId ,byte[] body) {
+	public void broadcast(User user,int cmd,int squenceId ,byte[] body) {
 		this.broadcast(cmd, squenceId, body, null);
 	}
 	
@@ -212,7 +217,7 @@ public abstract class Table {
 		for(int i =0 ;i<users.length;i++){
 			User mUser = users[i];
 			if(null != mUser && mUser != user){
-				send2Access(cmd,squenceId,body);
+				send2Access(mUser,cmd,squenceId,body);
 			}
 		}
 	}

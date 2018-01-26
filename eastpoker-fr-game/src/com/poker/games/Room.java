@@ -6,6 +6,8 @@ import com.open.util.log.Logger;
 import com.poker.cmd.GameCmd;
 import com.poker.common.config.Config;
 import com.poker.games.impl.GTable;
+import com.poker.games.impl.config.CardConfig;
+import com.poker.games.impl.config.GameConfig;
 
 
 public class Room {
@@ -17,10 +19,16 @@ public class Room {
 	
 	public Room(Config mConfig) {
 		
+		GameConfig mGameConfig = new GameConfig();
+		mGameConfig.initFileConfig("./conf-game/game.config");
+		
+		CardConfig mCardConfig = new CardConfig();
+		mCardConfig.initFileConfig("./conf-game/card.config");
+		
 		mTables = new Table[mConfig.table_count];
 		for(int i=0;i<mConfig.table_count;i++){
 			int tableId = (mConfig.server_id << 16) + i;
-			mTables[i] = new GTable(tableId,mConfig.table_max_user);
+			mTables[i] = new GTable(tableId,mConfig,mGameConfig,mCardConfig);
 		}
 		
 		//预先分配1/4桌子数目的用户，每次增长1/4桌子数目的用户

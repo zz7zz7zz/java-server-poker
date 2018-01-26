@@ -264,7 +264,7 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
     		
     		//先判断游戏外逻辑，再判断游戏内逻辑
         	if(cmd == AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){
-        		mHandler.on_get_roominfo(client,write_buff_dispatcher,write_buff,1,this,Main.mServerConfig,Main.mRoom);
+        		mHandler.on_get_roominfo(client,write_buff_dispatcher,1,this,Main.mServerConfig,Main.mRoom);
         	}else{
         		Main.mRoom.dispatchRoomMessage(cmd, data, header_start, header_length, body_start, body_length);
         	}
