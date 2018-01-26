@@ -8,11 +8,14 @@ import java.util.List;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
+import com.open.util.log.Logger;
 import com.poker.cmd.GameCmd;
 import com.poker.data.DataPacket;
 import com.poker.protocols.game.GameServerProto;
 import com.poker.protocols.game.GameServerProto.GameServer;
 import com.poker.protocols.game.GameTableProto.GameTable;
+import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
+import com.poker.allocator.Main;
 import com.poker.allocator.handler.ImplDataTransfer;
 
 
@@ -60,10 +63,11 @@ public class ClientMessageHandler {
 		}
     }
     
-	public void on_report_roominfo(AbstractClient mClient , byte[] data, int body_start, int body_length) throws InvalidProtocolBufferException{
-    	
-		GameServer mServer = GameServer.parseFrom(data,body_start,body_length);
-
+	public void on_report_roominfo(AbstractClient mClient , byte[] data, int header_start,int header_length,int body_start,int body_length) throws InvalidProtocolBufferException{
+		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
+		mDispatchPacket.getData().copyTo(Main.write_buff, 0);
+		GameServer mServer = GameServer.parseFrom(Main.write_buff,0,mDispatchPacket.getData().size());
+		Logger.v(mServer.toString());
     	//找gameid->(level-gameSers)
 		int game_id = mServer.getGameId();
     	LevelGameSer level_gameser = game_server_map.get(game_id);
@@ -134,7 +138,7 @@ public class ClientMessageHandler {
 		System.out.println(game_server_map);
 	}
 	
-	public void on_get_roominfo(AbstractClient mClient , byte[] data, int body_start, int body_length) throws InvalidProtocolBufferException{
+	public void on_get_roominfo(AbstractClient mClient , byte[] data, int header_start,int header_length,int body_start,int body_length) throws InvalidProtocolBufferException{
     	GameServerProto.GameServer mServer = GameServerProto.GameServer.parseFrom(data,body_start,body_length);
     	
     	//找gameid->(level-gameSers)
@@ -214,16 +218,13 @@ public class ClientMessageHandler {
 		}
 	}
 	
-	public void on_update_roominfo(AbstractClient mClient ,byte[] data, int body_start, int body_length) throws InvalidProtocolBufferException{
+	public void on_update_roominfo(AbstractClient mClient ,byte[] data, int header_start,int header_length,int body_start,int body_length) throws InvalidProtocolBufferException{
     	
 	}
 	
 	public void on_login_game(AbstractClient mClient ,byte[] write_buff_dispatcher,byte[] write_buf, byte[] data, int body_start, int body_length, int squenceId,AbstractClientMessageProcessor sender) throws InvalidProtocolBufferException{
-		
-		int length = DataPacket.write(write_buf, squenceId, GameCmd.CMD_LOGIN_GAME, (byte)0, data,0,0);
-		
-		length =  ImplDataTransfer.send2Allocator(write_buff_dispatcher, squenceId, write_buf, 0, length);
-		sender.send(mClient, write_buff_dispatcher, 0, length);
+		int size =  ImplDataTransfer.send2Allocator(write_buff_dispatcher, squenceId,0,GameCmd.CMD_LOGIN_GAME,0, write_buf, 0, 0);
+		sender.send(mClient, write_buff_dispatcher, 0, size);
 		
 	}
 }

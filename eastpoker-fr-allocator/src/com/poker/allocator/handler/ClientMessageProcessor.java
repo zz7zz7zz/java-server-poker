@@ -259,11 +259,11 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
     		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + AllocatorCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
     		
         	if(cmd == AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO){
-        		mHandler.on_report_roominfo(client,data,body_start,body_length);
+        		mHandler.on_report_roominfo(client,data,header_start,header_length,body_start,body_length);
         	}else if(cmd == AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){
-        		mHandler.on_get_roominfo(client,data,body_start,body_length);
+        		mHandler.on_get_roominfo(client,data,header_start,header_length,body_start,body_length);
         	}else if(cmd == AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_UPDATE_ROOMINFO){
-        		mHandler.on_update_roominfo(client,data,body_start,body_length);
+        		mHandler.on_update_roominfo(client,data,header_start,header_length,body_start,body_length);
         	}else if(cmd == AllocatorCmd.CMD_LOGIN_GAME){
         		
         		mHandler.on_login_game(client, Main.write_buff_dispatcher, Main.write_buff, data, body_start, body_length, 1, this);
