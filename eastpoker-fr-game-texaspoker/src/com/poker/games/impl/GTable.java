@@ -50,7 +50,7 @@ public class GTable extends Table {
 	@Override
 	protected int onTableUserFirstLogin(User mUser) {
 		//1。对进来的用户广播桌子上有哪些用户
-		send2Access(GBaseCmd.CMD_SERVER_USERLOGIN, squenceId, GameBaseServer.userLogin(mUser.seatId,this));
+		send2Access(mUser,GBaseCmd.CMD_SERVER_USERLOGIN, squenceId, GameBaseServer.userLogin(mUser.seatId,this));
 		
 		//2.对桌子上的用户广播谁进来类
 		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, GameBaseServer.broadUserLogin(mUser),mUser);
@@ -71,7 +71,7 @@ public class GTable extends Table {
 	protected int onTableUserReLogin(User mUser) {
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){
 			squenceId++;
-			send2Access(GCmd.CMD_SERVER_RECONNECT, squenceId, TexasGameServer.reconnect(this,mGameConfig));
+			send2Access(mUser,GCmd.CMD_SERVER_RECONNECT, squenceId, TexasGameServer.reconnect(this,mGameConfig));
 			return 0;
 		}
 		return 0;
@@ -173,7 +173,7 @@ public class GTable extends Table {
     	
     	//3.发送游戏开始数据
     	squenceId++;
-    	broadcast(GCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.start(sb_seatid, bb_seatid, btn_seateId, mGameConfig));
+    	broadcast(null,GCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.start(sb_seatid, bb_seatid, btn_seateId, mGameConfig));
 	}
 	
 	public void dealPreFlop() {
@@ -221,7 +221,7 @@ public class GTable extends Table {
      		
      		GUser user = gGsers[i];
      		squenceId++;
-        	send2Access(GCmd.CMD_SERVER_DEAL_PREFLOP, squenceId, TexasGameServer.dealPreFlop( user.handCard));
+        	send2Access(user,GCmd.CMD_SERVER_DEAL_PREFLOP, squenceId, TexasGameServer.dealPreFlop( user.handCard));
 	    }
 		 
   		step = GStep.GStep_preflop;
@@ -254,7 +254,7 @@ public class GTable extends Table {
   		step = GStep.GStep_flop;
   		
 		squenceId++;
-		broadcast(GCmd.CMD_SERVER_DEAL_FLOP, squenceId, TexasGameServer.dealFlop(flop));
+		broadcast(null,GCmd.CMD_SERVER_DEAL_FLOP, squenceId, TexasGameServer.dealFlop(flop));
 		
 		next_option(null);
 	}
@@ -283,7 +283,7 @@ public class GTable extends Table {
   		step = GStep.GStep_trun;
   		
 		squenceId++;
-		broadcast(GCmd.CMD_SERVER_DEAL_TURN, squenceId, TexasGameServer.dealTrun(turn));
+		broadcast(null,GCmd.CMD_SERVER_DEAL_TURN, squenceId, TexasGameServer.dealTrun(turn));
 		
 		next_option(null);
 	}
@@ -312,7 +312,7 @@ public class GTable extends Table {
   		step = GStep.GStep_river;
   		
 		squenceId++;
-		broadcast(GCmd.CMD_SERVER_DEAL_RIVER, squenceId,TexasGameServer.dealRiver(river));
+		broadcast(null,GCmd.CMD_SERVER_DEAL_RIVER, squenceId,TexasGameServer.dealRiver(river));
 		
 		next_option(null);
 	}
@@ -418,7 +418,7 @@ public class GTable extends Table {
 			}
 		}else {
 			squenceId++;
-			broadcast(GCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction(last_user,max_round_chip,action_seatid,
+			broadcast(null,GCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction(last_user,max_round_chip,action_seatid,
 					op_min_raise_chip,op_max_raise_chip,op_call_chip));
 		}
 	}
@@ -428,12 +428,12 @@ public class GTable extends Table {
   		step = GStep.GStep_showhand;
   		
 		squenceId++;
-		broadcast(GCmd.CMD_SERVER_BROADCAST_SHOW_HAND, squenceId, TexasGameServer.showHand(this));
+		broadcast(null,GCmd.CMD_SERVER_BROADCAST_SHOW_HAND, squenceId, TexasGameServer.showHand(this));
 	}
 	
 	public void stopGame() {
 		squenceId++;
-		broadcast(GCmd.CMD_SERVER_GAME_END, squenceId, TexasGameServer.end(this));
+		broadcast(null,GCmd.CMD_SERVER_GAME_END, squenceId, TexasGameServer.end(this));
 		
 		//--------------------------------------------------------------------------------
 		cardFlags |= Long.MAX_VALUE;
