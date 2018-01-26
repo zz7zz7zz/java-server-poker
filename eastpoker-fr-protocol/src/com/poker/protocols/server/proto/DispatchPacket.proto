@@ -8,7 +8,7 @@ option java_package = "com.poker.protocols.server";
 option java_outer_classname = "DispatchPacketProto";
  
 message DispatchPacket{
-	int32         sequenceId  = 1;
+	int32    sequenceId  = 1;
 	bytes    data  = 2;
 	repeated DispatchChain dispatchChainList = 3;   
 }

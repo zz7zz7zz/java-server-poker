@@ -47,6 +47,21 @@ public final class DispatchChainProto {
      * <code>int32 dst_match_group = 6;</code>
      */
     int getDstMatchGroup();
+
+    /**
+     * <code>int64 uid = 7;</code>
+     */
+    long getUid();
+
+    /**
+     * <code>int32 cmd = 8;</code>
+     */
+    int getCmd();
+
+    /**
+     * <code>int32 dispatch_type = 9;</code>
+     */
+    int getDispatchType();
   }
   /**
    * Protobuf type {@code com.poker.protocols.server.proto.DispatchChain}
@@ -67,6 +82,9 @@ public final class DispatchChainProto {
       dstServerId_ = 0;
       dstGameGroup_ = 0;
       dstMatchGroup_ = 0;
+      uid_ = 0L;
+      cmd_ = 0;
+      dispatchType_ = 0;
     }
 
     @java.lang.Override
@@ -128,6 +146,21 @@ public final class DispatchChainProto {
             case 48: {
 
               dstMatchGroup_ = input.readInt32();
+              break;
+            }
+            case 56: {
+
+              uid_ = input.readInt64();
+              break;
+            }
+            case 64: {
+
+              cmd_ = input.readInt32();
+              break;
+            }
+            case 72: {
+
+              dispatchType_ = input.readInt32();
               break;
             }
           }
@@ -208,6 +241,33 @@ public final class DispatchChainProto {
       return dstMatchGroup_;
     }
 
+    public static final int UID_FIELD_NUMBER = 7;
+    private long uid_;
+    /**
+     * <code>int64 uid = 7;</code>
+     */
+    public long getUid() {
+      return uid_;
+    }
+
+    public static final int CMD_FIELD_NUMBER = 8;
+    private int cmd_;
+    /**
+     * <code>int32 cmd = 8;</code>
+     */
+    public int getCmd() {
+      return cmd_;
+    }
+
+    public static final int DISPATCH_TYPE_FIELD_NUMBER = 9;
+    private int dispatchType_;
+    /**
+     * <code>int32 dispatch_type = 9;</code>
+     */
+    public int getDispatchType() {
+      return dispatchType_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -237,6 +297,15 @@ public final class DispatchChainProto {
       }
       if (dstMatchGroup_ != 0) {
         output.writeInt32(6, dstMatchGroup_);
+      }
+      if (uid_ != 0L) {
+        output.writeInt64(7, uid_);
+      }
+      if (cmd_ != 0) {
+        output.writeInt32(8, cmd_);
+      }
+      if (dispatchType_ != 0) {
+        output.writeInt32(9, dispatchType_);
       }
       unknownFields.writeTo(output);
     }
@@ -270,6 +339,18 @@ public final class DispatchChainProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(6, dstMatchGroup_);
       }
+      if (uid_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(7, uid_);
+      }
+      if (cmd_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(8, cmd_);
+      }
+      if (dispatchType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(9, dispatchType_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -298,6 +379,12 @@ public final class DispatchChainProto {
           == other.getDstGameGroup());
       result = result && (getDstMatchGroup()
           == other.getDstMatchGroup());
+      result = result && (getUid()
+          == other.getUid());
+      result = result && (getCmd()
+          == other.getCmd());
+      result = result && (getDispatchType()
+          == other.getDispatchType());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -321,6 +408,13 @@ public final class DispatchChainProto {
       hash = (53 * hash) + getDstGameGroup();
       hash = (37 * hash) + DST_MATCH_GROUP_FIELD_NUMBER;
       hash = (53 * hash) + getDstMatchGroup();
+      hash = (37 * hash) + UID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getUid());
+      hash = (37 * hash) + CMD_FIELD_NUMBER;
+      hash = (53 * hash) + getCmd();
+      hash = (37 * hash) + DISPATCH_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getDispatchType();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -476,6 +570,12 @@ public final class DispatchChainProto {
 
         dstMatchGroup_ = 0;
 
+        uid_ = 0L;
+
+        cmd_ = 0;
+
+        dispatchType_ = 0;
+
         return this;
       }
 
@@ -504,6 +604,9 @@ public final class DispatchChainProto {
         result.dstServerId_ = dstServerId_;
         result.dstGameGroup_ = dstGameGroup_;
         result.dstMatchGroup_ = dstMatchGroup_;
+        result.uid_ = uid_;
+        result.cmd_ = cmd_;
+        result.dispatchType_ = dispatchType_;
         onBuilt();
         return result;
       }
@@ -562,6 +665,15 @@ public final class DispatchChainProto {
         }
         if (other.getDstMatchGroup() != 0) {
           setDstMatchGroup(other.getDstMatchGroup());
+        }
+        if (other.getUid() != 0L) {
+          setUid(other.getUid());
+        }
+        if (other.getCmd() != 0) {
+          setCmd(other.getCmd());
+        }
+        if (other.getDispatchType() != 0) {
+          setDispatchType(other.getDispatchType());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -745,6 +857,84 @@ public final class DispatchChainProto {
         onChanged();
         return this;
       }
+
+      private long uid_ ;
+      /**
+       * <code>int64 uid = 7;</code>
+       */
+      public long getUid() {
+        return uid_;
+      }
+      /**
+       * <code>int64 uid = 7;</code>
+       */
+      public Builder setUid(long value) {
+        
+        uid_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 uid = 7;</code>
+       */
+      public Builder clearUid() {
+        
+        uid_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private int cmd_ ;
+      /**
+       * <code>int32 cmd = 8;</code>
+       */
+      public int getCmd() {
+        return cmd_;
+      }
+      /**
+       * <code>int32 cmd = 8;</code>
+       */
+      public Builder setCmd(int value) {
+        
+        cmd_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 cmd = 8;</code>
+       */
+      public Builder clearCmd() {
+        
+        cmd_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int dispatchType_ ;
+      /**
+       * <code>int32 dispatch_type = 9;</code>
+       */
+      public int getDispatchType() {
+        return dispatchType_;
+      }
+      /**
+       * <code>int32 dispatch_type = 9;</code>
+       */
+      public Builder setDispatchType(int value) {
+        
+        dispatchType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 dispatch_type = 9;</code>
+       */
+      public Builder clearDispatchType() {
+        
+        dispatchType_ = 0;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
@@ -810,12 +1000,14 @@ public final class DispatchChainProto {
     java.lang.String[] descriptorData = {
       "\n8src/com/poker/protocols/server/proto/D" +
       "ispatchChain.proto\022 com.poker.protocols." +
-      "server.proto\"\240\001\n\rDispatchChain\022\027\n\017src_se" +
+      "server.proto\"\321\001\n\rDispatchChain\022\027\n\017src_se" +
       "rver_type\030\001 \001(\005\022\025\n\rsrc_server_id\030\002 \001(\005\022\027" +
       "\n\017dst_server_type\030\003 \001(\005\022\025\n\rdst_server_id" +
       "\030\004 \001(\005\022\026\n\016dst_game_group\030\005 \001(\005\022\027\n\017dst_ma" +
-      "tch_group\030\006 \001(\005B0\n\032com.poker.protocols.s" +
-      "erverB\022DispatchChainProtob\006proto3"
+      "tch_group\030\006 \001(\005\022\013\n\003uid\030\007 \001(\003\022\013\n\003cmd\030\010 \001(" +
+      "\005\022\025\n\rdispatch_type\030\t \001(\005B0\n\032com.poker.pr" +
+      "otocols.serverB\022DispatchChainProtob\006prot" +
+      "o3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -834,7 +1026,7 @@ public final class DispatchChainProto {
     internal_static_com_poker_protocols_server_proto_DispatchChain_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_poker_protocols_server_proto_DispatchChain_descriptor,
-        new java.lang.String[] { "SrcServerType", "SrcServerId", "DstServerType", "DstServerId", "DstGameGroup", "DstMatchGroup", });
+        new java.lang.String[] { "SrcServerType", "SrcServerId", "DstServerType", "DstServerId", "DstGameGroup", "DstMatchGroup", "Uid", "Cmd", "DispatchType", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
