@@ -32,7 +32,7 @@ public class ServerMessageHandler {
     }
 
    //--------------------------------------------------------------------------------------------------------
-    public void dispatch(AbstractServerClient client, byte[] data, int body_start, int body_length, byte[] write_buff,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
+    public void dispatch(AbstractServerClient client, byte[] data,int header_start,int header_length,int body_start,int body_length,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
 		int count = mDispatchPacket.getDispatchChainListCount();
 		if(count>0){
@@ -55,8 +55,7 @@ public class ServerMessageHandler {
 			Logger.v(String.format("dispatch %d %d %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),chain.getDstServerType(),chain.getDstServerId(),(null != server) ? 1 : 0));
 			
 			if(null != server){
-				mDispatchPacket.getData().copyTo(write_buff, 0);
-				mServerMessageProcessor.unicast(server, write_buff,0,mDispatchPacket.getData().size());
+				mServerMessageProcessor.unicast(server, data,header_start,header_length + body_length);
 			}
 		}
     }

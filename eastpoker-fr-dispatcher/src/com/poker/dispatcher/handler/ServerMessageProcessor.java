@@ -281,14 +281,12 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
     		
     		if(cmd == DispatchCmd.CMD_DISPATCH_REGISTER){
     			mHandler.register(client, data, body_start,body_length);
-    		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA){
-    			mHandler.dispatch(client, data, body_start, body_length,write_buff,this);
     		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA_GAME_GROUP){
     			mHandler.dispatchGameGoup(client, data, body_start, body_length, write_buff, this);
     		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA_MATCH_GROUP){
     			mHandler.dispatchMatchGroup(client, data, body_start, body_length, write_buff, this);
     		}else{
-    			
+    			mHandler.dispatch(client, data, header_start,header_length,body_start, body_length,this);
     		}
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();
