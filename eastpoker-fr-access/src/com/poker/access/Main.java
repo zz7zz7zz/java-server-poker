@@ -103,9 +103,10 @@ public class Main {
     public static ArgsConfig libArgsConfig;
     public static int dispatchIndex = -1;
     public static NioClient [] dispatcher;
-    public static byte[] write_buff = new byte[16*1024];
-    public static ClientMessageProcessor mClientMessageProcessor = new ClientMessageProcessor(new ClientMessageHandler());
-    public static ServerMessageProcessor mServerMessageProcessor = new ServerMessageProcessor(new ServerMessageHandler(), write_buff);
+    public static byte[] write_buff ;
+    public static byte[] write_buff_dispatcher;
+    public static ClientMessageProcessor mClientMessageProcessor ;
+    public static ServerMessageProcessor mServerMessageProcessor ;
     
    //---------------------------------------Logger----------------------------------------------------
     public static LogListener mLogListener = new LogListener(){
@@ -119,6 +120,9 @@ public class Main {
     //---------------------------------------初始化全局对象----------------------------------------------------
     private static void initGlobalFields(int packet_max_length_tcp){
     	write_buff = new byte[packet_max_length_tcp];
+    	write_buff_dispatcher = new byte[packet_max_length_tcp];
+    	mClientMessageProcessor = new ClientMessageProcessor(new ClientMessageHandler());
+    	mServerMessageProcessor = new ServerMessageProcessor(new ServerMessageHandler(), write_buff);
     }
     
     //---------------------------------------Monitor----------------------------------------------------

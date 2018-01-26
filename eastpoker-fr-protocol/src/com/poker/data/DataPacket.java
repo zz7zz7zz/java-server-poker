@@ -28,7 +28,7 @@ public class DataPacket {
     	byte packet_header_extend_length	= (byte)packet_header_extend.length;				//包头，扩展长度
     	int  packet_header_length   		= Header.HEADER_BASE_LENGTH + packet_header_extend_length; //包头，长度
     	
-    	int  packet_ength 		 			= packet_header_length + body.length;//完整包长度
+    	int  packet_ength 		 			= packet_header_length + bodyLength;//完整包长度
     	
     	//组装包头
     	DataConverter.putInt(writeBuff,   Header.HEADER_OFFSET_LENGTH,	packet_ength);

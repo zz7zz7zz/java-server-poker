@@ -5,8 +5,12 @@ import java.util.HashMap;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
+import com.poker.cmd.LoginCmd;
+import com.poker.data.DistapchType;
+import com.poker.login.Main;
 import com.poker.protocols.login.LoginRequestProto;
 import com.poker.protocols.login.LoginServer;
+import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 
 
 public class ClientMessageHandler {
@@ -16,7 +20,10 @@ public class ClientMessageHandler {
 	
 	public void login(AbstractClient mClient ,byte[] write_buff_dispatcher,byte[] write_buf, byte[] data, int body_start, int body_length, int squenceId,AbstractClientMessageProcessor sender) throws InvalidProtocolBufferException{
 		
-		LoginRequestProto.LoginRequest loginRequest = LoginRequestProto.LoginRequest.parseFrom(data,body_start,body_length);
+		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
+		mDispatchPacket.getData().copyTo(Main.write_buff, 0);
+		
+		LoginRequestProto.LoginRequest loginRequest = LoginRequestProto.LoginRequest.parseFrom(Main.write_buff,0,mDispatchPacket.getData().size());
 		System.out.println("login "+loginRequest.toString());
 		
 		String uuid = loginRequest.getUuid();
@@ -31,8 +38,8 @@ public class ClientMessageHandler {
 			uid = uidObject;
 		}
 		
-		int length = LoginServer.login_response(write_buf, squenceId, (int)uid);
-		length = ImplDataTransfer.send2Access(write_buff_dispatcher, squenceId, write_buf, 0, length);
-		sender.send(mClient, write_buff_dispatcher,0,length);
+		byte[] resp_data = LoginServer.login_response(write_buf, squenceId, (int)uid);
+		int length = ImplDataTransfer.send2Access(write_buff_dispatcher, squenceId, uid, LoginCmd.CMD_LOGIN_RESPONSE, DistapchType.TYPE_P2P, resp_data, 0, resp_data.length);
+		sender.send(mClient, write_buff_dispatcher, 0, length);
 	}
 }

@@ -1,15 +1,23 @@
 package com.poker.access.handler;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.message.Message;
 import com.open.net.client.message.MessageBuffer;
 import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
+import com.open.net.server.object.AbstractServerClient;
 import com.open.util.log.Logger;
 import com.poker.cmd.DispatchCmd;
+import com.poker.cmd.LoginCmd;
 import com.poker.data.DataPacket;
+import com.poker.protocols.game.GameServerProto.GameServer;
+import com.poker.protocols.server.DispatchChainProto.DispatchChain;
+import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
+import com.poker.protocols.server.ServerProto.Server;
 import com.poker.access.Main;
 
 public class ClientMessageProcessor extends AbstractClientMessageProcessor {
@@ -253,17 +261,28 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
 		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
 	}
 		
-	private static ByteBuffer mWriteBuffer  = ByteBuffer.allocate(16*1024);
 	public void dispatchMessage(AbstractClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
-    		int cmd   = DataPacket.getCmd(data, header_start);
-		 	Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
-//        	mServerMessageProcessor.unicast(client, src, offset, length);
-        	mWriteBuffer.clear();
-            mWriteBuffer.put(data,header_start,header_length + body_length);
-            mWriteBuffer.flip();
-//        unicast(client,mWriteBuffer.array(),0,response.length);
-            Main.mServerMessageProcessor.broadcast(mWriteBuffer.array(),0,mWriteBuffer.remaining());
-            mWriteBuffer.clear();
+		
+		DispatchPacket mDispatchPacket;
+		try {
+			mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
+			int count = mDispatchPacket.getDispatchChainListCount();
+			if(count>0){
+				DispatchChain chain = mDispatchPacket.getDispatchChainList(count-1);
+				int  cmd = chain.getCmd();
+				long uid = chain.getUid();
+				
+				mDispatchPacket.getData().copyTo(Main.write_buff, 0);
+				int length = DataPacket.write(Main.write_buff_dispatcher, mDispatchPacket.getSequenceId(), cmd, (byte)0,Main.write_buff,0, mDispatchPacket.getData().size());
+	            Main.mServerMessageProcessor.broadcast(Main.write_buff_dispatcher,0,length);
+	            if(cmd == LoginCmd.CMD_LOGIN_RESPONSE){
+	            	
+	            }
+			 	Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
+			}	
+		} catch (InvalidProtocolBufferException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

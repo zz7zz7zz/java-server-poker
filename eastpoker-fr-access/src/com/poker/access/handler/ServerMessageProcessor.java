@@ -9,6 +9,7 @@ import com.open.util.log.Logger;
 import com.poker.base.ServerIds;
 import com.poker.cmd.DispatchCmd;
 import com.poker.data.DataPacket;
+import com.poker.data.DistapchType;
 import com.poker.access.Main;
 
 public class ServerMessageProcessor extends AbstractServerMessageProcessor{
@@ -286,9 +287,9 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
       	if(server > 0){
       		int length = 0;
       		if(server == ServerIds.SERVER_LOGIN){
-      			length = ImplDataTransfer.send2Login(write_buff, squenceId, data,header_start,header_length + body_length);
+      			length = ImplDataTransfer.send2Login(write_buff, squenceId, 0,cmd,DistapchType.TYPE_P2P,data,body_start,  body_length);
       		}else if(server == ServerIds.SERVER_USER){
-      			length = ImplDataTransfer.send2User(write_buff, squenceId, data,header_start,header_length + body_length);
+      			length = ImplDataTransfer.send2User(write_buff, squenceId, 0,cmd,DistapchType.TYPE_P2P,data,body_start,body_length);
       		}
       		
       		Main.dispatchIndex = (Main.dispatchIndex+1) % Main.dispatcher.length;
