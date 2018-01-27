@@ -41,10 +41,10 @@ public class DataPacket {
         ByteUtil.putByte(writeBuff,  Header.HEADER_OFFSET_EXTEND,packet_header_extend_length);
         
     	//组装扩展包头
-        ByteUtil.putByte(writeBuff, Header.HEADER_BASE_LENGTH, packet_header_extend, 0, packet_header_extend_length);
+        ByteUtil.putBytes(writeBuff, Header.HEADER_BASE_LENGTH, packet_header_extend, 0, packet_header_extend_length);
         
         //组装包体
-        ByteUtil.putByte(writeBuff, packet_header_length,body,bodyOffset,bodyLength);
+        ByteUtil.putBytes(writeBuff, packet_header_length,body,bodyOffset,bodyLength);
         
         return packet_ength;
     }

@@ -49,7 +49,7 @@ public class BasePacket {
         ByteUtil.putByte(buff,  Header.HEADER_OFFSET_EXTEND,		(byte)packet_header_extend_length);
         
     	//组装扩展包头
-        ByteUtil.putByte(buff, Header.HEADER_BASE_LENGTH, PACKET_HEADER_EXTEND, 0, packet_header_extend_length);
+        ByteUtil.putBytes(buff, Header.HEADER_BASE_LENGTH, PACKET_HEADER_EXTEND, 0, packet_header_extend_length);
         
         offset += (packet_header_base_length + packet_header_extend_length);
 	}
@@ -74,7 +74,7 @@ public class BasePacket {
         ByteUtil.putByte(buff,  Header.HEADER_OFFSET_EXTEND,		(byte)packet_header_extend_length);
         
     	//组装扩展包头
-        ByteUtil.putByte(buff, Header.HEADER_BASE_LENGTH, PACKET_HEADER_EXTEND_FORGAME, 0, packet_header_extend_length);
+        ByteUtil.putBytes(buff, Header.HEADER_BASE_LENGTH, PACKET_HEADER_EXTEND_FORGAME, 0, packet_header_extend_length);
         
         offset += (packet_header_base_length + packet_header_extend_length);
 	}
@@ -127,7 +127,12 @@ public class BasePacket {
 		packet_body_ength += (size1+size2);
 	}
 	
-	
+	protected void writeBytes(byte[] value,int value_offset,int value_length){
+		int size1= ByteUtil.putInt(buff, offset,value_length);
+		int size2= ByteUtil.putBytes(buff, offset,value,value_offset,value_length);
+		offset += (size1+size2);
+		packet_body_ength += (size1+size2);
+	}
 	//-----------------------------读取----------------------------------
 	protected byte readByte(){
 		offset += 1;
@@ -271,5 +276,13 @@ public class BasePacket {
     //将内部数据拷贝到外部数组
     public void copyTo(byte[] to ,int toOffset){
     	System.arraycopy(buff,0,to,toOffset,length);
+    }
+    
+    public byte[] getPacket(){
+    	return buff;
+    }
+    
+    public int getPacketLength(){
+    	return length;
     }
 }

@@ -25,7 +25,7 @@ public final class ByteUtil {
 		return in.length;
 	}
 	
-	public static int putByte(byte[] buff, int offset, byte[] in,int in_offset ,int in_length) {
+	public static int putBytes(byte[] buff, int offset, byte[] in,int in_offset ,int in_length) {
 		if (in == null || in.length == 0 || in.length < (in_offset + in_length)) {
 			return 0;
 		}

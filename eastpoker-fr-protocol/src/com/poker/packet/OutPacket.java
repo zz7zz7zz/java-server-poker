@@ -48,6 +48,9 @@ public class OutPacket extends BasePacket{
 		super.writeBytes(value);
 	}
 	
+	public void writeBytes(byte[] value,int value_offset,int value_length){
+		super.writeBytes(value,value_offset,value_length);
+	}
 	//-----------------------------结束----------------------------------
 	public void end(){
     	super.end();
