@@ -2,6 +2,10 @@ package com.poker.packet;
 
 public class InPacket extends BasePacket {
 	
+	public InPacket(int max_buff_length) {
+		super(max_buff_length);
+	}
+
 	//-----------------------------读取----------------------------------
 	public byte readByte(){
 		return super.readByte();

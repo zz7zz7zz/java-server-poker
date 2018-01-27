@@ -10,13 +10,17 @@ public class BasePacket {
 	public static final byte[] PACKET_HEADER_EXTEND_FORGAME = new byte[6];//可将gameId和tableId封装在扩展包头中
 	
 	//---------------------------------------------------------------
-	byte[] buff = new byte[8192];
-	int offset = 0;
+	byte[] buff = null;
+	int offset  = 0;
 	
 	//---------------------------------------------------------------
 	int packet_header_base_length = Header.HEADER_BASE_LENGTH;
 	int packet_header_extend_length;
 	int packet_body_ength;
+	
+	public BasePacket(int max_buff_length){
+		buff = new byte[max_buff_length];
+	}
 	
 	//---------------------------------------------------------------
 	protected void reset(){

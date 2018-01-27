@@ -2,6 +2,10 @@ package com.poker.packet;
 
 public class OutPacket extends BasePacket{
 	
+	public OutPacket(int max_buff_length) {
+		super(max_buff_length);
+	}
+
 	//-----------------------------开始----------------------------------
 	public void begin( int squenceId, int cmd){
 		super.begin(squenceId, cmd);
