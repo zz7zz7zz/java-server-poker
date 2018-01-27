@@ -12,7 +12,7 @@ public class BasePacket {
 	//---------------------------------------------------------------
 	byte[] buff = null;
 	int offset  = 0;
-	
+	int length  = 0;
 	//---------------------------------------------------------------
 	int packet_header_base_length = Header.HEADER_BASE_LENGTH;
 	int packet_header_extend_length;
@@ -171,7 +171,8 @@ public class BasePacket {
 	
 	//---------------------------------------------------------------
 	protected void end(){
-    	ByteUtil.putInt(buff,   Header.HEADER_OFFSET_LENGTH,	packet_header_base_length + packet_header_extend_length + packet_body_ength);
+		length = packet_header_base_length + packet_header_extend_length + packet_body_ength;
+    	ByteUtil.putInt(buff,   Header.HEADER_OFFSET_LENGTH,	length);
 	};
 	
 	//-------------------------------------------------包头定义--------------------------------------------
@@ -260,11 +261,15 @@ public class BasePacket {
     //--------------------------------------------------------------------------------
     //从外部数组将数据拷贝进来
     public void copyFrom(byte[] from ,int fromOffset , int fromLenth){
+    	reset();
+    	offset = getHeaderLength();
+    	length = fromLenth;
+    	
         System.arraycopy(from,fromOffset,buff,0,fromLenth);
     }
     
     //将内部数据拷贝到外部数组
     public void copyTo(byte[] to ,int toOffset){
-    	System.arraycopy(buff,0,to,toOffset,(packet_header_base_length + packet_header_extend_length + packet_body_ength));
+    	System.arraycopy(buff,0,to,toOffset,length);
     }
 }
