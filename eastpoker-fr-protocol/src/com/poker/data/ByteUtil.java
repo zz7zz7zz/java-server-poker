@@ -6,7 +6,7 @@ package com.poker.data;
  * description  :
  */
 
-public final class DataConverter {
+public final class ByteUtil {
 
     //---------------------------------------写--------------------------------------------
 	
@@ -15,7 +15,7 @@ public final class DataConverter {
 		return 1;
 	}
 
-	public static int putByte(byte[] buff, int offset, byte[] in) {
+	public static int putBytes(byte[] buff, int offset, byte[] in) {
 		if (in == null || in.length == 0) {
 			return 0;
 		}

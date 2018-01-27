@@ -18,8 +18,8 @@ public class DataPacket {
     }
     
     public static int writeGame(short gameId,int tableId,byte[] writeBuff, int squenceId, int cmd , byte encrypt, byte[] body,int bodyOffset,int bodyLength){
-    	DataConverter.putShort(PACKET_HEADER_EXTEND_FORGAME, 0, gameId);
-    	DataConverter.putInt(PACKET_HEADER_EXTEND_FORGAME, 2, tableId);
+    	ByteUtil.putShort(PACKET_HEADER_EXTEND_FORGAME, 0, gameId);
+    	ByteUtil.putInt(PACKET_HEADER_EXTEND_FORGAME, 2, tableId);
     	return write(writeBuff,squenceId,cmd,PACKET_FLAG,PACKET_VERSION,encrypt,PACKET_HEADER_EXTEND_FORGAME,body,bodyOffset,bodyLength);
     }
     
@@ -31,20 +31,20 @@ public class DataPacket {
     	int  packet_ength 		 			= packet_header_length + bodyLength;//完整包长度
     	
     	//组装包头
-    	DataConverter.putInt(writeBuff,   Header.HEADER_OFFSET_LENGTH,	packet_ength);
-        DataConverter.putInt(writeBuff,   Header.HEADER_OFFSET_SEQUENCEID,squenceId);
-        DataConverter.putInt(writeBuff,   Header.HEADER_OFFSET_CMD,cmd);
+    	ByteUtil.putInt(writeBuff,   Header.HEADER_OFFSET_LENGTH,	packet_ength);
+        ByteUtil.putInt(writeBuff,   Header.HEADER_OFFSET_SEQUENCEID,squenceId);
+        ByteUtil.putInt(writeBuff,   Header.HEADER_OFFSET_CMD,cmd);
         
-        DataConverter.putByte(writeBuff,  Header.HEADER_OFFSET_FLAG, flag);
-        DataConverter.putByte(writeBuff,  Header.HEADER_OFFSET_VERSION,version);
-        DataConverter.putByte(writeBuff,  Header.HEADER_OFFSET_ENCRYPT,encrypt);
-        DataConverter.putByte(writeBuff,  Header.HEADER_OFFSET_EXTEND,packet_header_extend_length);
+        ByteUtil.putByte(writeBuff,  Header.HEADER_OFFSET_FLAG, flag);
+        ByteUtil.putByte(writeBuff,  Header.HEADER_OFFSET_VERSION,version);
+        ByteUtil.putByte(writeBuff,  Header.HEADER_OFFSET_ENCRYPT,encrypt);
+        ByteUtil.putByte(writeBuff,  Header.HEADER_OFFSET_EXTEND,packet_header_extend_length);
         
     	//组装扩展包头
-        DataConverter.putByte(writeBuff, Header.HEADER_BASE_LENGTH, packet_header_extend, 0, packet_header_extend_length);
+        ByteUtil.putByte(writeBuff, Header.HEADER_BASE_LENGTH, packet_header_extend, 0, packet_header_extend_length);
         
         //组装包体
-        DataConverter.putByte(writeBuff, packet_header_length,body,bodyOffset,bodyLength);
+        ByteUtil.putByte(writeBuff, packet_header_length,body,bodyOffset,bodyLength);
         
         return packet_ength;
     }
@@ -55,7 +55,7 @@ public class DataPacket {
     }
     
     public static int getLength(byte[] buff,int header_start_offset){
-        return DataConverter.getInt(buff, header_start_offset+Header.HEADER_OFFSET_LENGTH);
+        return ByteUtil.getInt(buff, header_start_offset+Header.HEADER_OFFSET_LENGTH);
     }
 
     public static int getSequenceId(byte[] buff){
@@ -63,7 +63,7 @@ public class DataPacket {
     }
     
     public static int getSequenceId(byte[] buff,int header_start_offset){
-        return DataConverter.getInt(buff, header_start_offset+Header.HEADER_OFFSET_SEQUENCEID);
+        return ByteUtil.getInt(buff, header_start_offset+Header.HEADER_OFFSET_SEQUENCEID);
     }
     
     public static int getCmd(byte[] buff){
@@ -71,7 +71,7 @@ public class DataPacket {
     }
     
     public static int getCmd(byte[] buff,int header_start_offset){
-    	return DataConverter.getInt(buff, header_start_offset + Header.HEADER_OFFSET_CMD);
+    	return ByteUtil.getInt(buff, header_start_offset + Header.HEADER_OFFSET_CMD);
     }
     
     public static byte getFlag(byte[] buff){
@@ -79,7 +79,7 @@ public class DataPacket {
     }
     
     public static byte getFlag(byte[] buff,int header_start_offset){
-    	return DataConverter.getByte(buff, header_start_offset+Header.HEADER_OFFSET_FLAG);
+    	return ByteUtil.getByte(buff, header_start_offset+Header.HEADER_OFFSET_FLAG);
     }
     
     public static byte getVersion(byte[] buff){
@@ -87,7 +87,7 @@ public class DataPacket {
     }
     
     public static byte getVersion(byte[] buff,int header_start_offset){
-    	return DataConverter.getByte(buff, header_start_offset+Header.HEADER_OFFSET_VERSION);
+    	return ByteUtil.getByte(buff, header_start_offset+Header.HEADER_OFFSET_VERSION);
     }
 
     public static byte getEncrypt(byte[] buff){
@@ -95,7 +95,7 @@ public class DataPacket {
     }
     
     public static byte getEncrypt(byte[] buff,int header_start_offset){
-    	return DataConverter.getByte(buff, header_start_offset+Header.HEADER_OFFSET_ENCRYPT);
+    	return ByteUtil.getByte(buff, header_start_offset+Header.HEADER_OFFSET_ENCRYPT);
     }
 
     public static int getHeaderLength(byte[] buff,int header_start_offset){
@@ -111,7 +111,7 @@ public class DataPacket {
     }
     
     public static byte getExtendHeaderLength(byte[] buff,int header_start_offset){
-    	return DataConverter.getByte(buff, header_start_offset + Header.HEADER_OFFSET_EXTEND);
+    	return ByteUtil.getByte(buff, header_start_offset + Header.HEADER_OFFSET_EXTEND);
     }
     
     public static short getGid(byte[] buff){
@@ -119,7 +119,7 @@ public class DataPacket {
     }
     
     public static short getGid(byte[] buff,int header_start_offset){
-    	return DataConverter.getShort(buff, header_start_offset+Header.HEADER_OFFSET_EXTEND_GID);
+    	return ByteUtil.getShort(buff, header_start_offset+Header.HEADER_OFFSET_EXTEND_GID);
     }
     
     public static int getTid(byte[] buff){
@@ -127,7 +127,7 @@ public class DataPacket {
     }
     
     public static int getTid(byte[] buff,int header_start_offset){
-    	return DataConverter.getInt(buff, header_start_offset+Header.HEADER_OFFSET_EXTEND_TID);
+    	return ByteUtil.getInt(buff, header_start_offset+Header.HEADER_OFFSET_EXTEND_TID);
     }
     //---------------------------------------------------------------------------------------------
     public static final class Header {
