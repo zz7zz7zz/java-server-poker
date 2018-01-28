@@ -263,43 +263,24 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
 		
 	public void dispatchMessage(AbstractClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
 		
-		DispatchPacket mDispatchPacket;
 		try {
-			mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
+			
+			int  cmd = 0;
+			long uid = 0;
+			
+			DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
 			int count = mDispatchPacket.getDispatchChainListCount();
 			if(count>0){
 				DispatchChain chain = mDispatchPacket.getDispatchChainList(count-1);
-				int  cmd = chain.getCmd();
-				long uid = chain.getUid();
-				
-				Main.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());
-				long socketId = Main.mInPacket.readLong();
-				uid = Main.mInPacket.readLong();
-				
-				System.out.println("socketId " + socketId + " uid "+ uid);
-				
-				//方法二：使用下面的方法代替，避免创建多余的数组，浪费内存
-				int[] offset_length_array = Main.mInPacket.readBytesOffsetAndLenth();
-				int packet_start = offset_length_array[0];
-				int packet_length = offset_length_array[1];
-				
-				int packet_header_length = DataPacket.getHeaderLength(Main.mInPacket.getPacket(), packet_start);
-				
-				int packet_body_start = packet_start + packet_header_length;
-				int packet_body_length = packet_length - packet_header_length;
-				
-				int length = DataPacket.write(Main.write_buff_dispatcher, mDispatchPacket.getSequenceId(), cmd, (byte)0,Main.mInPacket.getPacket(),packet_body_start, packet_body_length);
-	            Main.mServerMessageProcessor.broadcast(Main.write_buff_dispatcher,0,length);
-				
-//				mDispatchPacket.getData().copyTo(Main.write_buff, 0);
-//				int length = DataPacket.write(Main.write_buff_dispatcher, mDispatchPacket.getSequenceId(), cmd, (byte)0,Main.write_buff,0, mDispatchPacket.getData().size());
-//	            Main.mServerMessageProcessor.broadcast(Main.write_buff_dispatcher,0,length);
-				
-	            if(cmd == LoginCmd.CMD_LOGIN_RESPONSE){
-	            	
-	            }
-			 	Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
+				cmd = chain.getCmd();
+				uid = chain.getUid();
 			}	
+			
+			Main.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());
+            if(cmd == LoginCmd.CMD_LOGIN_RESPONSE){
+            	mHandler.onClinetLogin(client, Main.mInPacket);
+            }
+            
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();
 		}

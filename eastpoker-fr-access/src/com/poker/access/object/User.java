@@ -4,7 +4,7 @@ public class User {
 	
 	public long uid;
 	
-	public int  socketId;
+	public long socketId;
 	public long socketHeartBeatTime;
 	
 	public int gameSid;

@@ -11,6 +11,8 @@ import com.poker.cmd.DispatchCmd;
 import com.poker.data.DataPacket;
 import com.poker.data.DistapchType;
 import com.poker.access.Main;
+import com.poker.access.object.User;
+import com.poker.access.object.UserPool;
 
 public class ServerMessageProcessor extends AbstractServerMessageProcessor{
 
@@ -241,14 +243,18 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
     }
 	
 	@Override
-	public void onClientEnter(AbstractServerClient arg0) {
+	public void onClientEnter(AbstractServerClient client) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onClientExit(AbstractServerClient client) {
-
+		User attachUser = (User)client.getAttachment();
+        if(null != attachUser && attachUser.socketId == client.mClientId){
+        	Main.userMap.remove(attachUser.uid);
+        	UserPool.release(attachUser);
+        }
 	}
 
 	@Override

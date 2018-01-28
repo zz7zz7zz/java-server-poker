@@ -2,7 +2,7 @@ package com.poker.access;
 
 import java.io.IOException;
 import java.util.Arrays;
-
+import java.util.HashMap;
 
 import com.open.net.client.GClient;
 import com.open.net.client.impl.tcp.nio.NioClient;
@@ -23,6 +23,7 @@ import com.poker.access.handler.ClientMessageHandler;
 import com.poker.access.handler.ClientMessageProcessor;
 import com.poker.access.handler.ServerMessageHandler;
 import com.poker.access.handler.ServerMessageProcessor;
+import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
 import com.poker.base.ServerIds;
 import com.poker.common.config.Config;
@@ -113,7 +114,8 @@ public class Main {
     public static byte[] write_buff_dispatcher;
     public static ClientMessageProcessor mClientMessageProcessor ;
     public static ServerMessageProcessor mServerMessageProcessor ;
-    
+	public static HashMap<Long,User> userMap = new HashMap<Long,User>();
+	
    //---------------------------------------Logger----------------------------------------------------
     public static LogListener mLogListener = new LogListener(){
 
