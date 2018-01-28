@@ -23,9 +23,11 @@ import com.poker.access.handler.ClientMessageHandler;
 import com.poker.access.handler.ClientMessageProcessor;
 import com.poker.access.handler.ServerMessageHandler;
 import com.poker.access.handler.ServerMessageProcessor;
+import com.poker.access.object.UserPool;
 import com.poker.base.ServerIds;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
+import com.poker.packet.OutPacket;
 import com.poker.protocols.Dispatcher;
 import com.poker.protocols.Monitor;
 
@@ -46,7 +48,7 @@ public class Main {
     	libArgsConfig.server_type = ServerIds.SERVER_ACCESS;
     	
     	//1.2.1 服务器配置初始化:解析文件配置
-        ServerConfig libServerConfig = new ServerConfig();
+        libServerConfig = new ServerConfig();
         libServerConfig.initArgsConfig(libArgsConfig);
         libServerConfig.initFileConfig("./conf/lib.server.config");
         
@@ -101,7 +103,9 @@ public class Main {
 
     //---------------------------------------Fields----------------------------------------------------
     public static ArgsConfig libArgsConfig;
+    public static ServerConfig libServerConfig;
     public static int dispatchIndex = -1;
+	public static OutPacket mOutPacket;
     public static NioClient [] dispatcher;
     public static byte[] write_buff ;
     public static byte[] write_buff_dispatcher;
@@ -119,10 +123,15 @@ public class Main {
     
     //---------------------------------------初始化全局对象----------------------------------------------------
     private static void initGlobalFields(int packet_max_length_tcp){
+    	mOutPacket = new OutPacket(packet_max_length_tcp);
     	write_buff = new byte[packet_max_length_tcp];
     	write_buff_dispatcher = new byte[packet_max_length_tcp];
     	mClientMessageProcessor = new ClientMessageProcessor(new ClientMessageHandler());
     	mServerMessageProcessor = new ServerMessageProcessor(new ServerMessageHandler(), write_buff);
+    	
+		//预先分配1/4桌子数目的用户，每次增长1/4桌子数目的用户
+		int user_init_size = (int)(0.25*libServerConfig.connect_max_count);
+		UserPool.init(user_init_size,user_init_size);
     }
     
     //---------------------------------------Monitor----------------------------------------------------

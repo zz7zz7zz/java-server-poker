@@ -287,7 +287,14 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
       	if(server > 0){
       		int length = 0;
       		if(server == ServerIds.SERVER_LOGIN){
-      			length = ImplDataTransfer.send2Login(write_buff, squenceId, 0,cmd,DistapchType.TYPE_P2P,data,body_start,  body_length);
+      			
+      			Main.mOutPacket.begin(squenceId, cmd);
+      			Main.mOutPacket.writeLong(client.mClientId);//额外的数据
+      			Main.mOutPacket.writeBytes(data,header_start,header_length+body_length);//原始数据
+      			Main.mOutPacket.end();
+      			
+      			length = ImplDataTransfer.send2Login(write_buff, squenceId, 0,cmd,DistapchType.TYPE_P2P,Main.mOutPacket.getPacket(),0,  Main.mOutPacket.getLength());
+      			
       		}else if(server == ServerIds.SERVER_USER){
       			length = ImplDataTransfer.send2User(write_buff, squenceId, 0,cmd,DistapchType.TYPE_P2P,data,body_start,body_length);
       		}
