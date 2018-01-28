@@ -1,6 +1,5 @@
 package com.poker.access.handler;
 
-import java.util.HashMap;
 
 import com.open.net.client.object.AbstractClient;
 import com.open.net.server.GServer;
@@ -43,26 +42,28 @@ public class ClientMessageHandler {
 			}
 		}
 		
-		AbstractServerClient client_server_connection = GServer.getClient(socketId);
-		if(null != client_server_connection){
+		AbstractServerClient mConnection = GServer.getClient(socketId);
+		if(null != mConnection){
 			int length = DataPacket.write(Main.write_buff_dispatcher, sequenceId, cmd, (byte)0,Main.mInPacket.getPacket(),packet_body_start, packet_body_length);
-	        Main.mServerMessageProcessor.unicast(client_server_connection, Main.write_buff_dispatcher,0,length);
+	        Main.mServerMessageProcessor.unicast(mConnection, Main.write_buff_dispatcher,0,length);
 	        
-	        User attachUser = (User)client_server_connection.getAttachment();
+	        User attachUser = (User)mConnection.getAttachment();
 	        if(null == attachUser){
 	        	
 	        	attachUser = UserPool.get(uid);
 	        	attachUser.socketId = socketId;
-		        client_server_connection.attach(user);
+		        mConnection.attach(user);
 		        
 		        Main.userMap.put(uid, attachUser);
 		        
 	        }else if(attachUser.socketId != socketId){//会跑到这里来吗？？？
 	        	attachUser.socketId = socketId;
 	        }
+		}else {//这里有可能在登录的瞬间又掉线了
+			
 		}
 
         
-		System.out.println("onClinetLogin socketId " + socketId + " uid "+ uid + " success " + (null != client_server_connection));
+		System.out.println("onClinetLogin socketId " + socketId + " uid "+ uid + " success " + (null != mConnection));
 	}
 }

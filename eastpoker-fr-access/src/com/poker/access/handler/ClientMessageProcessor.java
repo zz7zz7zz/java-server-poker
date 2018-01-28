@@ -1,7 +1,5 @@
 package com.poker.access.handler;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -9,15 +7,11 @@ import com.open.net.client.message.Message;
 import com.open.net.client.message.MessageBuffer;
 import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
-import com.open.net.server.object.AbstractServerClient;
 import com.open.util.log.Logger;
-import com.poker.cmd.DispatchCmd;
 import com.poker.cmd.LoginCmd;
 import com.poker.data.DataPacket;
-import com.poker.protocols.game.GameServerProto.GameServer;
 import com.poker.protocols.server.DispatchChainProto.DispatchChain;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
-import com.poker.protocols.server.ServerProto.Server;
 import com.poker.access.Main;
 
 public class ClientMessageProcessor extends AbstractClientMessageProcessor {
@@ -264,7 +258,6 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
 	public void dispatchMessage(AbstractClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
 		
 		try {
-			
 			int  cmd = 0;
 			long uid = 0;
 			
@@ -276,10 +269,11 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
 				uid = chain.getUid();
 			}	
 			
-//			Main.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());
 			Main.mInPacket.copyFrom(mDispatchPacket.getData());
 			if(cmd == LoginCmd.CMD_LOGIN_RESPONSE){
-            	mHandler.onClinetLogin(client, Main.mInPacket);
+            		mHandler.onClinetLogin(client, Main.mInPacket);
+            }else {
+            	
             }
             
 		} catch (InvalidProtocolBufferException e) {
