@@ -42,4 +42,8 @@ public class InPacket extends BasePacket {
 	public int[] readBytesOffsetAndLenth(){
 		return super.readBytesOffsetAndLenth();
 	}
+	
+	public PacketInfo readBytesToSubPacket() {
+		return super.readBytesToSubPacket();
+	}
 }

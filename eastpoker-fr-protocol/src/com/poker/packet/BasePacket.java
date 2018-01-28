@@ -2,6 +2,7 @@ package com.poker.packet;
 
 import com.google.protobuf.ByteString;
 import com.poker.data.ByteUtil;
+import com.poker.data.DataPacket;
 
 public class BasePacket {
     
@@ -184,11 +185,27 @@ public class BasePacket {
 	
 	protected int[] readBytesOffsetAndLenth(){
 		int size = readInt();
+		
 		int ret_offset = offset;
 		int ret_length = size;
 		
 		offset += size;
 		return new int[]{ret_offset,ret_length};
+	}
+	
+	protected PacketInfo readBytesToSubPacket(){
+		int size = readInt();
+		
+		PacketInfo ret = new PacketInfo();
+		ret.buff = buff;
+		ret.length = size;
+		ret.header_start = offset;
+		ret.header_length = DataPacket.getHeaderLength(buff, ret.header_start);
+		ret.body_start = ret.header_start + ret.header_length;
+		ret.body_length= ret.length - ret.header_length;
+
+		offset += size;
+		return ret;
 	}
 	
 	//---------------------------------------------------------------
