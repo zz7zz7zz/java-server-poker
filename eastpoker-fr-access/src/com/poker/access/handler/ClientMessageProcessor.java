@@ -276,8 +276,9 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
 				uid = chain.getUid();
 			}	
 			
-			Main.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());
-            if(cmd == LoginCmd.CMD_LOGIN_RESPONSE){
+//			Main.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());
+			Main.mInPacket.copyFrom(mDispatchPacket.getData());
+			if(cmd == LoginCmd.CMD_LOGIN_RESPONSE){
             	mHandler.onClinetLogin(client, Main.mInPacket);
             }
             
