@@ -1,5 +1,6 @@
 package com.poker.packet;
 
+import com.google.protobuf.ByteString;
 import com.poker.data.ByteUtil;
 
 public class BasePacket {
@@ -327,10 +328,21 @@ public class BasePacket {
     //从外部数组将数据拷贝进来
     public void copyFrom(byte[] from ,int fromOffset , int fromLenth){
     	reset();
-    	offset = getHeaderLength(from,fromOffset);
-    	length = fromLenth;
     	
         System.arraycopy(from,fromOffset,buff,0,fromLenth);
+        
+    	offset = getHeaderLength();
+    	length = fromLenth;
+
+    }
+    
+    public void copyFrom(ByteString mByteString){
+    	reset();
+    	
+    	mByteString.copyTo(buff, 0);
+    	
+    	offset = getHeaderLength();
+    	length = mByteString.size();
     }
     
     //将内部数据拷贝到外部数组
