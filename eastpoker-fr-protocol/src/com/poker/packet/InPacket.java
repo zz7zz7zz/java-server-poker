@@ -46,4 +46,8 @@ public class InPacket extends BasePacket {
 	public PacketInfo readBytesToSubPacket() {
 		return super.readBytesToSubPacket();
 	}
+	
+	public void readBytesToSubPacket(PacketInfo ret) {
+		super.readBytesToSubPacket(ret);
+	}
 }

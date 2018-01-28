@@ -208,6 +208,19 @@ public class BasePacket {
 		return ret;
 	}
 	
+	protected void readBytesToSubPacket(PacketInfo ret){
+		int size = readInt();
+		
+		ret.buff = buff;
+		ret.length = size;
+		ret.header_start = offset;
+		ret.header_length = DataPacket.getHeaderLength(buff, ret.header_start);
+		ret.body_start = ret.header_start + ret.header_length;
+		ret.body_length= ret.length - ret.header_length;
+
+		offset += size;
+	}
+	
 	//---------------------------------------------------------------
 	protected void end(){
 		length = packet_header_base_length + packet_header_extend_length + packet_body_ength;
