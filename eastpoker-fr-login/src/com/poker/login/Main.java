@@ -18,6 +18,8 @@ import com.poker.base.ServerIds;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
 import com.poker.login.handler.ClientMessageProcessor;
+import com.poker.packet.InPacket;
+import com.poker.packet.OutPacket;
 import com.poker.login.handler.ClientMessageHandler;
 import com.poker.protocols.Dispatcher;
 import com.poker.protocols.Monitor;
@@ -88,6 +90,8 @@ public class Main {
     public static byte[] write_buff;
     public static byte[] write_buff_dispatcher;
 	private static ClientMessageProcessor mClientMessageProcessor = new ClientMessageProcessor(new ClientMessageHandler());
+	public static InPacket mInPacket = new InPacket(8192);	
+	public static OutPacket mOutPacket = new OutPacket(8192);
 	
     //---------------------------------------Logger----------------------------------------------------
     public static LogListener mLogListener = new LogListener(){

@@ -27,6 +27,7 @@ import com.poker.access.object.UserPool;
 import com.poker.base.ServerIds;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
+import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.protocols.Dispatcher;
 import com.poker.protocols.Monitor;
@@ -106,6 +107,7 @@ public class Main {
     public static ServerConfig libServerConfig;
     public static int dispatchIndex = -1;
 	public static OutPacket mOutPacket;
+	public static InPacket mInPacket;
     public static NioClient [] dispatcher;
     public static byte[] write_buff ;
     public static byte[] write_buff_dispatcher;
@@ -124,6 +126,7 @@ public class Main {
     //---------------------------------------初始化全局对象----------------------------------------------------
     private static void initGlobalFields(int packet_max_length_tcp){
     	mOutPacket = new OutPacket(packet_max_length_tcp);
+    	mInPacket = new InPacket(packet_max_length_tcp);
     	write_buff = new byte[packet_max_length_tcp];
     	write_buff_dispatcher = new byte[packet_max_length_tcp];
     	mClientMessageProcessor = new ClientMessageProcessor(new ClientMessageHandler());
