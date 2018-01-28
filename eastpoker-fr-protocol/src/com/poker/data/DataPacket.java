@@ -129,6 +129,11 @@ public class DataPacket {
     public static int getTid(byte[] buff,int header_start_offset){
     	return ByteUtil.getInt(buff, header_start_offset+Header.HEADER_OFFSET_EXTEND_TID);
     }
+    
+    public int getBodyLenth(byte[] buff,int header_start_offset){
+    	return getLength(buff,header_start_offset) - getHeaderLength(buff,header_start_offset);
+    }
+    
     //---------------------------------------------------------------------------------------------
     public static final class Header {
 

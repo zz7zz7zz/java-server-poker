@@ -122,46 +122,52 @@ public class BasePacket {
 	
 	protected void writeBytes(byte[] value){
 		int size1= ByteUtil.putInt(buff, offset,value.length);
-		int size2= ByteUtil.putBytes(buff, offset,value);
+		int size2= ByteUtil.putBytes(buff, offset+size1,value);
 		offset += (size1+size2);
 		packet_body_ength += (size1+size2);
 	}
 	
 	protected void writeBytes(byte[] value,int value_offset,int value_length){
 		int size1= ByteUtil.putInt(buff, offset,value_length);
-		int size2= ByteUtil.putBytes(buff, offset,value,value_offset,value_length);
+		int size2= ByteUtil.putBytes(buff, offset+size1,value,value_offset,value_length);
 		offset += (size1+size2);
 		packet_body_ength += (size1+size2);
 	}
 	//-----------------------------读取----------------------------------
 	protected byte readByte(){
+		byte ret = ByteUtil.getByte(buff, offset);
 		offset += 1;
-		return ByteUtil.getByte(buff, offset);
+		return ret;
 	}
 	
-	protected int readShort(){
+	protected short readShort(){
+		short ret = ByteUtil.getShort(buff, offset);
 		offset += 2;
-		return ByteUtil.getShort(buff, offset);
+		return ret;
 	}
 	
 	protected int readInt(){
+		int ret = ByteUtil.getInt(buff, offset);
 		offset += 4;
-		return ByteUtil.getInt(buff, offset);
+		return ret;
 	}
 	
 	protected long readLong(){
+		long ret = ByteUtil.getLong(buff, offset);
 		offset += 8;
-		return ByteUtil.getLong(buff, offset);
+		return ret;
 	}
 	
 	protected float readFloat(){
+		float ret = ByteUtil.getFloat(buff, offset);
 		offset += 4;
-		return ByteUtil.getFloat(buff, offset);
+		return ret;
 	}
 	
 	protected double readeDouble(){
+		double ret = ByteUtil.getDouble(buff, offset);
 		offset += 8;
-		return ByteUtil.getDouble(buff, offset);
+		return ret;
 	}
 	
 	protected String readString(){
@@ -170,8 +176,18 @@ public class BasePacket {
 	
 	protected byte[] readBytes(){
 		int size = readInt();
+		byte[] ret = ByteUtil.getBytes(buff, offset,size);
 		offset += size;
-		return ByteUtil.getBytes(buff, offset,size);
+		return ret;
+	}
+	
+	protected int[] readBytesOffsetAndLenth(){
+		int size = readInt();
+		int ret_offset = offset;
+		int ret_length = size;
+		
+		offset += size;
+		return new int[]{ret_offset,ret_length};
 	}
 	
 	//---------------------------------------------------------------
@@ -219,36 +235,72 @@ public class BasePacket {
     	 return ByteUtil.getInt(buff, Header.HEADER_OFFSET_LENGTH);
     }
 
+    public static int getLength(byte[] buff,int header_start_offset){
+        return ByteUtil.getInt(buff, header_start_offset+Header.HEADER_OFFSET_LENGTH);
+    }
+    
     public int getSequenceId(){
     	return ByteUtil.getInt(buff, Header.HEADER_OFFSET_SEQUENCEID);
+    }
+    
+    public static int getSequenceId(byte[] buff,int header_start_offset){
+        return ByteUtil.getInt(buff, header_start_offset+Header.HEADER_OFFSET_SEQUENCEID);
     }
     
     public int getCmd(){
     	return ByteUtil.getInt(buff, Header.HEADER_OFFSET_CMD);
     }
     
+    public static int getCmd(byte[] buff,int header_start_offset){
+    	return ByteUtil.getInt(buff, header_start_offset + Header.HEADER_OFFSET_CMD);
+    }
+    
     public byte getFlag(){
     	return ByteUtil.getByte(buff, Header.HEADER_OFFSET_FLAG);
+    }
+    
+    public static byte getFlag(byte[] buff,int header_start_offset){
+    	return ByteUtil.getByte(buff, header_start_offset+Header.HEADER_OFFSET_FLAG);
     }
     
     public byte getVersion(){
     	return ByteUtil.getByte(buff, Header.HEADER_OFFSET_VERSION);
     }
 
+    public static byte getVersion(byte[] buff,int header_start_offset){
+    	return ByteUtil.getByte(buff, header_start_offset+Header.HEADER_OFFSET_VERSION);
+    }
+    
     public byte getEncrypt(){
     	return ByteUtil.getByte(buff, Header.HEADER_OFFSET_ENCRYPT);
     }
 
+    public static byte getEncrypt(byte[] buff,int header_start_offset){
+    	return ByteUtil.getByte(buff, header_start_offset+Header.HEADER_OFFSET_ENCRYPT);
+    }
+    
     public int getExtendHeaderLength(){
     	return ByteUtil.getByte(buff, Header.HEADER_OFFSET_EXTEND);
+    }
+    
+    public static byte getExtendHeaderLength(byte[] buff,int header_start_offset){
+    	return ByteUtil.getByte(buff, header_start_offset + Header.HEADER_OFFSET_EXTEND);
     }
     
     public short getGid(){
     	return ByteUtil.getShort(buff, Header.HEADER_OFFSET_EXTEND_GID);
     }
 
+    public static short getGid(byte[] buff,int header_start_offset){
+    	return ByteUtil.getShort(buff, header_start_offset+Header.HEADER_OFFSET_EXTEND_GID);
+    }
+    
     public int getTid(){
     	return ByteUtil.getInt(buff, Header.HEADER_OFFSET_EXTEND_TID);
+    }
+    
+    public static int getTid(byte[] buff,int header_start_offset){
+    	return ByteUtil.getInt(buff, header_start_offset+Header.HEADER_OFFSET_EXTEND_TID);
     }
     
     public int getBaseHeaderLength(){
@@ -259,15 +311,23 @@ public class BasePacket {
     	return getBaseHeaderLength() + getExtendHeaderLength();
     }
     
+    public int getHeaderLength(byte[] buff,int header_start_offset){
+    	return getBaseHeaderLength() + getExtendHeaderLength(buff,header_start_offset);
+    }
+    
     public int getBodyLenth(){
     	return getLength() - getHeaderLength();
     }
    
+    public int getBodyLenth(byte[] buff,int header_start_offset){
+    	return getLength(buff,header_start_offset) - getHeaderLength(buff,header_start_offset);
+    }
+    
     //--------------------------------------------------------------------------------
     //从外部数组将数据拷贝进来
     public void copyFrom(byte[] from ,int fromOffset , int fromLenth){
     	reset();
-    	offset = getHeaderLength();
+    	offset = getHeaderLength(from,fromOffset);
     	length = fromLenth;
     	
         System.arraycopy(from,fromOffset,buff,0,fromLenth);

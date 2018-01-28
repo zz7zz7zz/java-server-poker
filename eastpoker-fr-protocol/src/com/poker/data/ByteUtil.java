@@ -32,7 +32,7 @@ public final class ByteUtil {
 		for (int i = 0; i < in_length; i++) {
 			buff[offset + i] = in[in_offset + i];
 		}
-		return in.length;
+		return in_length;
 	}
 	
 	public static int putShort(byte[] buff, int offset, short value) {

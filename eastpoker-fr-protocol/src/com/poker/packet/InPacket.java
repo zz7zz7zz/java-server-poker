@@ -11,7 +11,7 @@ public class InPacket extends BasePacket {
 		return super.readByte();
 	}
 	
-	public int readShort(){
+	public short readShort(){
 		return super.readShort();
 	}
 	
@@ -39,4 +39,7 @@ public class InPacket extends BasePacket {
 		return super.readBytes();
 	}
 	
+	public int[] readBytesOffsetAndLenth(){
+		return super.readBytesOffsetAndLenth();
+	}
 }
