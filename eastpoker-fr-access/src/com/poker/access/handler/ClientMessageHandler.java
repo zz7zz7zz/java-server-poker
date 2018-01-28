@@ -9,6 +9,7 @@ import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
 import com.poker.data.DataPacket;
 import com.poker.packet.InPacket;
+import com.poker.packet.PacketInfo;
 
 public class ClientMessageHandler {
 	
@@ -18,22 +19,10 @@ public class ClientMessageHandler {
 		
 		long socketId 	= mInPacket.readLong();
 		long uid 		= mInPacket.readLong();
-		
-		//方法二：使用下面的方法代替，避免创建多余的数组，浪费内存
-		int[] offset_length_array = mInPacket.readBytesOffsetAndLenth();
-		int packet_start = offset_length_array[0];
-		int packet_length = offset_length_array[1];
-		
-		int packet_header_length = DataPacket.getHeaderLength(mInPacket.getPacket(), packet_start);
-		
-		int packet_body_start = packet_start + packet_header_length;
-		int packet_body_length = packet_length - packet_header_length;
-		
-		int cmd = DataPacket.getCmd(Main.mInPacket.getPacket(), packet_start);
-		int sequenceId = DataPacket.getSequenceId(Main.mInPacket.getPacket(), packet_start);
-		
+		PacketInfo mSubPacket = mInPacket.readBytesToSubPacket();
+
 		User user = Main.userMap.get(uid);
-		if(null != user){//说明之前已经连接上了
+		if(null != user){//说明之前已经连接上了,断掉老的链接
 			if(user.socketId != socketId){
 				AbstractServerClient client_server_connection = GServer.getClient(user.socketId);
 				if(null != client_server_connection){
@@ -44,7 +33,9 @@ public class ClientMessageHandler {
 		
 		AbstractServerClient mConnection = GServer.getClient(socketId);
 		if(null != mConnection){
-			int length = DataPacket.write(Main.write_buff_dispatcher, sequenceId, cmd, (byte)0,Main.mInPacket.getPacket(),packet_body_start, packet_body_length);
+			int cmd 			= DataPacket.getCmd(mSubPacket.buff, mSubPacket.header_start);
+			int sequenceId 	= DataPacket.getSequenceId(mSubPacket.buff, mSubPacket.header_start);
+			int length = DataPacket.write(Main.write_buff_dispatcher, sequenceId, cmd, (byte)0,mSubPacket.buff,mSubPacket.body_start, mSubPacket.body_length);
 	        Main.mServerMessageProcessor.unicast(mConnection, Main.write_buff_dispatcher,0,length);
 	        
 	        User attachUser = (User)mConnection.getAttachment();
