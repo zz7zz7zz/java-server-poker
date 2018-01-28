@@ -272,9 +272,29 @@ public class ClientMessageProcessor extends AbstractClientMessageProcessor {
 				int  cmd = chain.getCmd();
 				long uid = chain.getUid();
 				
-				mDispatchPacket.getData().copyTo(Main.write_buff, 0);
-				int length = DataPacket.write(Main.write_buff_dispatcher, mDispatchPacket.getSequenceId(), cmd, (byte)0,Main.write_buff,0, mDispatchPacket.getData().size());
+				Main.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());
+				long socketId = Main.mInPacket.readLong();
+				uid = Main.mInPacket.readLong();
+				
+				System.out.println("socketId " + socketId + " uid "+ uid);
+				
+				//方法二：使用下面的方法代替，避免创建多余的数组，浪费内存
+				int[] offset_length_array = Main.mInPacket.readBytesOffsetAndLenth();
+				int packet_start = offset_length_array[0];
+				int packet_length = offset_length_array[1];
+				
+				int packet_header_length = DataPacket.getHeaderLength(Main.mInPacket.getPacket(), packet_start);
+				
+				int packet_body_start = packet_start + packet_header_length;
+				int packet_body_length = packet_length - packet_header_length;
+				
+				int length = DataPacket.write(Main.write_buff_dispatcher, mDispatchPacket.getSequenceId(), cmd, (byte)0,Main.mInPacket.getPacket(),packet_body_start, packet_body_length);
 	            Main.mServerMessageProcessor.broadcast(Main.write_buff_dispatcher,0,length);
+				
+//				mDispatchPacket.getData().copyTo(Main.write_buff, 0);
+//				int length = DataPacket.write(Main.write_buff_dispatcher, mDispatchPacket.getSequenceId(), cmd, (byte)0,Main.write_buff,0, mDispatchPacket.getData().size());
+//	            Main.mServerMessageProcessor.broadcast(Main.write_buff_dispatcher,0,length);
+				
 	            if(cmd == LoginCmd.CMD_LOGIN_RESPONSE){
 	            	
 	            }
