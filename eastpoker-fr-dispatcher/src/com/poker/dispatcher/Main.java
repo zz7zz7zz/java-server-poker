@@ -14,8 +14,9 @@ import com.open.util.log.base.LogConfig;
 import com.poker.base.ServerIds;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
-import com.poker.dispatcher.handler.ServerMessageHandler;
-import com.poker.dispatcher.handler.ServerMessageProcessor;
+import com.poker.dispatcher.handler.ServerHandler;
+import com.poker.packet.InPacket;
+import com.poker.packet.OutPacket;
 import com.poker.protocols.Monitor;
 
 
@@ -58,7 +59,8 @@ public class Main {
         Logger.v("mServerConfig  : "+ mServerConfig.toString()+"\r\n");
         
         //----------------------------------------- 二、注册到关联服务器 ---------------------------------------
-        register_monitor(mServerConfig);//注册到服务监听器
+        byte[] mTempBuff = new byte[512];
+        register_monitor(mServerConfig,mTempBuff);//注册到服务监听器
     	
         //----------------------------------------- 三、服务器初始化 ------------------------------------------
     	Logger.v("-------Server------start---------");
@@ -67,7 +69,7 @@ public class Main {
             GServer.init(libServerConfig, com.open.net.server.impl.tcp.nio.NioClient.class);
             
             //3.2 服务器初始化
-            NioServer mNioServer = new NioServer(libServerConfig,new ServerMessageProcessor(new ServerMessageHandler(),write_buff),mLogListener);
+            NioServer mNioServer = new NioServer(libServerConfig,new ServerHandler(new InPacket(libServerConfig.packet_max_length_tcp), new OutPacket(libServerConfig.packet_max_length_tcp)),mLogListener);
             mNioServer.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -75,7 +77,7 @@ public class Main {
         Logger.v("-------Server------end---------");
         
         //----------------------------------------- 四、反注册关联服务器 ---------------------------------------
-        unregister_monitor(mServerConfig);//反注册到服务监听器
+        unregister_monitor(mServerConfig,new byte[512]);//反注册到服务监听器
         
         //----------------------------------------- 五、最终退出程序 ---------------------------------------
         System.exit(0);
@@ -84,7 +86,6 @@ public class Main {
     
     //---------------------------------------Fields----------------------------------------------------
     public static ArgsConfig libArgsConfig;
-    private static byte[] write_buff ;
     
     //---------------------------------------Logger----------------------------------------------------
     public static LogListener mLogListener = new LogListener(){
@@ -97,26 +98,26 @@ public class Main {
     
     //---------------------------------------初始化全局对象----------------------------------------------------
     private static void initGlobalFields(int packet_max_length_tcp){
-    	write_buff = new byte[packet_max_length_tcp];
+
     }
     
-    //---------------------------------------Monitor----------------------------------------------------
-    public static void register_monitor(Config mConfig){
-        Monitor.register2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
+  //---------------------------------------Monitor----------------------------------------------------
+    public static void register_monitor(Config mConfig,byte[] buff){
+    	Monitor.register2Monitor(buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.getLength(write_buff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,buff,0,DataPacket.getLength(buff));
     		}
     	}
     }
     
-    public static void unregister_monitor(Config mConfig){
-    	Monitor.unregister2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
+    public static void unregister_monitor(Config mConfig,byte[] buff){
+        Monitor.unregister2Monitor(buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.getLength(write_buff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,buff,0,DataPacket.getLength(buff));
     		}
     	}
     }

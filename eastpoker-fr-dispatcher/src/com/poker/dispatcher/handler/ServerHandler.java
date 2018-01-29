@@ -10,16 +10,50 @@ import com.open.net.server.object.AbstractServerClient;
 import com.open.net.server.object.AbstractServerMessageProcessor;
 import com.open.net.server.utils.TextUtils;
 import com.open.util.log.Logger;
+import com.poker.cmd.DispatchCmd;
+import com.poker.data.DataPacket;
+import com.poker.packet.InPacket;
+import com.poker.packet.OutPacket;
 import com.poker.protocols.server.DispatchChainProto.DispatchChain;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 import com.poker.protocols.server.ServerProto.Server;
 
-public class ServerMessageHandler {
+public class ServerHandler extends AbsServerHandler{
 
-    public HashMap<Integer, ArrayList<AbstractServerClient>> serverList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
+	public HashMap<Integer, ArrayList<AbstractServerClient>> serverList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
     public HashMap<Integer, ArrayList<AbstractServerClient>> gameGroupList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
     public HashMap<Integer, ArrayList<AbstractServerClient>> matchGroupList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
     
+    public ServerHandler(InPacket mInPacket, OutPacket mOutPacket) {
+		super(mInPacket, mOutPacket);
+	}
+
+	@Override
+	public void onClientExit(AbstractServerClient client) {
+		exit(client);
+	}
+	
+	@Override
+	public void dispatchMessage(AbstractServerClient client, byte[] data, int header_start, int header_length,
+			int body_start, int body_length) {
+    	try {
+    		int cmd   = DataPacket.getCmd(data, header_start);
+    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
+    		
+    		if(cmd == DispatchCmd.CMD_DISPATCH_REGISTER){
+    			register(client, data, body_start,body_length);
+    		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA_GAME_GROUP){
+    			dispatchGameGoup(client, data, body_start, body_length, this);
+    		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA_MATCH_GROUP){
+    			dispatchMatchGroup(client, data, body_start, body_length, this);
+    		}else{
+    			dispatch(client, data, header_start,header_length,body_start, body_length,this);
+    		}
+		} catch (InvalidProtocolBufferException e) {
+			e.printStackTrace();
+		}
+	}
+	
     //--------------------------------------------------------------------------------------------------------
     public void register(AbstractServerClient client, byte[] data, int body_start, int body_length) throws InvalidProtocolBufferException{
     	
@@ -60,7 +94,7 @@ public class ServerMessageHandler {
 		}
     }
 
-    public void dispatchGameGoup(AbstractServerClient client, byte[] data, int body_start, int body_length, byte[] write_buff,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
+    public void dispatchGameGoup(AbstractServerClient client, byte[] data, int body_start, int body_length,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
 
 		int count = mDispatchPacket.getDispatchChainListCount();
@@ -69,20 +103,22 @@ public class ServerMessageHandler {
 			int gameGroupId = chain.getDstGameGroup();
 			
 			ArrayList<AbstractServerClient> gameGroupArray = gameGroupList.get(gameGroupId);
-    		if(null != gameGroupArray){
+    		if(null != gameGroupArray && gameGroupArray.size() >0){
     			Logger.v(String.format("dispatch_game_group %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),gameGroupId));
+    			//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
+    			byte[] mTempBuff = mOutPacket.getPacket();
+				mDispatchPacket.getData().copyTo(mTempBuff, 0);
         		for(AbstractServerClient server:gameGroupArray){
         			Server attachObj = (Server) server.getAttachment();
-        			Logger.v(String.format("dispatch_game_group %d %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),attachObj.getType(),attachObj.getId()));
+        			mServerMessageProcessor.unicast(server, mTempBuff,0,mDispatchPacket.getData().size());
         			
-    				mDispatchPacket.getData().copyTo(write_buff, 0);
-    				mServerMessageProcessor.unicast(server, write_buff,0,mDispatchPacket.getData().size());
+        			Logger.v(String.format("dispatch_game_group %d %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),attachObj.getType(),attachObj.getId()));
         		}
     		}
 		}
     }
     
-    public void dispatchMatchGroup(AbstractServerClient client, byte[] data, int body_start, int body_length,byte[] write_buff,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
+    public void dispatchMatchGroup(AbstractServerClient client, byte[] data, int body_start, int body_length,AbstractServerMessageProcessor mServerMessageProcessor) throws InvalidProtocolBufferException{
     	DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
 
 		int count = mDispatchPacket.getDispatchChainListCount();
@@ -93,12 +129,14 @@ public class ServerMessageHandler {
 			ArrayList<AbstractServerClient> matchGroupArray = matchGroupList.get(matchGroupId);
     		if(null != matchGroupArray){
     			Logger.v(String.format("dispatch_match_group %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),matchGroupId));
+    			//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
+    			byte[] mTempBuff = mOutPacket.getPacket();
+				mDispatchPacket.getData().copyTo(mTempBuff, 0);
+				
         		for(AbstractServerClient server:matchGroupArray){
         			Server attachObj = (Server) server.getAttachment();
+        			mServerMessageProcessor.unicast(server, mTempBuff,0,mDispatchPacket.getData().size());
         			Logger.v(String.format("dispatch_match_group %d %d %d %d", chain.getSrcServerType(),chain.getSrcServerId(),attachObj.getType(),attachObj.getId()));
-        			
-    				mDispatchPacket.getData().copyTo(write_buff, 0);
-    				mServerMessageProcessor.unicast(server, write_buff,0,mDispatchPacket.getData().size());
         		}
     		}
 		}
