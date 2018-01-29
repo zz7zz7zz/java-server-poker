@@ -34,21 +34,21 @@ public class ServerHandler extends AbsServerHandler{
       			mOutPacket.writeBytes(data,header_start,header_length+body_length);//原始数据
       			mOutPacket.end();
       			
-      			length = PacketTransfer.send2Login(write_buff, squenceId, 0,cmd,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
+      			length = PacketTransfer.send2Login(mOutBuff, squenceId, 0,cmd,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
       			
       		}else if(server == ServerIds.SERVER_USER){
-      			length = PacketTransfer.send2User(write_buff, squenceId, 0,cmd,DistapchType.TYPE_P2P,data,body_start,body_length);
+      			length = PacketTransfer.send2User(mOutBuff, squenceId, 0,cmd,DistapchType.TYPE_P2P,data,body_start,body_length);
       		}
       		
       		Main.dispatchIndex = (Main.dispatchIndex+1) % Main.dispatcher.length;
       		NioClient mNioClient = Main.dispatcher[Main.dispatchIndex];
       		if(mNioClient.isConnected()){
-      			mNioClient.getmMessageProcessor().send(mNioClient,write_buff,0,length);
+      			mNioClient.getmMessageProcessor().send(mNioClient,mOutBuff,0,length);
       		}else{
       			for(int i = 0;i<Main.dispatcher.length;i++){
       				mNioClient = Main.dispatcher[Main.dispatchIndex];
               		if(mNioClient.isConnected()){
-              			mNioClient.getmMessageProcessor().send(mNioClient,write_buff,0,length);
+              			mNioClient.getmMessageProcessor().send(mNioClient,mOutBuff,0,length);
               			break;
               		}
       			}

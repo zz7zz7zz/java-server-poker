@@ -71,7 +71,7 @@ public class ClientHandler extends AbsClientHandler{
 			int cmd 		= BasePacket.getCmd(mSubPacket.buff, mSubPacket.header_start);
 			int sequenceId 	= BasePacket.getSequenceId(mSubPacket.buff, mSubPacket.header_start);
 			int length 		= BasePacket.buildClientPacekt(Main.write_buff_dispatcher, sequenceId, cmd, (byte)0,mSubPacket.buff,mSubPacket.body_start, mSubPacket.body_length);
-	        Main.mServerProcessor.unicast(mConnection, Main.write_buff_dispatcher,0,length);
+	        Main.mServerHandler.unicast(mConnection, Main.write_buff_dispatcher,0,length);
 	        User attachUser = (User)mConnection.getAttachment();
 	        if(null == attachUser){//1.说明是新的连接，新的登录
 	        	

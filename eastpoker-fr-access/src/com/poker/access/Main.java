@@ -87,7 +87,7 @@ public class Main {
             GServer.init(libServerConfig, com.open.net.server.impl.tcp.nio.NioClient.class);
             
             //3.2 服务器初始化
-            NioServer mNioServer = new NioServer(libServerConfig,mServerProcessor,mLogListener);
+            NioServer mNioServer = new NioServer(libServerConfig,mServerHandler,mLogListener);
             mNioServer.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -109,7 +109,7 @@ public class Main {
     public static NioClient [] dispatcher;
     public static byte[] write_buff ;
     public static byte[] write_buff_dispatcher;
-    public static ServerHandler mServerProcessor ;
+    public static ServerHandler mServerHandler ;
 	public static HashMap<Long,User> userMap = new HashMap<Long,User>();
 	
    //---------------------------------------Logger----------------------------------------------------
@@ -129,7 +129,7 @@ public class Main {
     	write_buff = new byte[packet_max_length_tcp];
     	write_buff_dispatcher = new byte[packet_max_length_tcp];
 
-    	mServerProcessor = new ServerHandler(new OutPacket(packet_max_length_tcp), write_buff);
+    	mServerHandler = new ServerHandler(new OutPacket(packet_max_length_tcp), write_buff);
     	
 		//预先分配1/4桌子数目的用户，每次增长1/4桌子数目的用户
 		int user_init_size = (int)(0.25*libServerConfig.connect_max_count);

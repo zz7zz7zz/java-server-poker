@@ -14,12 +14,12 @@ import com.poker.access.object.UserPool;
 public abstract class AbsServerHandler extends AbstractServerMessageProcessor{
 
 	public OutPacket mOutPacket;
-    public byte[] write_buff;
+    public byte[] mOutBuff;
     
 	public AbsServerHandler(OutPacket mOutPacket,byte[] writeBuffer) {
 		super();
 		this.mOutPacket = mOutPacket;
-		this.write_buff = writeBuffer;
+		this.mOutBuff 	= writeBuffer;
 	}
 	
 	@Override
