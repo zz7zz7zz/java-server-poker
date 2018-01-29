@@ -79,7 +79,7 @@ public class ClientHandler extends AbsClientHandler{
 		length = PacketTransfer.send2Access(mTempBuff, squenceId, uid, LoginCmd.CMD_LOGIN_RESPONSE, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 		send2Dispatch(mTempBuff, 0, length);
 		
-		System.out.println(" socketId " + socketId + "login "+loginRequest.toString());
+		System.out.println(" socketId " + socketId + " login "+loginRequest.toString());
 	}
 	
 	public static void send2Dispatch(byte[] buff, int offset, int length){
