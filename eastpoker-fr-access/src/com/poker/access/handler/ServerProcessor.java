@@ -14,12 +14,12 @@ import com.poker.access.Main;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
 
-public class ServerMessageProcessor extends AbstractServerMessageProcessor{
+public class ServerProcessor extends AbstractServerMessageProcessor{
 
-	public ServerMessageHandler mHandler;
+	public ServerHandler mHandler;
     public byte[] write_buff;
     
-	public ServerMessageProcessor(ServerMessageHandler mHandler, byte[] writeBuffer) {
+	public ServerProcessor(ServerHandler mHandler, byte[] writeBuffer) {
 		super();
 		this.mHandler = mHandler;
 		this.write_buff = writeBuffer;
@@ -308,12 +308,12 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
       		Main.dispatchIndex = (Main.dispatchIndex+1) % Main.dispatcher.length;
       		NioClient mNioClient = Main.dispatcher[Main.dispatchIndex];
       		if(mNioClient.isConnected()){
-      			Main.mClientMessageProcessor.send(mNioClient,write_buff,0,length);
+      			Main.mClientProcessor.send(mNioClient,write_buff,0,length);
       		}else{
       			for(int i = 0;i<Main.dispatcher.length;i++){
       				mNioClient = Main.dispatcher[Main.dispatchIndex];
               		if(mNioClient.isConnected()){
-              			Main.mClientMessageProcessor.send(mNioClient,write_buff,0,length);
+              			Main.mClientProcessor.send(mNioClient,write_buff,0,length);
               			break;
               		}
       			}

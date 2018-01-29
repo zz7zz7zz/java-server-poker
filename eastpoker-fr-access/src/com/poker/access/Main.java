@@ -19,10 +19,10 @@ import com.open.net.server.object.ServerLog.LogListener;
 import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
-import com.poker.access.handler.ClientMessageHandler;
-import com.poker.access.handler.ClientMessageProcessor;
-import com.poker.access.handler.ServerMessageHandler;
-import com.poker.access.handler.ServerMessageProcessor;
+import com.poker.access.handler.ClientHandler;
+import com.poker.access.handler.ClientProcessor;
+import com.poker.access.handler.ServerHandler;
+import com.poker.access.handler.ServerProcessor;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
 import com.poker.base.ServerIds;
@@ -88,7 +88,7 @@ public class Main {
             GServer.init(libServerConfig, com.open.net.server.impl.tcp.nio.NioClient.class);
             
             //3.2 服务器初始化
-            NioServer mNioServer = new NioServer(libServerConfig,mServerMessageProcessor,mLogListener);
+            NioServer mNioServer = new NioServer(libServerConfig,mServerProcessor,mLogListener);
             mNioServer.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -112,8 +112,8 @@ public class Main {
     public static NioClient [] dispatcher;
     public static byte[] write_buff ;
     public static byte[] write_buff_dispatcher;
-    public static ClientMessageProcessor mClientMessageProcessor ;
-    public static ServerMessageProcessor mServerMessageProcessor ;
+    public static ClientProcessor mClientProcessor ;
+    public static ServerProcessor mServerProcessor ;
 	public static HashMap<Long,User> userMap = new HashMap<Long,User>();
 	
    //---------------------------------------Logger----------------------------------------------------
@@ -131,8 +131,8 @@ public class Main {
     	mInPacket = new InPacket(packet_max_length_tcp);
     	write_buff = new byte[packet_max_length_tcp];
     	write_buff_dispatcher = new byte[packet_max_length_tcp];
-    	mClientMessageProcessor = new ClientMessageProcessor(new ClientMessageHandler());
-    	mServerMessageProcessor = new ServerMessageProcessor(new ServerMessageHandler(), write_buff);
+    	mClientProcessor = new ClientProcessor(new ClientHandler());
+    	mServerProcessor = new ServerProcessor(new ServerHandler(), write_buff);
     	
 		//预先分配1/4桌子数目的用户，每次增长1/4桌子数目的用户
 		int user_init_size = (int)(0.25*libServerConfig.connect_max_count);
@@ -166,7 +166,7 @@ public class Main {
     	if(dispatcherSize > 0){
     		dispatcher = new NioClient[dispatcherSize];
     		for(int i=0; i< dispatcherSize ; i++){
-    			dispatcher[i] = new NioClient(mClientMessageProcessor,mClientConnectResultListener); 
+    			dispatcher[i] = new NioClient(mClientProcessor,mClientConnectResultListener); 
     			dispatcher[i].setConnectAddress(new TcpAddress[]{mConfig.dispatcher_net_tcp[i]});
     			dispatcher[i].connect();
     		}
@@ -188,7 +188,7 @@ public class Main {
 			Logger.v("-------dispatcher onConnectionSuccess---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
 			//register to dispatchServer
 			int length = Dispatcher.register2Dispatcher(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
-			mClientMessageProcessor.send(client,write_buff,0,length);
+			mClientProcessor.send(client,write_buff,0,length);
 		}
 
 		@Override

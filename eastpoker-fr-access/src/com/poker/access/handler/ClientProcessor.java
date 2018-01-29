@@ -14,11 +14,11 @@ import com.poker.protocols.server.DispatchChainProto.DispatchChain;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 import com.poker.access.Main;
 
-public class ClientMessageProcessor extends AbstractClientMessageProcessor {
+public class ClientProcessor extends AbstractClientMessageProcessor {
 
-	private ClientMessageHandler mHandler;
+	private ClientHandler mHandler;
 	
-	public ClientMessageProcessor(ClientMessageHandler mHandler) {
+	public ClientProcessor(ClientHandler mHandler) {
 		super();
 		this.mHandler = mHandler;
 	}
