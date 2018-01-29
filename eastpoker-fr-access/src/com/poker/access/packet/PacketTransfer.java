@@ -2,7 +2,7 @@ package com.poker.access.packet;
 
 import com.google.protobuf.ByteString;
 import com.poker.base.ServerIds;
-import com.poker.data.DataPacket;
+import com.poker.packet.BasePacket;
 import com.poker.protocols.server.DispatchChainProto;
 import com.poker.protocols.server.DispatchPacketProto;
 
@@ -65,6 +65,6 @@ public class PacketTransfer{
 		DispatchPacketProto.DispatchPacket dispatchPacket = builder.build();
 		byte[] body = dispatchPacket.toByteArray();
 		
-		return DataPacket.write(writeBuff, squenceId, cmd, (byte)0, body,0,body.length);
+		return BasePacket.buildServerPacket(writeBuff, squenceId, cmd, body,0,body.length);
 	}
 }
