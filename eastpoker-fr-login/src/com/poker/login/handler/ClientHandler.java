@@ -7,18 +7,39 @@ import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.util.log.Logger;
 import com.poker.cmd.LoginCmd;
+import com.poker.common.packet.PacketTransfer;
 import com.poker.data.DataPacket;
 import com.poker.data.DistapchType;
 import com.poker.login.Main;
+import com.poker.packet.InPacket;
 import com.poker.protocols.login.LoginRequestProto;
 import com.poker.protocols.login.LoginServer;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 
 
-public class ClientMessageHandler {
+public class ClientHandler extends AbsClientHandler{
 
 	public static HashMap<String, Long> uidMap = new HashMap<>();
 	public static int uid_auto_generator = 10000;
+	
+	public ClientHandler(InPacket mInPacket) {
+		super(mInPacket);
+	}
+	
+	@Override
+	public void dispatchMessage(AbstractClient client, byte[] data, int header_start, int header_length, int body_start,
+			int body_length) {
+    	try {
+    		int cmd   = DataPacket.getCmd(data, header_start);
+    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + LoginCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
+    		
+        	if(cmd == LoginCmd.CMD_LOGIN_REQUEST){
+        		login(client, Main.write_buff_dispatcher, Main.write_buff, data, body_start, body_length, 1, this);
+        	}
+		} catch (InvalidProtocolBufferException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public void login(AbstractClient mClient ,byte[] write_buff_dispatcher,byte[] write_buf, byte[] data, int body_start, int body_length, int squenceId,AbstractClientMessageProcessor sender) throws InvalidProtocolBufferException{
 		
@@ -26,18 +47,18 @@ public class ClientMessageHandler {
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
 		mDispatchPacket.getData().copyTo(Main.write_buff, 0);
 		
-		Main.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());
-		long socketId = Main.mInPacket.readLong();
+		mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());
+		long socketId = mInPacket.readLong();
 
 		//方法一：
 //		byte[] binary = mInPacket.readBytes();
 		
 		//方法二：使用下面的方法代替，避免创建多余的数组，浪费内存
-		int[] offset_length_array = Main.mInPacket.readBytesOffsetAndLenth();
+		int[] offset_length_array = mInPacket.readBytesOffsetAndLenth();
 		int packet_start = offset_length_array[0];
 		int packet_length = offset_length_array[1];
 		
-		int packet_header_length = DataPacket.getHeaderLength(Main.mInPacket.getPacket(), packet_start);
+		int packet_header_length = DataPacket.getHeaderLength(mInPacket.getPacket(), packet_start);
 		
 		int packet_body_start = packet_start + packet_header_length;
 		int packet_body_length = packet_length - packet_header_length;
@@ -45,7 +66,7 @@ public class ClientMessageHandler {
 		Logger.v(" socketId " + socketId);
 		
 		
-		LoginRequestProto.LoginRequest loginRequest = LoginRequestProto.LoginRequest.parseFrom(Main.mInPacket.getPacket(),packet_body_start,packet_body_length);
+		LoginRequestProto.LoginRequest loginRequest = LoginRequestProto.LoginRequest.parseFrom(mInPacket.getPacket(),packet_body_start,packet_body_length);
 		System.out.println("login "+loginRequest.toString());
 		
 		String uuid = loginRequest.getUuid();
@@ -75,8 +96,7 @@ public class ClientMessageHandler {
 		
 		Main.mOutPacket.end();
 		
-		
-		length = ImplDataTransfer.send2Access(write_buff_dispatcher, squenceId, uid, LoginCmd.CMD_LOGIN_RESPONSE, DistapchType.TYPE_P2P, Main.mOutPacket.getPacket(),0,  Main.mOutPacket.getLength());
+		length = PacketTransfer.send2Access(write_buff_dispatcher, squenceId, uid, LoginCmd.CMD_LOGIN_RESPONSE, DistapchType.TYPE_P2P, Main.mOutPacket.getPacket(),0,  Main.mOutPacket.getLength());
 		sender.send(mClient, write_buff_dispatcher, 0, length);
 		
 	}
