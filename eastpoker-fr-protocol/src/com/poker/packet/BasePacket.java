@@ -221,17 +221,17 @@ public class BasePacket {
 		offset += size;
 	}
 	
-    public static int buildClientData(byte[] writeBuff, int squenceId, int cmd , byte encrypt, byte[] body,int bodyOffset,int bodyLength){
-    	return buildClientData(writeBuff,squenceId,cmd,PACKET_FLAG,PACKET_VERSION,encrypt,PACKET_HEADER_EXTEND,body,bodyOffset,bodyLength);
+    public static int buildClientPacekt(byte[] writeBuff, int squenceId, int cmd , byte encrypt, byte[] body,int bodyOffset,int bodyLength){
+    	return buildClientPacekt(writeBuff,squenceId,cmd,PACKET_FLAG,PACKET_VERSION,encrypt,PACKET_HEADER_EXTEND,body,bodyOffset,bodyLength);
     }
     
-    public static int buildClientData(short gameId,int tableId,byte[] writeBuff, int squenceId, int cmd , byte encrypt, byte[] body,int bodyOffset,int bodyLength){
+    public static int buildClientPacekt(short gameId,int tableId,byte[] writeBuff, int squenceId, int cmd , byte encrypt, byte[] body,int bodyOffset,int bodyLength){
     	ByteUtil.putShort(PACKET_HEADER_EXTEND_FORGAME, 0, gameId);
     	ByteUtil.putInt(PACKET_HEADER_EXTEND_FORGAME, 2, tableId);
-    	return buildClientData(writeBuff,squenceId,cmd,PACKET_FLAG,PACKET_VERSION,encrypt,PACKET_HEADER_EXTEND_FORGAME,body,bodyOffset,bodyLength);
+    	return buildClientPacekt(writeBuff,squenceId,cmd,PACKET_FLAG,PACKET_VERSION,encrypt,PACKET_HEADER_EXTEND_FORGAME,body,bodyOffset,bodyLength);
     }
     
-    private static int buildClientData(byte[] writeBuff, int squenceId, int cmd ,byte flag ,byte version, byte encrypt,byte[] packet_header_extend, byte[] body,int bodyOffset,int bodyLength){
+    private static int buildClientPacekt(byte[] writeBuff, int squenceId, int cmd ,byte flag ,byte version, byte encrypt,byte[] packet_header_extend, byte[] body,int bodyOffset,int bodyLength){
     	
     	byte packet_header_extend_length	= (byte)packet_header_extend.length;				//包头，扩展长度
     	int  packet_header_length   		= Header.HEADER_BASE_LENGTH + packet_header_extend_length; //包头，长度
@@ -255,6 +255,10 @@ public class BasePacket {
         ByteUtil.putBytes(writeBuff, packet_header_length,body,bodyOffset,bodyLength);
         
         return packet_ength;
+    }
+    
+    public static int buildServerPacket(byte[] writeBuff, int squenceId, int cmd , byte[] body,int bodyOffset,int bodyLength){
+    	return buildClientPacekt(writeBuff,squenceId,cmd,PACKET_FLAG,PACKET_VERSION,(byte)0,PACKET_HEADER_EXTEND,body,bodyOffset,bodyLength);
     }
 	//---------------------------------------------------------------
 	protected void end(){
