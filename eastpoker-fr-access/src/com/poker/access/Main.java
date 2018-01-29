@@ -23,6 +23,7 @@ import com.poker.access.handler.ClientHandler;
 import com.poker.access.handler.ServerHandler;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
+import com.poker.access.packet.PacketTransfer;
 import com.poker.base.ServerIds;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
@@ -122,6 +123,9 @@ public class Main {
     
     //---------------------------------------初始化全局对象----------------------------------------------------
     private static void initGlobalFields(int packet_max_length_tcp){
+    	
+    	PacketTransfer.init(libServerConfig.server_type, libServerConfig.id);
+    	
     	write_buff = new byte[packet_max_length_tcp];
     	write_buff_dispatcher = new byte[packet_max_length_tcp];
 

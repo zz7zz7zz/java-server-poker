@@ -4,6 +4,7 @@ import com.open.net.client.impl.tcp.nio.NioClient;
 import com.open.net.server.object.AbstractServerClient;
 import com.open.util.log.Logger;
 import com.poker.access.Main;
+import com.poker.access.packet.PacketTransfer;
 import com.poker.base.ServerIds;
 import com.poker.cmd.DispatchCmd;
 import com.poker.data.DataPacket;
@@ -33,10 +34,10 @@ public class ServerHandler extends AbsServerHandler{
       			mOutPacket.writeBytes(data,header_start,header_length+body_length);//原始数据
       			mOutPacket.end();
       			
-      			length = ImplDataTransfer.send2Login(write_buff, squenceId, 0,cmd,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
+      			length = PacketTransfer.send2Login(write_buff, squenceId, 0,cmd,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
       			
       		}else if(server == ServerIds.SERVER_USER){
-      			length = ImplDataTransfer.send2User(write_buff, squenceId, 0,cmd,DistapchType.TYPE_P2P,data,body_start,body_length);
+      			length = PacketTransfer.send2User(write_buff, squenceId, 0,cmd,DistapchType.TYPE_P2P,data,body_start,body_length);
       		}
       		
       		Main.dispatchIndex = (Main.dispatchIndex+1) % Main.dispatcher.length;
