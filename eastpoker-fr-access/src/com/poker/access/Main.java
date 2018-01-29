@@ -54,7 +54,7 @@ public class Main {
         libServerConfig.initFileConfig("./conf/lib.server.config");
         
         //1.2.1 服务器配置初始化:作为客户端配置
-        ClientConfig libClientConfig = new ClientConfig();
+        libClientConfig = new ClientConfig();
         libClientConfig.initFileConfig("./conf/lib.client.config");
         GClient.init(libClientConfig);
         
@@ -77,8 +77,9 @@ public class Main {
         Logger.v("mServerConfig: "+ mServerConfig.toString()+"\r\n");
         
         //----------------------------------------- 二、注册到关联服务器 ---------------------------------------
-        register_monitor(mServerConfig);//注册到服务监听器
-    	register_dispatcher(mServerConfig);//注册到Dispatcher
+        byte[] mTempBuff = new byte[512];
+        register_monitor(mServerConfig,mTempBuff);//注册到服务监听器
+    	register_dispatcher(mServerConfig,mTempBuff);//注册到Dispatcher
     	
         //----------------------------------------- 三、服务器初始化 ------------------------------------------
     	Logger.v("-------Server------start---------");
@@ -96,16 +97,18 @@ public class Main {
         
         //----------------------------------------- 四、反注册关联服务器 ---------------------------------------
         unregister_dispatcher(mServerConfig);//反注册到服务监听器
-        unregister_monitor(mServerConfig);//反注册到服务监听器
+        unregister_monitor(mServerConfig,new byte[512]);//反注册到服务监听器
         
         //----------------------------------------- 五、最终退出程序 ---------------------------------------
         System.exit(0);
     }
 
     //---------------------------------------Fields----------------------------------------------------
-    public static ArgsConfig libArgsConfig;
+    public static ArgsConfig   libArgsConfig;
+    public static ClientConfig libClientConfig;
     public static ServerConfig libServerConfig;
     public static NioClient [] dispatcher;
+    public static int 		   dispatchIndex = -1;
     public static ServerHandler mServerHandler ;
     
 	public static HashMap<Long,User> userMap = new HashMap<Long,User>();
@@ -123,7 +126,7 @@ public class Main {
     	
     	PacketTransfer.init(libServerConfig.server_type, libServerConfig.id);
     	
-    	mServerHandler = new ServerHandler(new OutPacket(packet_max_length_tcp), new byte[packet_max_length_tcp]);
+    	mServerHandler = new ServerHandler(new InPacket(packet_max_length_tcp), new OutPacket(packet_max_length_tcp));
     	
 		//预先分配1/4桌子数目的用户，每次增长1/4桌子数目的用户
 		int user_init_size = (int)(0.25*libServerConfig.connect_max_count);
@@ -131,8 +134,7 @@ public class Main {
     }
     
     //---------------------------------------Monitor----------------------------------------------------
-    public static void register_monitor(Config mConfig){
-    	byte[] buff = mServerHandler.getTempBuff();
+    public static void register_monitor(Config mConfig,byte[] buff){
     	Monitor.register2Monitor(buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
@@ -142,8 +144,7 @@ public class Main {
     	}
     }
     
-    public static void unregister_monitor(Config mConfig){
-    	byte[] buff = mServerHandler.getTempBuff();
+    public static void unregister_monitor(Config mConfig,byte[] buff){
         Monitor.unregister2Monitor(buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
@@ -154,12 +155,12 @@ public class Main {
     }
     
     //---------------------------------------Dispatcher----------------------------------------------------
-    public static void register_dispatcher(Config mConfig){
+    public static void register_dispatcher(Config mConfig,byte[] buff){
     	int dispatcherSize = (null != mConfig.dispatcher_net_tcp) ? mConfig.dispatcher_net_tcp.length : 0;
     	if(dispatcherSize > 0){
     		dispatcher = new NioClient[dispatcherSize];
     		for(int i=0; i< dispatcherSize ; i++){
-    			dispatcher[i] = new NioClient(new ClientHandler(new InPacket(libServerConfig.packet_max_length_tcp),new byte[libServerConfig.packet_max_length_tcp]),mClientConnectResultListener); 
+    			dispatcher[i] = new NioClient(new ClientHandler(new InPacket(libClientConfig.packet_max_length_tcp),new OutPacket(libClientConfig.packet_max_length_tcp)),mClientConnectResultListener); 
     			dispatcher[i].setConnectAddress(new TcpAddress[]{mConfig.dispatcher_net_tcp[i]});
     			dispatcher[i].connect();
     		}

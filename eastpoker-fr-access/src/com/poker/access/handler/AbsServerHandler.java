@@ -1,11 +1,13 @@
 package com.poker.access.handler;
 
+import com.open.net.client.impl.tcp.nio.NioClient;
 import com.open.net.server.message.Message;
 import com.open.net.server.message.MessageBuffer;
 import com.open.net.server.object.AbstractServerClient;
 import com.open.net.server.object.AbstractServerMessageProcessor;
 import com.open.util.log.Logger;
 import com.poker.data.DataPacket;
+import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.access.Main;
 import com.poker.access.object.User;
@@ -13,21 +15,21 @@ import com.poker.access.object.UserPool;
 
 public abstract class AbsServerHandler extends AbstractServerMessageProcessor{
 
+	protected InPacket  mInPacket;
 	protected OutPacket mOutPacket;
-	protected byte[] mTempBuff;//临时的buff
     
-	public AbsServerHandler(OutPacket mOutPacket,byte[] writeBuffer) {
+	public AbsServerHandler(InPacket mInPacket, OutPacket mOutPacket) {
 		super();
-		this.mOutPacket = mOutPacket;
-		this.mTempBuff 	= writeBuffer;
-	}
-	
-	public OutPacket getOutPacket() {
-		return mOutPacket;
+		this.mInPacket = mInPacket;
+		this.mOutPacket   = mOutPacket;
 	}
 
-	public byte[] getTempBuff() {
-		return mTempBuff;
+	public InPacket getInPacket() {
+		return mInPacket;
+	}
+
+	public OutPacket getOutPacket() {
+		return mOutPacket;
 	}
 
 	@Override
@@ -288,5 +290,21 @@ public abstract class AbsServerHandler extends AbstractServerMessageProcessor{
     }
 	
 	//-----------------------------------------------------------------------------------------------------------------------------------
+	public static void send2Dispatch(byte[] buff, int offset, int length){
+  		Main.dispatchIndex = (Main.dispatchIndex+1) % Main.dispatcher.length;
+  		NioClient mNioClient = Main.dispatcher[Main.dispatchIndex];
+  		if(mNioClient.isConnected()){
+  			mNioClient.getmMessageProcessor().send(mNioClient,buff,offset,length);
+  		}else{
+  			for(int i = 1;i<Main.dispatcher.length;i++){
+  				mNioClient = Main.dispatcher[(Main.dispatchIndex+i)%Main.dispatcher.length];
+          		if(mNioClient.isConnected()){
+          			mNioClient.getmMessageProcessor().send(mNioClient,buff,offset,length);
+          			break;
+          		}
+  			}
+  		}
+	}
+	
 	public abstract void dispatchMessage(AbstractServerClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length);
 }

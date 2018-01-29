@@ -16,6 +16,7 @@ import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
 import com.poker.base.ServerIds;
 import com.poker.common.config.Config;
+import com.poker.common.packet.PacketTransfer;
 import com.poker.data.DataPacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
@@ -63,8 +64,9 @@ public class Main {
         Logger.v("mServerConfig: "+ mServerConfig.toString()+"\r\n");
         
         //----------------------------------------- 二、注册到关联服务器 ---------------------------------------
-        register_monitor(mServerConfig);//注册到服务监听器
-    	register_dispatcher(mServerConfig);//注册到Dispatcher
+        byte[] mTempBuff = new byte[512];
+        register_monitor(mServerConfig,mTempBuff);//注册到服务监听器
+    	register_dispatcher(mServerConfig,mTempBuff);//注册到Dispatcher
     	
         //----------------------------------------- 三、服务器初始化 ------------------------------------------
     	while(true){
@@ -77,7 +79,7 @@ public class Main {
     	}
         //----------------------------------------- 四、反注册关联服务器 ---------------------------------------
         unregister_dispatcher(mServerConfig);//反注册到服务监听器
-        unregister_monitor(mServerConfig);//反注册到服务监听器
+        unregister_monitor(mServerConfig,new byte[512]);//反注册到服务监听器
         
         //----------------------------------------- 五、最终退出程序 ---------------------------------------
         System.exit(0);
@@ -87,9 +89,7 @@ public class Main {
     public static ArgsConfig libArgsConfig;
     public static ClientConfig libClientConfig;
     public static NioClient [] dispatcher;
-    public static byte[] write_buff;
-    public static byte[] write_buff_dispatcher;
-	public static OutPacket mOutPacket = new OutPacket(8192);
+    public static int 		   dispatchIndex = -1;
 	
     //---------------------------------------Logger----------------------------------------------------
     public static LogListener mLogListener = new LogListener(){
@@ -102,38 +102,37 @@ public class Main {
     
     //---------------------------------------初始化全局对象----------------------------------------------------
     private static void initGlobalFields(int packet_max_length_tcp){
-    	write_buff = new byte[packet_max_length_tcp];
-    	write_buff_dispatcher = new byte[packet_max_length_tcp];
+    	PacketTransfer.init(libArgsConfig.server_type, libArgsConfig.id);
     }
     
     //---------------------------------------Monitor----------------------------------------------------
-    public static void register_monitor(Config mConfig){
-        Monitor.register2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
+    public static void register_monitor(Config mConfig,byte[] buff){
+    	Monitor.register2Monitor(buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.getLength(write_buff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,buff,0,DataPacket.getLength(buff));
     		}
     	}
     }
     
-    public static void unregister_monitor(Config mConfig){
-    	Monitor.unregister2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
+    public static void unregister_monitor(Config mConfig,byte[] buff){
+        Monitor.unregister2Monitor(buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.getLength(write_buff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,buff,0,DataPacket.getLength(buff));
     		}
     	}
     }
     
     //---------------------------------------Dispatcher----------------------------------------------------
-    public static void register_dispatcher(Config mConfig){
+    public static void register_dispatcher(Config mConfig,byte[] buff){
     	int dispatcherSize = (null != mConfig.dispatcher_net_tcp) ? mConfig.dispatcher_net_tcp.length : 0;
     	if(dispatcherSize > 0){
     		dispatcher = new NioClient[dispatcherSize];
     		for(int i=0; i< dispatcherSize ; i++){
-    			dispatcher[i] = new NioClient(new ClientHandler(new InPacket(libClientConfig.packet_max_length_tcp)),mDisPatcherConnectResultListener); 
+    			dispatcher[i] = new NioClient(new ClientHandler(new InPacket(libClientConfig.packet_max_length_tcp),new OutPacket(libClientConfig.packet_max_length_tcp)),mClientConnectResultListener); 
     			dispatcher[i].setConnectAddress(new TcpAddress[]{mConfig.dispatcher_net_tcp[i]});
     			dispatcher[i].connect();
     		}
@@ -149,13 +148,16 @@ public class Main {
     	}
     }
     
-	private static IConnectListener mDisPatcherConnectResultListener = new IConnectListener() {
+	private static IConnectListener mClientConnectResultListener = new IConnectListener() {
 		@Override
 		public void onConnectionSuccess(AbstractClient client) {
-			Logger.v("-------dispatcher onConnectionSuccess---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
-			//register to dispatchServer
-			int length = Dispatcher.register2Dispatcher(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
-			client.getmMessageProcessor().send(client,write_buff,0,length);
+			Logger.v("-------dispatcher onConnection Success---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
+			
+			//register to dispatchServer 公用byte[] ，为了不必要的内存开销
+			ClientHandler mClientHandler=((ClientHandler)client.getmMessageProcessor());
+			byte[] buff = mClientHandler.getInPacket().getPacket();
+			int length = Dispatcher.register2Dispatcher(buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
+			client.getmMessageProcessor().send(client,buff,0,length);
 		}
 
 		@Override
@@ -169,7 +171,7 @@ public class Main {
 			
 			for(NioClient mClient: dispatcher){
 				if(mClient == client){
-					Logger.v("-------dispatcher onConnectionFailed---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
+					Logger.v("-------dispatcher onConnection Failed---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
 					mClient.connect();
 					break;
 				}

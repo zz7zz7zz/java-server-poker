@@ -12,14 +12,15 @@ import com.poker.access.object.UserPool;
 import com.poker.cmd.LoginCmd;
 import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
+import com.poker.packet.OutPacket;
 import com.poker.packet.PacketInfo;
 import com.poker.protocols.server.DispatchChainProto.DispatchChain;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 
 public class ClientHandler extends AbsClientHandler{
 	
-	public ClientHandler(InPacket mInPacket, byte[] mInBuff) {
-		super(mInPacket, mInBuff);
+	public ClientHandler(InPacket mInPacket, OutPacket mOutPacket) {
+		super(mInPacket, mOutPacket);
 	}
 
 	public void dispatchMessage(AbstractClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
@@ -70,6 +71,10 @@ public class ClientHandler extends AbsClientHandler{
 		if(null != mConnection){
 			int cmd 		= BasePacket.getCmd(mSubPacket.buff, mSubPacket.header_start);
 			int sequenceId 	= BasePacket.getSequenceId(mSubPacket.buff, mSubPacket.header_start);
+			
+			//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
+			byte[] mTempBuff = mOutPacket.getPacket();
+			
 			int length 		= BasePacket.buildClientPacekt(mTempBuff, sequenceId, cmd, (byte)0,mSubPacket.buff,mSubPacket.body_start, mSubPacket.body_length);
 	        Main.mServerHandler.unicast(mConnection, mTempBuff,0,length);
 	        User attachUser = (User)mConnection.getAttachment();
