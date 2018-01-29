@@ -45,8 +45,8 @@ public class ServerHandler extends AbsServerHandler{
       		if(mNioClient.isConnected()){
       			mNioClient.getmMessageProcessor().send(mNioClient,mOutBuff,0,length);
       		}else{
-      			for(int i = 0;i<Main.dispatcher.length;i++){
-      				mNioClient = Main.dispatcher[Main.dispatchIndex];
+      			for(int i = 1;i<Main.dispatcher.length;i++){
+      				mNioClient = Main.dispatcher[(Main.dispatchIndex+i)%Main.dispatcher.length];
               		if(mNioClient.isConnected()){
               			mNioClient.getmMessageProcessor().send(mNioClient,mOutBuff,0,length);
               			break;
