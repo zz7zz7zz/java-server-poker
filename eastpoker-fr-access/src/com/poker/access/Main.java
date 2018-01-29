@@ -105,13 +105,10 @@ public class Main {
     //---------------------------------------Fields----------------------------------------------------
     public static ArgsConfig libArgsConfig;
     public static ServerConfig libServerConfig;
-    public static int dispatchIndex = -1;
     public static NioClient [] dispatcher;
-    public static byte[] write_buff ;
-    public static byte[] write_buff_dispatcher;
     public static ServerHandler mServerHandler ;
+    
 	public static HashMap<Long,User> userMap = new HashMap<Long,User>();
-	
    //---------------------------------------Logger----------------------------------------------------
     public static LogListener mLogListener = new LogListener(){
 
@@ -126,10 +123,7 @@ public class Main {
     	
     	PacketTransfer.init(libServerConfig.server_type, libServerConfig.id);
     	
-    	write_buff = new byte[packet_max_length_tcp];
-    	write_buff_dispatcher = new byte[packet_max_length_tcp];
-
-    	mServerHandler = new ServerHandler(new OutPacket(packet_max_length_tcp), write_buff);
+    	mServerHandler = new ServerHandler(new OutPacket(packet_max_length_tcp), new byte[packet_max_length_tcp]);
     	
 		//预先分配1/4桌子数目的用户，每次增长1/4桌子数目的用户
 		int user_init_size = (int)(0.25*libServerConfig.connect_max_count);
@@ -138,21 +132,23 @@ public class Main {
     
     //---------------------------------------Monitor----------------------------------------------------
     public static void register_monitor(Config mConfig){
-    	Monitor.register2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
+    	byte[] buff = mServerHandler.getTempBuff();
+    	Monitor.register2Monitor(buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.getLength(write_buff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,buff,0,DataPacket.getLength(buff));
     		}
     	}
     }
     
     public static void unregister_monitor(Config mConfig){
-        Monitor.unregister2Monitor(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
+    	byte[] buff = mServerHandler.getTempBuff();
+        Monitor.unregister2Monitor(buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
         int monitorSize = (null != mConfig.monitor_net_udp) ? mConfig.monitor_net_udp.length : 0;
     	if(monitorSize > 0){
     		for(int i=0; i< monitorSize ; i++){
-    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,write_buff,0,DataPacket.getLength(write_buff));
+    			NetUtil.send_data_by_udp_nio(mConfig.monitor_net_udp[i].ip, mConfig.monitor_net_udp[i].port,buff,0,DataPacket.getLength(buff));
     		}
     	}
     }
@@ -163,7 +159,7 @@ public class Main {
     	if(dispatcherSize > 0){
     		dispatcher = new NioClient[dispatcherSize];
     		for(int i=0; i< dispatcherSize ; i++){
-    			dispatcher[i] = new NioClient(new ClientHandler(new InPacket(libServerConfig.packet_max_length_tcp)),mClientConnectResultListener); 
+    			dispatcher[i] = new NioClient(new ClientHandler(new InPacket(libServerConfig.packet_max_length_tcp),new byte[libServerConfig.packet_max_length_tcp]),mClientConnectResultListener); 
     			dispatcher[i].setConnectAddress(new TcpAddress[]{mConfig.dispatcher_net_tcp[i]});
     			dispatcher[i].connect();
     		}
@@ -182,10 +178,13 @@ public class Main {
 	private static IConnectListener mClientConnectResultListener = new IConnectListener() {
 		@Override
 		public void onConnectionSuccess(AbstractClient client) {
-			Logger.v("-------dispatcher onConnectionSuccess---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
-			//register to dispatchServer
-			int length = Dispatcher.register2Dispatcher(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
-			client.getmMessageProcessor().send(client,write_buff,0,length);
+			Logger.v("-------dispatcher onConnection Success---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
+			
+			//register to dispatchServer 公用byte[] ，为了不必要的内存开销
+			ClientHandler mClientHandler=((ClientHandler)client.getmMessageProcessor());
+			byte[] buff = mClientHandler.getInPacket().getPacket();
+			int length = Dispatcher.register2Dispatcher(buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
+			client.getmMessageProcessor().send(client,buff,0,length);
 		}
 
 		@Override
@@ -199,7 +198,7 @@ public class Main {
 			
 			for(NioClient mClient: dispatcher){
 				if(mClient == client){
-					Logger.v("-------dispatcher onConnectionFailed---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
+					Logger.v("-------dispatcher onConnection Failed---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
 					mClient.connect();
 					break;
 				}

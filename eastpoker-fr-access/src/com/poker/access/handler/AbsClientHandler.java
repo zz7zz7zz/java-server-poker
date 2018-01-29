@@ -13,10 +13,20 @@ import com.poker.packet.InPacket;
 public abstract class AbsClientHandler extends AbstractClientMessageProcessor {
 
 	protected InPacket mInPacket;
-	
-	public AbsClientHandler(InPacket mInPacket) {
+	protected byte[] mTempBuff;//临时的buff
+    
+	public AbsClientHandler(InPacket mInPacket,byte[] mInBuff) {
 		super();
 		this.mInPacket = mInPacket;
+		this.mTempBuff   = mInBuff;
+	}
+
+	public InPacket getInPacket() {
+		return mInPacket;
+	}
+
+	public byte[] getTempBuff() {
+		return mTempBuff;
 	}
 
 	@Override

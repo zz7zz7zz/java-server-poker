@@ -18,8 +18,8 @@ import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 
 public class ClientHandler extends AbsClientHandler{
 	
-	public ClientHandler(InPacket mInPacket) {
-		super(mInPacket);
+	public ClientHandler(InPacket mInPacket, byte[] mInBuff) {
+		super(mInPacket, mInBuff);
 	}
 
 	public void dispatchMessage(AbstractClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
@@ -70,8 +70,8 @@ public class ClientHandler extends AbsClientHandler{
 		if(null != mConnection){
 			int cmd 		= BasePacket.getCmd(mSubPacket.buff, mSubPacket.header_start);
 			int sequenceId 	= BasePacket.getSequenceId(mSubPacket.buff, mSubPacket.header_start);
-			int length 		= BasePacket.buildClientPacekt(Main.write_buff_dispatcher, sequenceId, cmd, (byte)0,mSubPacket.buff,mSubPacket.body_start, mSubPacket.body_length);
-	        Main.mServerHandler.unicast(mConnection, Main.write_buff_dispatcher,0,length);
+			int length 		= BasePacket.buildClientPacekt(mTempBuff, sequenceId, cmd, (byte)0,mSubPacket.buff,mSubPacket.body_start, mSubPacket.body_length);
+	        Main.mServerHandler.unicast(mConnection, mTempBuff,0,length);
 	        User attachUser = (User)mConnection.getAttachment();
 	        if(null == attachUser){//1.说明是新的连接，新的登录
 	        	

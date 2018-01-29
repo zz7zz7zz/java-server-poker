@@ -13,15 +13,23 @@ import com.poker.access.object.UserPool;
 
 public abstract class AbsServerHandler extends AbstractServerMessageProcessor{
 
-	public OutPacket mOutPacket;
-    public byte[] mOutBuff;
+	protected OutPacket mOutPacket;
+	protected byte[] mTempBuff;//临时的buff
     
 	public AbsServerHandler(OutPacket mOutPacket,byte[] writeBuffer) {
 		super();
 		this.mOutPacket = mOutPacket;
-		this.mOutBuff 	= writeBuffer;
+		this.mTempBuff 	= writeBuffer;
 	}
 	
+	public OutPacket getOutPacket() {
+		return mOutPacket;
+	}
+
+	public byte[] getTempBuff() {
+		return mTempBuff;
+	}
+
 	@Override
 	public void onClientEnter(AbstractServerClient client) {
 		// TODO Auto-generated method stub

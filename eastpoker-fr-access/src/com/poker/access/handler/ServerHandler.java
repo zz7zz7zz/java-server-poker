@@ -34,25 +34,30 @@ public class ServerHandler extends AbsServerHandler{
       			mOutPacket.writeBytes(data,header_start,header_length+body_length);//原始数据
       			mOutPacket.end();
       			
-      			length = PacketTransfer.send2Login(mOutBuff, squenceId, 0,cmd,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
+      			length = PacketTransfer.send2Login(mTempBuff, squenceId, 0,cmd,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
       			
       		}else if(server == ServerIds.SERVER_USER){
-      			length = PacketTransfer.send2User(mOutBuff, squenceId, 0,cmd,DistapchType.TYPE_P2P,data,body_start,body_length);
+      			length = PacketTransfer.send2User(mTempBuff, squenceId, 0,cmd,DistapchType.TYPE_P2P,data,body_start,body_length);
       		}
       		
-      		Main.dispatchIndex = (Main.dispatchIndex+1) % Main.dispatcher.length;
-      		NioClient mNioClient = Main.dispatcher[Main.dispatchIndex];
-      		if(mNioClient.isConnected()){
-      			mNioClient.getmMessageProcessor().send(mNioClient,mOutBuff,0,length);
-      		}else{
-      			for(int i = 1;i<Main.dispatcher.length;i++){
-      				mNioClient = Main.dispatcher[(Main.dispatchIndex+i)%Main.dispatcher.length];
-              		if(mNioClient.isConnected()){
-              			mNioClient.getmMessageProcessor().send(mNioClient,mOutBuff,0,length);
-              			break;
-              		}
-      			}
-      		}
+      		send2Dispatch(mTempBuff,0,length);
       	}
+	}
+	
+    public static int dispatchIndex = -1;
+	public static void send2Dispatch(byte[] buff, int offset, int length){
+  		dispatchIndex = (dispatchIndex+1) % Main.dispatcher.length;
+  		NioClient mNioClient = Main.dispatcher[dispatchIndex];
+  		if(mNioClient.isConnected()){
+  			mNioClient.getmMessageProcessor().send(mNioClient,buff,offset,length);
+  		}else{
+  			for(int i = 1;i<Main.dispatcher.length;i++){
+  				mNioClient = Main.dispatcher[(dispatchIndex+i)%Main.dispatcher.length];
+          		if(mNioClient.isConnected()){
+          			mNioClient.getmMessageProcessor().send(mNioClient,buff,offset,length);
+          			break;
+          		}
+  			}
+  		}
 	}
 }
