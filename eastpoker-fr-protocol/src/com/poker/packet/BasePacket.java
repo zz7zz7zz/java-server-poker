@@ -221,6 +221,41 @@ public class BasePacket {
 		offset += size;
 	}
 	
+    public static int buildClientData(byte[] writeBuff, int squenceId, int cmd , byte encrypt, byte[] body,int bodyOffset,int bodyLength){
+    	return buildClientData(writeBuff,squenceId,cmd,PACKET_FLAG,PACKET_VERSION,encrypt,PACKET_HEADER_EXTEND,body,bodyOffset,bodyLength);
+    }
+    
+    public static int buildClientData(short gameId,int tableId,byte[] writeBuff, int squenceId, int cmd , byte encrypt, byte[] body,int bodyOffset,int bodyLength){
+    	ByteUtil.putShort(PACKET_HEADER_EXTEND_FORGAME, 0, gameId);
+    	ByteUtil.putInt(PACKET_HEADER_EXTEND_FORGAME, 2, tableId);
+    	return buildClientData(writeBuff,squenceId,cmd,PACKET_FLAG,PACKET_VERSION,encrypt,PACKET_HEADER_EXTEND_FORGAME,body,bodyOffset,bodyLength);
+    }
+    
+    private static int buildClientData(byte[] writeBuff, int squenceId, int cmd ,byte flag ,byte version, byte encrypt,byte[] packet_header_extend, byte[] body,int bodyOffset,int bodyLength){
+    	
+    	byte packet_header_extend_length	= (byte)packet_header_extend.length;				//包头，扩展长度
+    	int  packet_header_length   		= Header.HEADER_BASE_LENGTH + packet_header_extend_length; //包头，长度
+    	
+    	int  packet_ength 		 			= packet_header_length + bodyLength;//完整包长度
+    	
+    	//组装包头
+    	ByteUtil.putInt(writeBuff,   Header.HEADER_OFFSET_LENGTH,	packet_ength);
+        ByteUtil.putInt(writeBuff,   Header.HEADER_OFFSET_SEQUENCEID,squenceId);
+        ByteUtil.putInt(writeBuff,   Header.HEADER_OFFSET_CMD,cmd);
+        
+        ByteUtil.putByte(writeBuff,  Header.HEADER_OFFSET_FLAG, flag);
+        ByteUtil.putByte(writeBuff,  Header.HEADER_OFFSET_VERSION,version);
+        ByteUtil.putByte(writeBuff,  Header.HEADER_OFFSET_ENCRYPT,encrypt);
+        ByteUtil.putByte(writeBuff,  Header.HEADER_OFFSET_EXTEND,packet_header_extend_length);
+        
+    	//组装扩展包头
+        ByteUtil.putBytes(writeBuff, Header.HEADER_BASE_LENGTH, packet_header_extend, 0, packet_header_extend_length);
+        
+        //组装包体
+        ByteUtil.putBytes(writeBuff, packet_header_length,body,bodyOffset,bodyLength);
+        
+        return packet_ength;
+    }
 	//---------------------------------------------------------------
 	protected void end(){
 		length = packet_header_base_length + packet_header_extend_length + packet_body_ength;

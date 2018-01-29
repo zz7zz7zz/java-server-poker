@@ -4,10 +4,11 @@ package com.poker.access.handler;
 import com.open.net.client.object.AbstractClient;
 import com.open.net.server.GServer;
 import com.open.net.server.object.AbstractServerClient;
+import com.open.util.log.Logger;
 import com.poker.access.Main;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
-import com.poker.data.DataPacket;
+import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.PacketInfo;
 
@@ -25,6 +26,7 @@ public class ClientMessageHandler {
 				AbstractServerClient client_server_connection = GServer.getClient(user.socketId);
 				if(null != client_server_connection){
 					client_server_connection.onClose();
+					Logger.v("onClinetLogin disconnect oldSocketId " + user.socketId + " NewSocketId "+ socketId);
 				}
 			}
 		}
@@ -32,9 +34,9 @@ public class ClientMessageHandler {
 		int ret = 0;
 		AbstractServerClient mConnection = GServer.getClient(socketId);
 		if(null != mConnection){
-			int cmd 		= DataPacket.getCmd(mSubPacket.buff, mSubPacket.header_start);
-			int sequenceId 	= DataPacket.getSequenceId(mSubPacket.buff, mSubPacket.header_start);
-			int length 		= DataPacket.write(Main.write_buff_dispatcher, sequenceId, cmd, (byte)0,mSubPacket.buff,mSubPacket.body_start, mSubPacket.body_length);
+			int cmd 		= BasePacket.getCmd(mSubPacket.buff, mSubPacket.header_start);
+			int sequenceId 	= BasePacket.getSequenceId(mSubPacket.buff, mSubPacket.header_start);
+			int length 		= BasePacket.buildClientData(Main.write_buff_dispatcher, sequenceId, cmd, (byte)0,mSubPacket.buff,mSubPacket.body_start, mSubPacket.body_length);
 	        Main.mServerMessageProcessor.unicast(mConnection, Main.write_buff_dispatcher,0,length);
 	        User attachUser = (User)mConnection.getAttachment();
 	        if(null == attachUser){//1.说明是新的连接，新的登录
@@ -55,6 +57,6 @@ public class ClientMessageHandler {
 			ret = 4;
 		}
 
-		System.out.println("onClinetLogin socketId " + socketId + " uid "+ uid + " ret " + ret);
+		Logger.v("onClinetLogin socketId " + socketId + " uid "+ uid + " ret " + ret);
 	}
 }
