@@ -2,27 +2,22 @@ package com.poker.access.handler;
 
 import java.util.LinkedList;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.message.Message;
 import com.open.net.client.message.MessageBuffer;
 import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.util.log.Logger;
-import com.poker.cmd.LoginCmd;
 import com.poker.data.DataPacket;
-import com.poker.protocols.server.DispatchChainProto.DispatchChain;
-import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
-import com.poker.access.Main;
+import com.poker.packet.InPacket;
 
-public class ClientProcessor extends AbstractClientMessageProcessor {
+public abstract class AbsClientHandler extends AbstractClientMessageProcessor {
 
-	private ClientHandler mHandler;
+	protected InPacket mInPacket;
 	
-	public ClientProcessor(ClientHandler mHandler) {
+	public AbsClientHandler(InPacket mInPacket) {
 		super();
-		this.mHandler = mHandler;
+		this.mInPacket = mInPacket;
 	}
-
 
 	@Override
 	public void onReceiveMessages(AbstractClient mClient, LinkedList<Message> list) {
@@ -31,6 +26,14 @@ public class ClientProcessor extends AbstractClientMessageProcessor {
 			onReceiveMessage(mClient,msg);
 		}
 	}
+	
+	@Override
+	public void send(AbstractClient mClient, byte[] src, int offset, int length) {
+		super.send(mClient, src, offset, length);
+		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+	}
+		
+	//----------------------------------------------------------------------
 	
 	protected void onReceiveMessage(AbstractClient client, Message msg){
 
@@ -249,36 +252,6 @@ public class ClientProcessor extends AbstractClientMessageProcessor {
 		Logger.v("code "+ code +" full_packet_count " + full_packet_count + " half_packet_count " + half_packet_count + System.getProperty("line.separator"));
     }
 	
-	@Override
-	public void send(AbstractClient mClient, byte[] src, int offset, int length) {
-		super.send(mClient, src, offset, length);
-		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
-	}
-		
-	public void dispatchMessage(AbstractClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
-		
-		try {
-			int  cmd = 0;
-			long uid = 0;
-			
-			DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
-			int count = mDispatchPacket.getDispatchChainListCount();
-			if(count>0){
-				DispatchChain chain = mDispatchPacket.getDispatchChainList(count-1);
-				cmd = chain.getCmd();
-				uid = chain.getUid();
-			}	
-			
-			Main.mInPacket.copyFrom(mDispatchPacket.getData());
-			if(cmd == LoginCmd.CMD_LOGIN_RESPONSE){
-            		mHandler.onClinetLogin(client, Main.mInPacket);
-            }else {
-            	
-            }
-            
-		} catch (InvalidProtocolBufferException e) {
-			e.printStackTrace();
-		}
-	}
-
+	public abstract void dispatchMessage(AbstractClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length);
+	
 }

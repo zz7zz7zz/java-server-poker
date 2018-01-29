@@ -1,6 +1,7 @@
 package com.poker.access.handler;
 
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.object.AbstractClient;
 import com.open.net.server.GServer;
 import com.open.net.server.object.AbstractServerClient;
@@ -8,11 +9,44 @@ import com.open.util.log.Logger;
 import com.poker.access.Main;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
+import com.poker.cmd.LoginCmd;
 import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.PacketInfo;
+import com.poker.protocols.server.DispatchChainProto.DispatchChain;
+import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 
-public class ClientHandler {
+public class ClientHandler extends AbsClientHandler{
+	
+	public ClientHandler(InPacket mInPacket) {
+		super(mInPacket);
+	}
+
+	public void dispatchMessage(AbstractClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
+		
+		try {
+			int  cmd = 0;
+			long uid = 0;
+			
+			DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
+			int count = mDispatchPacket.getDispatchChainListCount();
+			if(count>0){
+				DispatchChain chain = mDispatchPacket.getDispatchChainList(count-1);
+				cmd = chain.getCmd();
+				uid = chain.getUid();
+			}	
+			
+			mInPacket.copyFrom(mDispatchPacket.getData());
+			if(cmd == LoginCmd.CMD_LOGIN_RESPONSE){
+            		onClinetLogin(client, mInPacket);
+            }else {
+            	
+            }
+            
+		} catch (InvalidProtocolBufferException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public void onClinetLogin(AbstractClient mClient , InPacket mInPacket){
 		

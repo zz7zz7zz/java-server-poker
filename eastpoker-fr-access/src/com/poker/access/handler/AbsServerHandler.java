@@ -1,30 +1,67 @@
 package com.poker.access.handler;
 
-import com.open.net.client.impl.tcp.nio.NioClient;
 import com.open.net.server.message.Message;
 import com.open.net.server.message.MessageBuffer;
 import com.open.net.server.object.AbstractServerClient;
 import com.open.net.server.object.AbstractServerMessageProcessor;
 import com.open.util.log.Logger;
-import com.poker.base.ServerIds;
-import com.poker.cmd.DispatchCmd;
 import com.poker.data.DataPacket;
-import com.poker.data.DistapchType;
+import com.poker.packet.OutPacket;
 import com.poker.access.Main;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
 
-public class ServerProcessor extends AbstractServerMessageProcessor{
+public abstract class AbsServerHandler extends AbstractServerMessageProcessor{
 
-	public ServerHandler mHandler;
+	public OutPacket mOutPacket;
     public byte[] write_buff;
     
-	public ServerProcessor(ServerHandler mHandler, byte[] writeBuffer) {
+	public AbsServerHandler(OutPacket mOutPacket,byte[] writeBuffer) {
 		super();
-		this.mHandler = mHandler;
+		this.mOutPacket = mOutPacket;
 		this.write_buff = writeBuffer;
 	}
+	
+	@Override
+	public void onClientEnter(AbstractServerClient client) {
+		// TODO Auto-generated method stub
+		
+	}
 
+	@Override
+	public void onClientExit(AbstractServerClient client) {
+		User attachUser = (User)client.getAttachment();
+        if(null != attachUser && attachUser.socketId == client.mClientId){
+        	Main.userMap.remove(attachUser.uid);
+        	UserPool.release(attachUser);
+        }
+	}
+
+	@Override
+	public void onTimeTick() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void unicast(AbstractServerClient client, byte[] src, int offset, int length) {
+		super.unicast(client, src, offset, length);
+		Logger.v("output_packet_unicast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+	}
+
+	@Override
+	public void multicast(AbstractServerClient[] clients, byte[] src, int offset, int length) {
+		super.multicast(clients, src, offset, length);
+		Logger.v("output_packet_multicast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+	}
+
+	@Override
+	public void broadcast(byte[] src, int offset, int length) {
+		super.broadcast(src, offset, length);
+		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+	}
+	
+	@Override
 	protected void onReceiveMessage(AbstractServerClient client, Message msg){
 
     	//过滤异常Message
@@ -242,82 +279,6 @@ public class ServerProcessor extends AbstractServerMessageProcessor{
 		Logger.v("code "+ code +" full_packet_count " + full_packet_count + " half_packet_count " + half_packet_count + System.getProperty("line.separator"));
     }
 	
-	@Override
-	public void onClientEnter(AbstractServerClient client) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onClientExit(AbstractServerClient client) {
-		User attachUser = (User)client.getAttachment();
-        if(null != attachUser && attachUser.socketId == client.mClientId){
-        	Main.userMap.remove(attachUser.uid);
-        	UserPool.release(attachUser);
-        }
-	}
-
-	@Override
-	public void onTimeTick() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void unicast(AbstractServerClient client, byte[] src, int offset, int length) {
-		super.unicast(client, src, offset, length);
-		Logger.v("output_packet_unicast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
-	}
-
-	@Override
-	public void multicast(AbstractServerClient[] clients, byte[] src, int offset, int length) {
-		super.multicast(clients, src, offset, length);
-		Logger.v("output_packet_multicast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
-	}
-
-	@Override
-	public void broadcast(byte[] src, int offset, int length) {
-		super.broadcast(src, offset, length);
-		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
-	}
-	
 	//-----------------------------------------------------------------------------------------------------------------------------------
-	public void dispatchMessage(AbstractServerClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
-		int cmd   = DataPacket.getCmd(data, header_start);
-		int server = cmd >> 16;
-      	int squenceId = DataPacket.getSequenceId(data,header_start);
-      	
-      	Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
-      	
-      	//如果Server大于0，则将数据转发至对应的server
-      	if(server > 0){
-      		int length = 0;
-      		if(server == ServerIds.SERVER_LOGIN){
-      			
-      			Main.mOutPacket.begin(squenceId, cmd);
-      			Main.mOutPacket.writeLong(client.mClientId);//额外的数据
-      			Main.mOutPacket.writeBytes(data,header_start,header_length+body_length);//原始数据
-      			Main.mOutPacket.end();
-      			
-      			length = ImplDataTransfer.send2Login(write_buff, squenceId, 0,cmd,DistapchType.TYPE_P2P,Main.mOutPacket.getPacket(),0,  Main.mOutPacket.getLength());
-      			
-      		}else if(server == ServerIds.SERVER_USER){
-      			length = ImplDataTransfer.send2User(write_buff, squenceId, 0,cmd,DistapchType.TYPE_P2P,data,body_start,body_length);
-      		}
-      		
-      		Main.dispatchIndex = (Main.dispatchIndex+1) % Main.dispatcher.length;
-      		NioClient mNioClient = Main.dispatcher[Main.dispatchIndex];
-      		if(mNioClient.isConnected()){
-      			Main.mClientProcessor.send(mNioClient,write_buff,0,length);
-      		}else{
-      			for(int i = 0;i<Main.dispatcher.length;i++){
-      				mNioClient = Main.dispatcher[Main.dispatchIndex];
-              		if(mNioClient.isConnected()){
-              			Main.mClientProcessor.send(mNioClient,write_buff,0,length);
-              			break;
-              		}
-      			}
-      		}
-      	}
-	}
+	public abstract void dispatchMessage(AbstractServerClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length);
 }

@@ -20,9 +20,7 @@ import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
 import com.poker.access.handler.ClientHandler;
-import com.poker.access.handler.ClientProcessor;
 import com.poker.access.handler.ServerHandler;
-import com.poker.access.handler.ServerProcessor;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
 import com.poker.base.ServerIds;
@@ -107,13 +105,10 @@ public class Main {
     public static ArgsConfig libArgsConfig;
     public static ServerConfig libServerConfig;
     public static int dispatchIndex = -1;
-	public static OutPacket mOutPacket;
-	public static InPacket mInPacket;
     public static NioClient [] dispatcher;
     public static byte[] write_buff ;
     public static byte[] write_buff_dispatcher;
-    public static ClientProcessor mClientProcessor ;
-    public static ServerProcessor mServerProcessor ;
+    public static ServerHandler mServerProcessor ;
 	public static HashMap<Long,User> userMap = new HashMap<Long,User>();
 	
    //---------------------------------------Logger----------------------------------------------------
@@ -127,12 +122,10 @@ public class Main {
     
     //---------------------------------------初始化全局对象----------------------------------------------------
     private static void initGlobalFields(int packet_max_length_tcp){
-    	mOutPacket = new OutPacket(packet_max_length_tcp);
-    	mInPacket = new InPacket(packet_max_length_tcp);
     	write_buff = new byte[packet_max_length_tcp];
     	write_buff_dispatcher = new byte[packet_max_length_tcp];
-    	mClientProcessor = new ClientProcessor(new ClientHandler());
-    	mServerProcessor = new ServerProcessor(new ServerHandler(), write_buff);
+
+    	mServerProcessor = new ServerHandler(new OutPacket(packet_max_length_tcp), write_buff);
     	
 		//预先分配1/4桌子数目的用户，每次增长1/4桌子数目的用户
 		int user_init_size = (int)(0.25*libServerConfig.connect_max_count);
@@ -166,7 +159,7 @@ public class Main {
     	if(dispatcherSize > 0){
     		dispatcher = new NioClient[dispatcherSize];
     		for(int i=0; i< dispatcherSize ; i++){
-    			dispatcher[i] = new NioClient(mClientProcessor,mClientConnectResultListener); 
+    			dispatcher[i] = new NioClient(new ClientHandler(new InPacket(libServerConfig.packet_max_length_tcp)),mClientConnectResultListener); 
     			dispatcher[i].setConnectAddress(new TcpAddress[]{mConfig.dispatcher_net_tcp[i]});
     			dispatcher[i].connect();
     		}
@@ -188,7 +181,7 @@ public class Main {
 			Logger.v("-------dispatcher onConnectionSuccess---------" +Arrays.toString(((NioClient)client).getConnectAddress()));
 			//register to dispatchServer
 			int length = Dispatcher.register2Dispatcher(write_buff,libArgsConfig.server_type,libArgsConfig.name, libArgsConfig.id,libArgsConfig.host, libArgsConfig.port);
-			mClientProcessor.send(client,write_buff,0,length);
+			client.getmMessageProcessor().send(client,write_buff,0,length);
 		}
 
 		@Override
