@@ -271,9 +271,13 @@ public class ClientHandler extends AbsClientHandler{
 		mOutPacket.writeByte(tableId>0 ?(byte)1:(byte)0);//说明是重连
 		mOutPacket.end();
 		
+		//debug ---------
+		tableId = 65536;
+		int game_serverId= (tableId>>16);
+		//debug ---------
+		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		int game_serverId= (tableId>>16);
 		int length = PacketTransfer.send2Game(game_serverId,mTempBuff, squenceId, uid,GameCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
   		send2Dispatch(mTempBuff,0,length);	
 	}
