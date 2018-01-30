@@ -9,17 +9,48 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.util.log.Logger;
+import com.poker.cmd.AllocatorCmd;
 import com.poker.cmd.GameCmd;
+import com.poker.common.packet.PacketTransfer;
 import com.poker.data.DataPacket;
+import com.poker.data.DistapchType;
+import com.poker.packet.InPacket;
+import com.poker.packet.OutPacket;
 import com.poker.protocols.game.GameServerProto;
 import com.poker.protocols.game.GameServerProto.GameServer;
 import com.poker.protocols.game.GameTableProto.GameTable;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 import com.poker.allocator.Main;
-import com.poker.allocator.handler.ImplDataTransfer;
 
 
-public class ClientMessageHandler {
+public class ClientHandler extends AbsClientHandler{
+	
+	public ClientHandler(InPacket mInPacket, OutPacket mOutPacket) {
+		super(mInPacket, mOutPacket);
+	}
+
+	@Override
+	public void dispatchMessage(AbstractClient client, byte[] data, int header_start, int header_length, int body_start,
+			int body_length) {
+		try {
+    		int cmd   = DataPacket.getCmd(data, header_start);
+    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + AllocatorCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
+    		
+        	if(cmd == AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO){
+        		on_report_roominfo(client,data,header_start,header_length,body_start,body_length);
+        	}else if(cmd == AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){
+        		on_get_roominfo(client,data,header_start,header_length,body_start,body_length);
+        	}else if(cmd == AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_UPDATE_ROOMINFO){
+        		on_update_roominfo(client,data,header_start,header_length,body_start,body_length);
+        	}else if(cmd == AllocatorCmd.CMD_LOGIN_GAME){
+        		
+        		on_login_game(client, data, body_start, body_length, 1, this);
+        	
+        	}
+		} catch (InvalidProtocolBufferException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	//game_id -> Servers
 	//Servers -> level-sever
@@ -65,8 +96,8 @@ public class ClientMessageHandler {
     
 	public void on_report_roominfo(AbstractClient mClient , byte[] data, int header_start,int header_length,int body_start,int body_length) throws InvalidProtocolBufferException{
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
-		mDispatchPacket.getData().copyTo(Main.write_buff, 0);
-		GameServer mServer = GameServer.parseFrom(Main.write_buff,0,mDispatchPacket.getData().size());
+		mDispatchPacket.getData().copyTo(mInPacket.getPacket(), 0);
+		GameServer mServer = GameServer.parseFrom(mInPacket.getPacket(),0,mDispatchPacket.getData().size());
 		Logger.v(mServer.toString());
     	//找gameid->(level-gameSers)
 		int game_id = mServer.getGameId();
@@ -222,9 +253,29 @@ public class ClientMessageHandler {
     	
 	}
 	
-	public void on_login_game(AbstractClient mClient ,byte[] write_buff_dispatcher,byte[] write_buf, byte[] data, int body_start, int body_length, int squenceId,AbstractClientMessageProcessor sender) throws InvalidProtocolBufferException{
-		int size =  ImplDataTransfer.send2Allocator(write_buff_dispatcher, squenceId,0,GameCmd.CMD_LOGIN_GAME,0, write_buf, 0, 0);
-		sender.send(mClient, write_buff_dispatcher, 0, size);
+	public void on_login_game(AbstractClient mClient ,byte[] data, int body_start, int body_length, int squenceId,AbstractClientMessageProcessor sender) throws InvalidProtocolBufferException{
 		
+		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
+		long uid = mDispatchPacket.getDispatchChainList(0).getUid();
+		
+		mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());	
+		int accessId = mInPacket.readInt();
+		int gameId = mInPacket.readInt();
+		int matchId = mInPacket.readInt();
+		int tableId = mInPacket.readInt();
+		
+		mOutPacket.begin(squenceId, GameCmd.CMD_LOGIN_GAME);
+		mOutPacket.writeInt(accessId);//AccessId
+		mOutPacket.writeInt(gameId);//gameId
+		mOutPacket.writeInt(matchId);//matchId
+		mOutPacket.writeInt(tableId);//tableId
+		mOutPacket.writeByte(tableId>0 ?(byte)1:(byte)0);//说明是重连
+		mOutPacket.end();
+		
+		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
+		byte[] mTempBuff = mInPacket.getPacket();
+		int length = PacketTransfer.send2Game(mTempBuff, squenceId, uid,GameCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
+  		send2Dispatch(mTempBuff,0,length);	
 	}
+
 }
