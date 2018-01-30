@@ -267,12 +267,9 @@ public class ClientHandler extends AbsClientHandler{
 		int request_gameid = loginGameRequest.getGameid();
 		int request_gamelevel = loginGameRequest.getLevel();
 		
-		//这里是找桌子逻辑
-		//debug ---------
-		int tableId = 65536;
+		int tableId = findTable(request_gameid,request_gamelevel);
 		int gameSid= (tableId>>16);
-		//debug ---------
-		
+
 		mOutPacket.begin(squenceId, GameCmd.CMD_LOGIN_GAME);
 		mOutPacket.writeInt(accessId);//AccessId
 		mOutPacket.writeInt(tableId);//tableId
@@ -282,6 +279,14 @@ public class ClientHandler extends AbsClientHandler{
 		byte[] mTempBuff = mInPacket.getPacket();
 		int length = PacketTransfer.send2Game(gameSid,mTempBuff, squenceId, uid,GameCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
   		send2Dispatch(mTempBuff,0,length);	
+	}
+	
+	public int findTable(int request_gameid , int request_gamelevel){
+		//debug ----写死-----
+		int ret_tableId = 65536;
+		//TODO
+
+		return ret_tableId;
 	}
 
 }
