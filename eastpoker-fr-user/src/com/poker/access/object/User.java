@@ -7,11 +7,11 @@ public class User {
 	public long socketId;
 	public long socketHeartBeatTime;
 	
-	public int gameSid;
-	public int gameId;
+	public short gameSid;
+	public short gameId;
 	
-	public int matchSid;
-	public int matchId;
+	public short matchSid;
+	public short matchId;
 	
 	public int tableId;
 	

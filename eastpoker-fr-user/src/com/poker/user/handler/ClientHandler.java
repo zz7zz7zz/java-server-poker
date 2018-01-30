@@ -3,46 +3,51 @@ package com.poker.user.handler;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.object.AbstractClient;
-import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.util.log.Logger;
 import com.poker.access.object.User;
+import com.poker.access.object.UserPool;
 import com.poker.cmd.AllocatorCmd;
+import com.poker.cmd.GameCmd;
 import com.poker.cmd.LoginCmd;
 import com.poker.cmd.UserCmd;
-import com.poker.data.DataPacket;
 import com.poker.data.DistapchType;
+import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.packet.PacketTransfer;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 import com.poker.user.Main;
 
-
 public class ClientHandler extends AbsClientHandler{
 
 
-	
 	public ClientHandler(InPacket mInPacket, OutPacket mOutPacket) {
 		super(mInPacket, mOutPacket);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	public void dispatchMessage(AbstractClient client, byte[] data, int header_start, int header_length, int body_start,
 			int body_length) {
+		
 		try {
-    		int cmd   = DataPacket.getCmd(data, header_start);
-    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + LoginCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
-        	if(cmd == UserCmd.CMD_LOGIN_GAME){
-        		
-        		login_game(client, data, header_start,header_length,body_start, body_length, 1, this);
+    		int cmd   = BasePacket.getCmd(data, header_start);
+    		int squenceId = BasePacket.getSequenceId(data, header_start);
+    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + LoginCmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
+        	
+    		if(cmd == UserCmd.CMD_LOGIN_GAME){
+        		loginGame(squenceId,data, header_start,header_length,body_start, body_length);
+        	}else if(cmd == UserCmd.CMD_ENTER_ROOM){
+        		enterRoom(squenceId,data, header_start,header_length,body_start, body_length);
+        	}else if(cmd == UserCmd.CMD_LEAVE_ROOM){
+        		leaveRoom(squenceId,data, header_start,header_length,body_start, body_length);
         	}
+    		
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void login_game(AbstractClient mClient ,byte[] data, int header_start, int header_length, int body_start, int body_length, int squenceId,AbstractClientMessageProcessor sender) throws InvalidProtocolBufferException{
+	public void loginGame(int squenceId ,byte[] data, int header_start, int header_length, int body_start, int body_length) throws InvalidProtocolBufferException{
 		
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
 		long uid = mDispatchPacket.getDispatchChainList(0).getUid();
@@ -50,26 +55,63 @@ public class ClientHandler extends AbsClientHandler{
 		mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());
 		int accessId = mInPacket.readInt();
 		
-		int gameId = 0;
-		int matchId = 0;
 		int tableId = 0;
+		short gameId = 0;
+		short gameSid = 0;
+		short matchId = 0;
+		short matchSid = 0;
 		User user = Main.userMap.get(uid);
 		if(null != user){
-			gameId = user.gameId;
-			matchId = user.matchId;
 			tableId = user.tableId;
+			gameId = user.gameId;
+			gameSid = user.gameSid;
+			matchId = user.matchId;
+			matchSid = user.matchSid;
 		}
 		
 		mOutPacket.begin(squenceId, AllocatorCmd.CMD_LOGIN_GAME);
 		mOutPacket.writeInt(accessId);//AccessId
-		mOutPacket.writeInt(gameId);//gameId
-		mOutPacket.writeInt(matchId);//matchId
 		mOutPacket.writeInt(tableId);//tableId
+		mOutPacket.writeShort(gameId);//gameId
+		mOutPacket.writeShort(gameSid);//gameSid
+		mOutPacket.writeShort(matchId);//matchId
+		mOutPacket.writeShort(matchSid);//matchSid
 		mOutPacket.end();
 		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		int length = PacketTransfer.send2User(accessId,mTempBuff, squenceId, uid,AllocatorCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
-  		send2Dispatch(mTempBuff,0,length);		
+		if(tableId > 0){//说明没有在游戏中，去Alloc中寻找桌子再进入游戏
+			int length = PacketTransfer.send2Game(gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_LOGIN_GAME, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
+			send2Dispatch(mTempBuff,0,length);	
+		}else{
+			int length = PacketTransfer.send2User(accessId,mTempBuff, squenceId, uid,AllocatorCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
+	  		send2Dispatch(mTempBuff,0,length);	
+		}
+	}
+	
+	public void enterRoom(int squenceId ,byte[] data, int header_start, int header_length, int body_start, int body_length) throws InvalidProtocolBufferException{
+		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
+		long uid = mDispatchPacket.getDispatchChainList(0).getUid();
+		
+		mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());
+		int tid = mInPacket.readInt();
+		short gameId = mInPacket.readShort();
+		short gameSid = mInPacket.readShort();
+		
+		User user = Main.userMap.get(uid);
+		if(null != user){
+			user = UserPool.get(uid);
+		}
+		
+		user.tableId = tid;
+		user.gameId = gameId;
+		user.gameSid = gameSid;
+	}
+	
+	public void leaveRoom(int squenceId ,byte[] data, int header_start, int header_length, int body_start, int body_length) throws InvalidProtocolBufferException{
+		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
+		long uid = mDispatchPacket.getDispatchChainList(0).getUid();
+		User user = Main.userMap.remove(uid);
+		UserPool.release(user);
 	}
 }

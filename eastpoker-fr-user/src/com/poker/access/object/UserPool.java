@@ -31,6 +31,7 @@ public final class UserPool {
             }
         }
         User ret= mQueen.poll();
+        ret.reset();
         ret.uid = uid;
         return ret;
     }
