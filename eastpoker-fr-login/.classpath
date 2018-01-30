@@ -5,9 +5,9 @@
 	<classpathentry kind="lib" path="libs/commons-cli-1.4.jar"/>
 	<classpathentry kind="lib" path="libs/open.util.log.jar"/>
 	<classpathentry kind="lib" path="libs/org.json.jar"/>
+	<classpathentry kind="lib" path="libs/protobuf-java-3.5.1.jar"/>
 	<classpathentry kind="lib" path="libs/open.net.client.jar"/>
 	<classpathentry kind="lib" path="libs/open.net.server.jar"/>
-	<classpathentry kind="lib" path="libs/protobuf-java-3.5.1.jar"/>
 	<classpathentry kind="lib" path="libs/protocol.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

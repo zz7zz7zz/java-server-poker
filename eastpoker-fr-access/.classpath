@@ -8,6 +8,6 @@
 	<classpathentry kind="lib" path="libs/open.net.client.jar" sourcepath="/java-socket-client"/>
 	<classpathentry kind="lib" path="libs/open.net.server.jar" sourcepath="/java-socket-server"/>
 	<classpathentry kind="lib" path="libs/protobuf-java-3.5.1.jar" sourcepath="/protobuff"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/eastpoker-fr-protocol"/>
+	<classpathentry kind="lib" path="libs/protocol.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
