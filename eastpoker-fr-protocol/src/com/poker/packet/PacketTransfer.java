@@ -28,6 +28,10 @@ public class PacketTransfer{
 		return send2Dispatcher(writeBuff,squenceId, uid,cmd,dispatch_type, data, offset, length, SERVER_TYPE, SERVER_ID, ServerIds.SERVER_USER, dst_server_id,-1,-1);
 	}
 	
+	public static int send2Alloc(int dst_server_id ,byte[] writeBuff,int squenceId ,long uid, int cmd ,int dispatch_type, byte[] data, int offset ,int length){
+		return send2Dispatcher(writeBuff,squenceId, uid,cmd,dispatch_type, data, offset, length, SERVER_TYPE, SERVER_ID, ServerIds.SERVER_ALLOCATOR, dst_server_id,-1,-1);
+	}
+	
 	public static int send2Game(int dst_server_id ,byte[] writeBuff,int squenceId ,long uid, int cmd ,int dispatch_type, byte[] data, int offset ,int length){
 		return send2Dispatcher(writeBuff,squenceId, uid,cmd,dispatch_type, data, offset, length, SERVER_TYPE, SERVER_ID, ServerIds.SERVER_GAME, dst_server_id,-1,-1);
 	}
