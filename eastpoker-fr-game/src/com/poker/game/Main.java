@@ -16,6 +16,7 @@ import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
 import com.poker.base.ServerIds;
 import com.poker.common.config.Config;
+import com.poker.common.packet.PacketTransfer;
 import com.poker.data.DataPacket;
 import com.poker.game.handler.ClientHandler;
 import com.poker.games.Room;
@@ -105,7 +106,8 @@ public class Main {
     };
     
     //---------------------------------------初始化全局对象----------------------------------------------------
-    private static void initGlobalFields(int packet_max_length_tcp){    	 
+    private static void initGlobalFields(int packet_max_length_tcp){    	
+    	PacketTransfer.init(libArgsConfig.server_type, libArgsConfig.id);
         mRoom = new Room(mServerConfig);
     }
     

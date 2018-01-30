@@ -18,6 +18,7 @@ import com.open.util.log.base.LogConfig;
 import com.poker.allocator.handler.ClientHandler;
 import com.poker.base.ServerIds;
 import com.poker.common.config.Config;
+import com.poker.common.packet.PacketTransfer;
 import com.poker.data.DataPacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
@@ -103,7 +104,7 @@ public class Main {
     
     //---------------------------------------初始化全局对象----------------------------------------------------
     private static void initGlobalFields(int packet_max_length_tcp){
-
+    	PacketTransfer.init(libArgsConfig.server_type, libArgsConfig.id);
     }
     
   //---------------------------------------Monitor----------------------------------------------------

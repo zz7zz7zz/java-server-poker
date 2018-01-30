@@ -123,11 +123,9 @@ public class Main {
     
     //---------------------------------------初始化全局对象----------------------------------------------------
     private static void initGlobalFields(int packet_max_length_tcp){
-    	
-    	PacketTransfer.init(libServerConfig.server_type, libServerConfig.id);
-    	
+    	PacketTransfer.init(libArgsConfig.server_type, libArgsConfig.id);
     	mServerHandler = new ServerHandler(new InPacket(packet_max_length_tcp), new OutPacket(packet_max_length_tcp));
-    	
+   
 		//预先分配1/4桌子数目的用户，每次增长1/4桌子数目的用户
 		int user_init_size = (int)(0.25*libServerConfig.connect_max_count);
 		UserPool.init(user_init_size,user_init_size);
