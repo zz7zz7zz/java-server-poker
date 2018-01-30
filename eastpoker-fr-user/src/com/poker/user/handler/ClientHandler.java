@@ -14,7 +14,9 @@ import com.poker.data.DistapchType;
 import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
+import com.poker.packet.PacketInfo;
 import com.poker.packet.PacketTransfer;
+import com.poker.protocols.game.LoginGameProto.LoginGame;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 import com.poker.user.Main;
 
@@ -54,6 +56,11 @@ public class ClientHandler extends AbsClientHandler{
 		
 		mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());
 		int accessId = mInPacket.readInt();
+		PacketInfo mSubPacket = mInPacket.readBytesToSubPacket();
+		LoginGame loginGameRequest = LoginGame.parseFrom(mSubPacket.buff,mSubPacket.body_start, mSubPacket.body_length);
+		
+		int request_gameid = loginGameRequest.getGameid();
+		int request_gamelevel = loginGameRequest.getLevel();
 		
 		int tableId = 0;
 		short gameId = 0;
@@ -69,22 +76,19 @@ public class ClientHandler extends AbsClientHandler{
 			matchSid = user.matchSid;
 		}
 		
-		mOutPacket.begin(squenceId, AllocatorCmd.CMD_LOGIN_GAME);
-		mOutPacket.writeInt(accessId);//AccessId
-		mOutPacket.writeInt(tableId);//tableId
-		mOutPacket.writeShort(gameId);//gameId
-		mOutPacket.writeShort(gameSid);//gameSid
-		mOutPacket.writeShort(matchId);//matchId
-		mOutPacket.writeShort(matchSid);//matchSid
-		mOutPacket.end();
-		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
 		if(tableId > 0){//说明没有在游戏中，去Alloc中寻找桌子再进入游戏
 			int length = PacketTransfer.send2Game(gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_LOGIN_GAME, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
 			send2Dispatch(mTempBuff,0,length);	
 		}else{
-			int length = PacketTransfer.send2User(accessId,mTempBuff, squenceId, uid,AllocatorCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
+			
+			mOutPacket.begin(squenceId, AllocatorCmd.CMD_LOGIN_GAME);
+			mOutPacket.writeInt(accessId);//AccessId
+			mOutPacket.writeBytes(mSubPacket.buff, mSubPacket.body_start, mSubPacket.body_length);
+			mOutPacket.end();
+			
+			int length = PacketTransfer.send2Alloc(request_gameid,mTempBuff, squenceId, uid,AllocatorCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
 	  		send2Dispatch(mTempBuff,0,length);	
 		}
 	}

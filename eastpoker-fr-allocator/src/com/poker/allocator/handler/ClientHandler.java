@@ -259,15 +259,19 @@ public class ClientHandler extends AbsClientHandler{
 		
 		mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());	
 		int accessId = mInPacket.readInt();
-		int gameId = mInPacket.readInt();
-		int matchId = mInPacket.readInt();
-		int tableId = mInPacket.readInt();
+		int tableId  = mInPacket.readInt();
+		short gameId = mInPacket.readShort();
+		short gameSid = mInPacket.readShort();
+		short matchId = mInPacket.readShort();
+		short matchSid = mInPacket.readShort();
 		
 		mOutPacket.begin(squenceId, GameCmd.CMD_LOGIN_GAME);
 		mOutPacket.writeInt(accessId);//AccessId
-		mOutPacket.writeInt(gameId);//gameId
-		mOutPacket.writeInt(matchId);//matchId
 		mOutPacket.writeInt(tableId);//tableId
+		mOutPacket.writeInt(gameId);//gameId
+		mOutPacket.writeInt(gameSid);//gameId
+		mOutPacket.writeInt(matchId);//matchId
+		mOutPacket.writeInt(matchSid);//matchSid
 		mOutPacket.writeByte(tableId>0 ?(byte)1:(byte)0);//说明是重连
 		mOutPacket.end();
 		
