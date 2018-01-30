@@ -11,16 +11,15 @@ import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.util.log.Logger;
 import com.poker.cmd.AllocatorCmd;
 import com.poker.cmd.GameCmd;
-import com.poker.common.packet.PacketTransfer;
 import com.poker.data.DataPacket;
 import com.poker.data.DistapchType;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
+import com.poker.packet.PacketTransfer;
 import com.poker.protocols.game.GameServerProto;
 import com.poker.protocols.game.GameServerProto.GameServer;
 import com.poker.protocols.game.GameTableProto.GameTable;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
-import com.poker.allocator.Main;
 
 
 public class ClientHandler extends AbsClientHandler{
@@ -274,7 +273,8 @@ public class ClientHandler extends AbsClientHandler{
 		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		int length = PacketTransfer.send2Game(mTempBuff, squenceId, uid,GameCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		int game_serverId= (tableId>>16);
+		int length = PacketTransfer.send2Game(game_serverId,mTempBuff, squenceId, uid,GameCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
   		send2Dispatch(mTempBuff,0,length);	
 	}
 

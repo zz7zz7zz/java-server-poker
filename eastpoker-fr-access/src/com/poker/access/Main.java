@@ -25,10 +25,10 @@ import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
 import com.poker.base.ServerIds;
 import com.poker.common.config.Config;
-import com.poker.common.packet.PacketTransfer;
 import com.poker.data.DataPacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
+import com.poker.packet.PacketTransfer;
 import com.poker.protocols.Dispatcher;
 import com.poker.protocols.Monitor;
 

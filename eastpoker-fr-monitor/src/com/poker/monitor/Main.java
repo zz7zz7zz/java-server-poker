@@ -12,7 +12,6 @@ import com.open.net.server.object.ServerLog.LogListener;
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
 import com.poker.base.ServerIds;
-import com.poker.common.packet.PacketTransfer;
 import com.poker.monitor.handler.ServerHandler;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
@@ -44,7 +43,6 @@ public class Main {
         Logger.addFilterTraceElement(mLogListener.getClass().getName());
         
         //-----------------------------------------初始化全局属性-----------------------------------------------
-    	PacketTransfer.init(libArgsConfig.server_type, libArgsConfig.id);
     	
         Logger.v("libArgsConfig: "+ libArgsConfig.toString()+"\r\n");
         Logger.v("libServerConfig: "+ libServerConfig.toString()+"\r\n");

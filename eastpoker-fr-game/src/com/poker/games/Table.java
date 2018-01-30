@@ -2,10 +2,9 @@ package com.poker.games;
 
 import com.poker.cmd.SystemCmd;
 import com.poker.common.config.Config;
-import com.poker.common.packet.PacketTransfer;
 import com.poker.data.DistapchType;
 import com.poker.game.Main;
-
+import com.poker.packet.PacketTransfer;
 import com.poker.protocols.server.ErrorServer;
 
 public abstract class Table {

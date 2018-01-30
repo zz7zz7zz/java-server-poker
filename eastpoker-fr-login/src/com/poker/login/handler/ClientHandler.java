@@ -8,13 +8,13 @@ import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.util.log.Logger;
 import com.poker.cmd.LoginCmd;
-import com.poker.common.packet.PacketTransfer;
 import com.poker.data.DataPacket;
 import com.poker.data.DistapchType;
 import com.poker.login.Main;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.packet.PacketInfo;
+import com.poker.packet.PacketTransfer;
 import com.poker.protocols.login.LoginRequestProto;
 import com.poker.protocols.login.LoginServer;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
@@ -48,6 +48,7 @@ public class ClientHandler extends AbsClientHandler{
 		
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
 		mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());
+		int accessId  = mInPacket.readInt();
 		long socketId = mInPacket.readLong();
 		PacketInfo mSubPacket = mInPacket.readBytesToSubPacket();
 
@@ -76,7 +77,7 @@ public class ClientHandler extends AbsClientHandler{
 		mOutPacket.writeBytes(mTempBuff,0,length);
 		mOutPacket.end();
 		
-		length = PacketTransfer.send2Access(mTempBuff, squenceId, uid, LoginCmd.CMD_LOGIN_RESPONSE, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		length = PacketTransfer.send2Access(accessId,mTempBuff, squenceId, uid, LoginCmd.CMD_LOGIN_RESPONSE, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 		send2Dispatch(mTempBuff, 0, length);
 		
 		System.out.println(" socketId " + socketId + " login "+loginRequest.toString());
