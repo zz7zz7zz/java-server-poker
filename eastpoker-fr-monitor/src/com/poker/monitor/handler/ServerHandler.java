@@ -9,13 +9,35 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.server.object.AbstractServerClient;
 import com.open.net.server.utils.TextUtils;
 import com.open.util.log.Logger;
+import com.poker.cmd.MonitorCmd;
+import com.poker.data.DataPacket;
+import com.poker.packet.InPacket;
+import com.poker.packet.OutPacket;
 import com.poker.protocols.server.ServerProto.Server;
 
-public class ClientMessageHandler {
+public class ServerHandler extends AbsServerHandler{
 
-    public HashMap<Integer, ArrayList<AbstractServerClient>> serverOnlineList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
+    public ServerHandler(InPacket mInPacket, OutPacket mOutPacket) {
+		super(mInPacket, mOutPacket);
+	}
 
+	@Override
+	public void dispatchMessage(AbstractServerClient client, byte[] data, int header_start, int header_length,
+			int body_start, int body_length) {
+		try {
+    		int cmd   = DataPacket.getCmd(data, header_start);
+    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + MonitorCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
+    		
+    		if(cmd == MonitorCmd.CMD_MONITOR_REGISTER){
+    			register(client, data, body_start,body_length);
+    		}
+		} catch (InvalidProtocolBufferException e) {
+			e.printStackTrace();
+		}
+	}
 	
+	public HashMap<Integer, ArrayList<AbstractServerClient>> serverOnlineList = new HashMap<Integer, ArrayList<AbstractServerClient>>();
+
     public void register(AbstractServerClient client, byte[] data, int body_start, int body_length) throws InvalidProtocolBufferException{
     	Server enterServer = Server.parseFrom(data,body_start,body_length);
 		
@@ -58,4 +80,7 @@ public class ClientMessageHandler {
 	        }
 		}
     }
+
+
+
 }

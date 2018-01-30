@@ -12,8 +12,9 @@ import com.open.net.server.object.ServerLog.LogListener;
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
 import com.poker.base.ServerIds;
-import com.poker.monitor.handler.ClientMessageHandler;
-import com.poker.monitor.handler.ServerMessageProcessor;
+import com.poker.monitor.handler.ServerHandler;
+import com.poker.packet.InPacket;
+import com.poker.packet.OutPacket;
 
 /**
  * author       :   long
@@ -52,7 +53,7 @@ public class Main {
             GServer.init(libServerConfig, UdpNioClient.class);
             
             //3.2 服务器初始化
-            UdpNioServer mBioServer = new UdpNioServer(libServerConfig,new ServerMessageProcessor(new ClientMessageHandler()),mLogListener);
+            UdpNioServer mBioServer = new UdpNioServer(libServerConfig,new ServerHandler(new InPacket(libServerConfig.packet_max_length_tcp), new OutPacket(libServerConfig.packet_max_length_tcp)),mLogListener);
             mBioServer.start();
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,23 +1,69 @@
 package com.poker.monitor.handler;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.server.message.Message;
 import com.open.net.server.message.MessageBuffer;
 import com.open.net.server.object.AbstractServerClient;
 import com.open.net.server.object.AbstractServerMessageProcessor;
 import com.open.util.log.Logger;
-import com.poker.cmd.MonitorCmd;
 import com.poker.data.DataPacket;
+import com.poker.packet.InPacket;
+import com.poker.packet.OutPacket;
 
-public class ServerMessageProcessor extends AbstractServerMessageProcessor{
+public abstract class AbsServerHandler extends AbstractServerMessageProcessor{
 
-	public ClientMessageHandler mHandler;
-	
-	public ServerMessageProcessor(ClientMessageHandler mHandler) {
+	protected InPacket  mInPacket;
+	protected OutPacket mOutPacket;
+    
+	public AbsServerHandler(InPacket mInPacket, OutPacket mOutPacket) {
 		super();
-		this.mHandler = mHandler;
+		this.mInPacket = mInPacket;
+		this.mOutPacket   = mOutPacket;
 	}
 
+	public InPacket getInPacket() {
+		return mInPacket;
+	}
+
+	public OutPacket getOutPacket() {
+		return mOutPacket;
+	}
+
+	@Override
+	public void onClientEnter(AbstractServerClient client) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onClientExit(AbstractServerClient client) {
+
+	}
+
+	@Override
+	public void onTimeTick() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void unicast(AbstractServerClient client, byte[] src, int offset, int length) {
+		super.unicast(client, src, offset, length);
+		Logger.v("output_packet_unicast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+	}
+
+	@Override
+	public void multicast(AbstractServerClient[] clients, byte[] src, int offset, int length) {
+		super.multicast(clients, src, offset, length);
+		Logger.v("output_packet_multicast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+	}
+
+	@Override
+	public void broadcast(byte[] src, int offset, int length) {
+		super.broadcast(src, offset, length);
+		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+	}
+	
+	@Override
 	protected void onReceiveMessage(AbstractServerClient client, Message msg){
 
     	//过滤异常Message
@@ -235,51 +281,7 @@ public class ServerMessageProcessor extends AbstractServerMessageProcessor{
 		Logger.v("code "+ code +" full_packet_count " + full_packet_count + " half_packet_count " + half_packet_count + System.getProperty("line.separator"));
     }
 	
-    @Override
-	public void unicast(AbstractServerClient client, byte[] src, int offset, int length) {
-		super.unicast(client, src, offset, length);
-		Logger.v("output_packet_unicast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
-	}
-
-	@Override
-	public void multicast(AbstractServerClient[] clients, byte[] src, int offset, int length) {
-		super.multicast(clients, src, offset, length);
-		Logger.v("output_packet_multicast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
-	}
-
-	@Override
-	public void broadcast(byte[] src, int offset, int length) {
-		super.broadcast(src, offset, length);
-		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
-	}
-
-	@Override
-	public void onClientEnter(AbstractServerClient client) {
-		Logger.v("onClientEnter " + client.mClientId);
-	}
-
-	@Override
-	public void onClientExit(AbstractServerClient client) {
-		Logger.v("onClientExit " + client.mClientId);
-	}
-
-	@Override
-	public void onTimeTick() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	//-----------------------------------------------------------------------------------------------------------------------------------
-	public void dispatchMessage(AbstractServerClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
-    	try {
-    		int cmd   = DataPacket.getCmd(data, header_start);
-    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + MonitorCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
-    		
-    		if(cmd == MonitorCmd.CMD_MONITOR_REGISTER){
-    			mHandler.register(client, data, body_start,body_length);
-    		}
-		} catch (InvalidProtocolBufferException e) {
-			e.printStackTrace();
-		}
-	}
+	
+	public abstract void dispatchMessage(AbstractServerClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length);
 }
