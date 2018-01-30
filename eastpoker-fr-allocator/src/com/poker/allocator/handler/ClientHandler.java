@@ -15,10 +15,12 @@ import com.poker.data.DataPacket;
 import com.poker.data.DistapchType;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
+import com.poker.packet.PacketInfo;
 import com.poker.packet.PacketTransfer;
 import com.poker.protocols.game.GameServerProto;
 import com.poker.protocols.game.GameServerProto.GameServer;
 import com.poker.protocols.game.GameTableProto.GameTable;
+import com.poker.protocols.game.LoginGameProto.LoginGame;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 
 
@@ -259,30 +261,26 @@ public class ClientHandler extends AbsClientHandler{
 		
 		mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());	
 		int accessId = mInPacket.readInt();
-		int tableId  = mInPacket.readInt();
-		short gameId = mInPacket.readShort();
-		short gameSid = mInPacket.readShort();
-		short matchId = mInPacket.readShort();
-		short matchSid = mInPacket.readShort();
+		PacketInfo mSubPacket = mInPacket.readBytesToSubPacket();
+		LoginGame loginGameRequest = LoginGame.parseFrom(mSubPacket.buff,mSubPacket.body_start, mSubPacket.body_length);
+		
+		int request_gameid = loginGameRequest.getGameid();
+		int request_gamelevel = loginGameRequest.getLevel();
+		
+		//这里是找桌子逻辑
+		//debug ---------
+		int tableId = 65536;
+		int gameSid= (tableId>>16);
+		//debug ---------
 		
 		mOutPacket.begin(squenceId, GameCmd.CMD_LOGIN_GAME);
 		mOutPacket.writeInt(accessId);//AccessId
 		mOutPacket.writeInt(tableId);//tableId
-		mOutPacket.writeInt(gameId);//gameId
-		mOutPacket.writeInt(gameSid);//gameId
-		mOutPacket.writeInt(matchId);//matchId
-		mOutPacket.writeInt(matchSid);//matchSid
-		mOutPacket.writeByte(tableId>0 ?(byte)1:(byte)0);//说明是重连
 		mOutPacket.end();
-		
-		//debug ---------
-		tableId = 65536;
-		int game_serverId= (tableId>>16);
-		//debug ---------
 		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		int length = PacketTransfer.send2Game(game_serverId,mTempBuff, squenceId, uid,GameCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		int length = PacketTransfer.send2Game(gameSid,mTempBuff, squenceId, uid,GameCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
   		send2Dispatch(mTempBuff,0,length);	
 	}
 
