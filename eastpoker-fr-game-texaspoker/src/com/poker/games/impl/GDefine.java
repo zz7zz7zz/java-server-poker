@@ -1,6 +1,6 @@
 package com.poker.games.impl;
 
-public class GData {
+public class GDefine {
 	
 	public static final byte[] POKER_ARRAY={
 		
@@ -15,11 +15,11 @@ public class GData {
 	};
 	
 	enum GStep{
-		GStep_preflop(1),
-		GStep_flop(2),
-		GStep_trun(3),
-		GStep_river(4),
-		GStep_showhand(5);
+		PREFLOP(1),
+		FLOP(2),
+		TRUN(3),
+		RIVER(4),
+		SHOWHAND(5);
 		
 		int code;
         private GStep(int code) {
@@ -29,10 +29,10 @@ public class GData {
 	
 	
 	enum GStatus{
-		GStatus_PLAY(1),
-		GStatus_UNPLAY_SITDOWN(2),
-		GStatus_UNPLAY_ONLOOKERS(3),
-		GStatus_UNPLAY_WAIT(4);
+		PLAY(1),
+		NOT_PLAY_SITDOWN(2),
+		NOT_PLAY_ONLOOKERS(3),
+		NOT_PLAY_WAIT(4);
 		
 		int code;
         private GStatus(int code) {

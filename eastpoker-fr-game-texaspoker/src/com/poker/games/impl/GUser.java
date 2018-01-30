@@ -3,7 +3,7 @@ package com.poker.games.impl;
 import java.util.Arrays;
 
 import com.poker.games.User;
-import com.poker.games.impl.GData.GStatus;
+import com.poker.games.impl.GDefine.GStatus;
 import com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate;
 
 public class GUser extends User {
@@ -21,7 +21,7 @@ public class GUser extends User {
 	
 	public void clear(){
 		action_type = Operate.FOLD;
-		play_status = GStatus.GStatus_UNPLAY_SITDOWN;
+		play_status = GStatus.NOT_PLAY_SITDOWN;
 		Arrays.fill(handCard, (byte)0);
 	}
 }

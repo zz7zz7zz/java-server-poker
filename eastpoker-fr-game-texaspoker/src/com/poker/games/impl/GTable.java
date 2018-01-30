@@ -6,10 +6,11 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.poker.common.config.Config;
 import com.poker.game.handler.GameBaseServer;
 import com.poker.games.GBaseCmd;
+import com.poker.games.GDefine.TableStatus;
 import com.poker.games.Table;
 import com.poker.games.User;
-import com.poker.games.impl.GData.GStatus;
-import com.poker.games.impl.GData.GStep;
+import com.poker.games.impl.GDefine.GStatus;
+import com.poker.games.impl.GDefine.GStep;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.games.impl.handler.GCmd;
@@ -126,7 +127,7 @@ public class GTable extends Table {
     		if(null ==gGsers[i]) {
     			continue;
     		}
-    		gGsers[i].play_status = GStatus.GStatus_PLAY;
+    		gGsers[i].play_status = GStatus.PLAY;
     		play_user_count++;
         }
         
@@ -147,7 +148,7 @@ public class GTable extends Table {
         
     	for(int i = 0 ;i<this.mConfig.table_max_user;i++){
     		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
-        	if(null != gGsers[r_next_seatId_index] && gGsers[r_next_seatId_index].play_status == GStatus.GStatus_PLAY){
+        	if(null != gGsers[r_next_seatId_index] && gGsers[r_next_seatId_index].play_status == GStatus.PLAY){
         		sb_seatid = r_next_seatId_index;
         		break;
         	}
@@ -156,7 +157,7 @@ public class GTable extends Table {
     	next_seatId_index = (sb_seatid+1)%this.mConfig.table_max_user;
     	for(int i = 0 ;i<this.mConfig.table_max_user;i++){
     		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
-        	if(null != gGsers[r_next_seatId_index] && gGsers[r_next_seatId_index].play_status == GStatus.GStatus_PLAY){
+        	if(null != gGsers[r_next_seatId_index] && gGsers[r_next_seatId_index].play_status == GStatus.PLAY){
         		bb_seatid = r_next_seatId_index;
         		break;
         	}
@@ -165,7 +166,7 @@ public class GTable extends Table {
     	next_seatId_index = (sb_seatid-1)%this.mConfig.table_max_user;
     	for(int i = 0 ;i<this.mConfig.table_max_user;i++){
     		int r_next_seatId_index = (next_seatId_index - i + this.mConfig.table_max_user)%this.mConfig.table_max_user;
-        	if(null != gGsers[r_next_seatId_index] && gGsers[r_next_seatId_index].play_status == GStatus.GStatus_PLAY){
+        	if(null != gGsers[r_next_seatId_index] && gGsers[r_next_seatId_index].play_status == GStatus.PLAY){
         		btn_seateId = r_next_seatId_index;
         		break;
         	}
@@ -181,7 +182,7 @@ public class GTable extends Table {
         
 		if(mCardConfig.isEnable) {
 	        for(int i =0;i<gGsers.length;i++) {
-        		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.GStatus_PLAY) {
+        		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY) {
         			continue;
         		}
         		
@@ -194,7 +195,7 @@ public class GTable extends Table {
 	        long t = System.currentTimeMillis();//获得当前时间的毫秒数
 	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
 	        for(int i =0;i<gGsers.length;i++) {
-        		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.GStatus_PLAY) {
+        		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY) {
         			continue;
         		}
         		
@@ -202,10 +203,10 @@ public class GTable extends Table {
         		for(int j=0;j<user.handCard.length;j++) {
         			int cardIndex;
         			while(true){
-        				cardIndex= rd.nextInt(GData.POKER_ARRAY.length);
+        				cardIndex= rd.nextInt(GDefine.POKER_ARRAY.length);
     	    			//判断该位是否被拿取过了,再赋值
     	    			if(((cardFlags >>(cardIndex)) & 0x1) == 0x1){
-    	    				user.handCard[j]=GData.POKER_ARRAY[cardIndex];
+    	    				user.handCard[j]=GDefine.POKER_ARRAY[cardIndex];
     		    			cardFlags &= ~(1<<cardIndex);
     		    			break;
     	    			}
@@ -215,7 +216,7 @@ public class GTable extends Table {
 		}
 		
 		for(int i =0;i<gGsers.length;i++) {
-     		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.GStatus_PLAY) {
+     		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY) {
      			continue;
      		}
      		
@@ -224,7 +225,7 @@ public class GTable extends Table {
         	send2Access(user,GCmd.CMD_SERVER_DEAL_PREFLOP, squenceId, TexasGameServer.dealPreFlop( user.handCard));
 	    }
 		 
-  		step = GStep.GStep_preflop;
+  		step = GStep.PREFLOP;
   		
   		next_option(null);
 
@@ -241,17 +242,17 @@ public class GTable extends Table {
     		for(int j=0;j<flop.length;j++) {
     			int cardIndex;
     			while(true){
-    				cardIndex= rd.nextInt(GData.POKER_ARRAY.length);
+    				cardIndex= rd.nextInt(GDefine.POKER_ARRAY.length);
 	    			//判断该位是否被拿取过了,再赋值
 	    			if(((cardFlags >>(cardIndex)) & 0x1) == 0x1){
-	    				flop[j]=GData.POKER_ARRAY[cardIndex];
+	    				flop[j]=GDefine.POKER_ARRAY[cardIndex];
 		    			cardFlags &= ~(1<<cardIndex);
 		    			break;
 	    			}
     			}
     		}
 		}
-  		step = GStep.GStep_flop;
+  		step = GStep.FLOP;
   		
 		squenceId++;
 		broadcast(null,GCmd.CMD_SERVER_DEAL_FLOP, squenceId, TexasGameServer.dealFlop(flop));
@@ -270,17 +271,17 @@ public class GTable extends Table {
     		for(int j=0;j<turn.length;j++) {
     			int cardIndex;
     			while(true){
-    				cardIndex= rd.nextInt(GData.POKER_ARRAY.length);
+    				cardIndex= rd.nextInt(GDefine.POKER_ARRAY.length);
 	    			//判断该位是否被拿取过了,再赋值
 	    			if(((cardFlags >>(cardIndex)) & 0x1) == 0x1){
-		    			turn[j]=GData.POKER_ARRAY[cardIndex];
+		    			turn[j]=GDefine.POKER_ARRAY[cardIndex];
 		    			cardFlags &= ~(1<<cardIndex);
 		    			break;
 	    			}
     			}
     		}
 		}
-  		step = GStep.GStep_trun;
+  		step = GStep.TRUN;
   		
 		squenceId++;
 		broadcast(null,GCmd.CMD_SERVER_DEAL_TURN, squenceId, TexasGameServer.dealTrun(turn));
@@ -299,17 +300,17 @@ public class GTable extends Table {
     		for(int j=0;j<river.length;j++) {
     			int cardIndex;
     			while(true){
-    				cardIndex= rd.nextInt(GData.POKER_ARRAY.length);
+    				cardIndex= rd.nextInt(GDefine.POKER_ARRAY.length);
 	    			//判断该位是否被拿取过了,再赋值
 	    			if(((cardFlags >>(cardIndex)) & 0x1) == 0x1){
-	    				river[j]=GData.POKER_ARRAY[cardIndex];
+	    				river[j]=GDefine.POKER_ARRAY[cardIndex];
 		    			cardFlags &= ~(1<<cardIndex);
 		    			break;
 	    			}
     			}
     		}
 		}
-  		step = GStep.GStep_river;
+  		step = GStep.RIVER;
   		
 		squenceId++;
 		broadcast(null,GCmd.CMD_SERVER_DEAL_RIVER, squenceId,TexasGameServer.dealRiver(river));
@@ -366,7 +367,7 @@ public class GTable extends Table {
 		for(int i = 0 ;i<this.mConfig.table_max_user -1;i++){
         		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
      		if(null ==gGsers[r_next_seatId_index] 
-     				|| gGsers[r_next_seatId_index].play_status != GStatus.GStatus_PLAY 
+     				|| gGsers[r_next_seatId_index].play_status != GStatus.PLAY 
      				|| gGsers[r_next_seatId_index].action_type !=Operate.FOLD) {
      			continue;
      		}
@@ -383,14 +384,14 @@ public class GTable extends Table {
 		//找不到了，说明一轮下注完毕，进入下一轮
 		if(action_seatid == -1) {
 			//结束了
-			if(step == GStep.GStep_showhand) {
+			if(step == GStep.SHOWHAND) {
 				stopGame();
 				return;
 			}else {//如果只有一个人下注，其它人都弃牌，也结束了
 				int bet_user_count = 0;
 				for(int i = 0 ;i<this.mConfig.table_max_user;i++){
 		     		if(null ==gGsers[i] 
-		     				|| gGsers[i].play_status != GStatus.GStatus_PLAY ) {
+		     				|| gGsers[i].play_status != GStatus.PLAY ) {
 		     			continue;
 		     		}
 		     		
@@ -403,13 +404,13 @@ public class GTable extends Table {
 					stopGame();
 					return;
 				}else {
-					if(step == GStep.GStep_preflop) {
+					if(step == GStep.PREFLOP) {
 						dealFlop();
-					}else if(step == GStep.GStep_flop) {
+					}else if(step == GStep.FLOP) {
 						dealTrun();
-					}else if(step == GStep.GStep_trun) {
+					}else if(step == GStep.TRUN) {
 						dealRiver();
-					}else if(step == GStep.GStep_river) {
+					}else if(step == GStep.RIVER) {
 						showHands();
 					}else {
 						//--------
@@ -425,7 +426,7 @@ public class GTable extends Table {
 	
 	
 	public void showHands() {
-  		step = GStep.GStep_showhand;
+  		step = GStep.SHOWHAND;
   		
 		squenceId++;
 		broadcast(null,GCmd.CMD_SERVER_BROADCAST_SHOW_HAND, squenceId, TexasGameServer.showHand(this));
