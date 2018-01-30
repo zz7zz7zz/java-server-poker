@@ -9,11 +9,11 @@ import com.poker.access.object.User;
 import com.poker.cmd.AllocatorCmd;
 import com.poker.cmd.LoginCmd;
 import com.poker.cmd.UserCmd;
-import com.poker.common.packet.PacketTransfer;
 import com.poker.data.DataPacket;
 import com.poker.data.DistapchType;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
+import com.poker.packet.PacketTransfer;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 import com.poker.user.Main;
 
@@ -69,7 +69,7 @@ public class ClientHandler extends AbsClientHandler{
 		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		int length = PacketTransfer.send2User(mTempBuff, squenceId, uid,AllocatorCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		int length = PacketTransfer.send2User(accessId,mTempBuff, squenceId, uid,AllocatorCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
   		send2Dispatch(mTempBuff,0,length);		
 	}
 }
