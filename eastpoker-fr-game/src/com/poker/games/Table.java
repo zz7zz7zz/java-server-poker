@@ -1,16 +1,16 @@
 package com.poker.games;
 
-import com.poker.cmd.AllocatorCmd;
 import com.poker.cmd.SystemCmd;
 import com.poker.common.config.Config;
-import com.poker.data.DataPacket;
-import com.poker.data.DataTransfer;
+import com.poker.common.packet.PacketTransfer;
 import com.poker.data.DistapchType;
 import com.poker.game.Main;
-import com.poker.game.handler.ImplDataTransfer;
+
 import com.poker.protocols.server.ErrorServer;
 
 public abstract class Table {
+	
+	public static byte[] mTempBuff;
 	
 	public final int tableId;
 	public TableStatus table_status;
@@ -51,6 +51,10 @@ public abstract class Table {
 	}
 	
 	public Table(int tableId , Config mConfig) {
+		if(null == mTempBuff){
+			mTempBuff = new byte[Main.libClientConfig.packet_max_length_tcp];
+		}
+		
 		this.tableId = tableId;
 		this.mConfig = mConfig;
 		users = new User[mConfig.table_max_user];
@@ -201,11 +205,10 @@ public abstract class Table {
 	public void send2Access(User user,int cmd,int squenceId ,byte[] body){
 		this.send2Access(user,cmd, squenceId, body, 0, body.length);
 	}
+
 	public int send2Access(User user,int cmd,int squenceId ,byte[] body,int offset ,int length){
-		int dst_server_id = user.accessId;
-		int dispatch_type = DistapchType.TYPE_P2P;
-		int size =  DataTransfer.send2Access(Main.write_buff_dispatcher,squenceId,user.uid,cmd,dispatch_type, body,0,body.length, Main.libArgsConfig.server_type, Main.libArgsConfig.id, dst_server_id,-1,-1);
-		Main.mClientMessageProcessor.send(Main.dispatcher[0], Main.write_buff_dispatcher, 0, size);
+		length = PacketTransfer.send2Access(user.accessId,mTempBuff, squenceId, user.uid, cmd, DistapchType.TYPE_P2P, body,offset,length);
+		Main.send2Dispatch(mTempBuff, 0, length);
 		return 1;
 	}
 	

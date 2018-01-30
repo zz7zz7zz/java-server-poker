@@ -45,10 +45,10 @@ public class ClientHandler extends AbsClientHandler{
 	public void login_game(AbstractClient mClient ,byte[] data, int header_start, int header_length, int body_start, int body_length, int squenceId,AbstractClientMessageProcessor sender) throws InvalidProtocolBufferException{
 		
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
+		long uid = mDispatchPacket.getDispatchChainList(0).getUid();
+		
 		mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());
 		int accessId = mInPacket.readInt();
-		
-		long uid = mDispatchPacket.getDispatchChainList(0).getUid();
 		
 		int gameId = 0;
 		int matchId = 0;
