@@ -36,7 +36,9 @@ public class ClientHandler extends AbsClientHandler{
     		int squenceId = BasePacket.getSequenceId(data, header_start);
     		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + LoginCmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
         	
-    		if(cmd == UserCmd.CMD_LOGIN_GAME){
+    		if(cmd == UserCmd.CMD_CHECK_GAME_STATUS){
+        		checkGameStatus(squenceId,data, header_start,header_length,body_start, body_length);
+        	}else if(cmd == UserCmd.CMD_LOGIN_GAME){
         		loginGame(squenceId,data, header_start,header_length,body_start, body_length);
         	}else if(cmd == UserCmd.CMD_ENTER_ROOM){
         		enterRoom(squenceId,data, header_start,header_length,body_start, body_length);
@@ -46,6 +48,26 @@ public class ClientHandler extends AbsClientHandler{
     		
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void checkGameStatus(int squenceId ,byte[] data, int header_start, int header_length, int body_start, int body_length) throws InvalidProtocolBufferException{
+		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
+		long uid = mDispatchPacket.getDispatchChainList(0).getUid();
+		User user = Main.userMap.get(uid);
+		if(null != user){
+			int tableId = user.tableId;
+			short gameId = user.gameId;
+			short gameSid = user.gameSid;
+			short matchId = user.matchId;
+			short matchSid = user.matchSid;
+			
+			//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
+			byte[] mTempBuff = mInPacket.getPacket();
+			if(tableId > 0){//说明在游戏中，需要重新进入游戏
+				int length = PacketTransfer.send2Game(gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_LOGIN_GAME, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
+				send2Dispatch(mTempBuff,0,length);	
+			}
 		}
 	}
 	
@@ -78,10 +100,10 @@ public class ClientHandler extends AbsClientHandler{
 		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		if(tableId > 0){//说明没有在游戏中，去Alloc中寻找桌子再进入游戏
+		if(tableId > 0){//说明在游戏中，需要重新进入游戏
 			int length = PacketTransfer.send2Game(gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_LOGIN_GAME, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
 			send2Dispatch(mTempBuff,0,length);	
-		}else{
+		}else{//说明没有在游戏中，去Alloc中寻找桌子再进入游戏
 			
 			mOutPacket.begin(squenceId, AllocatorCmd.CMD_LOGIN_GAME);
 			mOutPacket.writeInt(accessId);//AccessId

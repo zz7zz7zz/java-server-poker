@@ -8,6 +8,7 @@ import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.util.log.Logger;
 import com.poker.cmd.LoginCmd;
+import com.poker.cmd.UserCmd;
 import com.poker.data.DataPacket;
 import com.poker.data.DistapchType;
 import com.poker.login.Main;
@@ -65,6 +66,7 @@ public class ClientHandler extends AbsClientHandler{
 			uid = uidObject;
 		}
 		
+		//1.返回给客户端
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
 		
@@ -80,22 +82,14 @@ public class ClientHandler extends AbsClientHandler{
 		length = PacketTransfer.send2Access(accessId,mTempBuff, squenceId, uid, LoginCmd.CMD_LOGIN_RESPONSE, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 		send2Dispatch(mTempBuff, 0, length);
 		
+		//2.检查游戏状态
+		mOutPacket.begin(squenceId, UserCmd.CMD_CHECK_GAME_STATUS);
+		mOutPacket.writeInt(accessId);//额外的数据
+		mOutPacket.end();
+		int user_server_id = 0;
+		length = PacketTransfer.send2User(user_server_id,mTempBuff, squenceId, uid, UserCmd.CMD_CHECK_GAME_STATUS, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		send2Dispatch(mTempBuff, 0, length);
+		
 		System.out.println(" socketId " + socketId + " login "+loginRequest.toString());
-	}
-	
-	public static void send2Dispatch(byte[] buff, int offset, int length){
-  		Main.dispatchIndex = (Main.dispatchIndex+1) % Main.dispatcher.length;
-  		NioClient mNioClient = Main.dispatcher[Main.dispatchIndex];
-  		if(mNioClient.isConnected()){
-  			mNioClient.getmMessageProcessor().send(mNioClient,buff,offset,length);
-  		}else{
-  			for(int i = 1;i<Main.dispatcher.length;i++){
-  				mNioClient = Main.dispatcher[(Main.dispatchIndex+i)%Main.dispatcher.length];
-          		if(mNioClient.isConnected()){
-          			mNioClient.getmMessageProcessor().send(mNioClient,buff,offset,length);
-          			break;
-          		}
-  			}
-  		}
 	}
 }
