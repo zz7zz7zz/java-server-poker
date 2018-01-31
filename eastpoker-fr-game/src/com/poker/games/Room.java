@@ -92,9 +92,11 @@ public class Room {
 			
 			if(ret == 1){
 				userMap.put(uid, mUser);
+				enterRoom(uid, mTable);
 				//更新桌子人数
 			}else{
 				UserPool.release(mUser);
+				leaveRoom(uid);
 			}
     	}else{
     		
@@ -106,6 +108,7 @@ public class Room {
     		if(cmd == GameCmd.CMD_USER_EXIT){
     			int ret = mTable.onUserExit(mUser);
     			if(ret == 1){
+    				leaveRoom(uid);
     				UserPool.release(mUser);
     				//更新桌子人数
     			}
