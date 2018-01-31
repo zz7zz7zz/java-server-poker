@@ -77,7 +77,7 @@ public abstract class Table {
 	public LoginRet userEnter(User user){
 		for (User u : users) {
 			if(null != u && u.uid == user.uid){
-				return LoginRet.LOGIN_FAILED_ALREADY_EXIST;
+				return LoginRet.LOGIN_SUCCESS_ALREADY_EXIST;
 			}
 		}
 		
@@ -124,28 +124,33 @@ public abstract class Table {
 		return 0;
 	}
 	
+	public boolean isUserInTable(User user){
+		for (int i = 0; i < users.length; i++) {
+			if(null != users[i] && users[i].uid == user.uid){
+				return true;
+			}
+		}
+		return false;
+	}
 	//---------------------------------------------------------------------
-	public int onUserLogin(User mUser){
+	public LoginRet onUserLogin(User mUser){
 		LoginRet ret= userEnter(mUser);
 		if(ret == LoginRet.LOGIN_SUCCESS){
 			onTableUserFirstLogin(mUser);
-			return 1;
-		}else if(ret == LoginRet.LOGIN_FAILED_ALREADY_EXIST){
+		}else if(ret == LoginRet.LOGIN_SUCCESS_ALREADY_EXIST){
 			onTableUserReLogin(mUser);
-			return 1;
 		}else if(ret == LoginRet.LOGIN_FAILED_FULL){
 			send2Access(mUser,SystemCmd.CMD_ERR,0,ErrorServer.error(SystemCmd.ERR_CODE_LOGIN_FAILED_TABLE_FULL,""));
-			return 0;
 		}
-		return 0;
+		return ret;
 	};
 	
-	public int onUserExit(User mUser){
+	public LogoutRet onUserExit(User mUser){
 		LogoutRet ret= userExit(mUser);
 		if(ret ==  LogoutRet.LOGOUT_SUCCESS){
 			onTableUserExit(mUser);
 		}
-		return ret == LogoutRet.LOGOUT_SUCCESS ? 1 : 0;
+		return ret;
 	};
 	
 	public int onUserReady(User mUser){

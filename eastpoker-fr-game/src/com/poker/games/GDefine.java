@@ -14,7 +14,7 @@ public class GDefine {
 	
 	enum LoginRet{
 		LOGIN_SUCCESS(1),
-		LOGIN_FAILED_ALREADY_EXIST(2),
+		LOGIN_SUCCESS_ALREADY_EXIST(2),
 		LOGIN_FAILED_FULL(3);
 		
 		int code;

@@ -6,6 +6,8 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
 import com.poker.cmd.GameCmd;
 import com.poker.common.config.Config;
+import com.poker.games.GDefine.LoginRet;
+import com.poker.games.GDefine.LogoutRet;
 import com.poker.games.impl.GTable;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
@@ -64,27 +66,16 @@ public class Room {
 		User mUser = userMap.get(uid);
 		if(null != mUser){//说明之前在桌子上,替换上真实的桌子
 			if(mUser.tid != tid){
-				Logger.v(TAG+ "tid.diff tid " + tid + " realtid "+mUser.tid);
-				Table realTable = mTables[tidIndex];
-				mTable = realTable;
+				Logger.v(TAG+ "tid.diff tid " + tid + " index "+ (tid & 0xff)+ " realtid "+mUser.tid + " realIndex" + (mUser.tid & 0xff));
+				mTable = mTables[mUser.tid & 0xff];
 			}
 		}
 		
 		if(cmd == GameCmd.CMD_LOGIN_GAME){
-			if(null == mUser){
-				mUser = UserPool.get(uid);
-			}
-			
-			int ret = mTable.onUserLogin(mUser);
-			
-			if(ret == 1){
-				userMap.put(uid, mUser);
-				mTable.enterRoom(uid, mTable);
-				//更新桌子人数
-			}else{
-				UserPool.release(mUser);
-				mTable.leaveRoom(uid);
-			}
+    		if(null == mUser){
+    			mUser = UserPool.get(uid);
+    		}
+    		loginGame(mUser,mTable);
     	}else{
     		
     		if(null == mUser){
@@ -92,13 +83,10 @@ public class Room {
 				return;
 			}
     		
-    		if(cmd == GameCmd.CMD_USER_EXIT){
-    			int ret = mTable.onUserExit(mUser);
-    			if(ret == 1){
-    				mTable.leaveRoom(uid);
-    				UserPool.release(mUser);
-    				//更新桌子人数
-    			}
+    		if(cmd == GameCmd.CMD_CHECK_GAME_STATUS){
+    			checkGameStatus(mUser,mTable);
+        	}else if(cmd == GameCmd.CMD_USER_EXIT){
+        		logoutGame(mUser,mTable);
         	}else if(cmd == GameCmd.CMD_USER_READY){
     			mTable.onUserReady(mUser);
         	}else if(cmd == GameCmd.CMD_USER_OFFLINE){
@@ -109,6 +97,36 @@ public class Room {
         		mTable.dispatchTableMessage(mUser,cmd, data, header_start, header_length, body_start, body_length);
         	}
     	}
+	}
+	
+	private void checkGameStatus(User mUser , Table mTable){
+		if(mTable.isUserInTable(mUser)){
+			loginGame(mUser,mTable);
+		}else{
+			mTable.leaveRoom(mUser.uid);
+			UserPool.release(mUser);
+		}
+	}
+	
+	private void loginGame(User mUser , Table mTable){
+		LoginRet ret = mTable.onUserLogin(mUser);
+		if(ret != LoginRet.LOGIN_FAILED_FULL){
+			mUser.tid = mTable.tableId;
+			userMap.put(mUser.uid, mUser);
+			mTable.enterRoom(mUser.uid, mTable);
+			//更新桌子人数
+		}else{
+			mTable.leaveRoom(mUser.uid);
+			UserPool.release(mUser);
+		}
+	}
+	
+	private void logoutGame(User mUser , Table mTable){
+		LogoutRet ret = mTable.onUserExit(mUser);
+		
+		mTable.leaveRoom(mUser.uid);
+		UserPool.release(mUser);
+		//更新桌子人数
 	}
 	
 //	public static void main(String arg[]){
