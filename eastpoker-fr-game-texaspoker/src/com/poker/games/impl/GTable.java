@@ -7,6 +7,7 @@ import com.poker.common.config.Config;
 import com.poker.game.handler.GameBaseServer;
 import com.poker.games.GBaseCmd;
 import com.poker.games.GDefine.TableStatus;
+import com.poker.games.Room;
 import com.poker.games.Table;
 import com.poker.games.User;
 import com.poker.games.impl.GDefine.GStatus;
@@ -43,8 +44,8 @@ public class GTable extends Table {
 	
 	public GStep step;
 	
-	public GTable(int tableId, Config mConfig,GameConfig mGameConfig,CardConfig mCardConfig) {
-		super(tableId, mConfig);
+	public GTable(Room mRoom,int tableId, Config mConfig,GameConfig mGameConfig,CardConfig mCardConfig) {
+		super(mRoom,tableId, mConfig);
 		this.mCardConfig = mCardConfig;
 	}
 
