@@ -407,12 +407,26 @@ public final class GameServerProto {
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
+    //-----------------------------------------------------
+    public static com.poker.protocols.game.server.GameServerProto.GameServer parseFrom(byte[] data,int offset ,int length)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return PARSER.parseFrom(data,offset,length);
+        }
+    //-----------------------------------------------------
     public static com.poker.protocols.game.server.GameServerProto.GameServer parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
+    //-----------------------------------------------------
+    public static com.poker.protocols.game.server.GameServerProto.GameServer parseFrom(
+    		byte[] data,int offset ,int length,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return PARSER.parseFrom(data,offset,length, extensionRegistry);
+        }
+   //-----------------------------------------------------
     public static com.poker.protocols.game.server.GameServerProto.GameServer parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
