@@ -22,7 +22,7 @@ import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 public class ClientHandler extends AbsClientHandler{
 
 	public static HashMap<String, Long> uidMap = new HashMap<>();
-	public static int uid_auto_generator = 10000;
+	public static int uid_auto_generator = 10001;
 	
 	public ClientHandler(InPacket mInPacket, OutPacket mOutPacket) {
 		super(mInPacket, mOutPacket);
