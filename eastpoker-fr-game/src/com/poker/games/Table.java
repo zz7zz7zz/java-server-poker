@@ -1,29 +1,45 @@
 package com.poker.games;
 
+import com.poker.cmd.AllocatorCmd;
 import com.poker.cmd.SystemCmd;
+import com.poker.cmd.UserCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DistapchType;
 import com.poker.game.Main;
 import com.poker.games.GDefine.LoginRet;
 import com.poker.games.GDefine.LogoutRet;
 import com.poker.games.GDefine.TableStatus;
+import com.poker.packet.InPacket;
+import com.poker.packet.OutPacket;
 import com.poker.packet.PacketTransfer;
 import com.poker.protocols.server.ErrorServer;
 
 public abstract class Table {
 	
+	public Room mRoom;
 	public final int tableId;
-	public TableStatus table_status;
-	
 	public Config mConfig;
+	
+	public TableStatus table_status;
 	public final User[] users;
 	public int count;
 
-	public Table(int tableId , Config mConfig) {
+	
+	static InPacket  mInPacket;
+	static OutPacket mOutPacket;
+	
+	public Table(Room mRoom , int tableId , Config mConfig) {
+		this.mRoom = mRoom;
 		this.tableId = tableId;
 		this.mConfig = mConfig;
+		
 		users = new User[mConfig.table_max_user];
 		count=0;
+		
+		if(null == mInPacket){
+			mInPacket = new InPacket(Main.libClientConfig.packet_max_length_tcp);
+			mOutPacket= new OutPacket(Main.libClientConfig.packet_max_length_tcp);
+		}
 	}
 
 	public int getUserCount(){
@@ -164,16 +180,43 @@ public abstract class Table {
 	protected void stopGame(){
 		table_status = TableStatus.TABLE_STATUS_STOP;
 		//更新用户游戏状态
+		
+		for (int i = 0; i < users.length; i++) {
+			if(null != users[i] && users[i].onLineStatus == 0){
+				users[i] = null;
+			}
+		}
 	}
 	
+	public void enterRoom(long uid,Table table){
+		
+		mOutPacket.begin(0, AllocatorCmd.CMD_LOGIN_GAME);
+		mOutPacket.writeInt(table.tableId);
+		mOutPacket.writeShort(mRoom.gameId);
+		mOutPacket.writeShort(mRoom.gameSid);
+		mOutPacket.end();
+		
+		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
+		byte[] mTempBuff = mInPacket.getPacket();
+		int length = PacketTransfer.send2User(0, mTempBuff, 0, uid, UserCmd.CMD_ENTER_ROOM, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		Main.send2Dispatch(mTempBuff,0,length);	
+	}
+	
+	public void leaveRoom(long uid){
+		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
+		byte[] mTempBuff = mInPacket.getPacket();
+		
+		int length = PacketTransfer.send2User(0, mTempBuff, 0, uid, UserCmd.CMD_LEAVE_ROOM, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
+		Main.send2Dispatch(mTempBuff,0,length);	
+	}
 	
 	public void send2Access(User user,int cmd,int squenceId ,byte[] body){
 		this.send2Access(user,cmd, squenceId, body, 0, body.length);
 	}
 
 	public int send2Access(User user,int cmd,int squenceId ,byte[] body,int offset ,int length){
-		length = PacketTransfer.send2Access(user.accessId,Room.mOutPacket.getPacket(), squenceId, user.uid, cmd, DistapchType.TYPE_P2P, body,offset,length);
-		Main.send2Dispatch(Room.mOutPacket.getPacket(), 0, length);
+		length = PacketTransfer.send2Access(user.accessId,mOutPacket.getPacket(), squenceId, user.uid, cmd, DistapchType.TYPE_P2P, body,offset,length);
+		Main.send2Dispatch(mOutPacket.getPacket(), 0, length);
 		return 1;
 	}
 	

@@ -4,28 +4,18 @@ import java.util.HashMap;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
-import com.poker.cmd.AllocatorCmd;
 import com.poker.cmd.GameCmd;
-import com.poker.cmd.UserCmd;
 import com.poker.common.config.Config;
-import com.poker.data.DistapchType;
-import com.poker.game.Main;
 import com.poker.games.impl.GTable;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
-import com.poker.packet.InPacket;
-import com.poker.packet.OutPacket;
-import com.poker.packet.PacketTransfer;
+
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 
 
 public class Room {
 	
 	private final String TAG = "Room";
-	
-	static InPacket  mInPacket;
-	static OutPacket mOutPacket;
-	
 	public HashMap<Long,User> userMap = new HashMap<>();
 	public Table mTables[];
 	public short gameId;
@@ -51,9 +41,6 @@ public class Room {
 		//预先分配1/4桌子数目的用户，每次增长1/4桌子数目的用户
 		int user_init_size = (int)(0.25*mConfig.table_count) * mConfig.table_max_user;
 		UserPool.init(user_init_size,user_init_size);
-		
-		mInPacket = new InPacket(Main.libClientConfig.packet_max_length_tcp);
-		mOutPacket= new OutPacket(Main.libClientConfig.packet_max_length_tcp);
 	}
 
 	//---------------------------------------------------------------
@@ -92,11 +79,11 @@ public class Room {
 			
 			if(ret == 1){
 				userMap.put(uid, mUser);
-				enterRoom(uid, mTable);
+				mTable.enterRoom(uid, mTable);
 				//更新桌子人数
 			}else{
 				UserPool.release(mUser);
-				leaveRoom(uid);
+				mTable.leaveRoom(uid);
 			}
     	}else{
     		
@@ -108,7 +95,7 @@ public class Room {
     		if(cmd == GameCmd.CMD_USER_EXIT){
     			int ret = mTable.onUserExit(mUser);
     			if(ret == 1){
-    				leaveRoom(uid);
+    				mTable.leaveRoom(uid);
     				UserPool.release(mUser);
     				//更新桌子人数
     			}
@@ -122,28 +109,6 @@ public class Room {
         		mTable.dispatchTableMessage(mUser,cmd, data, header_start, header_length, body_start, body_length);
         	}
     	}
-	}
-	
-	public void enterRoom(long uid,Table table){
-		
-		mOutPacket.begin(0, AllocatorCmd.CMD_LOGIN_GAME);
-		mOutPacket.writeInt(table.tableId);
-		mOutPacket.writeShort(gameId);
-		mOutPacket.writeShort(gameSid);
-		mOutPacket.end();
-		
-		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
-		byte[] mTempBuff = mInPacket.getPacket();
-		int length = PacketTransfer.send2User(0, mTempBuff, 0, uid, UserCmd.CMD_ENTER_ROOM, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
-		Main.send2Dispatch(mTempBuff,0,length);	
-	}
-	
-	public void leaveRoom(long uid){
-		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
-		byte[] mTempBuff = mInPacket.getPacket();
-		
-		int length = PacketTransfer.send2User(0, mTempBuff, 0, uid, UserCmd.CMD_LEAVE_ROOM, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
-		Main.send2Dispatch(mTempBuff,0,length);	
 	}
 	
 //	public static void main(String arg[]){
