@@ -1,0 +1,15 @@
+syntax="proto3";
+
+package com.poker.protocols.game.server.proto; 
+
+import "src/com/poker/protocols/game/server/proto/GameUser.proto";
+
+option java_package = "com.poker.protocols.game.server";
+option java_outer_classname = "ResponseLoginGameProto";
+
+message ResponseLoginGame{
+	int32  seatId        	= 1;
+	repeated GameUser users = 2;   
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/game/server/proto/ResponseLoginGame.proto

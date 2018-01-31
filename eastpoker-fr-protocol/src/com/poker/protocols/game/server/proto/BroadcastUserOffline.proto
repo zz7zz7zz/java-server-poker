@@ -1,0 +1,13 @@
+syntax="proto3";
+
+package com.poker.protocols.game.server.proto; 
+
+option java_package = "com.poker.protocols.game.server";
+option java_outer_classname = "BroadcastUserOfflineProto";
+
+message BroadcastUserOffline{
+	int64  uid    = 1;
+	int32  status = 2;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/game/server/proto/BroadcastUserOffline.proto

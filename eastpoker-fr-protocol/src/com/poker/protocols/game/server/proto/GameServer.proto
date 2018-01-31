@@ -1,0 +1,19 @@
+syntax="proto3";
+
+package com.poker.protocols.game.server.proto; 
+
+import "src/com/poker/protocols/game/server/proto/GameTable.proto";
+
+option java_package = "com.poker.protocols.game.server";
+option java_outer_classname = "GameServerProto";
+
+message GameServer{
+	int32 server_id  				= 1;
+	int32 game_id  	 				= 2;
+	int32 game_level  				= 3;
+	int32 table_count  				= 4;
+	int32 table_max_user   			= 5;
+	repeated GameTable tableList 	= 6;   
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/game/server/proto/GameServer.proto

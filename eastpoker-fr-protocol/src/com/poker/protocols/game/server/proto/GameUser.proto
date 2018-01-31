@@ -1,8 +1,8 @@
 syntax="proto3";
 
-package com.poker.protocols.game.proto; 
+package com.poker.protocols.game.server.proto; 
 
-option java_package = "com.poker.protocols.game";
+option java_package = "com.poker.protocols.game.server";
 option java_outer_classname = "GameUserProto";
 
 message GameUser{
@@ -14,4 +14,4 @@ message GameUser{
 	int32  seatId        = 6;
 }
 
-// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/game/proto/GameUser.proto 
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/game/server/proto/GameUser.proto 

@@ -2,16 +2,18 @@ package com.poker.game.handler;
 
 import com.poker.games.Table;
 import com.poker.games.User;
-import com.poker.protocols.game.BroadcastUserExitProto.BroadcastUserExit;
-import com.poker.protocols.game.BroadcastUserLoginProto.BroadcastUserLogin;
-import com.poker.protocols.game.BroadcastUserOfflineProto.BroadcastUserOffline;
-import com.poker.protocols.game.GameUserProto.GameUser;
-import com.poker.protocols.game.UserLoginProto.UserLogin;
+import com.poker.protocols.game.server.BroadcastUserExitProto.BroadcastUserExit;
+import com.poker.protocols.game.server.BroadcastUserLoginProto.BroadcastUserLogin;
+import com.poker.protocols.game.server.BroadcastUserOfflineProto.BroadcastUserOffline;
+import com.poker.protocols.game.server.BroadcastUserReadyProto.BroadcastUserReady;
+import com.poker.protocols.game.server.GameUserProto.GameUser;
+import com.poker.protocols.game.server.ResponseLoginGameProto.ResponseLoginGame;
+
 
 public class GameBaseServer {
 	
 	public static byte[] userLogin(int seatId,Table table){
-		UserLogin.Builder builder = UserLogin.newBuilder();
+		ResponseLoginGame.Builder builder = ResponseLoginGame.newBuilder();
 		builder.setSeatId(seatId);
 		
 		for(int i =0 ;i<table.users.length;i++){
@@ -43,7 +45,7 @@ public class GameBaseServer {
 		userBuild.setLevel(mUser.level);
 		userBuild.setSeatId(mUser.seatId);
 		
-		builder.addUsers(userBuild);
+		builder.setUsers(userBuild);
 		
 		byte[] body = builder.build().toByteArray();
 		return body;
@@ -51,13 +53,14 @@ public class GameBaseServer {
 	
 	public static byte[] broadUserLogout(User mUser){
 		BroadcastUserExit.Builder builder = BroadcastUserExit.newBuilder();
-		
-		GameUser.Builder userBuild = GameUser.newBuilder();
-		userBuild.setUid(mUser.uid);
-		userBuild.setSeatId(mUser.seatId);
-		
-		builder.addUsers(userBuild);
-		
+		builder.setSeatId(mUser.seatId);
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+	
+	public static byte[] broadUserReady(User mUser){
+		BroadcastUserReady.Builder builder = BroadcastUserReady.newBuilder();
+		builder.setSeatId(mUser.seatId);
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}

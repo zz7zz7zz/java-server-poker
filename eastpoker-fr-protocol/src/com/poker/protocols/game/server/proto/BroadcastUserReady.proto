@@ -1,0 +1,12 @@
+syntax="proto3";
+
+package com.poker.protocols.game.server.proto; 
+
+option java_package = "com.poker.protocols.game.server";
+option java_outer_classname = "BroadcastUserReadyProto";
+
+message BroadcastUserReady{
+	int32 seatId = 1; 
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/game/server/proto/BroadcastUserReady.proto

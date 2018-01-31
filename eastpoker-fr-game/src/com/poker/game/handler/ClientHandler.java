@@ -15,8 +15,8 @@ import com.poker.games.Room;
 import com.poker.games.Table;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
-import com.poker.protocols.game.GameServerProto;
-import com.poker.protocols.game.GameTableProto;
+import com.poker.protocols.game.server.GameServerProto;
+import com.poker.protocols.game.server.GameTableProto;
 
 public class ClientHandler extends AbsClientHandler{
 	
