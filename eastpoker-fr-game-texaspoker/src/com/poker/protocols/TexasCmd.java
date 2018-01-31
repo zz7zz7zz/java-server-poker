@@ -1,4 +1,4 @@
-package com.poker.games.impl.handler;
+package com.poker.protocols;
 
 public final class TexasCmd {
 	

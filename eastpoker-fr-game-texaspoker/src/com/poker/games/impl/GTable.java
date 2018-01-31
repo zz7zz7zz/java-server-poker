@@ -14,10 +14,10 @@ import com.poker.games.impl.GDefine.GStatus;
 import com.poker.games.impl.GDefine.GStep;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
-import com.poker.games.impl.handler.TexasCmd;
-import com.poker.games.impl.handler.TexasGameServer;
+
+import com.poker.protocols.TexasCmd;
+import com.poker.protocols.TexasGameServer;
 import com.poker.protocols.texaspoker.TexasGameActionRequestProto.TexasGameActionRequest;
-import com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction;
 import com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate;
 
 public class GTable extends Table {

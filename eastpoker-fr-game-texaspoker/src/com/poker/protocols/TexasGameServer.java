@@ -1,4 +1,4 @@
-package com.poker.games.impl.handler;
+package com.poker.protocols;
 
 
 import com.poker.games.Table;
