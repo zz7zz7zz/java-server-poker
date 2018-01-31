@@ -3,7 +3,6 @@ package com.poker.login.handler;
 import java.util.HashMap;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.open.net.client.impl.tcp.nio.NioClient;
 import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.util.log.Logger;
@@ -11,13 +10,12 @@ import com.poker.cmd.LoginCmd;
 import com.poker.cmd.UserCmd;
 import com.poker.data.DataPacket;
 import com.poker.data.DistapchType;
-import com.poker.login.Main;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.packet.PacketInfo;
 import com.poker.packet.PacketTransfer;
 import com.poker.protocols.login.client.LoginServer;
-import com.poker.protocols.login.client.proto.LoginRequestProto;
+import com.poker.protocols.login.client.RequestLoginProto.RequestLogin;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 
 
@@ -53,7 +51,7 @@ public class ClientHandler extends AbsClientHandler{
 		long socketId = mInPacket.readLong();
 		PacketInfo mSubPacket = mInPacket.readBytesToSubPacket();
 
-		LoginRequestProto.LoginRequest loginRequest = LoginRequestProto.LoginRequest.parseFrom(mSubPacket.buff,mSubPacket.body_start, mSubPacket.body_length);
+		RequestLogin loginRequest = RequestLogin.parseFrom(mSubPacket.buff,mSubPacket.body_start, mSubPacket.body_length);
 		String uuid = loginRequest.getUuid();
 		long uid = 0;
 		Long uidObject = uidMap.get(uuid);
