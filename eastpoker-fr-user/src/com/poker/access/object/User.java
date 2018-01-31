@@ -4,6 +4,7 @@ public class User {
 	
 	public long uid;
 	
+	public int accessId;
 	public long socketId;
 	public long socketHeartBeatTime;
 	

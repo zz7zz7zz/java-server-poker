@@ -2,19 +2,21 @@ package com.poker.games;
 
 import java.util.HashMap;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
 import com.poker.cmd.GameCmd;
 import com.poker.common.config.Config;
 import com.poker.games.impl.GTable;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
+import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 
 
 public class Room {
 	
 	private final String TAG = "Room";
 	
-	public HashMap<Integer,User> userMap = new HashMap<>();
+	public HashMap<Long,User> userMap = new HashMap<>();
 	public Table mTables[];
 	
 	public Room(Config mConfig) {
@@ -37,8 +39,11 @@ public class Room {
 	}
 
 	//---------------------------------------------------------------
-	public void dispatchRoomMessage(int cmd , byte[] data,int header_start,int header_length,int body_start,int body_length){
-		int uid = 0;
+	public void dispatchRoomMessage(int cmd , byte[] data,int header_start,int header_length,int body_start,int body_length) throws InvalidProtocolBufferException{
+		
+		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
+		long uid = mDispatchPacket.getDispatchChainList(0).getUid();
+		
 		int tid = 0;
 		
 		int tidIndex = tid & 0xff;

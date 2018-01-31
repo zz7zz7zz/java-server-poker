@@ -54,6 +54,8 @@ public class ClientHandler extends AbsClientHandler{
 	public void checkGameStatus(int squenceId ,byte[] data, int header_start, int header_length, int body_start, int body_length) throws InvalidProtocolBufferException{
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
 		long uid = mDispatchPacket.getDispatchChainList(0).getUid();
+		int accessId  = mInPacket.readInt();
+		
 		User user = Main.userMap.get(uid);
 		if(null != user){
 			int tableId = user.tableId;
@@ -67,6 +69,11 @@ public class ClientHandler extends AbsClientHandler{
 			if(tableId > 0){//说明在游戏中，需要重新进入游戏
 				int length = PacketTransfer.send2Game(gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_LOGIN_GAME, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
 				send2Dispatch(mTempBuff,0,length);	
+			}
+			
+			if(user.accessId != accessId){
+				user.accessId = accessId;
+				//需要断掉旧的连接，以新的连接为准
 			}
 		}
 	}
@@ -96,6 +103,11 @@ public class ClientHandler extends AbsClientHandler{
 			gameSid = user.gameSid;
 			matchId = user.matchId;
 			matchSid = user.matchSid;
+		}
+		
+		if(user.accessId != accessId){
+			user.accessId = accessId;
+			//需要断掉旧的连接，以新的连接为准
 		}
 		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
