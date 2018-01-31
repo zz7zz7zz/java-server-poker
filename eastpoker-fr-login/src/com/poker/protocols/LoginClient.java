@@ -1,4 +1,4 @@
-package com.poker.protocols.login.client;
+package com.poker.protocols;
 import com.poker.protocols.login.client.RequestLoginProto.RequestLogin;
 
 public class LoginClient {

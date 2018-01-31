@@ -14,7 +14,7 @@ import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.packet.PacketInfo;
 import com.poker.packet.PacketTransfer;
-import com.poker.protocols.login.client.LoginServer;
+import com.poker.protocols.LoginServer;
 import com.poker.protocols.login.client.RequestLoginProto.RequestLogin;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 

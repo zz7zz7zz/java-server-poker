@@ -1,4 +1,4 @@
-package com.poker.protocols.login.client;
+package com.poker.protocols;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
