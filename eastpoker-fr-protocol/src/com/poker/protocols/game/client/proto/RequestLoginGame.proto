@@ -1,0 +1,13 @@
+syntax="proto3";
+
+package com.poker.protocols.game.client.proto; 
+
+option java_package = "com.poker.protocols.game.client";
+option java_outer_classname = "RequestLoginGameProto";
+
+message RequestLoginGame{
+	int32  gameid        	= 1;
+	int32  level            = 2;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/game/client/proto/RequestLoginGame.proto
