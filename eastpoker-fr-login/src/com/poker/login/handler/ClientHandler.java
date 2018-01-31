@@ -72,7 +72,7 @@ public class ClientHandler extends AbsClientHandler{
 		mOutPacket.writeLong(socketId);//额外的数据
 		mOutPacket.writeLong(uid);//额外的数据
 		//发给客户端的包
-		byte[] resp_data = LoginServer.login_response(squenceId, (int)uid);
+		byte[] resp_data = LoginServer.responseLogin(squenceId, uid,"粤B"+uid%100000,"http://img0.bdstatic.com/static/searchresult/img/logo-2X_b99594a.png",1);
 		int length = DataPacket.write(mTempBuff, squenceId, LoginCmd.CMD_LOGIN_RESPONSE, (byte)0, resp_data, 0, resp_data.length);
 		mOutPacket.writeBytes(mTempBuff,0,length);
 		mOutPacket.end();
