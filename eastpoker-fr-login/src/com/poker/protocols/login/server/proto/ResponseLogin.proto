@@ -1,0 +1,13 @@
+syntax="proto3";
+
+option java_package = "com.poker.protocols.login.server";
+option java_outer_classname = "ResponseLoginProto";
+
+message ResponseLogin{
+	int64  uid   		 = 1;
+	string nick_name     = 2;
+	string head_portrait = 3;
+	int32  level         = 4;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/login/server/proto/ResponseLogin.proto 

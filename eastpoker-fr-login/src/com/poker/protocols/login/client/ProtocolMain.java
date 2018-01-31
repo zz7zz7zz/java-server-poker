@@ -1,11 +1,11 @@
-package com.poker.protocols.login;
+package com.poker.protocols.login.client;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import com.google.protobuf.ByteString;
-import com.poker.protocols.login.LoginRequestProto;
-import com.poker.protocols.login.LoginResponseProto;
+import com.poker.protocols.login.client.RequestLoginProto.RequestLogin;
+import com.poker.protocols.login.server.ResponseLoginProto.ResponseLogin;
 import com.poker.protocols.server.DispatchChainProto;
 import com.poker.protocols.server.DispatchPacketProto;
 import com.poker.protocols.server.ServerProto;
@@ -107,13 +107,13 @@ public class ProtocolMain {
 	public static void testLogin(){
 		
 		// 按照定义的数据结构，创建一个对象
-		LoginRequestProto.LoginRequest.Builder builder = LoginRequestProto.LoginRequest.newBuilder();
+		RequestLogin.Builder builder = RequestLogin.newBuilder();
 		builder.setUuid("10001");
 		builder.setUid(1);
 		
 		// 将数据写到输出流，如网络输出流，这里就用ByteArrayOutputStream来代替 
 		ByteArrayOutputStream output = new ByteArrayOutputStream(16*1024);
-		LoginRequestProto.LoginRequest obj = builder.build();
+		RequestLogin obj = builder.build();
 		try {
 			obj.writeTo(output);
 			//op.write(obj.toByteArray())
@@ -131,7 +131,7 @@ public class ProtocolMain {
 		// 接收到流并读取，如网络输入流，这里用ByteArrayInputStream来代替  
 //        ByteArrayInputStream input = new ByteArrayInputStream(byteArray);
         try {
-        	LoginRequestProto.LoginRequest readObj = LoginRequestProto.LoginRequest.parseFrom(byteArray,0,byteArray.length);
+        	RequestLogin readObj = RequestLogin.parseFrom(byteArray,0,byteArray.length);
 			
 			System.out.println(" input length " + byteArray.length + " toString " + readObj.toString());
 		} catch (IOException e) {
@@ -143,12 +143,12 @@ public class ProtocolMain {
 	public static void testLoginResponse(){
 		
 		// 按照定义的数据结构，创建一个对象
-		LoginResponseProto.LoginResponse.Builder builder = LoginResponseProto.LoginResponse.newBuilder();
+		ResponseLogin.Builder builder =ResponseLogin.newBuilder();
 		builder.setUid(1);
 		
 		// 将数据写到输出流，如网络输出流，这里就用ByteArrayOutputStream来代替 
 		ByteArrayOutputStream output = new ByteArrayOutputStream(16*1024);
-		LoginResponseProto.LoginResponse obj = builder.build();
+		ResponseLogin obj = builder.build();
 		try {
 			obj.writeTo(output);
 			//op.write(obj.toByteArray())
@@ -166,7 +166,7 @@ public class ProtocolMain {
 		// 接收到流并读取，如网络输入流，这里用ByteArrayInputStream来代替  
 //        ByteArrayInputStream input = new ByteArrayInputStream(byteArray);
         try {
-        	LoginResponseProto.LoginResponse readObj = LoginResponseProto.LoginResponse.parseFrom(byteArray,0,byteArray.length);
+        	ResponseLogin readObj = ResponseLogin.parseFrom(byteArray,0,byteArray.length);
 			
 			System.out.println(" input length " + byteArray.length + " toString " + readObj.toString());
 		} catch (IOException e) {
