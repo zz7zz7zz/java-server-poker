@@ -1,6 +1,6 @@
 package com.poker.games.impl.handler;
 
-public final class GCmd {
+public final class TexasCmd {
 	
 	//客户端发起命令字
 	public static final int CMD_CLIENT_WHO_ACTION_WHAT				= 0x1006; //谁做了什么操作

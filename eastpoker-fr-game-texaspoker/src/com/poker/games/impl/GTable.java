@@ -14,7 +14,7 @@ import com.poker.games.impl.GDefine.GStatus;
 import com.poker.games.impl.GDefine.GStep;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
-import com.poker.games.impl.handler.GCmd;
+import com.poker.games.impl.handler.TexasCmd;
 import com.poker.games.impl.handler.TexasGameServer;
 import com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction;
 import com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate;
@@ -73,7 +73,7 @@ public class GTable extends Table {
 	protected int onTableUserReLogin(User mUser) {
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){
 			squenceId++;
-			send2Access(mUser,GCmd.CMD_SERVER_RECONNECT, squenceId, TexasGameServer.reconnect(this,mGameConfig));
+			send2Access(mUser,TexasCmd.CMD_SERVER_RECONNECT, squenceId, TexasGameServer.reconnect(this,mGameConfig));
 			return 0;
 		}
 		return 0;
@@ -106,7 +106,7 @@ public class GTable extends Table {
 	@Override
 	protected int dispatchTableMessage(User mUser,int cmd, byte[] data, int header_start, int header_length, int body_start,
 			int body_length) {
-		if(cmd == GCmd.CMD_CLIENT_WHO_ACTION_WHAT) {
+		if(cmd == TexasCmd.CMD_CLIENT_WHO_ACTION_WHAT) {
 			action(mUser,data, body_start, body_length);
 		}
 		return 0;
@@ -175,7 +175,7 @@ public class GTable extends Table {
     	
     	//3.发送游戏开始数据
     	squenceId++;
-    	broadcast(null,GCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.start(sb_seatid, bb_seatid, btn_seateId, mGameConfig));
+    	broadcast(null,TexasCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.start(sb_seatid, bb_seatid, btn_seateId, mGameConfig));
 	}
 	
 	public void dealPreFlop() {
@@ -223,7 +223,7 @@ public class GTable extends Table {
      		
      		GUser user = gGsers[i];
      		squenceId++;
-        	send2Access(user,GCmd.CMD_SERVER_DEAL_PREFLOP, squenceId, TexasGameServer.dealPreFlop( user.handCard));
+        	send2Access(user,TexasCmd.CMD_SERVER_DEAL_PREFLOP, squenceId, TexasGameServer.dealPreFlop( user.handCard));
 	    }
 		 
   		step = GStep.PREFLOP;
@@ -256,7 +256,7 @@ public class GTable extends Table {
   		step = GStep.FLOP;
   		
 		squenceId++;
-		broadcast(null,GCmd.CMD_SERVER_DEAL_FLOP, squenceId, TexasGameServer.dealFlop(flop));
+		broadcast(null,TexasCmd.CMD_SERVER_DEAL_FLOP, squenceId, TexasGameServer.dealFlop(flop));
 		
 		next_option(null);
 	}
@@ -285,7 +285,7 @@ public class GTable extends Table {
   		step = GStep.TRUN;
   		
 		squenceId++;
-		broadcast(null,GCmd.CMD_SERVER_DEAL_TURN, squenceId, TexasGameServer.dealTrun(turn));
+		broadcast(null,TexasCmd.CMD_SERVER_DEAL_TURN, squenceId, TexasGameServer.dealTrun(turn));
 		
 		next_option(null);
 	}
@@ -314,7 +314,7 @@ public class GTable extends Table {
   		step = GStep.RIVER;
   		
 		squenceId++;
-		broadcast(null,GCmd.CMD_SERVER_DEAL_RIVER, squenceId,TexasGameServer.dealRiver(river));
+		broadcast(null,TexasCmd.CMD_SERVER_DEAL_RIVER, squenceId,TexasGameServer.dealRiver(river));
 		
 		next_option(null);
 	}
@@ -420,7 +420,7 @@ public class GTable extends Table {
 			}
 		}else {
 			squenceId++;
-			broadcast(null,GCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction(last_user,max_round_chip,action_seatid,
+			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction(last_user,max_round_chip,action_seatid,
 					op_min_raise_chip,op_max_raise_chip,op_call_chip));
 		}
 	}
@@ -430,12 +430,12 @@ public class GTable extends Table {
   		step = GStep.SHOWHAND;
   		
 		squenceId++;
-		broadcast(null,GCmd.CMD_SERVER_BROADCAST_SHOW_HAND, squenceId, TexasGameServer.showHand(this));
+		broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_SHOW_HAND, squenceId, TexasGameServer.showHand(this));
 	}
 	
 	public void stopGame() {
 		squenceId++;
-		broadcast(null,GCmd.CMD_SERVER_GAME_END, squenceId, TexasGameServer.end(this));
+		broadcast(null,TexasCmd.CMD_SERVER_GAME_END, squenceId, TexasGameServer.end(this));
 		
 		//--------------------------------------------------------------------------------
 		cardFlags |= Long.MAX_VALUE;
