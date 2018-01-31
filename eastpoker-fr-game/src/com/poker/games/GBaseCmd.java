@@ -11,4 +11,5 @@ public final class GBaseCmd {
 	public static final int CMD_SERVER_USERREADY   				= 0x1005; 
 	public static final int CMD_SERVER_BROAD_USERREADY   		= 0x1006; 
 	
+	public static final int CMD_SERVER_BROAD_USEROFFLINE  		= 0x1007; 
 }

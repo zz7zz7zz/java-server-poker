@@ -1,10 +1,74 @@
-1.用户进入 0x7001
-返回当前用户分配的seatId
-返回当前除了自己以外的已经入座的所有用户信息
+1.用户进入 0x1001
+	public static byte[] userLogin(int seatId,Table table){
+		ResponseLoginGame.Builder builder = ResponseLoginGame.newBuilder();
+		builder.setSeatId(seatId);
+		
+		for(int i =0 ;i<table.users.length;i++){
+			User mUser = table.users[i];
+			if(null  != mUser && mUser.seatId != seatId){
+				GameUser.Builder userBuild = GameUser.newBuilder();
+				userBuild.setUid(mUser.uid);
+				userBuild.setNickName(mUser.nick_name);
+				userBuild.setHeadPortrait(mUser.head_portrait);
+				userBuild.setChip(mUser.chip);
+				userBuild.setLevel(mUser.level);
+				userBuild.setSeatId(mUser.seatId);
+				
+				builder.addUsers(userBuild);
+			}
+		}
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+	
 
-2.广播用户进入 0x7002
-返回当前除了自己以外的已经入座的所有用户信息
+2.广播用户进入 0x1002
+	public static byte[] broadUserLogin(User mUser){
+		BroadcastUserLogin.Builder builder = BroadcastUserLogin.newBuilder();
+		
+		GameUser.Builder userBuild = GameUser.newBuilder();
+		userBuild.setUid(mUser.uid);
+		userBuild.setNickName(mUser.nick_name);
+		userBuild.setHeadPortrait(mUser.head_portrait);
+		userBuild.setChip(mUser.chip);
+		userBuild.setLevel(mUser.level);
+		userBuild.setSeatId(mUser.seatId);
+		
+		builder.setUsers(userBuild);
+		
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+	
 
-3.用户退出 0x7003
+3.用户退出         0x1003
 
-3.广播用户退出 0x7004
+
+4.广播用户退出 0x1004
+	public static byte[] broadUserLogout(User mUser){
+		BroadcastUserExit.Builder builder = BroadcastUserExit.newBuilder();
+		builder.setSeatId(mUser.seatId);
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+	
+	
+5.用户退出         0x1005
+	
+	
+6.广播用户准备   0x1006
+	public static byte[] broadUserReady(User mUser){
+		BroadcastUserReady.Builder builder = BroadcastUserReady.newBuilder();
+		builder.setSeatId(mUser.seatId);
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+	
+7.广播用户掉线 0x1007
+		public static byte[] broadUserOffline(long uid,int status){
+		BroadcastUserOffline.Builder builder = BroadcastUserOffline.newBuilder();
+		builder.setUid(uid);
+		builder.setStatus(status);
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
