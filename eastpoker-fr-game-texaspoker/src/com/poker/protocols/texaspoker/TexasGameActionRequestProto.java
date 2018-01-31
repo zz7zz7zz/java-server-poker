@@ -28,13 +28,13 @@ public final class TexasGameActionRequestProto {
     int getSeatId();
 
     /**
-     * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 2;</code>
+     * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 2;</code>
      */
     int getOperateValue();
     /**
-     * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 2;</code>
+     * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 2;</code>
      */
-    com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate getOperate();
+    com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate getOperate();
 
     /**
      * <code>int64 chip = 3;</code>
@@ -146,17 +146,17 @@ public final class TexasGameActionRequestProto {
     public static final int OPERATE_FIELD_NUMBER = 2;
     private int operate_;
     /**
-     * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 2;</code>
+     * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 2;</code>
      */
     public int getOperateValue() {
       return operate_;
     }
     /**
-     * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 2;</code>
+     * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 2;</code>
      */
-    public com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate getOperate() {
-      com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate result = com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate.valueOf(operate_);
-      return result == null ? com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate.UNRECOGNIZED : result;
+    public com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate getOperate() {
+      com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate result = com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate.valueOf(operate_);
+      return result == null ? com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate.UNRECOGNIZED : result;
     }
 
     public static final int CHIP_FIELD_NUMBER = 3;
@@ -183,7 +183,7 @@ public final class TexasGameActionRequestProto {
       if (seatId_ != 0) {
         output.writeInt32(1, seatId_);
       }
-      if (operate_ != com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate.FOLD.getNumber()) {
+      if (operate_ != com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate.FOLD.getNumber()) {
         output.writeEnum(2, operate_);
       }
       if (chip_ != 0L) {
@@ -201,7 +201,7 @@ public final class TexasGameActionRequestProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(1, seatId_);
       }
-      if (operate_ != com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate.FOLD.getNumber()) {
+      if (operate_ != com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate.FOLD.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(2, operate_);
       }
@@ -539,13 +539,13 @@ public final class TexasGameActionRequestProto {
 
       private int operate_ = 0;
       /**
-       * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 2;</code>
+       * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 2;</code>
        */
       public int getOperateValue() {
         return operate_;
       }
       /**
-       * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 2;</code>
+       * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 2;</code>
        */
       public Builder setOperateValue(int value) {
         operate_ = value;
@@ -553,16 +553,16 @@ public final class TexasGameActionRequestProto {
         return this;
       }
       /**
-       * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 2;</code>
+       * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 2;</code>
        */
-      public com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate getOperate() {
-        com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate result = com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate.valueOf(operate_);
-        return result == null ? com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate.UNRECOGNIZED : result;
+      public com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate getOperate() {
+        com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate result = com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate.valueOf(operate_);
+        return result == null ? com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate.UNRECOGNIZED : result;
       }
       /**
-       * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 2;</code>
+       * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 2;</code>
        */
-      public Builder setOperate(com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate value) {
+      public Builder setOperate(com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -572,7 +572,7 @@ public final class TexasGameActionRequestProto {
         return this;
       }
       /**
-       * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 2;</code>
+       * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 2;</code>
        */
       public Builder clearOperate() {
         
@@ -671,14 +671,14 @@ public final class TexasGameActionRequestProto {
     java.lang.String[] descriptorData = {
       "\nEsrc/com/poker/protocols/texaspoker/pro" +
       "to/TexasGameActionRequest.proto\022$com.pok" +
-      "er.protocols.texaspoker.proto\032>src/com/p" +
+      "er.protocols.texaspoker.proto\032Gsrc/com/p" +
       "oker/protocols/texaspoker/proto/TexasGam" +
-      "eAction.proto\"\206\001\n\026TexasGameActionRequest" +
-      "\022\016\n\006seatId\030\001 \001(\005\022N\n\007operate\030\002 \001(\0162=.com." +
-      "poker.protocols.texaspoker.proto.TexasGa" +
-      "meAction.Operate\022\014\n\004chip\030\003 \001(\003B=\n\036com.po" +
-      "ker.protocols.texaspokerB\033TexasGameActio" +
-      "nRequestProtob\006proto3"
+      "eBroadcastAction.proto\"\217\001\n\026TexasGameActi" +
+      "onRequest\022\016\n\006seatId\030\001 \001(\005\022W\n\007operate\030\002 \001" +
+      "(\0162F.com.poker.protocols.texaspoker.prot" +
+      "o.TexasGameBroadcastAction.Operate\022\014\n\004ch" +
+      "ip\030\003 \001(\003B=\n\036com.poker.protocols.texaspok" +
+      "erB\033TexasGameActionRequestProtob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -691,7 +691,7 @@ public final class TexasGameActionRequestProto {
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          com.poker.protocols.texaspoker.TexasGameActionProto.getDescriptor(),
+          com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.getDescriptor(),
         }, assigner);
     internal_static_com_poker_protocols_texaspoker_proto_TexasGameActionRequest_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -699,7 +699,7 @@ public final class TexasGameActionRequestProto {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_poker_protocols_texaspoker_proto_TexasGameActionRequest_descriptor,
         new java.lang.String[] { "SeatId", "Operate", "Chip", });
-    com.poker.protocols.texaspoker.TexasGameActionProto.getDescriptor();
+    com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

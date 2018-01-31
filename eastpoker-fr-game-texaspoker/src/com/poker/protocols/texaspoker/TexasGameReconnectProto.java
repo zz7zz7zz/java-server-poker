@@ -59,13 +59,13 @@ public final class TexasGameReconnectProto {
     int getSeatId();
 
     /**
-     * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 7;</code>
+     * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 7;</code>
      */
     int getOperateValue();
     /**
-     * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 7;</code>
+     * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 7;</code>
      */
-    com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate getOperate();
+    com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate getOperate();
 
     /**
      * <code>int64 round_chip = 8;</code>
@@ -300,17 +300,17 @@ public final class TexasGameReconnectProto {
     public static final int OPERATE_FIELD_NUMBER = 7;
     private int operate_;
     /**
-     * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 7;</code>
+     * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 7;</code>
      */
     public int getOperateValue() {
       return operate_;
     }
     /**
-     * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 7;</code>
+     * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 7;</code>
      */
-    public com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate getOperate() {
-      com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate result = com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate.valueOf(operate_);
-      return result == null ? com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate.UNRECOGNIZED : result;
+    public com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate getOperate() {
+      com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate result = com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate.valueOf(operate_);
+      return result == null ? com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate.UNRECOGNIZED : result;
     }
 
     public static final int ROUND_CHIP_FIELD_NUMBER = 8;
@@ -352,7 +352,7 @@ public final class TexasGameReconnectProto {
       if (seatId_ != 0) {
         output.writeInt32(6, seatId_);
       }
-      if (operate_ != com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate.FOLD.getNumber()) {
+      if (operate_ != com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate.FOLD.getNumber()) {
         output.writeEnum(7, operate_);
       }
       if (roundChip_ != 0L) {
@@ -388,7 +388,7 @@ public final class TexasGameReconnectProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(6, seatId_);
       }
-      if (operate_ != com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate.FOLD.getNumber()) {
+      if (operate_ != com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate.FOLD.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(7, operate_);
       }
@@ -984,13 +984,13 @@ public final class TexasGameReconnectProto {
 
       private int operate_ = 0;
       /**
-       * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 7;</code>
+       * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 7;</code>
        */
       public int getOperateValue() {
         return operate_;
       }
       /**
-       * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 7;</code>
+       * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 7;</code>
        */
       public Builder setOperateValue(int value) {
         operate_ = value;
@@ -998,16 +998,16 @@ public final class TexasGameReconnectProto {
         return this;
       }
       /**
-       * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 7;</code>
+       * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 7;</code>
        */
-      public com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate getOperate() {
-        com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate result = com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate.valueOf(operate_);
-        return result == null ? com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate.UNRECOGNIZED : result;
+      public com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate getOperate() {
+        com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate result = com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate.valueOf(operate_);
+        return result == null ? com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate.UNRECOGNIZED : result;
       }
       /**
-       * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 7;</code>
+       * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 7;</code>
        */
-      public Builder setOperate(com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate value) {
+      public Builder setOperate(com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1017,7 +1017,7 @@ public final class TexasGameReconnectProto {
         return this;
       }
       /**
-       * <code>.com.poker.protocols.texaspoker.proto.TexasGameAction.Operate operate = 7;</code>
+       * <code>.com.poker.protocols.texaspoker.proto.TexasGameBroadcastAction.Operate operate = 7;</code>
        */
       public Builder clearOperate() {
         
@@ -3918,27 +3918,27 @@ public final class TexasGameReconnectProto {
       "to/TexasGameReconnect.proto\022$com.poker.p" +
       "rotocols.texaspoker.proto\032=src/com/poker" +
       "/protocols/texaspoker/proto/TexasGameSta" +
-      "rt.proto\032>src/com/poker/protocols/texasp" +
-      "oker/proto/TexasGameAction.proto\"\316\001\n\004Use" +
-      "r\022\013\n\003uid\030\001 \001(\003\022\021\n\tnick_name\030\002 \001(\t\022\025\n\rhea" +
-      "d_portrait\030\003 \001(\t\022\014\n\004chip\030\004 \001(\003\022\r\n\005level\030" +
-      "\005 \001(\005\022\016\n\006seatId\030\006 \001(\005\022N\n\007operate\030\007 \001(\0162=" +
-      ".com.poker.protocols.texaspoker.proto.Te" +
-      "xasGameAction.Operate\022\022\n\nround_chip\030\010 \001(" +
-      "\003\"\322\003\n\022TexasGameReconnect\022<\n\006config\030\001 \001(\013" +
-      "2,.com.poker.protocols.texaspoker.proto." +
-      "Config\022:\n\006mUsers\030\002 \003(\0132*.com.poker.proto" +
-      "cols.texaspoker.proto.User\022\024\n\014table_stat" +
-      "us\030\003 \001(\005\022\021\n\tsb_seatId\030\004 \001(\005\022\021\n\tbb_seatId" +
-      "\030\005 \001(\005\022\022\n\nbtn_seatId\030\006 \001(\005\022\r\n\005cards\030\007 \003(" +
-      "\005\022\022\n\ncards_flop\030\010 \003(\005\022\022\n\ncards_trun\030\t \003(" +
-      "\005\022\023\n\013cards_river\030\n \003(\005\022\026\n\016next_op_seatId" +
-      "\030\013 \001(\005\022\031\n\021next_op_call_chip\030\014 \001(\003\022\036\n\026nex" +
-      "t_op_min_raise_chip\030\r \001(\003\022\036\n\026next_op_max" +
-      "_raise_chip\030\016 \001(\003\022\026\n\016max_round_chip\030\017 \001(" +
-      "\003\022\033\n\023rest_action_timeout\030\020 \001(\005B9\n\036com.po" +
-      "ker.protocols.texaspokerB\027TexasGameRecon" +
-      "nectProtob\006proto3"
+      "rt.proto\032Gsrc/com/poker/protocols/texasp" +
+      "oker/proto/TexasGameBroadcastAction.prot" +
+      "o\"\327\001\n\004User\022\013\n\003uid\030\001 \001(\003\022\021\n\tnick_name\030\002 \001" +
+      "(\t\022\025\n\rhead_portrait\030\003 \001(\t\022\014\n\004chip\030\004 \001(\003\022" +
+      "\r\n\005level\030\005 \001(\005\022\016\n\006seatId\030\006 \001(\005\022W\n\007operat" +
+      "e\030\007 \001(\0162F.com.poker.protocols.texaspoker" +
+      ".proto.TexasGameBroadcastAction.Operate\022" +
+      "\022\n\nround_chip\030\010 \001(\003\"\322\003\n\022TexasGameReconne" +
+      "ct\022<\n\006config\030\001 \001(\0132,.com.poker.protocols" +
+      ".texaspoker.proto.Config\022:\n\006mUsers\030\002 \003(\013" +
+      "2*.com.poker.protocols.texaspoker.proto." +
+      "User\022\024\n\014table_status\030\003 \001(\005\022\021\n\tsb_seatId\030" +
+      "\004 \001(\005\022\021\n\tbb_seatId\030\005 \001(\005\022\022\n\nbtn_seatId\030\006" +
+      " \001(\005\022\r\n\005cards\030\007 \003(\005\022\022\n\ncards_flop\030\010 \003(\005\022" +
+      "\022\n\ncards_trun\030\t \003(\005\022\023\n\013cards_river\030\n \003(\005" +
+      "\022\026\n\016next_op_seatId\030\013 \001(\005\022\031\n\021next_op_call" +
+      "_chip\030\014 \001(\003\022\036\n\026next_op_min_raise_chip\030\r " +
+      "\001(\003\022\036\n\026next_op_max_raise_chip\030\016 \001(\003\022\026\n\016m" +
+      "ax_round_chip\030\017 \001(\003\022\033\n\023rest_action_timeo" +
+      "ut\030\020 \001(\005B9\n\036com.poker.protocols.texaspok" +
+      "erB\027TexasGameReconnectProtob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -3952,7 +3952,7 @@ public final class TexasGameReconnectProto {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           com.poker.protocols.texaspoker.TexasGameStartProto.getDescriptor(),
-          com.poker.protocols.texaspoker.TexasGameActionProto.getDescriptor(),
+          com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.getDescriptor(),
         }, assigner);
     internal_static_com_poker_protocols_texaspoker_proto_User_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -3967,7 +3967,7 @@ public final class TexasGameReconnectProto {
         internal_static_com_poker_protocols_texaspoker_proto_TexasGameReconnect_descriptor,
         new java.lang.String[] { "Config", "MUsers", "TableStatus", "SbSeatId", "BbSeatId", "BtnSeatId", "Cards", "CardsFlop", "CardsTrun", "CardsRiver", "NextOpSeatId", "NextOpCallChip", "NextOpMinRaiseChip", "NextOpMaxRaiseChip", "MaxRoundChip", "RestActionTimeout", });
     com.poker.protocols.texaspoker.TexasGameStartProto.getDescriptor();
-    com.poker.protocols.texaspoker.TexasGameActionProto.getDescriptor();
+    com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

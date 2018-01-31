@@ -16,8 +16,9 @@ import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.games.impl.handler.TexasCmd;
 import com.poker.games.impl.handler.TexasGameServer;
-import com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction;
-import com.poker.protocols.texaspoker.TexasGameActionProto.TexasGameAction.Operate;
+import com.poker.protocols.texaspoker.TexasGameActionRequestProto.TexasGameActionRequest;
+import com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction;
+import com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate;
 
 public class GTable extends Table {
 	
@@ -320,9 +321,9 @@ public class GTable extends Table {
 	}
 	
 	public void action(User mUser,byte[] data, int body_start, int body_length) {
-		TexasGameAction action = null;
+		TexasGameActionRequest action = null;
 		try {
-			action = TexasGameAction.parseFrom(data, body_start, body_length);
+			action = TexasGameActionRequest.parseFrom(data, body_start, body_length);
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();
 		}
