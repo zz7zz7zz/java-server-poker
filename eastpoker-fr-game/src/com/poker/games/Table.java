@@ -12,8 +12,6 @@ import com.poker.protocols.server.ErrorServer;
 
 public abstract class Table {
 	
-	public static byte[] mTempBuff;
-	
 	public final int tableId;
 	public TableStatus table_status;
 	
@@ -22,10 +20,6 @@ public abstract class Table {
 	public int count;
 
 	public Table(int tableId , Config mConfig) {
-		if(null == mTempBuff){
-			mTempBuff = new byte[Main.libClientConfig.packet_max_length_tcp];
-		}
-		
 		this.tableId = tableId;
 		this.mConfig = mConfig;
 		users = new User[mConfig.table_max_user];
@@ -178,8 +172,8 @@ public abstract class Table {
 	}
 
 	public int send2Access(User user,int cmd,int squenceId ,byte[] body,int offset ,int length){
-		length = PacketTransfer.send2Access(user.accessId,mTempBuff, squenceId, user.uid, cmd, DistapchType.TYPE_P2P, body,offset,length);
-		Main.send2Dispatch(mTempBuff, 0, length);
+		length = PacketTransfer.send2Access(user.accessId,Room.mOutPacket.getPacket(), squenceId, user.uid, cmd, DistapchType.TYPE_P2P, body,offset,length);
+		Main.send2Dispatch(Room.mOutPacket.getPacket(), 0, length);
 		return 1;
 	}
 	

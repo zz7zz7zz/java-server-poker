@@ -17,8 +17,8 @@ public class Config {
     public UdpAddress[] monitor_net_udp;
     
 	//Allocator
-    public int server_id;
-	public int game_id;
+    public short server_id;
+	public short game_id;
 	public int game_level;
 	
     //桌子信息
@@ -45,7 +45,7 @@ public class Config {
     protected void initFileConfig(HashMap<String,Object> map){
     	if(null !=map){
     		
-    		game_id = CfgParser.getInt(map, "Game","game_id");
+    		game_id = CfgParser.getShort(map, "Game","game_id");
     		game_level = CfgParser.getInt(map, "Game","game_level");
     		
     		table_count = CfgParser.getInt(map, "Game","table_count");
