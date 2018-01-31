@@ -20,7 +20,7 @@ import com.poker.packet.PacketTransfer;
 import com.poker.protocols.game.GameServerProto;
 import com.poker.protocols.game.GameServerProto.GameServer;
 import com.poker.protocols.game.GameTableProto.GameTable;
-import com.poker.protocols.game.LoginGameProto.LoginGame;
+import com.poker.protocols.game.client.RequestLoginGameProto.RequestLoginGame;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 
 
@@ -262,7 +262,7 @@ public class ClientHandler extends AbsClientHandler{
 		mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());	
 		int accessId = mInPacket.readInt();
 		PacketInfo mSubPacket = mInPacket.readBytesToSubPacket();
-		LoginGame loginGameRequest = LoginGame.parseFrom(mSubPacket.buff,mSubPacket.body_start, mSubPacket.body_length);
+		RequestLoginGame loginGameRequest = RequestLoginGame.parseFrom(mSubPacket.buff,mSubPacket.body_start, mSubPacket.body_length);
 		
 		int request_gameid = loginGameRequest.getGameid();
 		int request_gamelevel = loginGameRequest.getLevel();
