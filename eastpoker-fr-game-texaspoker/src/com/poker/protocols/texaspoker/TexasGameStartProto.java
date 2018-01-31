@@ -47,28 +47,55 @@ public final class TexasGameStartProto {
 
     /**
      * <pre>
-     *每台桌子对最大玩家数量
+     *每台桌子最小玩家数量
      * </pre>
      *
-     * <code>int32 max_user = 3;</code>
+     * <code>int32 min_user = 3;</code>
+     */
+    int getMinUser();
+
+    /**
+     * <pre>
+     *每台桌子最大玩家数量
+     * </pre>
+     *
+     * <code>int32 max_user = 4;</code>
      */
     int getMaxUser();
+
+    /**
+     * <pre>
+     *最小进入筹码
+     * </pre>
+     *
+     * <code>int64 min_chip = 5;</code>
+     */
+    long getMinChip();
 
     /**
      * <pre>
      *最大进入筹码
      * </pre>
      *
-     * <code>int64 max_chip = 4;</code>
+     * <code>int64 max_chip = 6;</code>
      */
     long getMaxChip();
+
+    /**
+     * <pre>
+     *操作超时时间
+     * </pre>
+     *
+     * <code>int32 action_timeout = 7;</code>
+     */
+    int getActionTimeout();
 
     /**
      * <pre>
      *前注;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int64 ante = 5;</code>
+     * <code>repeated int64 ante = 8;</code>
      */
     java.util.List<java.lang.Long> getAnteList();
     /**
@@ -76,7 +103,7 @@ public final class TexasGameStartProto {
      *前注;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int64 ante = 5;</code>
+     * <code>repeated int64 ante = 8;</code>
      */
     int getAnteCount();
     /**
@@ -84,7 +111,7 @@ public final class TexasGameStartProto {
      *前注;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int64 ante = 5;</code>
+     * <code>repeated int64 ante = 8;</code>
      */
     long getAnte(int index);
 
@@ -93,7 +120,7 @@ public final class TexasGameStartProto {
      *大盲注;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int64 blind = 6;</code>
+     * <code>repeated int64 blind = 9;</code>
      */
     java.util.List<java.lang.Long> getBlindList();
     /**
@@ -101,7 +128,7 @@ public final class TexasGameStartProto {
      *大盲注;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int64 blind = 6;</code>
+     * <code>repeated int64 blind = 9;</code>
      */
     int getBlindCount();
     /**
@@ -109,7 +136,7 @@ public final class TexasGameStartProto {
      *大盲注;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int64 blind = 6;</code>
+     * <code>repeated int64 blind = 9;</code>
      */
     long getBlind(int index);
 
@@ -118,7 +145,7 @@ public final class TexasGameStartProto {
      *每个盲注持续时间;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int32 blind_time = 7;</code>
+     * <code>repeated int32 blind_time = 10;</code>
      */
     java.util.List<java.lang.Integer> getBlindTimeList();
     /**
@@ -126,7 +153,7 @@ public final class TexasGameStartProto {
      *每个盲注持续时间;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int32 blind_time = 7;</code>
+     * <code>repeated int32 blind_time = 10;</code>
      */
     int getBlindTimeCount();
     /**
@@ -134,18 +161,9 @@ public final class TexasGameStartProto {
      *每个盲注持续时间;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int32 blind_time = 7;</code>
+     * <code>repeated int32 blind_time = 10;</code>
      */
     int getBlindTime(int index);
-
-    /**
-     * <pre>
-     *操作超时时间
-     * </pre>
-     *
-     * <code>int32 action_timeout = 8;</code>
-     */
-    int getActionTimeout();
   }
   /**
    * Protobuf type {@code com.poker.protocols.texaspoker.proto.Config}
@@ -162,12 +180,14 @@ public final class TexasGameStartProto {
     private Config() {
       level_ = 0;
       levelName_ = "";
+      minUser_ = 0;
       maxUser_ = 0;
+      minChip_ = 0L;
       maxChip_ = 0L;
+      actionTimeout_ = 0;
       ante_ = java.util.Collections.emptyList();
       blind_ = java.util.Collections.emptyList();
       blindTime_ = java.util.Collections.emptyList();
-      actionTimeout_ = 0;
     }
 
     @java.lang.Override
@@ -214,28 +234,43 @@ public final class TexasGameStartProto {
             }
             case 24: {
 
-              maxUser_ = input.readInt32();
+              minUser_ = input.readInt32();
               break;
             }
             case 32: {
 
-              maxChip_ = input.readInt64();
+              maxUser_ = input.readInt32();
               break;
             }
             case 40: {
-              if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+
+              minChip_ = input.readInt64();
+              break;
+            }
+            case 48: {
+
+              maxChip_ = input.readInt64();
+              break;
+            }
+            case 56: {
+
+              actionTimeout_ = input.readInt32();
+              break;
+            }
+            case 64: {
+              if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
                 ante_ = new java.util.ArrayList<java.lang.Long>();
-                mutable_bitField0_ |= 0x00000010;
+                mutable_bitField0_ |= 0x00000080;
               }
               ante_.add(input.readInt64());
               break;
             }
-            case 42: {
+            case 66: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00000010) == 0x00000010) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00000080) == 0x00000080) && input.getBytesUntilLimit() > 0) {
                 ante_ = new java.util.ArrayList<java.lang.Long>();
-                mutable_bitField0_ |= 0x00000010;
+                mutable_bitField0_ |= 0x00000080;
               }
               while (input.getBytesUntilLimit() > 0) {
                 ante_.add(input.readInt64());
@@ -243,20 +278,20 @@ public final class TexasGameStartProto {
               input.popLimit(limit);
               break;
             }
-            case 48: {
-              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+            case 72: {
+              if (!((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
                 blind_ = new java.util.ArrayList<java.lang.Long>();
-                mutable_bitField0_ |= 0x00000020;
+                mutable_bitField0_ |= 0x00000100;
               }
               blind_.add(input.readInt64());
               break;
             }
-            case 50: {
+            case 74: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00000100) == 0x00000100) && input.getBytesUntilLimit() > 0) {
                 blind_ = new java.util.ArrayList<java.lang.Long>();
-                mutable_bitField0_ |= 0x00000020;
+                mutable_bitField0_ |= 0x00000100;
               }
               while (input.getBytesUntilLimit() > 0) {
                 blind_.add(input.readInt64());
@@ -264,30 +299,25 @@ public final class TexasGameStartProto {
               input.popLimit(limit);
               break;
             }
-            case 56: {
-              if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+            case 80: {
+              if (!((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
                 blindTime_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000040;
+                mutable_bitField0_ |= 0x00000200;
               }
               blindTime_.add(input.readInt32());
               break;
             }
-            case 58: {
+            case 82: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00000040) == 0x00000040) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00000200) == 0x00000200) && input.getBytesUntilLimit() > 0) {
                 blindTime_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000040;
+                mutable_bitField0_ |= 0x00000200;
               }
               while (input.getBytesUntilLimit() > 0) {
                 blindTime_.add(input.readInt32());
               }
               input.popLimit(limit);
-              break;
-            }
-            case 64: {
-
-              actionTimeout_ = input.readInt32();
               break;
             }
           }
@@ -298,13 +328,13 @@ public final class TexasGameStartProto {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+        if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
           ante_ = java.util.Collections.unmodifiableList(ante_);
         }
-        if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+        if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
           blind_ = java.util.Collections.unmodifiableList(blind_);
         }
-        if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+        if (((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
           blindTime_ = java.util.Collections.unmodifiableList(blindTime_);
         }
         this.unknownFields = unknownFields.build();
@@ -379,40 +409,79 @@ public final class TexasGameStartProto {
       }
     }
 
-    public static final int MAX_USER_FIELD_NUMBER = 3;
+    public static final int MIN_USER_FIELD_NUMBER = 3;
+    private int minUser_;
+    /**
+     * <pre>
+     *每台桌子最小玩家数量
+     * </pre>
+     *
+     * <code>int32 min_user = 3;</code>
+     */
+    public int getMinUser() {
+      return minUser_;
+    }
+
+    public static final int MAX_USER_FIELD_NUMBER = 4;
     private int maxUser_;
     /**
      * <pre>
-     *每台桌子对最大玩家数量
+     *每台桌子最大玩家数量
      * </pre>
      *
-     * <code>int32 max_user = 3;</code>
+     * <code>int32 max_user = 4;</code>
      */
     public int getMaxUser() {
       return maxUser_;
     }
 
-    public static final int MAX_CHIP_FIELD_NUMBER = 4;
+    public static final int MIN_CHIP_FIELD_NUMBER = 5;
+    private long minChip_;
+    /**
+     * <pre>
+     *最小进入筹码
+     * </pre>
+     *
+     * <code>int64 min_chip = 5;</code>
+     */
+    public long getMinChip() {
+      return minChip_;
+    }
+
+    public static final int MAX_CHIP_FIELD_NUMBER = 6;
     private long maxChip_;
     /**
      * <pre>
      *最大进入筹码
      * </pre>
      *
-     * <code>int64 max_chip = 4;</code>
+     * <code>int64 max_chip = 6;</code>
      */
     public long getMaxChip() {
       return maxChip_;
     }
 
-    public static final int ANTE_FIELD_NUMBER = 5;
+    public static final int ACTION_TIMEOUT_FIELD_NUMBER = 7;
+    private int actionTimeout_;
+    /**
+     * <pre>
+     *操作超时时间
+     * </pre>
+     *
+     * <code>int32 action_timeout = 7;</code>
+     */
+    public int getActionTimeout() {
+      return actionTimeout_;
+    }
+
+    public static final int ANTE_FIELD_NUMBER = 8;
     private java.util.List<java.lang.Long> ante_;
     /**
      * <pre>
      *前注;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int64 ante = 5;</code>
+     * <code>repeated int64 ante = 8;</code>
      */
     public java.util.List<java.lang.Long>
         getAnteList() {
@@ -423,7 +492,7 @@ public final class TexasGameStartProto {
      *前注;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int64 ante = 5;</code>
+     * <code>repeated int64 ante = 8;</code>
      */
     public int getAnteCount() {
       return ante_.size();
@@ -433,21 +502,21 @@ public final class TexasGameStartProto {
      *前注;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int64 ante = 5;</code>
+     * <code>repeated int64 ante = 8;</code>
      */
     public long getAnte(int index) {
       return ante_.get(index);
     }
     private int anteMemoizedSerializedSize = -1;
 
-    public static final int BLIND_FIELD_NUMBER = 6;
+    public static final int BLIND_FIELD_NUMBER = 9;
     private java.util.List<java.lang.Long> blind_;
     /**
      * <pre>
      *大盲注;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int64 blind = 6;</code>
+     * <code>repeated int64 blind = 9;</code>
      */
     public java.util.List<java.lang.Long>
         getBlindList() {
@@ -458,7 +527,7 @@ public final class TexasGameStartProto {
      *大盲注;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int64 blind = 6;</code>
+     * <code>repeated int64 blind = 9;</code>
      */
     public int getBlindCount() {
       return blind_.size();
@@ -468,21 +537,21 @@ public final class TexasGameStartProto {
      *大盲注;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int64 blind = 6;</code>
+     * <code>repeated int64 blind = 9;</code>
      */
     public long getBlind(int index) {
       return blind_.get(index);
     }
     private int blindMemoizedSerializedSize = -1;
 
-    public static final int BLIND_TIME_FIELD_NUMBER = 7;
+    public static final int BLIND_TIME_FIELD_NUMBER = 10;
     private java.util.List<java.lang.Integer> blindTime_;
     /**
      * <pre>
      *每个盲注持续时间;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int32 blind_time = 7;</code>
+     * <code>repeated int32 blind_time = 10;</code>
      */
     public java.util.List<java.lang.Integer>
         getBlindTimeList() {
@@ -493,7 +562,7 @@ public final class TexasGameStartProto {
      *每个盲注持续时间;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int32 blind_time = 7;</code>
+     * <code>repeated int32 blind_time = 10;</code>
      */
     public int getBlindTimeCount() {
       return blindTime_.size();
@@ -503,25 +572,12 @@ public final class TexasGameStartProto {
      *每个盲注持续时间;数组意味着比赛场，如SNG
      * </pre>
      *
-     * <code>repeated int32 blind_time = 7;</code>
+     * <code>repeated int32 blind_time = 10;</code>
      */
     public int getBlindTime(int index) {
       return blindTime_.get(index);
     }
     private int blindTimeMemoizedSerializedSize = -1;
-
-    public static final int ACTION_TIMEOUT_FIELD_NUMBER = 8;
-    private int actionTimeout_;
-    /**
-     * <pre>
-     *操作超时时间
-     * </pre>
-     *
-     * <code>int32 action_timeout = 8;</code>
-     */
-    public int getActionTimeout() {
-      return actionTimeout_;
-    }
 
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -542,35 +598,41 @@ public final class TexasGameStartProto {
       if (!getLevelNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, levelName_);
       }
+      if (minUser_ != 0) {
+        output.writeInt32(3, minUser_);
+      }
       if (maxUser_ != 0) {
-        output.writeInt32(3, maxUser_);
+        output.writeInt32(4, maxUser_);
+      }
+      if (minChip_ != 0L) {
+        output.writeInt64(5, minChip_);
       }
       if (maxChip_ != 0L) {
-        output.writeInt64(4, maxChip_);
+        output.writeInt64(6, maxChip_);
+      }
+      if (actionTimeout_ != 0) {
+        output.writeInt32(7, actionTimeout_);
       }
       if (getAnteList().size() > 0) {
-        output.writeUInt32NoTag(42);
+        output.writeUInt32NoTag(66);
         output.writeUInt32NoTag(anteMemoizedSerializedSize);
       }
       for (int i = 0; i < ante_.size(); i++) {
         output.writeInt64NoTag(ante_.get(i));
       }
       if (getBlindList().size() > 0) {
-        output.writeUInt32NoTag(50);
+        output.writeUInt32NoTag(74);
         output.writeUInt32NoTag(blindMemoizedSerializedSize);
       }
       for (int i = 0; i < blind_.size(); i++) {
         output.writeInt64NoTag(blind_.get(i));
       }
       if (getBlindTimeList().size() > 0) {
-        output.writeUInt32NoTag(58);
+        output.writeUInt32NoTag(82);
         output.writeUInt32NoTag(blindTimeMemoizedSerializedSize);
       }
       for (int i = 0; i < blindTime_.size(); i++) {
         output.writeInt32NoTag(blindTime_.get(i));
-      }
-      if (actionTimeout_ != 0) {
-        output.writeInt32(8, actionTimeout_);
       }
       unknownFields.writeTo(output);
     }
@@ -587,13 +649,25 @@ public final class TexasGameStartProto {
       if (!getLevelNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, levelName_);
       }
+      if (minUser_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, minUser_);
+      }
       if (maxUser_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(3, maxUser_);
+          .computeInt32Size(4, maxUser_);
+      }
+      if (minChip_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(5, minChip_);
       }
       if (maxChip_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(4, maxChip_);
+          .computeInt64Size(6, maxChip_);
+      }
+      if (actionTimeout_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(7, actionTimeout_);
       }
       {
         int dataSize = 0;
@@ -637,10 +711,6 @@ public final class TexasGameStartProto {
         }
         blindTimeMemoizedSerializedSize = dataSize;
       }
-      if (actionTimeout_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(8, actionTimeout_);
-      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -661,18 +731,22 @@ public final class TexasGameStartProto {
           == other.getLevel());
       result = result && getLevelName()
           .equals(other.getLevelName());
+      result = result && (getMinUser()
+          == other.getMinUser());
       result = result && (getMaxUser()
           == other.getMaxUser());
+      result = result && (getMinChip()
+          == other.getMinChip());
       result = result && (getMaxChip()
           == other.getMaxChip());
+      result = result && (getActionTimeout()
+          == other.getActionTimeout());
       result = result && getAnteList()
           .equals(other.getAnteList());
       result = result && getBlindList()
           .equals(other.getBlindList());
       result = result && getBlindTimeList()
           .equals(other.getBlindTimeList());
-      result = result && (getActionTimeout()
-          == other.getActionTimeout());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -688,11 +762,18 @@ public final class TexasGameStartProto {
       hash = (53 * hash) + getLevel();
       hash = (37 * hash) + LEVEL_NAME_FIELD_NUMBER;
       hash = (53 * hash) + getLevelName().hashCode();
+      hash = (37 * hash) + MIN_USER_FIELD_NUMBER;
+      hash = (53 * hash) + getMinUser();
       hash = (37 * hash) + MAX_USER_FIELD_NUMBER;
       hash = (53 * hash) + getMaxUser();
+      hash = (37 * hash) + MIN_CHIP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getMinChip());
       hash = (37 * hash) + MAX_CHIP_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getMaxChip());
+      hash = (37 * hash) + ACTION_TIMEOUT_FIELD_NUMBER;
+      hash = (53 * hash) + getActionTimeout();
       if (getAnteCount() > 0) {
         hash = (37 * hash) + ANTE_FIELD_NUMBER;
         hash = (53 * hash) + getAnteList().hashCode();
@@ -705,8 +786,6 @@ public final class TexasGameStartProto {
         hash = (37 * hash) + BLIND_TIME_FIELD_NUMBER;
         hash = (53 * hash) + getBlindTimeList().hashCode();
       }
-      hash = (37 * hash) + ACTION_TIMEOUT_FIELD_NUMBER;
-      hash = (53 * hash) + getActionTimeout();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -854,18 +933,22 @@ public final class TexasGameStartProto {
 
         levelName_ = "";
 
+        minUser_ = 0;
+
         maxUser_ = 0;
+
+        minChip_ = 0L;
 
         maxChip_ = 0L;
 
-        ante_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000010);
-        blind_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000020);
-        blindTime_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000040);
         actionTimeout_ = 0;
 
+        ante_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000080);
+        blind_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000100);
+        blindTime_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000200);
         return this;
       }
 
@@ -892,24 +975,26 @@ public final class TexasGameStartProto {
         int to_bitField0_ = 0;
         result.level_ = level_;
         result.levelName_ = levelName_;
+        result.minUser_ = minUser_;
         result.maxUser_ = maxUser_;
+        result.minChip_ = minChip_;
         result.maxChip_ = maxChip_;
-        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        result.actionTimeout_ = actionTimeout_;
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
           ante_ = java.util.Collections.unmodifiableList(ante_);
-          bitField0_ = (bitField0_ & ~0x00000010);
+          bitField0_ = (bitField0_ & ~0x00000080);
         }
         result.ante_ = ante_;
-        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        if (((bitField0_ & 0x00000100) == 0x00000100)) {
           blind_ = java.util.Collections.unmodifiableList(blind_);
-          bitField0_ = (bitField0_ & ~0x00000020);
+          bitField0_ = (bitField0_ & ~0x00000100);
         }
         result.blind_ = blind_;
-        if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        if (((bitField0_ & 0x00000200) == 0x00000200)) {
           blindTime_ = java.util.Collections.unmodifiableList(blindTime_);
-          bitField0_ = (bitField0_ & ~0x00000040);
+          bitField0_ = (bitField0_ & ~0x00000200);
         }
         result.blindTime_ = blindTime_;
-        result.actionTimeout_ = actionTimeout_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -959,16 +1044,25 @@ public final class TexasGameStartProto {
           levelName_ = other.levelName_;
           onChanged();
         }
+        if (other.getMinUser() != 0) {
+          setMinUser(other.getMinUser());
+        }
         if (other.getMaxUser() != 0) {
           setMaxUser(other.getMaxUser());
+        }
+        if (other.getMinChip() != 0L) {
+          setMinChip(other.getMinChip());
         }
         if (other.getMaxChip() != 0L) {
           setMaxChip(other.getMaxChip());
         }
+        if (other.getActionTimeout() != 0) {
+          setActionTimeout(other.getActionTimeout());
+        }
         if (!other.ante_.isEmpty()) {
           if (ante_.isEmpty()) {
             ante_ = other.ante_;
-            bitField0_ = (bitField0_ & ~0x00000010);
+            bitField0_ = (bitField0_ & ~0x00000080);
           } else {
             ensureAnteIsMutable();
             ante_.addAll(other.ante_);
@@ -978,7 +1072,7 @@ public final class TexasGameStartProto {
         if (!other.blind_.isEmpty()) {
           if (blind_.isEmpty()) {
             blind_ = other.blind_;
-            bitField0_ = (bitField0_ & ~0x00000020);
+            bitField0_ = (bitField0_ & ~0x00000100);
           } else {
             ensureBlindIsMutable();
             blind_.addAll(other.blind_);
@@ -988,15 +1082,12 @@ public final class TexasGameStartProto {
         if (!other.blindTime_.isEmpty()) {
           if (blindTime_.isEmpty()) {
             blindTime_ = other.blindTime_;
-            bitField0_ = (bitField0_ & ~0x00000040);
+            bitField0_ = (bitField0_ & ~0x00000200);
           } else {
             ensureBlindTimeIsMutable();
             blindTime_.addAll(other.blindTime_);
           }
           onChanged();
-        }
-        if (other.getActionTimeout() != 0) {
-          setActionTimeout(other.getActionTimeout());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1153,23 +1244,61 @@ public final class TexasGameStartProto {
         return this;
       }
 
+      private int minUser_ ;
+      /**
+       * <pre>
+       *每台桌子最小玩家数量
+       * </pre>
+       *
+       * <code>int32 min_user = 3;</code>
+       */
+      public int getMinUser() {
+        return minUser_;
+      }
+      /**
+       * <pre>
+       *每台桌子最小玩家数量
+       * </pre>
+       *
+       * <code>int32 min_user = 3;</code>
+       */
+      public Builder setMinUser(int value) {
+        
+        minUser_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *每台桌子最小玩家数量
+       * </pre>
+       *
+       * <code>int32 min_user = 3;</code>
+       */
+      public Builder clearMinUser() {
+        
+        minUser_ = 0;
+        onChanged();
+        return this;
+      }
+
       private int maxUser_ ;
       /**
        * <pre>
-       *每台桌子对最大玩家数量
+       *每台桌子最大玩家数量
        * </pre>
        *
-       * <code>int32 max_user = 3;</code>
+       * <code>int32 max_user = 4;</code>
        */
       public int getMaxUser() {
         return maxUser_;
       }
       /**
        * <pre>
-       *每台桌子对最大玩家数量
+       *每台桌子最大玩家数量
        * </pre>
        *
-       * <code>int32 max_user = 3;</code>
+       * <code>int32 max_user = 4;</code>
        */
       public Builder setMaxUser(int value) {
         
@@ -1179,14 +1308,52 @@ public final class TexasGameStartProto {
       }
       /**
        * <pre>
-       *每台桌子对最大玩家数量
+       *每台桌子最大玩家数量
        * </pre>
        *
-       * <code>int32 max_user = 3;</code>
+       * <code>int32 max_user = 4;</code>
        */
       public Builder clearMaxUser() {
         
         maxUser_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long minChip_ ;
+      /**
+       * <pre>
+       *最小进入筹码
+       * </pre>
+       *
+       * <code>int64 min_chip = 5;</code>
+       */
+      public long getMinChip() {
+        return minChip_;
+      }
+      /**
+       * <pre>
+       *最小进入筹码
+       * </pre>
+       *
+       * <code>int64 min_chip = 5;</code>
+       */
+      public Builder setMinChip(long value) {
+        
+        minChip_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *最小进入筹码
+       * </pre>
+       *
+       * <code>int64 min_chip = 5;</code>
+       */
+      public Builder clearMinChip() {
+        
+        minChip_ = 0L;
         onChanged();
         return this;
       }
@@ -1197,7 +1364,7 @@ public final class TexasGameStartProto {
        *最大进入筹码
        * </pre>
        *
-       * <code>int64 max_chip = 4;</code>
+       * <code>int64 max_chip = 6;</code>
        */
       public long getMaxChip() {
         return maxChip_;
@@ -1207,7 +1374,7 @@ public final class TexasGameStartProto {
        *最大进入筹码
        * </pre>
        *
-       * <code>int64 max_chip = 4;</code>
+       * <code>int64 max_chip = 6;</code>
        */
       public Builder setMaxChip(long value) {
         
@@ -1220,7 +1387,7 @@ public final class TexasGameStartProto {
        *最大进入筹码
        * </pre>
        *
-       * <code>int64 max_chip = 4;</code>
+       * <code>int64 max_chip = 6;</code>
        */
       public Builder clearMaxChip() {
         
@@ -1229,11 +1396,49 @@ public final class TexasGameStartProto {
         return this;
       }
 
+      private int actionTimeout_ ;
+      /**
+       * <pre>
+       *操作超时时间
+       * </pre>
+       *
+       * <code>int32 action_timeout = 7;</code>
+       */
+      public int getActionTimeout() {
+        return actionTimeout_;
+      }
+      /**
+       * <pre>
+       *操作超时时间
+       * </pre>
+       *
+       * <code>int32 action_timeout = 7;</code>
+       */
+      public Builder setActionTimeout(int value) {
+        
+        actionTimeout_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *操作超时时间
+       * </pre>
+       *
+       * <code>int32 action_timeout = 7;</code>
+       */
+      public Builder clearActionTimeout() {
+        
+        actionTimeout_ = 0;
+        onChanged();
+        return this;
+      }
+
       private java.util.List<java.lang.Long> ante_ = java.util.Collections.emptyList();
       private void ensureAnteIsMutable() {
-        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+        if (!((bitField0_ & 0x00000080) == 0x00000080)) {
           ante_ = new java.util.ArrayList<java.lang.Long>(ante_);
-          bitField0_ |= 0x00000010;
+          bitField0_ |= 0x00000080;
          }
       }
       /**
@@ -1241,7 +1446,7 @@ public final class TexasGameStartProto {
        *前注;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int64 ante = 5;</code>
+       * <code>repeated int64 ante = 8;</code>
        */
       public java.util.List<java.lang.Long>
           getAnteList() {
@@ -1252,7 +1457,7 @@ public final class TexasGameStartProto {
        *前注;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int64 ante = 5;</code>
+       * <code>repeated int64 ante = 8;</code>
        */
       public int getAnteCount() {
         return ante_.size();
@@ -1262,7 +1467,7 @@ public final class TexasGameStartProto {
        *前注;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int64 ante = 5;</code>
+       * <code>repeated int64 ante = 8;</code>
        */
       public long getAnte(int index) {
         return ante_.get(index);
@@ -1272,7 +1477,7 @@ public final class TexasGameStartProto {
        *前注;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int64 ante = 5;</code>
+       * <code>repeated int64 ante = 8;</code>
        */
       public Builder setAnte(
           int index, long value) {
@@ -1286,7 +1491,7 @@ public final class TexasGameStartProto {
        *前注;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int64 ante = 5;</code>
+       * <code>repeated int64 ante = 8;</code>
        */
       public Builder addAnte(long value) {
         ensureAnteIsMutable();
@@ -1299,7 +1504,7 @@ public final class TexasGameStartProto {
        *前注;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int64 ante = 5;</code>
+       * <code>repeated int64 ante = 8;</code>
        */
       public Builder addAllAnte(
           java.lang.Iterable<? extends java.lang.Long> values) {
@@ -1314,20 +1519,20 @@ public final class TexasGameStartProto {
        *前注;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int64 ante = 5;</code>
+       * <code>repeated int64 ante = 8;</code>
        */
       public Builder clearAnte() {
         ante_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000080);
         onChanged();
         return this;
       }
 
       private java.util.List<java.lang.Long> blind_ = java.util.Collections.emptyList();
       private void ensureBlindIsMutable() {
-        if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+        if (!((bitField0_ & 0x00000100) == 0x00000100)) {
           blind_ = new java.util.ArrayList<java.lang.Long>(blind_);
-          bitField0_ |= 0x00000020;
+          bitField0_ |= 0x00000100;
          }
       }
       /**
@@ -1335,7 +1540,7 @@ public final class TexasGameStartProto {
        *大盲注;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int64 blind = 6;</code>
+       * <code>repeated int64 blind = 9;</code>
        */
       public java.util.List<java.lang.Long>
           getBlindList() {
@@ -1346,7 +1551,7 @@ public final class TexasGameStartProto {
        *大盲注;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int64 blind = 6;</code>
+       * <code>repeated int64 blind = 9;</code>
        */
       public int getBlindCount() {
         return blind_.size();
@@ -1356,7 +1561,7 @@ public final class TexasGameStartProto {
        *大盲注;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int64 blind = 6;</code>
+       * <code>repeated int64 blind = 9;</code>
        */
       public long getBlind(int index) {
         return blind_.get(index);
@@ -1366,7 +1571,7 @@ public final class TexasGameStartProto {
        *大盲注;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int64 blind = 6;</code>
+       * <code>repeated int64 blind = 9;</code>
        */
       public Builder setBlind(
           int index, long value) {
@@ -1380,7 +1585,7 @@ public final class TexasGameStartProto {
        *大盲注;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int64 blind = 6;</code>
+       * <code>repeated int64 blind = 9;</code>
        */
       public Builder addBlind(long value) {
         ensureBlindIsMutable();
@@ -1393,7 +1598,7 @@ public final class TexasGameStartProto {
        *大盲注;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int64 blind = 6;</code>
+       * <code>repeated int64 blind = 9;</code>
        */
       public Builder addAllBlind(
           java.lang.Iterable<? extends java.lang.Long> values) {
@@ -1408,20 +1613,20 @@ public final class TexasGameStartProto {
        *大盲注;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int64 blind = 6;</code>
+       * <code>repeated int64 blind = 9;</code>
        */
       public Builder clearBlind() {
         blind_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000100);
         onChanged();
         return this;
       }
 
       private java.util.List<java.lang.Integer> blindTime_ = java.util.Collections.emptyList();
       private void ensureBlindTimeIsMutable() {
-        if (!((bitField0_ & 0x00000040) == 0x00000040)) {
+        if (!((bitField0_ & 0x00000200) == 0x00000200)) {
           blindTime_ = new java.util.ArrayList<java.lang.Integer>(blindTime_);
-          bitField0_ |= 0x00000040;
+          bitField0_ |= 0x00000200;
          }
       }
       /**
@@ -1429,7 +1634,7 @@ public final class TexasGameStartProto {
        *每个盲注持续时间;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int32 blind_time = 7;</code>
+       * <code>repeated int32 blind_time = 10;</code>
        */
       public java.util.List<java.lang.Integer>
           getBlindTimeList() {
@@ -1440,7 +1645,7 @@ public final class TexasGameStartProto {
        *每个盲注持续时间;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int32 blind_time = 7;</code>
+       * <code>repeated int32 blind_time = 10;</code>
        */
       public int getBlindTimeCount() {
         return blindTime_.size();
@@ -1450,7 +1655,7 @@ public final class TexasGameStartProto {
        *每个盲注持续时间;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int32 blind_time = 7;</code>
+       * <code>repeated int32 blind_time = 10;</code>
        */
       public int getBlindTime(int index) {
         return blindTime_.get(index);
@@ -1460,7 +1665,7 @@ public final class TexasGameStartProto {
        *每个盲注持续时间;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int32 blind_time = 7;</code>
+       * <code>repeated int32 blind_time = 10;</code>
        */
       public Builder setBlindTime(
           int index, int value) {
@@ -1474,7 +1679,7 @@ public final class TexasGameStartProto {
        *每个盲注持续时间;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int32 blind_time = 7;</code>
+       * <code>repeated int32 blind_time = 10;</code>
        */
       public Builder addBlindTime(int value) {
         ensureBlindTimeIsMutable();
@@ -1487,7 +1692,7 @@ public final class TexasGameStartProto {
        *每个盲注持续时间;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int32 blind_time = 7;</code>
+       * <code>repeated int32 blind_time = 10;</code>
        */
       public Builder addAllBlindTime(
           java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -1502,49 +1707,11 @@ public final class TexasGameStartProto {
        *每个盲注持续时间;数组意味着比赛场，如SNG
        * </pre>
        *
-       * <code>repeated int32 blind_time = 7;</code>
+       * <code>repeated int32 blind_time = 10;</code>
        */
       public Builder clearBlindTime() {
         blindTime_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000040);
-        onChanged();
-        return this;
-      }
-
-      private int actionTimeout_ ;
-      /**
-       * <pre>
-       *操作超时时间
-       * </pre>
-       *
-       * <code>int32 action_timeout = 8;</code>
-       */
-      public int getActionTimeout() {
-        return actionTimeout_;
-      }
-      /**
-       * <pre>
-       *操作超时时间
-       * </pre>
-       *
-       * <code>int32 action_timeout = 8;</code>
-       */
-      public Builder setActionTimeout(int value) {
-        
-        actionTimeout_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       *操作超时时间
-       * </pre>
-       *
-       * <code>int32 action_timeout = 8;</code>
-       */
-      public Builder clearActionTimeout() {
-        
-        actionTimeout_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000200);
         onChanged();
         return this;
       }
@@ -2531,16 +2698,17 @@ public final class TexasGameStartProto {
     java.lang.String[] descriptorData = {
       "\n=src/com/poker/protocols/texaspoker/pro" +
       "to/TexasGameStart.proto\022$com.poker.proto" +
-      "cols.texaspoker.proto\"\230\001\n\006Config\022\r\n\005leve" +
-      "l\030\001 \001(\005\022\022\n\nlevel_name\030\002 \001(\t\022\020\n\010max_user\030" +
-      "\003 \001(\005\022\020\n\010max_chip\030\004 \001(\003\022\014\n\004ante\030\005 \003(\003\022\r\n" +
-      "\005blind\030\006 \003(\003\022\022\n\nblind_time\030\007 \003(\005\022\026\n\016acti" +
-      "on_timeout\030\010 \001(\005\"\210\001\n\016TexasGameStart\022<\n\006c" +
-      "onfig\030\001 \001(\0132,.com.poker.protocols.texasp" +
-      "oker.proto.Config\022\021\n\tsb_seatId\030\002 \001(\005\022\021\n\t" +
-      "bb_seatId\030\003 \001(\005\022\022\n\nbtn_seatId\030\004 \001(\005B5\n\036c" +
-      "om.poker.protocols.texaspokerB\023TexasGame" +
-      "StartProtob\006proto3"
+      "cols.texaspoker.proto\"\274\001\n\006Config\022\r\n\005leve" +
+      "l\030\001 \001(\005\022\022\n\nlevel_name\030\002 \001(\t\022\020\n\010min_user\030" +
+      "\003 \001(\005\022\020\n\010max_user\030\004 \001(\005\022\020\n\010min_chip\030\005 \001(" +
+      "\003\022\020\n\010max_chip\030\006 \001(\003\022\026\n\016action_timeout\030\007 " +
+      "\001(\005\022\014\n\004ante\030\010 \003(\003\022\r\n\005blind\030\t \003(\003\022\022\n\nblin" +
+      "d_time\030\n \003(\005\"\210\001\n\016TexasGameStart\022<\n\006confi" +
+      "g\030\001 \001(\0132,.com.poker.protocols.texaspoker" +
+      ".proto.Config\022\021\n\tsb_seatId\030\002 \001(\005\022\021\n\tbb_s" +
+      "eatId\030\003 \001(\005\022\022\n\nbtn_seatId\030\004 \001(\005B5\n\036com.p" +
+      "oker.protocols.texaspokerB\023TexasGameStar" +
+      "tProtob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2559,7 +2727,7 @@ public final class TexasGameStartProto {
     internal_static_com_poker_protocols_texaspoker_proto_Config_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_poker_protocols_texaspoker_proto_Config_descriptor,
-        new java.lang.String[] { "Level", "LevelName", "MaxUser", "MaxChip", "Ante", "Blind", "BlindTime", "ActionTimeout", });
+        new java.lang.String[] { "Level", "LevelName", "MinUser", "MaxUser", "MinChip", "MaxChip", "ActionTimeout", "Ante", "Blind", "BlindTime", });
     internal_static_com_poker_protocols_texaspoker_proto_TexasGameStart_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_com_poker_protocols_texaspoker_proto_TexasGameStart_fieldAccessorTable = new

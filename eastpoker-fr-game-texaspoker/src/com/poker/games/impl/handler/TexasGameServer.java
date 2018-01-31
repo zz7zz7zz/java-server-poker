@@ -31,7 +31,9 @@ public class TexasGameServer {
 		Config.Builder configBuilder = Config.newBuilder();
 		configBuilder.setLevel(mGameConfig.level);
 		configBuilder.setLevelName(mGameConfig.level_name);
+		configBuilder.setMinUser(mGameConfig.table_min_user);
 		configBuilder.setMaxUser(mGameConfig.table_max_user);
+		configBuilder.setMinChip(mGameConfig.table_min_chip);
 		configBuilder.setMaxChip(mGameConfig.table_max_chip);
 		int size = mGameConfig.table_ante.length;
 		for(int i = 0;i<size;i++){
