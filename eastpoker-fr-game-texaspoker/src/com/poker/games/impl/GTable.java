@@ -4,7 +4,6 @@ import java.util.Random;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.poker.common.config.Config;
-import com.poker.games.GBaseCmd;
 import com.poker.games.GDefine.TableStatus;
 import com.poker.games.Room;
 import com.poker.games.Table;
@@ -13,7 +12,8 @@ import com.poker.games.impl.GDefine.GStatus;
 import com.poker.games.impl.GDefine.GStep;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
-import com.poker.games.protocols.GameBaseServer;
+import com.poker.games.protocols.GBaseCmd;
+import com.poker.games.protocols.GBaseServer;
 import com.poker.protocols.TexasCmd;
 import com.poker.protocols.TexasGameServer;
 import com.poker.protocols.texaspoker.TexasGameActionRequestProto.TexasGameActionRequest;
@@ -52,10 +52,10 @@ public class GTable extends Table {
 	@Override
 	protected int onTableUserFirstLogin(User mUser) {
 		//1。对进来的用户广播桌子上有哪些用户
-		send2Access(mUser,GBaseCmd.CMD_SERVER_USERLOGIN, squenceId, GameBaseServer.userLogin(mUser.seatId,this));
+		send2Access(mUser,GBaseCmd.CMD_SERVER_USERLOGIN, squenceId, GBaseServer.userLogin(mUser.seatId,this));
 		
 		//2.对桌子上的用户广播谁进来类
-		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, GameBaseServer.broadUserLogin(mUser),mUser);
+		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, GBaseServer.broadUserLogin(mUser),mUser);
 		
 		//3.判断游戏谁否可以开始了
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){
@@ -83,7 +83,7 @@ public class GTable extends Table {
 
 	@Override
 	protected int onTableUserExit(User mUser) {
-		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, GameBaseServer.broadUserLogout(mUser),mUser);
+		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, GBaseServer.broadUserLogout(mUser),mUser);
 		return 0;
 	}
 
@@ -91,7 +91,7 @@ public class GTable extends Table {
 
 	@Override
 	protected int onTableUserOffline(User mUser) {
-		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, GameBaseServer.broadUserOffline(mUser.uid,mUser.onLineStatus),mUser);
+		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, GBaseServer.broadUserOffline(mUser.uid,mUser.onLineStatus),mUser);
 		return 0;
 	}
 

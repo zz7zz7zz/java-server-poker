@@ -1,4 +1,4 @@
-package com.poker.games;
+package com.poker.games.protocols;
 
 public final class GBaseCmd {
 	

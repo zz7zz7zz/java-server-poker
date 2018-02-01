@@ -10,7 +10,7 @@ import com.poker.protocols.game.server.GameUserProto.GameUser;
 import com.poker.protocols.game.server.ResponseLoginGameProto.ResponseLoginGame;
 
 
-public class GameBaseServer {
+public class GBaseServer {
 	
 	public static byte[] userLogin(int seatId,Table table){
 		ResponseLoginGame.Builder builder = ResponseLoginGame.newBuilder();
