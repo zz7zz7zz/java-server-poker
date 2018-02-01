@@ -52,18 +52,22 @@ public class GTable extends Table {
 	@Override
 	protected int onTableUserFirstLogin(User mUser) {
 		//1。对进来的用户广播桌子上有哪些用户
+		squenceId++;
 		send2Access(mUser,GBaseCmd.CMD_SERVER_USERLOGIN, squenceId, GBaseServer.userLogin(mUser.seatId,this));
 		
 		//2.对桌子上的用户广播谁进来类
+		squenceId++;
 		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, GBaseServer.broadUserLogin(mUser),mUser);
 		
 		//3.判断游戏谁否可以开始了
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){
 			return 0;
 		}
+		
 		if(getUserCount()>=this.mConfig.table_max_user) {
 			startGame();
 		}
+		
 		return 0;
 	}
 
@@ -128,7 +132,6 @@ public class GTable extends Table {
     		if(null ==gGsers[i]) {
     			continue;
     		}
-    		gGsers[i].play_status = GStatus.PLAY;
     		play_user_count++;
         }
         
@@ -138,6 +141,7 @@ public class GTable extends Table {
         }
         
         //2.找出小盲，大盲位，按钮位
+        //2.1找小盲位
         int next_seatId_index;
         if(sb_seatid == -1){//说明是游戏刚开始，没有持续
 			long t = System.currentTimeMillis();//获得当前时间的毫秒数
@@ -147,31 +151,42 @@ public class GTable extends Table {
         	next_seatId_index = sb_seatid+1;
         }
         
-    	for(int i = 0 ;i<this.mConfig.table_max_user;i++){
-    		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
-        	if(null != gGsers[r_next_seatId_index] && gGsers[r_next_seatId_index].play_status == GStatus.PLAY){
-        		sb_seatid = r_next_seatId_index;
-        		break;
+        if(null == gGsers[next_seatId_index]){
+        	for(int i = 1 ;i<this.mConfig.table_max_user;i++){
+        		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
+            	if(null != gGsers[r_next_seatId_index]){
+            		next_seatId_index = r_next_seatId_index;
+            		break;
+            	}
         	}
-    	}
-
+        }
+        sb_seatid = next_seatId_index;
+        		
+       //2.2找大盲位
     	next_seatId_index = (sb_seatid+1)%this.mConfig.table_max_user;
-    	for(int i = 0 ;i<this.mConfig.table_max_user;i++){
-    		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
-        	if(null != gGsers[r_next_seatId_index] && gGsers[r_next_seatId_index].play_status == GStatus.PLAY){
-        		bb_seatid = r_next_seatId_index;
-        		break;
+    	if(null == gGsers[next_seatId_index]){
+        	for(int i = 1 ;i<this.mConfig.table_max_user;i++){
+        		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
+            	if(null != gGsers[r_next_seatId_index]){
+            		next_seatId_index = r_next_seatId_index;
+            		break;
+            	}
         	}
     	}
+    	bb_seatid = next_seatId_index;
     	
+        //2.3找Button位
     	next_seatId_index = (sb_seatid-1)%this.mConfig.table_max_user;
-    	for(int i = 0 ;i<this.mConfig.table_max_user;i++){
-    		int r_next_seatId_index = (next_seatId_index - i + this.mConfig.table_max_user)%this.mConfig.table_max_user;
-        	if(null != gGsers[r_next_seatId_index] && gGsers[r_next_seatId_index].play_status == GStatus.PLAY){
-        		btn_seateId = r_next_seatId_index;
-        		break;
+    	if(null == gGsers[next_seatId_index]){
+        	for(int i = 1 ;i<this.mConfig.table_max_user;i++){
+        		int r_next_seatId_index = (next_seatId_index - i + this.mConfig.table_max_user)%this.mConfig.table_max_user;
+            	if(null != gGsers[r_next_seatId_index]){
+            		next_seatId_index = r_next_seatId_index;
+            		break;
+            	}
         	}
     	}
+    	btn_seateId = next_seatId_index;
     	
     	//3.发送游戏开始数据
     	squenceId++;
@@ -441,6 +456,7 @@ public class GTable extends Table {
 		//--------------------------------------------------------------------------------
 		super.stopGame();
 		cardFlags |= Long.MAX_VALUE;
+		squenceId = 0;
 	}
 
 
