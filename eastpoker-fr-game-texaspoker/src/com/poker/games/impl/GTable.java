@@ -4,7 +4,6 @@ import java.util.Random;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.poker.common.config.Config;
-import com.poker.game.handler.GameBaseServer;
 import com.poker.games.GBaseCmd;
 import com.poker.games.GDefine.TableStatus;
 import com.poker.games.Room;
@@ -14,7 +13,7 @@ import com.poker.games.impl.GDefine.GStatus;
 import com.poker.games.impl.GDefine.GStep;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
-
+import com.poker.games.protocols.GameBaseServer;
 import com.poker.protocols.TexasCmd;
 import com.poker.protocols.TexasGameServer;
 import com.poker.protocols.texaspoker.TexasGameActionRequestProto.TexasGameActionRequest;
