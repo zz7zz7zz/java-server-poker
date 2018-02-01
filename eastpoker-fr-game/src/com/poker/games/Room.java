@@ -6,8 +6,8 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
 import com.poker.cmd.GameCmd;
 import com.poker.common.config.Config;
-import com.poker.games.GDefine.LoginRet;
-import com.poker.games.GDefine.LogoutRet;
+import com.poker.games.GDefine.LoginResult;
+import com.poker.games.GDefine.LogoutResult;
 import com.poker.games.impl.GTable;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
@@ -109,8 +109,8 @@ public class Room {
 	}
 	
 	private void loginGame(User mUser , Table mTable){
-		LoginRet ret = mTable.onUserLogin(mUser);
-		if(ret != LoginRet.LOGIN_FAILED_FULL){
+		LoginResult ret = mTable.onUserLogin(mUser);
+		if(ret != LoginResult.LOGIN_FAILED_FULL){
 			mUser.tid = mTable.tableId;
 			userMap.put(mUser.uid, mUser);
 			mTable.enterRoom(mUser.uid, mTable);
@@ -122,7 +122,7 @@ public class Room {
 	}
 	
 	private void logoutGame(User mUser , Table mTable){
-		LogoutRet ret = mTable.onUserExit(mUser);
+		LogoutResult ret = mTable.onUserExit(mUser);
 		
 		mTable.leaveRoom(mUser.uid);
 		UserPool.release(mUser);

@@ -6,8 +6,8 @@ import com.poker.cmd.UserCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DistapchType;
 import com.poker.game.Main;
-import com.poker.games.GDefine.LoginRet;
-import com.poker.games.GDefine.LogoutRet;
+import com.poker.games.GDefine.LoginResult;
+import com.poker.games.GDefine.LogoutResult;
 import com.poker.games.GDefine.TableStatus;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
@@ -74,10 +74,10 @@ public abstract class Table {
 		return 1;
 	}
 	
-	public LoginRet userEnter(User user){
+	public LoginResult userEnter(User user){
 		for (User u : users) {
 			if(null != u && u.uid == user.uid){
-				return LoginRet.LOGIN_SUCCESS_ALREADY_EXIST;
+				return LoginResult.LOGIN_SUCCESS_ALREADY_EXIST;
 			}
 		}
 		
@@ -85,21 +85,21 @@ public abstract class Table {
 			if(null == users[i]){
 				users[i] = user;
 				count++;
-				return LoginRet.LOGIN_SUCCESS;
+				return LoginResult.LOGIN_SUCCESS;
 			}
 		}
-		return LoginRet.LOGIN_FAILED_FULL;
+		return LoginResult.LOGIN_FAILED_FULL;
 	}
 	
-	public LogoutRet userExit(User user){
+	public LogoutResult userExit(User user){
 		for (int i = 0; i < users.length; i++) {
 			if(null != users[i] && users[i].uid == user.uid){
 				users[i] = null;
 				count--;
-				return LogoutRet.LOGOUT_SUCCESS;
+				return LogoutResult.LOGOUT_SUCCESS;
 			}
 		}
-		return LogoutRet.LOGOUT_FAILED;
+		return LogoutResult.LOGOUT_FAILED;
 	}
 	
 	public int userReady(User user){
@@ -133,21 +133,21 @@ public abstract class Table {
 		return false;
 	}
 	//---------------------------------------------------------------------
-	public LoginRet onUserLogin(User mUser){
-		LoginRet ret= userEnter(mUser);
-		if(ret == LoginRet.LOGIN_SUCCESS){
+	public LoginResult onUserLogin(User mUser){
+		LoginResult ret= userEnter(mUser);
+		if(ret == LoginResult.LOGIN_SUCCESS){
 			onTableUserFirstLogin(mUser);
-		}else if(ret == LoginRet.LOGIN_SUCCESS_ALREADY_EXIST){
+		}else if(ret == LoginResult.LOGIN_SUCCESS_ALREADY_EXIST){
 			onTableUserReLogin(mUser);
-		}else if(ret == LoginRet.LOGIN_FAILED_FULL){
+		}else if(ret == LoginResult.LOGIN_FAILED_FULL){
 			send2Access(mUser,SystemCmd.CMD_ERR,0,ErrorServer.error(SystemCmd.ERR_CODE_LOGIN_FAILED_TABLE_FULL,""));
 		}
 		return ret;
 	};
 	
-	public LogoutRet onUserExit(User mUser){
-		LogoutRet ret= userExit(mUser);
-		if(ret ==  LogoutRet.LOGOUT_SUCCESS){
+	public LogoutResult onUserExit(User mUser){
+		LogoutResult ret= userExit(mUser);
+		if(ret ==  LogoutResult.LOGOUT_SUCCESS){
 			onTableUserExit(mUser);
 		}
 		return ret;

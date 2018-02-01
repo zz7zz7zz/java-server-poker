@@ -12,23 +12,23 @@ public class GDefine {
         }
 	}
 	
-	enum LoginRet{
+	enum LoginResult{
 		LOGIN_SUCCESS(1),
 		LOGIN_SUCCESS_ALREADY_EXIST(2),
 		LOGIN_FAILED_FULL(3);
 		
 		int code;
-        private LoginRet(int code) {
+        private LoginResult(int code) {
             this.code = code;
         }
 	}
 	
-	enum LogoutRet{
+	enum LogoutResult{
 		LOGOUT_SUCCESS(1),
 		LOGOUT_FAILED(2);
 		
 		int code;
-        private LogoutRet(int code) {
+        private LogoutResult(int code) {
             this.code = code;
         }
 	}
