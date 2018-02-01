@@ -56,47 +56,76 @@ public class Room {
 			return;
 		}
 		
-		int tid = 0;
-		int tidIndex = tid & 0xff;
-		if(tidIndex <0 || tidIndex >= mTables.length){
-			return;
-		}
-		
-		Table mTable = mTables[tidIndex];
-		if(null == mTable){
-			return;
-		}
-		
+		Table mTable = null;
 		User mUser = userMap.get(uid);
 		if(null != mUser){//说明之前在桌子上,替换上真实的桌子
-			if(mUser.tid >= 0 && mUser.tid != tid){
-				Logger.v(TAG+ "error uid  tid.diff tid " + tid + " index "+ (tid & 0xff)+ " realtid "+mUser.tid + " realIndex" + (mUser.tid & 0xff));
+			if(mUser.tid >= 0){
 				mTable = mTables[mUser.tid & 0xff];
 			}
 		}
 		
 		if(cmd == GameCmd.CMD_LOGIN_GAME){
+			
+			Table.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());	
+			int accessId = Table.mInPacket.readInt();
+			int tableId  = Table.mInPacket.readInt();
+			
+			int tableIdIndex = tableId & 0xff;
+			if(tableIdIndex <0 || tableIdIndex >= mTables.length){
+				Logger.v(TAG+ "error uid  tid.diff tid " + tableId + " index "+ tableIdIndex);
+				return;
+			}
+			
+			Table mRequestTable = mTables[tableIdIndex];
+			if(null == mTable){
+				mTable = mRequestTable;
+			}else{
+				Logger.v(TAG+ "error uid  req.tid " + tableId + " req.tid.index "+ tableIdIndex+ " realtid "+mUser.tid + " realIndex" + (mUser.tid & 0xff));
+			}
+			
+			
     		if(null == mUser){
     			mUser = UserPool.get(uid);
     		}
-    		loginGame(mUser,mTable);
-    	}else{
+    		mUser.accessId = accessId;
     		
+    		loginGame(mUser,mTable);
+    		
+    	}else{
+
     		if(null == mUser){
-    			Logger.v(TAG+ "cmd be unable to handle uid " + uid + " cmd "+cmd);
+    			Logger.v(TAG+ "cmd be unable to handle user null " + uid + " cmd "+cmd);
+				return;
+			}
+    		
+    		if(null == mTable){
+    			Logger.v(TAG+ "cmd be unable to handle mTable null ");
 				return;
 			}
     		
     		if(cmd == GameCmd.CMD_CHECK_GAME_STATUS){
+    			
+    			Table.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());	
+    			int accessId = Table.mInPacket.readInt();
+    			mUser.accessId =  accessId;
     			checkGameStatus(mUser,mTable);
+    			
         	}else if(cmd == GameCmd.CMD_USER_EXIT){
+        		
         		logoutGame(mUser,mTable);
+        		
         	}else if(cmd == GameCmd.CMD_USER_READY){
+        		
     			mTable.onUserReady(mUser);
+    			
         	}else if(cmd == GameCmd.CMD_USER_OFFLINE){
+        		
         		mTable.onUserOffline(mUser);
+        		
         	}else if(cmd == GameCmd.CMD_KICK_USER){
-        		mTable.onKickUser(mUser, null);;
+        		
+        		mTable.onKickUser(mUser, null);
+        		
         	}else{
         		mTable.dispatchTableMessage(mUser,cmd, data, header_start, header_length, body_start, body_length);
         	}

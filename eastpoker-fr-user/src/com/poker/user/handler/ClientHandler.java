@@ -119,8 +119,9 @@ public class ClientHandler extends AbsClientHandler{
 		byte[] mTempBuff = mInPacket.getPacket();
 		if(tableId > 0){//说明在游戏中，需要重新进入游戏
 			
-			mOutPacket.begin(squenceId, AllocatorCmd.CMD_LOGIN_GAME);
+			mOutPacket.begin(squenceId, GameCmd.CMD_LOGIN_GAME);
 			mOutPacket.writeInt(accessId);//AccessId
+			mOutPacket.writeInt(tableId);//tableId
 			mOutPacket.end();
 			
 			int length = PacketTransfer.send2Game(gameId,gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_LOGIN_GAME, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
