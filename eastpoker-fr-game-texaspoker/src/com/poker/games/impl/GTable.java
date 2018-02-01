@@ -41,14 +41,22 @@ public class GTable extends Table {
 	public int action_seatid = -1;
 	public int action_set = 0;
 	
-	public int max_round_chip = 0;
+	public long max_round_chip = 0;
 	public int max_round_chip_seatid = 0;
+	
+	public long ante;
+	public long bb_chip;
+	
+	public long ante_all;
+	public long pots [] = new long[9];//最多9个pot
 	
 	public GStep step;
 	
 	public GTable(Room mRoom,int tableId, Config mConfig,GameConfig mGameConfig,CardConfig mCardConfig) {
 		super(mRoom,tableId, mConfig);
 		this.mCardConfig = mCardConfig;
+		this.ante = mGameConfig.table_ante[0];
+		this.bb_chip = mGameConfig.table_blind[0];
 	}
 
 	@Override
@@ -379,7 +387,42 @@ public class GTable extends Table {
 		
 		//说明是新的一轮开始
 		if(null == last_user){
-			
+			if(step == GStep.PREFLOP){
+				
+				//小盲大盲强制下
+				GUser[] gGsers=(GUser[])users;
+				for(int i =0;i<gGsers.length;i++) {
+		     		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY) {
+		     			continue;
+		     		}
+		     		
+		     		long user_ante = gGsers[i].chip > ante ? gGsers[i].chip : ante;
+		     		gGsers[i].chip -= user_ante;
+		     		ante_all += user_ante;
+			    }
+				
+				gGsers[sb_seatid].round_chip =  gGsers[sb_seatid].chip > bb_chip/2 ? bb_chip/2 : gGsers[sb_seatid].chip;
+				gGsers[sb_seatid].chip -= gGsers[sb_seatid].round_chip;
+				
+				gGsers[bb_seatid].round_chip =  gGsers[bb_seatid].chip > bb_chip/2 ? bb_chip/2 : gGsers[bb_seatid].chip;
+				gGsers[bb_seatid].chip -= gGsers[bb_seatid].round_chip;
+				
+				if(gGsers[bb_seatid].round_chip > gGsers[sb_seatid].round_chip){
+					max_round_chip = gGsers[bb_seatid].round_chip;
+					max_round_chip_seatid = bb_seatid;
+				}else{
+					max_round_chip = gGsers[sb_seatid].round_chip;
+					max_round_chip_seatid = sb_seatid;
+				}
+				
+				squenceId++;
+				broadcast(null,TexasCmd.CMD_SERVER_SB_BB_BET, squenceId,TexasGameServer.sbBbBet(sb_seatid, gGsers[sb_seatid].round_chip, bb_seatid, gGsers[bb_seatid].round_chip));
+				
+				//翻牌前枪口位开始
+				
+			}else{
+				
+			}
 		}
 		
 		//寻找下一个操作seatid

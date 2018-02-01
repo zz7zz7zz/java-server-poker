@@ -12,7 +12,7 @@ public class GUser extends User {
 	public GStatus play_status;
 	public Operate action_type;
 	
-	public int round_chip = 0;
+	public long round_chip = 0;
 	
 	public void reset(){
 		super.reset();

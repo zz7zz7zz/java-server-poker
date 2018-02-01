@@ -16,6 +16,7 @@ import com.poker.protocols.texaspoker.TexasGameEndProto.Result;
 import com.poker.protocols.texaspoker.TexasGameEndProto.TexasGameEnd;
 import com.poker.protocols.texaspoker.TexasGameReconnectProto.TexasGameReconnect;
 import com.poker.protocols.texaspoker.TexasGameReconnectProto.User;
+import com.poker.protocols.texaspoker.TexasGameSbBbBetProto.TexasGameSbBbBet;
 import com.poker.protocols.texaspoker.TexasGameShowHandProto.TexasGameShowHand;
 import com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard;
 
@@ -55,6 +56,17 @@ public class TexasGameServer {
 			builder.addCards(cards[i]);
 		}
 		
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+	
+	public static byte[] sbBbBet(int sbSeatId,long sbBet , int bbSeatId,long bbBet){
+		
+		TexasGameSbBbBet.Builder builder = TexasGameSbBbBet.newBuilder();
+		builder.setBbseatId(sbSeatId);
+		builder.setSBBet(sbBet);
+		builder.setBbseatId(bbSeatId);
+		builder.setBbBet(bbBet);
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}

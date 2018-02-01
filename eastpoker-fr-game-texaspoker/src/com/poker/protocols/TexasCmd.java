@@ -15,9 +15,10 @@ public final class TexasCmd {
 	public static final int CMD_SERVER_DEAL_TURN   					= 0x2004; //发转牌
 	public static final int CMD_SERVER_DEAL_RIVER   				= 0x2005; //发河牌
 
-	public static final int CMD_SERVER_BROADCAST_WHO_ACTION_WAHT 	= 0x2006; //广播 谁做了什么操作,下一个操作者是谁
-	public static final int CMD_SERVER_BROADCAST_SHOW_HAND 			= 0x2007; //广播 秀牌
+	public static final int CMD_SERVER_SB_BB_BET   					= 0x2006; //小盲大盲强制下注
+	public static final int CMD_SERVER_BROADCAST_WHO_ACTION_WAHT 	= 0x2007; //广播 谁做了什么操作,下一个操作者是谁
+	public static final int CMD_SERVER_BROADCAST_SHOW_HAND 			= 0x2008; //广播 秀牌
 
-	public static final int CMD_SERVER_RECONNECT 	    			= 0x2008; //客户端请求重连
-	public static final int CMD_SERVER_GAME_END 	    			= 0x2009; //游戏结束，进行结算
+	public static final int CMD_SERVER_RECONNECT 	    			= 0x2009; //客户端请求重连
+	public static final int CMD_SERVER_GAME_END 	    			= 0x200A; //游戏结束，进行结算
 }
