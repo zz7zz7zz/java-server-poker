@@ -434,21 +434,13 @@ public class GTable extends Table {
 	}
 	
 	public void stopGame() {
+		
 		squenceId++;
 		broadcast(null,TexasCmd.CMD_SERVER_GAME_END, squenceId, TexasGameServer.end(this));
 		
 		//--------------------------------------------------------------------------------
-		cardFlags |= Long.MAX_VALUE;
-		
-		GUser[] gGsers=(GUser[])users;
-        for(int i =0;i<gGsers.length;i++) {
-    		if(null ==gGsers[i]) {
-    			continue;
-    		}
-    		gGsers[i].clear();
-        }
-        
 		super.stopGame();
+		cardFlags |= Long.MAX_VALUE;
 	}
 
 

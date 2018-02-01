@@ -24,4 +24,16 @@ public class User {
 		
 		seatId = -1;
 	}
+	
+	public void startGame(){
+		
+	}
+
+	public void stopGame(){
+		
+	}
+	
+	public boolean isOffline(){
+		return onLineStatus == 0;
+	}
 }

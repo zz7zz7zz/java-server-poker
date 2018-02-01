@@ -180,15 +180,26 @@ public abstract class Table {
 	protected void startGame(){
 		table_status = TableStatus.TABLE_STATUS_PLAY;
 		//更新用户游戏状态
+		for (int i = 0; i < users.length; i++) {
+			if(null != users[i]){
+				users[i].startGame();
+			}
+		}
 	}
 	
 	protected void stopGame(){
 		table_status = TableStatus.TABLE_STATUS_STOP;
-		//更新用户游戏状态，将不在线的用户踢出去
+		//更新用户游戏状态，
 		for (int i = 0; i < users.length; i++) {
-			if(null != users[i] && users[i].onLineStatus == 0){
-				mRoom.logoutGame(users[i], this);
-				users[i] = null;
+			if(null != users[i]){
+				
+				users[i].stopGame();
+				
+				//将不在线的用户踢出去
+				if(users[i].isOffline()){
+					mRoom.logoutGame(users[i], this);
+					users[i] = null;
+				}
 			}
 		}
 	}

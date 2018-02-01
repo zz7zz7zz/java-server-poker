@@ -16,10 +16,16 @@ public class GUser extends User {
 	
 	public void reset(){
 		super.reset();
-		clear();
+		stopGame();
 	}
 	
-	public void clear(){
+	public void startGame(){
+		super.startGame();
+		play_status = GStatus.PLAY;
+	}
+	
+	public void stopGame(){
+		super.stopGame();
 		action_type = Operate.FOLD;
 		play_status = GStatus.NOT_PLAY_SITDOWN;
 		Arrays.fill(handCard, (byte)0);
