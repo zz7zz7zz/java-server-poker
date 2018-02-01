@@ -12,7 +12,7 @@ public class User {
 	
 	public int tid;
 	public int accessId = -1;
-	public int onLineStatus;
+	public int onLineStatus;//1在线，2掉线
 	public boolean isReady;
 	
 	public void reset(){
@@ -34,6 +34,6 @@ public class User {
 	}
 	
 	public boolean isOffline(){
-		return onLineStatus == 0;
+		return onLineStatus == 2;
 	}
 }

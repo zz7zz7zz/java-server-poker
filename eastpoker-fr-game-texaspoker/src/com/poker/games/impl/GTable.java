@@ -1,8 +1,10 @@
 package com.poker.games.impl;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.open.util.log.Logger;
 import com.poker.common.config.Config;
 import com.poker.games.GDefine.TableStatus;
 import com.poker.games.Room;
@@ -141,16 +143,29 @@ public class GTable extends Table {
         }
         
         //2.找出小盲，大盲位，按钮位
-        //2.1找小盲位
-        int next_seatId_index;
-        if(sb_seatid == -1){//说明是游戏刚开始，没有持续
+        
+        //2.3找Button位
+        int next_seatId_index = 0 ;
+        if(btn_seateId == -1){//说明是游戏刚开始，没有持续
 			long t = System.currentTimeMillis();//获得当前时间的毫秒数
 	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
 	        next_seatId_index = rd.nextInt(this.mConfig.table_max_user);
         }else{//说明是游戏持续
         	next_seatId_index = sb_seatid+1;
         }
-        
+    	if(null == gGsers[next_seatId_index]){
+        	for(int i = 1 ;i<this.mConfig.table_max_user;i++){
+        		int r_next_seatId_index = (next_seatId_index - i + this.mConfig.table_max_user)%this.mConfig.table_max_user;
+            	if(null != gGsers[r_next_seatId_index]){
+            		next_seatId_index = r_next_seatId_index;
+            		break;
+            	}
+        	}
+    	}
+    	btn_seateId = next_seatId_index;
+    	
+        //2.2找小盲位
+    	next_seatId_index = (btn_seateId+1)%this.mConfig.table_max_user;
         if(null == gGsers[next_seatId_index]){
         	for(int i = 1 ;i<this.mConfig.table_max_user;i++){
         		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
@@ -162,7 +177,7 @@ public class GTable extends Table {
         }
         sb_seatid = next_seatId_index;
         		
-       //2.2找大盲位
+       //2.3找大盲位
     	next_seatId_index = (sb_seatid+1)%this.mConfig.table_max_user;
     	if(null == gGsers[next_seatId_index]){
         	for(int i = 1 ;i<this.mConfig.table_max_user;i++){
@@ -174,19 +189,6 @@ public class GTable extends Table {
         	}
     	}
     	bb_seatid = next_seatId_index;
-    	
-        //2.3找Button位
-    	next_seatId_index = (sb_seatid-1)%this.mConfig.table_max_user;
-    	if(null == gGsers[next_seatId_index]){
-        	for(int i = 1 ;i<this.mConfig.table_max_user;i++){
-        		int r_next_seatId_index = (next_seatId_index - i + this.mConfig.table_max_user)%this.mConfig.table_max_user;
-            	if(null != gGsers[r_next_seatId_index]){
-            		next_seatId_index = r_next_seatId_index;
-            		break;
-            	}
-        	}
-    	}
-    	btn_seateId = next_seatId_index;
     	
     	//3.发送游戏开始数据
     	squenceId++;
@@ -369,16 +371,20 @@ public class GTable extends Table {
 			max_round_chip_seatid = user.seatId;
 		}
 
-
 		next_option(user);
-		
 	}
 	
 	public void next_option(GUser last_user) {
+		Logger.v(" step " + step);
+		
+		//说明是新的一轮开始
+		if(null == last_user){
+			
+		}
 		
 		//寻找下一个操作seatid
 		action_seatid = -1;
-	    	int next_seatId_index = null != last_user ? last_user.seatId+1 : sb_seatid;
+	    int next_seatId_index = null != last_user ? last_user.seatId+1 : sb_seatid;
 		GUser[] gGsers=(GUser[])users;
 		for(int i = 0 ;i<this.mConfig.table_max_user -1;i++){
         		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
@@ -452,13 +458,45 @@ public class GTable extends Table {
 		squenceId++;
 		broadcast(null,TexasCmd.CMD_SERVER_GAME_END, squenceId, TexasGameServer.stop(this));
 		
-		step = GStep.STOP;
-		
 		//--------------------------------------------------------------------------------
 		super.stopGame();
+		
+		step = GStep.STOP;
 		cardFlags |= Long.MAX_VALUE;
 		squenceId = 0;
+		
+		action_seatid = -1;
+		action_set = 0;
+		
+		Arrays.fill(flop, (byte)0);
+		Arrays.fill(turn, (byte)0);
+		Arrays.fill(river, (byte)0);
+	
+		max_round_chip = 0;
+		max_round_chip_seatid = 0;
 	}
 
+	public void resetTable(){
+		super.resetTable();
+		
+		step = GStep.STOP;
+		cardFlags |= Long.MAX_VALUE;
+		squenceId = 0;
+		
+		sb_seatid = -1;
+		bb_seatid = -1;
+		btn_seateId =-1;
+		
+		action_seatid = -1;
+		action_set = 0;
+		
+		Arrays.fill(flop, (byte)0);
+		Arrays.fill(turn, (byte)0);
+		Arrays.fill(river, (byte)0);
+	
+		max_round_chip = 0;
+		max_round_chip_seatid = 0;
+	}
+	
 
 }

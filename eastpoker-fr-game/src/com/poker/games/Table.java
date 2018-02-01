@@ -204,6 +204,16 @@ public abstract class Table {
 		}
 	}
 	
+	public void resetTable(){
+		table_status = TableStatus.TABLE_STATUS_STOP;
+		for (int i = 0; i < users.length; i++) {
+			if(null != users[i]){
+				users[i].stopGame();
+				users[i] = null;
+			}
+		}
+	}
+	
 	public void enterRoom(long uid,Table table){
 		
 		mOutPacket.begin(0, AllocatorCmd.CMD_LOGIN_GAME);
