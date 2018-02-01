@@ -14,7 +14,7 @@ public class GDefine {
 		    
 	};
 	
-	enum GStep{
+	static enum GStep{
 		START(1),
 		PREFLOP(2),
 		FLOP(3),

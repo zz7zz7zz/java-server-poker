@@ -10,7 +10,7 @@ public class GUser extends User {
 	
 	public byte[] handCard=new byte[2];
 	public GStatus play_status;
-	public Operate action_type;
+	public Operate operate;
 	
 	public long round_chip = 0;
 	
@@ -26,7 +26,7 @@ public class GUser extends User {
 	
 	public void stopGame(){
 		super.stopGame();
-		action_type = Operate.FOLD;
+		operate = Operate.FOLD;
 		play_status = GStatus.NOT_PLAY_SITDOWN;
 		Arrays.fill(handCard, (byte)0);
 	}

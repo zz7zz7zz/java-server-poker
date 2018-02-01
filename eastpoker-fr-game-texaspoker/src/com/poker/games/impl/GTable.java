@@ -40,6 +40,9 @@ public class GTable extends Table {
 	
 	public int action_seatid = -1;
 	public int action_set = 0;
+	public long op_call_chip ;
+	public long op_min_raise_chip ;
+	public long op_max_raise_chip ;
 	
 	public long max_round_chip = 0;
 	public int max_round_chip_seatid = 0;
@@ -87,7 +90,7 @@ public class GTable extends Table {
 	protected int onTableUserReLogin(User mUser) {
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){
 			squenceId++;
-			send2Access(mUser,TexasCmd.CMD_SERVER_RECONNECT, squenceId, TexasGameServer.reconnect(this,mGameConfig));
+			send2Access(mUser,TexasCmd.CMD_SERVER_RECONNECT, squenceId, TexasGameServer.reconnect(this,(GUser)mUser,mGameConfig));
 			return 0;
 		}
 		return 0;
@@ -370,7 +373,7 @@ public class GTable extends Table {
 		}
 		
 		GUser user = ((GUser)mUser);
-		user.action_type = action.getOperate();
+		user.operate = action.getOperate();
 		user.round_chip += action.getChip();
 		user.chip -= action.getChip();
 		
@@ -452,7 +455,7 @@ public class GTable extends Table {
 	        		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
 		     		if(null ==gGsers[r_next_seatId_index] 
 		     				|| gGsers[r_next_seatId_index].play_status != GStatus.PLAY 
-		     				|| gGsers[r_next_seatId_index].action_type !=Operate.FOLD
+		     				|| gGsers[r_next_seatId_index].operate !=Operate.FOLD
 		     				|| gGsers[r_next_seatId_index].chip > 0) {
 		     			continue;
 		     		}
@@ -465,9 +468,9 @@ public class GTable extends Table {
 		    		}
 	        }
 			
-			long op_call_chip = max_round_chip;
-			long op_min_raise_chip = Math.min(max_round_chip *2,gGsers[action_seatid].chip);
-			long op_max_raise_chip = gGsers[action_seatid].chip;
+			op_call_chip = max_round_chip;
+			op_min_raise_chip = Math.min(max_round_chip *2,gGsers[action_seatid].chip);
+			op_max_raise_chip = gGsers[action_seatid].chip;
 
 			squenceId++;
 			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction(preActionUser,max_round_chip,action_seatid,op_min_raise_chip,op_max_raise_chip,op_call_chip));

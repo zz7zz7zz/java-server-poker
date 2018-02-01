@@ -1,7 +1,9 @@
 package com.poker.protocols;
 
 
+import com.poker.games.GDefine;
 import com.poker.games.Table;
+import com.poker.games.impl.GTable;
 import com.poker.games.impl.GUser;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.protocols.texaspoker.TexasGameStartProto.TexasGameStart;
@@ -110,7 +112,7 @@ public class TexasGameServer {
 		TexasGameBroadcastAction.Builder builder = TexasGameBroadcastAction.newBuilder();
 		if(null != mUser) {
 			builder.setSeatId(mUser.seatId);
-			builder.setOperate(mUser.action_type);
+			builder.setOperate(mUser.operate);
 			builder.setChip(mUser.chip);
 			builder.setRoundChip(mUser.round_chip);
 			
@@ -132,14 +134,16 @@ public class TexasGameServer {
 	public static byte[] showHand(Table table){
 		
 		TexasGameShowHand.Builder builder = TexasGameShowHand.newBuilder();
-		for(int i = 0;i<table.users.length;i++){
-			if(null == table.users[i]){
+        GUser[] gGsers=(GUser[])table.users;
+		for(int i = 0;i<gGsers.length;i++){
+			if(null == gGsers[i]){
 				continue;
 			}
 			UserCard.Builder usercardBuilder =  UserCard.newBuilder();
 			usercardBuilder.setSeateId(table.users[i].seatId);
-			usercardBuilder.addCards(1);
-			usercardBuilder.addCards(2);
+			for(int j = 0 ;j<gGsers[i].handCard.length;j++){
+				usercardBuilder.addCards(gGsers[i].handCard[j]);
+			}
 			builder.addMUserCards(usercardBuilder);
 		}
 	
@@ -147,7 +151,7 @@ public class TexasGameServer {
 		return body;
 	}
 	
-	public static byte[] reconnect(Table table, GameConfig mGameConfig){
+	public static byte[] reconnect(GTable table, GUser mUser,GameConfig mGameConfig){
 		TexasGameReconnect.Builder builder = TexasGameReconnect.newBuilder();
 		
 		Config.Builder configBuilder = Config.newBuilder();
@@ -166,44 +170,49 @@ public class TexasGameServer {
 		
 		builder.setConfig(configBuilder);
 		
-		
-		for(int i = 0;i<table.users.length;i++){
+		 GUser[] gGsers=(GUser[])table.users;
+		for(int i = 0;i<gGsers.length;i++){
 			User.Builder userBuilder = User.newBuilder();
-			userBuilder.setUid(1000);
-			userBuilder.setSeatId(i);
-			userBuilder.setNickName("name");
-			userBuilder.setHeadPortrait("www.baidu.com/logo.png");
-			userBuilder.setChip(100);
-			userBuilder.setLevel(1);
-			userBuilder.setOperate(Operate.CALL);
-			userBuilder.setRoundChip(200);
+			userBuilder.setUid(gGsers[i].uid);
+			userBuilder.setSeatId(gGsers[i].seatId);
+			userBuilder.setNickName(gGsers[i].nick_name);
+			userBuilder.setHeadPortrait(gGsers[i].head_portrait);
+			userBuilder.setChip(gGsers[i].chip);
+			userBuilder.setLevel(gGsers[i].level);
+			userBuilder.setOperate(gGsers[i].operate);
+			userBuilder.setRoundChip(gGsers[i].round_chip);
 			builder.addMUsers(userBuilder);
 		}
 		
-		builder.setTableStatus(1);
-		builder.setSbSeatId(1);
-		builder.setSbSeatId(1);
-		builder.setBtnSeatId(1);
+		builder.setTableStatus(table.table_status.ordinal());
+		builder.setSbSeatId(table.sb_seatid);
+		builder.setSbSeatId(table.bb_seatid);
+		builder.setBtnSeatId(table.btn_seateId);
+
+		for(int i = 0 ;i < mUser.handCard.length;i++){
+			builder.addCards(mUser.handCard[i]);
+		}
+
+		for(int i = 0 ;i < table.flop.length;i++){
+			builder.addCards(table.flop[i]);
+		}
 		
+		for(int i = 0 ;i < table.turn.length;i++){
+			builder.addCards(table.turn[i]);
+		}
 		
-		builder.addCards(1);
-		builder.addCards(1);
+		for(int i = 0 ;i < table.river.length;i++){
+			builder.addCards(table.river[i]);
+		}
 		
-		builder.addCardsFlop(1);
-		builder.addCardsFlop(1);
-		builder.addCardsFlop(1);
+		builder.setNextOpSeatId(table.action_seatid);
+		builder.setNextOpMinRaiseChip(table.op_min_raise_chip);
+		builder.setNextOpMaxRaiseChip(table.op_max_raise_chip);
+		builder.setNextOpCallChip(table.op_call_chip);
 		
-		builder.addCardsTrun(1);
+		builder.setMaxRoundChip(table.max_round_chip);
 		
-		builder.addCardsRiver(1);
-		
-		builder.setNextOpSeatId(1);
-		builder.setNextOpMinRaiseChip(200);
-		builder.setNextOpMaxRaiseChip(500);
-		builder.setNextOpCallChip(300);
-		builder.setMaxRoundChip(5000);
-		
-		builder.setRestActionTimeout(10);
+		builder.setRestActionTimeout(mGameConfig.table_action_timeout);
 		
 		byte[] body = builder.build().toByteArray();
 		return body;
