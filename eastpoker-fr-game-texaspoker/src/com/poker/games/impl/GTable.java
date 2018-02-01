@@ -191,6 +191,8 @@ public class GTable extends Table {
     	//3.发送游戏开始数据
     	squenceId++;
     	broadcast(null,TexasCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.start(sb_seatid, bb_seatid, btn_seateId, mGameConfig));
+    	
+  		step = GStep.START;
 	}
 	
 	public void dealPreFlop() {
@@ -242,16 +244,14 @@ public class GTable extends Table {
 	    }
 		 
   		step = GStep.PREFLOP;
-  		
   		next_option(null);
-
 	}
 	
 	public void dealFlop() {
 		if(mCardConfig.isEnable) {
 			for(int j=0;j<flop.length;j++) {
 				flop[j]=mCardConfig.flop[j];
-    			}
+    		}
 		}else {
 			long t = System.currentTimeMillis();//获得当前时间的毫秒数
 	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
@@ -268,11 +268,11 @@ public class GTable extends Table {
     			}
     		}
 		}
-  		step = GStep.FLOP;
   		
 		squenceId++;
 		broadcast(null,TexasCmd.CMD_SERVER_DEAL_FLOP, squenceId, TexasGameServer.dealFlop(flop));
 		
+		step = GStep.FLOP;
 		next_option(null);
 	}
 	
@@ -280,7 +280,7 @@ public class GTable extends Table {
 		if(mCardConfig.isEnable) {
 			for(int j=0;j<turn.length;j++) {
 				turn[j]=mCardConfig.turn[j];
-    			}
+    		}
 		}else {
 			long t = System.currentTimeMillis();//获得当前时间的毫秒数
 	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
@@ -297,11 +297,11 @@ public class GTable extends Table {
     			}
     		}
 		}
-  		step = GStep.TRUN;
-  		
+
 		squenceId++;
 		broadcast(null,TexasCmd.CMD_SERVER_DEAL_TURN, squenceId, TexasGameServer.dealTrun(turn));
 		
+  		step = GStep.TRUN;
 		next_option(null);
 	}
 	
@@ -326,11 +326,11 @@ public class GTable extends Table {
     			}
     		}
 		}
-  		step = GStep.RIVER;
   		
 		squenceId++;
 		broadcast(null,TexasCmd.CMD_SERVER_DEAL_RIVER, squenceId,TexasGameServer.dealRiver(river));
 		
+  		step = GStep.RIVER;
 		next_option(null);
 	}
 	
@@ -435,23 +435,24 @@ public class GTable extends Table {
 			}
 		}else {
 			squenceId++;
-			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction(last_user,max_round_chip,action_seatid,
-					op_min_raise_chip,op_max_raise_chip,op_call_chip));
+			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction(last_user,max_round_chip,action_seatid,op_min_raise_chip,op_max_raise_chip,op_call_chip));
 		}
 	}
 	
 	
 	public void showHands() {
-  		step = GStep.SHOWHAND;
-  		
 		squenceId++;
 		broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_SHOW_HAND, squenceId, TexasGameServer.showHand(this));
+		
+		step = GStep.SHOWHAND;
 	}
 	
 	public void stopGame() {
 		
 		squenceId++;
-		broadcast(null,TexasCmd.CMD_SERVER_GAME_END, squenceId, TexasGameServer.end(this));
+		broadcast(null,TexasCmd.CMD_SERVER_GAME_END, squenceId, TexasGameServer.stop(this));
+		
+		step = GStep.STOP;
 		
 		//--------------------------------------------------------------------------------
 		super.stopGame();

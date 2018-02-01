@@ -57,7 +57,6 @@ public class TexasGameServer {
 		
 		byte[] body = builder.build().toByteArray();
 		return body;
-//		return DataPacket.write(writeBuff, squenceId, GCmd.CMD_SERVER_DEAL_PREFLOP, (byte)0, body,0,body.length);
 	}
 	
 	public static byte[] dealFlop(byte[] cards){
@@ -93,9 +92,7 @@ public class TexasGameServer {
 		return body;
 	}
 	
-	public static byte[] broadcastUserAction(GUser mUser ,
-			
-			long max_round_chip,int op_seate_id ,long op_min_raise_chip,long op_max_raise_chip,long op_call_chip) {
+	public static byte[] broadcastUserAction(GUser mUser ,long max_round_chip,int op_seate_id ,long op_min_raise_chip,long op_max_raise_chip,long op_call_chip) {
 		
 		//上一个操作者
 		TexasGameBroadcastAction.Builder builder = TexasGameBroadcastAction.newBuilder();
@@ -199,7 +196,7 @@ public class TexasGameServer {
 		return body;
 	}
 	
-	public static byte[] end(Table table){
+	public static byte[] stop(Table table){
 		TexasGameEnd.Builder builder = TexasGameEnd.newBuilder();
 		for(int i = 0;i<table.users.length;i++){
 			if(null == table.users[i]){

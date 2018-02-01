@@ -15,11 +15,13 @@ public class GDefine {
 	};
 	
 	enum GStep{
-		PREFLOP(1),
-		FLOP(2),
-		TRUN(3),
-		RIVER(4),
-		SHOWHAND(5);
+		START(1),
+		PREFLOP(2),
+		FLOP(3),
+		TRUN(4),
+		RIVER(5),
+		SHOWHAND(6),
+		STOP(7);
 		
 		int code;
         private GStep(int code) {
