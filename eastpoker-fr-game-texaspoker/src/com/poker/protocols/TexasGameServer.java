@@ -110,10 +110,11 @@ public class TexasGameServer {
 		TexasGameBroadcastAction.Builder builder = TexasGameBroadcastAction.newBuilder();
 		if(null != mUser) {
 			builder.setSeatId(mUser.seatId);
-			builder.setOperate(Operate.CALL);
+			builder.setOperate(mUser.action_type);
 			builder.setChip(mUser.chip);
-			builder.setRemainingChip(mUser.chip);
 			builder.setRoundChip(mUser.round_chip);
+			
+			builder.setRemainingChip(mUser.chip);
 		}
 
 		builder.setMaxRoundChip(max_round_chip);

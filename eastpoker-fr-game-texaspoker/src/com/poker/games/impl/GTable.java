@@ -382,11 +382,11 @@ public class GTable extends Table {
 		next_option(user);
 	}
 	
-	public void next_option(GUser last_user) {
+	public void next_option(GUser preActionUser) {
 		Logger.v(" step " + step);
 		
 		//说明是新的一轮开始
-		if(null == last_user){
+		if(null == preActionUser){
 			if(step == GStep.PREFLOP){
 				
 				//小盲大盲强制下
@@ -419,75 +419,75 @@ public class GTable extends Table {
 				broadcast(null,TexasCmd.CMD_SERVER_SB_BB_BET, squenceId,TexasGameServer.sbBbBet(sb_seatid, gGsers[sb_seatid].round_chip, bb_seatid, gGsers[bb_seatid].round_chip));
 				
 				//翻牌前枪口位开始
+				action_seatid = (bb_seatid+1)%mConfig.table_max_user;
 				
 			}else{
 				
+				action_seatid = sb_seatid;
 			}
+		}else{
+			action_seatid = (action_seatid+1) %mConfig.table_max_user;
 		}
 		
-		//寻找下一个操作seatid
-		action_seatid = -1;
-	    int next_seatId_index = null != last_user ? last_user.seatId+1 : sb_seatid;
+		//如果只有一个可操作的人，则牌局一直自动走到底
+		int bet_user_count = 0;
 		GUser[] gGsers=(GUser[])users;
-		for(int i = 0 ;i<this.mConfig.table_max_user -1;i++){
-        		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
-     		if(null ==gGsers[r_next_seatId_index] 
-     				|| gGsers[r_next_seatId_index].play_status != GStatus.PLAY 
-     				|| gGsers[r_next_seatId_index].action_type !=Operate.FOLD) {
+		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
+     		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY ) {
      			continue;
      		}
-	    		if(gGsers[r_next_seatId_index].chip>0 && gGsers[r_next_seatId_index].round_chip < max_round_chip) {
-	    			action_seatid = r_next_seatId_index;
-	    			break;
-	    		}
-        }
+     		
+     		if(gGsers[i].chip>0) {
+     			bet_user_count++;
+     		}
+		}
 		
-		long op_min_raise_chip = Math.min(max_round_chip *2,gGsers[action_seatid].chip);
-		long op_max_raise_chip = gGsers[action_seatid].chip;
-		long op_call_chip = max_round_chip;
-		
-		//找不到了，说明一轮下注完毕，进入下一轮
-		if(action_seatid == -1) {
-			//结束了
-			if(step == GStep.SHOWHAND) {
-				stopGame();
-				return;
-			}else {//如果只有一个人下注，其它人都弃牌，也结束了
-				int bet_user_count = 0;
-				for(int i = 0 ;i<this.mConfig.table_max_user;i++){
-		     		if(null ==gGsers[i] 
-		     				|| gGsers[i].play_status != GStatus.PLAY ) {
+		if(bet_user_count == 1) {
+			nextStep();
+			return;
+		}else{
+			//寻找下一个操作seatid
+		    int next_seatId_index = action_seatid;
+			for(int i = 0 ;i<this.mConfig.table_max_user -1;i++){
+	        		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
+		     		if(null ==gGsers[r_next_seatId_index] 
+		     				|| gGsers[r_next_seatId_index].play_status != GStatus.PLAY 
+		     				|| gGsers[r_next_seatId_index].action_type !=Operate.FOLD
+		     				|| gGsers[r_next_seatId_index].chip > 0) {
 		     			continue;
 		     		}
-		     		
-		     		if(gGsers[i].round_chip == max_round_chip) {
-		     			bet_user_count++;
-		     		}
-				}
-				
-				if(bet_user_count == 1) {
-					stopGame();
-					return;
-				}else {
-					if(step == GStep.PREFLOP) {
-						dealFlop();
-					}else if(step == GStep.FLOP) {
-						dealTrun();
-					}else if(step == GStep.TRUN) {
-						dealRiver();
-					}else if(step == GStep.RIVER) {
-						showHands();
-					}else {
-						//--------
-					}
-				}
-			}
-		}else {
+		    		if(gGsers[r_next_seatId_index].round_chip < max_round_chip) {
+		    			action_seatid = r_next_seatId_index;
+		    			break;
+		    		}else if(r_next_seatId_index == max_round_chip_seatid){//说明大家下注额是一样了，进入下一圈
+		    			nextStep();
+		    			return;
+		    		}
+	        }
+			
+			long op_call_chip = max_round_chip;
+			long op_min_raise_chip = Math.min(max_round_chip *2,gGsers[action_seatid].chip);
+			long op_max_raise_chip = gGsers[action_seatid].chip;
+
 			squenceId++;
-			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction(last_user,max_round_chip,action_seatid,op_min_raise_chip,op_max_raise_chip,op_call_chip));
+			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction(preActionUser,max_round_chip,action_seatid,op_min_raise_chip,op_max_raise_chip,op_call_chip));
 		}
 	}
 	
+	private void nextStep(){
+		if(step == GStep.PREFLOP) {
+			dealFlop();
+		}else if(step == GStep.FLOP) {
+			dealTrun();
+		}else if(step == GStep.TRUN) {
+			dealRiver();
+			return;
+		}else if(step == GStep.RIVER) {
+			showHands();
+		}else{
+			stopGame();
+		}
+	}
 	
 	public void showHands() {
 		squenceId++;
