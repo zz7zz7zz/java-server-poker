@@ -57,6 +57,7 @@ public class Main {
         mServerConfig.initFileConfig("./conf/server.config");
         mServerConfig.server_id = libArgsConfig.id;
         
+        libArgsConfig.server_type = (mServerConfig.game_id<<16 | ServerIds.SERVER_GAME);
         //-----------------------------------------初始化全局属性-----------------------------------------------
         initGlobalFields(libClientConfig.packet_max_length_tcp);
         

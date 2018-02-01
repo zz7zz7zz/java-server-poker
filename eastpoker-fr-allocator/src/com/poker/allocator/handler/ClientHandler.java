@@ -268,7 +268,7 @@ public class ClientHandler extends AbsClientHandler{
 		int request_gamelevel = loginGameRequest.getLevel();
 		
 		int tableId = findTable(request_gameid,request_gamelevel);
-		int gameSid= (tableId>>16);
+		short gameSid= (short)(tableId>>16);
 
 		mOutPacket.begin(squenceId, GameCmd.CMD_LOGIN_GAME);
 		mOutPacket.writeInt(accessId);//AccessId
@@ -277,7 +277,7 @@ public class ClientHandler extends AbsClientHandler{
 		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		int length = PacketTransfer.send2Game(gameSid,mTempBuff, squenceId, uid,GameCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		int length = PacketTransfer.send2Game(request_gameid,gameSid,mTempBuff, squenceId, uid,GameCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
   		send2Dispatch(mTempBuff,0,length);	
 	}
 	

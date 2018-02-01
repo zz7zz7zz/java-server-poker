@@ -16,10 +16,12 @@ public class User {
 	public boolean isReady;
 	
 	public void reset(){
+		tid = -1;
+		
 		uid = 0;
 		chip = 0;
 		level = 0;
 		
-		seatId = 0;
+		seatId = -1;
 	}
 }

@@ -72,7 +72,7 @@ public class ClientHandler extends AbsClientHandler{
 				mOutPacket.writeInt(accessId);//AccessId
 				mOutPacket.end();
 				
-				int length = PacketTransfer.send2Game(gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_CHECK_GAME_STATUS, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
+				int length = PacketTransfer.send2Game(gameId,gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_CHECK_GAME_STATUS, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
 				send2Dispatch(mTempBuff,0,length);	
 			}
 			
@@ -123,7 +123,7 @@ public class ClientHandler extends AbsClientHandler{
 			mOutPacket.writeInt(accessId);//AccessId
 			mOutPacket.end();
 			
-			int length = PacketTransfer.send2Game(gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_LOGIN_GAME, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+			int length = PacketTransfer.send2Game(gameId,gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_LOGIN_GAME, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 			send2Dispatch(mTempBuff,0,length);	
 		}else{//说明没有在游戏中，去Alloc中寻找桌子再进入游戏
 			

@@ -51,8 +51,12 @@ public class Room {
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
 		long uid = mDispatchPacket.getDispatchChainList(0).getUid();
 		
-		int tid = 0;
+		if(uid <=0){
+			Logger.vt(TAG, "error uid " + uid);
+			return;
+		}
 		
+		int tid = 0;
 		int tidIndex = tid & 0xff;
 		if(tidIndex <0 || tidIndex >= mTables.length){
 			return;
@@ -65,8 +69,8 @@ public class Room {
 		
 		User mUser = userMap.get(uid);
 		if(null != mUser){//说明之前在桌子上,替换上真实的桌子
-			if(mUser.tid != tid){
-				Logger.v(TAG+ "tid.diff tid " + tid + " index "+ (tid & 0xff)+ " realtid "+mUser.tid + " realIndex" + (mUser.tid & 0xff));
+			if(mUser.tid >= 0 && mUser.tid != tid){
+				Logger.v(TAG+ "error uid  tid.diff tid " + tid + " index "+ (tid & 0xff)+ " realtid "+mUser.tid + " realIndex" + (mUser.tid & 0xff));
 				mTable = mTables[mUser.tid & 0xff];
 			}
 		}

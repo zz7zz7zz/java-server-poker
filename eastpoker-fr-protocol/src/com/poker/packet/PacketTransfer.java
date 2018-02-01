@@ -32,8 +32,9 @@ public class PacketTransfer{
 		return send2Dispatcher(writeBuff,squenceId, uid,cmd,dispatch_type, data, offset, length, SERVER_TYPE, SERVER_ID, ServerIds.SERVER_ALLOCATOR, dst_server_id,-1,-1);
 	}
 	
-	public static int send2Game(int dst_server_id ,byte[] writeBuff,int squenceId ,long uid, int cmd ,int dispatch_type, byte[] data, int offset ,int length){
-		return send2Dispatcher(writeBuff,squenceId, uid,cmd,dispatch_type, data, offset, length, SERVER_TYPE, SERVER_ID, ServerIds.SERVER_GAME, dst_server_id,-1,-1);
+	public static int send2Game(int gameId, int dst_server_id ,byte[] writeBuff,int squenceId ,long uid, int cmd ,int dispatch_type, byte[] data, int offset ,int length){
+		int src_server_type = gameId<<16 | ServerIds.SERVER_GAME;
+		return send2Dispatcher(writeBuff,squenceId, uid,cmd,dispatch_type, data, offset, length, SERVER_TYPE, SERVER_ID, src_server_type, dst_server_id,-1,-1);
 	}
 	
 	public static int send2Dispatcher(byte[] writeBuff,int squenceId,long uid, int cmd ,int dispatch_type, byte[] data,int offset,int length, int src_server_type , int src_server_id ,int dst_server_type , int dst_server_id,int gameGroup,int matchGroup){
