@@ -154,7 +154,7 @@ public class Room {
 		}
 	}
 	
-	private void logoutGame(User mUser , Table mTable){
+	public void logoutGame(User mUser , Table mTable){
 		LogoutResult ret = mTable.onUserExit(mUser);
 		
 		mTable.leaveRoom(mUser.uid);
