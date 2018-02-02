@@ -409,11 +409,6 @@ public class GTable extends Table {
 				ret = -7;
 			}
 			
-			//判断操作是否合理
-			if((op_sets & action.getOperateValue()) <=0) {
-				ret =  -8 ;
-			}
-			
 			GUser user = ((GUser)mUser);
 			user.operate = action.getOperate();
 			long actBetChip = 0;
