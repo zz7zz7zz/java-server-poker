@@ -485,6 +485,23 @@ public class GTable extends Table {
 		
 		//说明是新的一轮开始
 		if(null == preActionUser){
+			
+			GUser[] gGsers=(GUser[])users;
+			for(int i = 0 ;i<this.mConfig.table_max_user;i++){
+	     		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY ) {
+	     			continue;
+	     		}
+	     		
+	     		gGsers[i].round_chip = 0;
+			}
+			
+			op_call_chip = 0;
+			op_min_raise_chip = Math.min(sb_chip * 2,users[op_seatid].chip);
+			op_max_raise_chip = users[op_seatid].chip;
+			
+			max_round_chip = 0;
+			max_round_chip_seatid = -1;
+			
 			if(step == GStep.PREFLOP){
 				//翻牌前枪口位开始
 				op_seatid = (bb_seatid+1)%mConfig.table_max_user;
@@ -492,7 +509,7 @@ public class GTable extends Table {
 				op_seatid = sb_seatid;
 			}
 		}else{
-			op_seatid = (op_seatid+1) %mConfig.table_max_user;
+			op_seatid = (preActionUser.seatId+1) %mConfig.table_max_user;
 		}
 		
 		//如果只有一个可操作的玩家，则牌局一直自动走到底
@@ -537,7 +554,7 @@ public class GTable extends Table {
 		    		}
 	        }
 			
-			op_call_chip = max_round_chip;
+			op_call_chip 	  = max_round_chip;
 			op_min_raise_chip = Math.min(max_round_chip *2,gGsers[op_seatid].chip);
 			op_max_raise_chip = gGsers[op_seatid].chip;
 
@@ -546,23 +563,7 @@ public class GTable extends Table {
 		}
 	}
 	
-	private void nextStep(){
-		GUser[] gGsers=(GUser[])users;
-		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
-     		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY ) {
-     			continue;
-     		}
-     		
-     		gGsers[i].round_chip = 0;
-		}
-		
-		op_call_chip = 0;
-		op_min_raise_chip = Math.min(sb_chip * 2,users[op_seatid].chip);
-		op_max_raise_chip = users[op_seatid].chip;
-		
-		max_round_chip = 0;
-		max_round_chip_seatid = -1;
-		
+	private void nextStep(){		
 		if(step == GStep.PREFLOP) {
 			dealFlop();
 		}else if(step == GStep.FLOP) {
