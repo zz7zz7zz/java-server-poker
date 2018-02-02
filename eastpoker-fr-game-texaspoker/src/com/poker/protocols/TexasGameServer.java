@@ -1,15 +1,15 @@
 package com.poker.protocols;
 
 
-import com.poker.games.GDefine;
 import com.poker.games.Table;
 import com.poker.games.impl.GTable;
 import com.poker.games.impl.GUser;
+import com.poker.games.impl.GDefine.GStatus;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.protocols.texaspoker.TexasGameStartProto.TexasGameStart;
-import com.poker.protocols.texaspoker.TexasGameStartProto.Config;
-import com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate;
+import com.poker.protocols.texaspoker.GameUserProto.GameUser;
 import com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction;
+import com.poker.protocols.texaspoker.TexasGameConfigProto.TexasGameConfig;
 import com.poker.protocols.texaspoker.TexasGameDealFlopProto.TexasGameDealFlop;
 import com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop;
 import com.poker.protocols.texaspoker.TexasGameDealRiverProto.TexasGameDealRiver;
@@ -17,35 +17,36 @@ import com.poker.protocols.texaspoker.TexasGameDealTurnProto.TexasGameDealTurn;
 import com.poker.protocols.texaspoker.TexasGameEndProto.Result;
 import com.poker.protocols.texaspoker.TexasGameEndProto.TexasGameEnd;
 import com.poker.protocols.texaspoker.TexasGameReconnectProto.TexasGameReconnect;
-import com.poker.protocols.texaspoker.TexasGameReconnectProto.User;
 import com.poker.protocols.texaspoker.TexasGameSbBbBetProto.TexasGameSbBbBet;
 import com.poker.protocols.texaspoker.TexasGameShowHandProto.TexasGameShowHand;
 import com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard;
 
 public class TexasGameServer {
 	
-	public static byte[] start(int sb_seatid,int bb_seatid,int btn_seateId, GameConfig mGameConfig){
+	public static byte[] start(int sb_seatid,int bb_seatid,int btn_seateId,long ante, long sb_round_chip,long bb_round_chip,GTable table){
 		
 		TexasGameStart.Builder builder = TexasGameStart.newBuilder();
 		builder.setSbSeatId(sb_seatid);
 		builder.setBbSeatId(bb_seatid);
 		builder.setBtnSeatId(btn_seateId);
 		
-		Config.Builder configBuilder = Config.newBuilder();
-		configBuilder.setLevel(mGameConfig.level);
-		configBuilder.setLevelName(mGameConfig.level_name);
-		configBuilder.setMinUser(mGameConfig.table_min_user);
-		configBuilder.setMaxUser(mGameConfig.table_max_user);
-		configBuilder.setMinChip(mGameConfig.table_min_chip);
-		configBuilder.setMaxChip(mGameConfig.table_max_chip);
-		int size = mGameConfig.table_ante.length;
-		for(int i = 0;i<size;i++){
-			configBuilder.addAnte(mGameConfig.table_ante[i]);
-			configBuilder.addBlind(mGameConfig.table_blind[i]);
-			configBuilder.addBlindTime(mGameConfig.table_blind_time[i]);
-		}
+		builder.setAnteAll(ante);
+		builder.setSbForceBetChip(sb_round_chip);
+		builder.setBbForceBetChip(bb_round_chip);
 		
-		builder.setConfig(configBuilder);
+		GUser[] gTableUsers = (GUser[])table.users;
+		for(int i =0 ;i<gTableUsers.length;i++){
+			GUser user = gTableUsers[i];
+			if(null  != user && user.play_status == GStatus.PLAY ){
+				GameUser.Builder userBuild = GameUser.newBuilder();
+				userBuild.setSeatId(user.seatId);
+				userBuild.setChip(user.chip);
+				userBuild.setChipTotal(user.chip_total);
+				userBuild.setRoundChip(user.round_chip);
+				
+				builder.addUser(userBuild);
+			}
+		}
 		
 		byte[] body = builder.build().toByteArray();
 		return body;
@@ -58,17 +59,6 @@ public class TexasGameServer {
 			builder.addCards(cards[i]);
 		}
 		
-		byte[] body = builder.build().toByteArray();
-		return body;
-	}
-	
-	public static byte[] sbBbBet(int sbSeatId,long sbBet , int bbSeatId,long bbBet){
-		
-		TexasGameSbBbBet.Builder builder = TexasGameSbBbBet.newBuilder();
-		builder.setBbseatId(sbSeatId);
-		builder.setSBBet(sbBet);
-		builder.setBbseatId(bbSeatId);
-		builder.setBbBet(bbBet);
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -151,48 +141,64 @@ public class TexasGameServer {
 		return body;
 	}
 	
-	public static byte[] reconnect(GTable table, GUser mUser,GameConfig mGameConfig){
+	public static byte[] reconnect(GTable table, GUser self,GameConfig mGameConfig){
 		TexasGameReconnect.Builder builder = TexasGameReconnect.newBuilder();
 		
-		Config.Builder configBuilder = Config.newBuilder();
+		//配置
+		TexasGameConfig.Builder configBuilder = TexasGameConfig.newBuilder();
 		configBuilder.setLevel(mGameConfig.level);
 		configBuilder.setLevelName(mGameConfig.level_name);
 		configBuilder.setMinUser(mGameConfig.table_min_user);
 		configBuilder.setMaxUser(mGameConfig.table_max_user);
 		configBuilder.setMinChip(mGameConfig.table_min_chip);
 		configBuilder.setMaxChip(mGameConfig.table_max_chip);
+		configBuilder.setActionTimeout(mGameConfig.table_action_timeout);
 		int size = mGameConfig.table_ante.length;
 		for(int i = 0;i<size;i++){
 			configBuilder.addAnte(mGameConfig.table_ante[i]);
 			configBuilder.addBlind(mGameConfig.table_blind[i]);
 			configBuilder.addBlindTime(mGameConfig.table_blind_time[i]);
 		}
-		
 		builder.setConfig(configBuilder);
 		
-		 GUser[] gGsers=(GUser[])table.users;
-		for(int i = 0;i<gGsers.length;i++){
-			User.Builder userBuilder = User.newBuilder();
-			userBuilder.setUid(gGsers[i].uid);
-			userBuilder.setSeatId(gGsers[i].seatId);
-			userBuilder.setNickName(gGsers[i].nick_name);
-			userBuilder.setHeadPortrait(gGsers[i].head_portrait);
-			userBuilder.setChip(gGsers[i].chip);
-			userBuilder.setLevel(gGsers[i].level);
-			userBuilder.setOperate(gGsers[i].operate);
-			userBuilder.setRoundChip(gGsers[i].round_chip);
-			builder.addMUsers(userBuilder);
+		//
+		GUser[] gTableUsers = (GUser[])table.users;
+		for(int i =0 ;i<gTableUsers.length;i++){
+			GUser user = gTableUsers[i];
+			if(null  != user){
+				GameUser.Builder userBuild = GameUser.newBuilder();
+				userBuild.setSeatId(user.seatId);
+				
+				if(user.uid != self.uid){
+					userBuild.setUid(user.uid);
+					userBuild.setNickName(user.nick_name);
+					userBuild.setHeadPortrait(user.head_portrait);
+					userBuild.setLevel(user.level);
+				}
+				
+				userBuild.setOperate(user.operate.ordinal());
+				userBuild.setChip(user.chip);
+				userBuild.setChipTotal(user.chip_total);
+				userBuild.setPlayStatus(user.play_status.ordinal());
+				
+				builder.addUsers(userBuild);
+			}
 		}
 		
+		//
 		builder.setTableStatus(table.table_status.ordinal());
+		builder.setBtnSeatId(table.btn_seateId);
 		builder.setSbSeatId(table.sb_seatid);
 		builder.setSbSeatId(table.bb_seatid);
-		builder.setBtnSeatId(table.btn_seateId);
 
-		for(int i = 0 ;i < mUser.handCard.length;i++){
-			builder.addCards(mUser.handCard[i]);
+		builder.setAnteAll(table.ante_all);
+		builder.setSbForceBetChip(table.sb_force_bet);
+		builder.setBbForceBetChip(table.bb_force_bet);
+
+		for(int i = 0 ;i < self.handCard.length;i++){
+			builder.addCards(self.handCard[i]);
 		}
-
+		
 		for(int i = 0 ;i < table.flop.length;i++){
 			builder.addCards(table.flop[i]);
 		}
@@ -205,14 +211,35 @@ public class TexasGameServer {
 			builder.addCards(table.river[i]);
 		}
 		
-		builder.setNextOpSeatId(table.action_seatid);
+		builder.setNextOpSeatId(table.op_seatid);
+		builder.setNextOpCallChip(table.op_call_chip);
 		builder.setNextOpMinRaiseChip(table.op_min_raise_chip);
 		builder.setNextOpMaxRaiseChip(table.op_max_raise_chip);
-		builder.setNextOpCallChip(table.op_call_chip);
-		
 		builder.setMaxRoundChip(table.max_round_chip);
 		
 		builder.setRestActionTimeout(mGameConfig.table_action_timeout);
+		
+		//
+		gTableUsers = (GUser[])table.onLookers;
+		for(int i =0 ;i<gTableUsers.length;i++){
+			GUser user = gTableUsers[i];
+			if(null  != user){
+				GameUser.Builder userBuild = GameUser.newBuilder();
+				userBuild.setSeatId(user.seatId);
+			
+				userBuild.setUid(user.uid);
+				userBuild.setNickName(user.nick_name);
+				userBuild.setHeadPortrait(user.head_portrait);
+				userBuild.setLevel(user.level);
+
+				userBuild.setOperate(user.operate.ordinal());
+				userBuild.setChip(user.chip);
+				userBuild.setChipTotal(user.chip_total);
+				userBuild.setPlayStatus(user.play_status.ordinal());
+				
+				builder.addUsers(userBuild);
+			}
+		}
 		
 		byte[] body = builder.build().toByteArray();
 		return body;

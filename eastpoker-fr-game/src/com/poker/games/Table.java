@@ -22,6 +22,7 @@ public abstract class Table {
 	
 	public TableStatus table_status;
 	public final User[] users;
+	public final User[] onLookers = new User[10];
 	public int count;
 
 	

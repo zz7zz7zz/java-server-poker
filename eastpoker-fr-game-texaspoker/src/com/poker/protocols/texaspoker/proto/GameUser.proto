@@ -14,8 +14,11 @@ message GameUser{
 	int32  level         = 5;
 	int64  chip_total    = 6;
 	int64  chip 		 = 7;
-
+	
+	
 	int32  play_status   = 8;
+	int32  operate       = 9;//操作
+	int64  round_chip    = 10;//回合下注数
 }
 
 // protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/GameUser.proto 

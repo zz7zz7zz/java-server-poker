@@ -2,17 +2,24 @@ syntax="proto3";
 
 package com.poker.protocols.texaspoker.proto; 
 
+import "src/com/poker/protocols/texaspoker/proto/GameUser.proto";
+
 option java_package = "com.poker.protocols.texaspoker";
 option java_outer_classname = "TexasGameStartProto";
 
 
 //游戏开始
 message TexasGameStart{
-	Config config 		= 1;//配置
-	
+
+	int32  btn_seatId   = 1;//按钮位桌位id
 	int32  sb_seatId    = 2;//小盲桌位id
 	int32  bb_seatId   	= 3;//大盲桌位id
-	int32  btn_seatId   = 4;//按钮位桌位id
+
+	int64  ante_all     = 4;//ante总数
+	int64  sb_force_bet_chip  = 5;//小盲
+	int64  bb_force_bet_chip  = 6;//大盲
+	
+	repeated GameUser user  = 7;//桌子上用户信息   
 }
 
 // protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameStart.proto 

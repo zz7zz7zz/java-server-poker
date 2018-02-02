@@ -67,6 +67,24 @@ public final class GameUserProto {
      * <code>int32 play_status = 8;</code>
      */
     int getPlayStatus();
+
+    /**
+     * <pre>
+     *操作
+     * </pre>
+     *
+     * <code>int32 operate = 9;</code>
+     */
+    int getOperate();
+
+    /**
+     * <pre>
+     *回合下注数
+     * </pre>
+     *
+     * <code>int64 round_chip = 10;</code>
+     */
+    long getRoundChip();
   }
   /**
    * Protobuf type {@code com.poker.protocols.texaspoker.proto.GameUser}
@@ -89,6 +107,8 @@ public final class GameUserProto {
       chipTotal_ = 0L;
       chip_ = 0L;
       playStatus_ = 0;
+      operate_ = 0;
+      roundChip_ = 0L;
     }
 
     @java.lang.Override
@@ -162,6 +182,16 @@ public final class GameUserProto {
             case 64: {
 
               playStatus_ = input.readInt32();
+              break;
+            }
+            case 72: {
+
+              operate_ = input.readInt32();
+              break;
+            }
+            case 80: {
+
+              roundChip_ = input.readInt64();
               break;
             }
           }
@@ -310,6 +340,32 @@ public final class GameUserProto {
       return playStatus_;
     }
 
+    public static final int OPERATE_FIELD_NUMBER = 9;
+    private int operate_;
+    /**
+     * <pre>
+     *操作
+     * </pre>
+     *
+     * <code>int32 operate = 9;</code>
+     */
+    public int getOperate() {
+      return operate_;
+    }
+
+    public static final int ROUND_CHIP_FIELD_NUMBER = 10;
+    private long roundChip_;
+    /**
+     * <pre>
+     *回合下注数
+     * </pre>
+     *
+     * <code>int64 round_chip = 10;</code>
+     */
+    public long getRoundChip() {
+      return roundChip_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -345,6 +401,12 @@ public final class GameUserProto {
       }
       if (playStatus_ != 0) {
         output.writeInt32(8, playStatus_);
+      }
+      if (operate_ != 0) {
+        output.writeInt32(9, operate_);
+      }
+      if (roundChip_ != 0L) {
+        output.writeInt64(10, roundChip_);
       }
       unknownFields.writeTo(output);
     }
@@ -384,6 +446,14 @@ public final class GameUserProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(8, playStatus_);
       }
+      if (operate_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(9, operate_);
+      }
+      if (roundChip_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(10, roundChip_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -416,6 +486,10 @@ public final class GameUserProto {
           == other.getChip());
       result = result && (getPlayStatus()
           == other.getPlayStatus());
+      result = result && (getOperate()
+          == other.getOperate());
+      result = result && (getRoundChip()
+          == other.getRoundChip());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -446,6 +520,11 @@ public final class GameUserProto {
           getChip());
       hash = (37 * hash) + PLAY_STATUS_FIELD_NUMBER;
       hash = (53 * hash) + getPlayStatus();
+      hash = (37 * hash) + OPERATE_FIELD_NUMBER;
+      hash = (53 * hash) + getOperate();
+      hash = (37 * hash) + ROUND_CHIP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getRoundChip());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -591,6 +670,10 @@ public final class GameUserProto {
 
         playStatus_ = 0;
 
+        operate_ = 0;
+
+        roundChip_ = 0L;
+
         return this;
       }
 
@@ -621,6 +704,8 @@ public final class GameUserProto {
         result.chipTotal_ = chipTotal_;
         result.chip_ = chip_;
         result.playStatus_ = playStatus_;
+        result.operate_ = operate_;
+        result.roundChip_ = roundChip_;
         onBuilt();
         return result;
       }
@@ -687,6 +772,12 @@ public final class GameUserProto {
         }
         if (other.getPlayStatus() != 0) {
           setPlayStatus(other.getPlayStatus());
+        }
+        if (other.getOperate() != 0) {
+          setOperate(other.getOperate());
+        }
+        if (other.getRoundChip() != 0L) {
+          setRoundChip(other.getRoundChip());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1008,6 +1099,82 @@ public final class GameUserProto {
         onChanged();
         return this;
       }
+
+      private int operate_ ;
+      /**
+       * <pre>
+       *操作
+       * </pre>
+       *
+       * <code>int32 operate = 9;</code>
+       */
+      public int getOperate() {
+        return operate_;
+      }
+      /**
+       * <pre>
+       *操作
+       * </pre>
+       *
+       * <code>int32 operate = 9;</code>
+       */
+      public Builder setOperate(int value) {
+        
+        operate_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *操作
+       * </pre>
+       *
+       * <code>int32 operate = 9;</code>
+       */
+      public Builder clearOperate() {
+        
+        operate_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long roundChip_ ;
+      /**
+       * <pre>
+       *回合下注数
+       * </pre>
+       *
+       * <code>int64 round_chip = 10;</code>
+       */
+      public long getRoundChip() {
+        return roundChip_;
+      }
+      /**
+       * <pre>
+       *回合下注数
+       * </pre>
+       *
+       * <code>int64 round_chip = 10;</code>
+       */
+      public Builder setRoundChip(long value) {
+        
+        roundChip_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *回合下注数
+       * </pre>
+       *
+       * <code>int64 round_chip = 10;</code>
+       */
+      public Builder clearRoundChip() {
+        
+        roundChip_ = 0L;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
@@ -1073,12 +1240,13 @@ public final class GameUserProto {
     java.lang.String[] descriptorData = {
       "\n7src/com/poker/protocols/texaspoker/pro" +
       "to/GameUser.proto\022$com.poker.protocols.t" +
-      "exaspoker.proto\"\227\001\n\010GameUser\022\016\n\006seatId\030\001" +
+      "exaspoker.proto\"\274\001\n\010GameUser\022\016\n\006seatId\030\001" +
       " \001(\005\022\013\n\003uid\030\002 \001(\003\022\021\n\tnick_name\030\003 \001(\t\022\025\n\r" +
       "head_portrait\030\004 \001(\t\022\r\n\005level\030\005 \001(\005\022\022\n\nch" +
       "ip_total\030\006 \001(\003\022\014\n\004chip\030\007 \001(\003\022\023\n\013play_sta" +
-      "tus\030\010 \001(\005B/\n\036com.poker.protocols.texaspo" +
-      "kerB\rGameUserProtob\006proto3"
+      "tus\030\010 \001(\005\022\017\n\007operate\030\t \001(\005\022\022\n\nround_chip" +
+      "\030\n \001(\003B/\n\036com.poker.protocols.texaspoker" +
+      "B\rGameUserProtob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1097,7 +1265,7 @@ public final class GameUserProto {
     internal_static_com_poker_protocols_texaspoker_proto_GameUser_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_poker_protocols_texaspoker_proto_GameUser_descriptor,
-        new java.lang.String[] { "SeatId", "Uid", "NickName", "HeadPortrait", "Level", "ChipTotal", "Chip", "PlayStatus", });
+        new java.lang.String[] { "SeatId", "Uid", "NickName", "HeadPortrait", "Level", "ChipTotal", "Chip", "PlayStatus", "Operate", "RoundChip", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

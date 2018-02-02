@@ -42,24 +42,43 @@ public class GBaseServer {
 		builder.setChip(gUser.chip);
 		builder.setPlayStatus(gUser.play_status.ordinal());
 		
-		//其它人信息
-		for(int i =0 ;i<table.users.length;i++){
-			User mUser = table.users[i];
-			if(null  != mUser && mUser.seatId != gUser.seatId){
+		//桌子上其它人的信息
+		GUser[] gTableUsers = (GUser[])table.users;
+		for(int i =0 ;i<gTableUsers.length;i++){
+			GUser user = gTableUsers[i];
+			if(null  != user && user.seatId != gUser.seatId){
 				GameUser.Builder userBuild = GameUser.newBuilder();
-				userBuild.setSeatId(mUser.seatId);
-				userBuild.setUid(mUser.uid);
-				userBuild.setNickName(mUser.nick_name);
-				userBuild.setHeadPortrait(mUser.head_portrait);
-				userBuild.setLevel(mUser.level);
-				userBuild.setChip(mUser.chip);
-				userBuild.setChipTotal(mUser.chip_total);
-				userBuild.setPlayStatus(gUser.play_status.ordinal());
+				userBuild.setSeatId(user.seatId);
+				userBuild.setUid(user.uid);
+				userBuild.setNickName(user.nick_name);
+				userBuild.setHeadPortrait(user.head_portrait);
+				userBuild.setLevel(user.level);
+				userBuild.setChip(user.chip);
+				userBuild.setChipTotal(user.chip_total);
+				userBuild.setPlayStatus(user.play_status.ordinal());
 				
 				builder.addUsers(userBuild);
 			}
 		}
 		
+		//旁观用户信息
+		GUser[] onLookerUsers = (GUser[])table.users;
+		for(int i =0 ;i<onLookerUsers.length;i++){
+			GUser user = onLookerUsers[i];
+			if(null  != user){
+				GameUser.Builder userBuild = GameUser.newBuilder();
+				userBuild.setSeatId(user.seatId);
+				userBuild.setUid(user.uid);
+				userBuild.setNickName(user.nick_name);
+				userBuild.setHeadPortrait(user.head_portrait);
+				userBuild.setLevel(user.level);
+				userBuild.setChip(user.chip);
+				userBuild.setChipTotal(user.chip_total);
+				userBuild.setPlayStatus(user.play_status.ordinal());
+
+				builder.addOnLooker(userBuild);
+			}
+		}
 		
 		byte[] body = builder.build().toByteArray();
 		return body;

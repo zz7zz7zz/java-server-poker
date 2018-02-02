@@ -38,8 +38,8 @@ public class GTable extends Table {
 	public byte[] turn=new byte[1];
 	public byte[] river=new byte[1];
 	
-	public int action_seatid = -1;
-	public int action_set = 0;
+	public int op_seatid = -1;
+	public int op_sets = 0;
 	public long op_call_chip ;
 	public long op_min_raise_chip ;
 	public long op_max_raise_chip ;
@@ -48,9 +48,11 @@ public class GTable extends Table {
 	public int max_round_chip_seatid = 0;
 	
 	public long ante;
-	public long bb_chip;
+	public long sb_chip;
 	
 	public long ante_all;
+	public long sb_force_bet;
+	public long bb_force_bet;
 	public long pots [] = new long[9];//最多9个pot
 	
 	public GStep step;
@@ -59,7 +61,7 @@ public class GTable extends Table {
 		super(mRoom,tableId, mConfig);
 		this.mCardConfig = mCardConfig;
 		this.ante = mGameConfig.table_ante[0];
-		this.bb_chip = mGameConfig.table_blind[0];
+		this.sb_chip = mGameConfig.table_blind[0];
 	}
 
 	@Override
@@ -205,8 +207,37 @@ public class GTable extends Table {
     	bb_seatid = next_seatId_index;
     	
     	//3.发送游戏开始数据
+    	
+		//强制玩家交Ante,小盲大盲强制下盲注
+		for(int i =0;i<gGsers.length;i++) {
+     		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY) {
+     			continue;
+     		}
+     		
+     		long user_ante = gGsers[i].chip > ante ? gGsers[i].chip : ante;
+     		gGsers[i].chip -= user_ante;
+     		ante_all += user_ante;
+	    }
+		
+		gGsers[sb_seatid].round_chip =  gGsers[sb_seatid].chip > sb_chip ? sb_chip : gGsers[sb_seatid].chip;
+		gGsers[sb_seatid].chip -= gGsers[sb_seatid].round_chip;
+		
+		gGsers[bb_seatid].round_chip =  gGsers[bb_seatid].chip > sb_chip*2 ? sb_chip*2 : gGsers[bb_seatid].chip;
+		gGsers[bb_seatid].chip -= gGsers[bb_seatid].round_chip;
+		
+		if(gGsers[bb_seatid].round_chip > gGsers[sb_seatid].round_chip){
+			max_round_chip = gGsers[bb_seatid].round_chip;
+			max_round_chip_seatid = bb_seatid;
+		}else{
+			max_round_chip = gGsers[sb_seatid].round_chip;
+			max_round_chip_seatid = sb_seatid;
+		}
+		
+		sb_force_bet = gGsers[sb_seatid].round_chip;
+		bb_force_bet = gGsers[bb_seatid].round_chip;
+		
     	squenceId++;
-    	broadcast(null,TexasCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.start(sb_seatid, bb_seatid, btn_seateId, mGameConfig));
+    	broadcast(null,TexasCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.start(sb_seatid, bb_seatid, btn_seateId, ante_all,sb_force_bet,bb_force_bet,this));
     	
   		step = GStep.START;
 	}
@@ -362,12 +393,12 @@ public class GTable extends Table {
 			return;
 		}
 		
-		if(action.getSeatId() != action_seatid) {
+		if(action.getSeatId() != op_seatid) {
 			return;
 		}
 		
 		//判断操作是否合理
-		if((action_set & action.getOperateValue()) <=0) {
+		if((op_sets & action.getOperateValue()) <=0) {
 			return;
 		}
 		
@@ -394,45 +425,13 @@ public class GTable extends Table {
 		//说明是新的一轮开始
 		if(null == preActionUser){
 			if(step == GStep.PREFLOP){
-				
-				//小盲大盲强制下
-				GUser[] gGsers=(GUser[])users;
-				for(int i =0;i<gGsers.length;i++) {
-		     		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY) {
-		     			continue;
-		     		}
-		     		
-		     		long user_ante = gGsers[i].chip > ante ? gGsers[i].chip : ante;
-		     		gGsers[i].chip -= user_ante;
-		     		ante_all += user_ante;
-			    }
-				
-				gGsers[sb_seatid].round_chip =  gGsers[sb_seatid].chip > bb_chip/2 ? bb_chip/2 : gGsers[sb_seatid].chip;
-				gGsers[sb_seatid].chip -= gGsers[sb_seatid].round_chip;
-				
-				gGsers[bb_seatid].round_chip =  gGsers[bb_seatid].chip > bb_chip/2 ? bb_chip/2 : gGsers[bb_seatid].chip;
-				gGsers[bb_seatid].chip -= gGsers[bb_seatid].round_chip;
-				
-				if(gGsers[bb_seatid].round_chip > gGsers[sb_seatid].round_chip){
-					max_round_chip = gGsers[bb_seatid].round_chip;
-					max_round_chip_seatid = bb_seatid;
-				}else{
-					max_round_chip = gGsers[sb_seatid].round_chip;
-					max_round_chip_seatid = sb_seatid;
-				}
-				
-				squenceId++;
-				broadcast(null,TexasCmd.CMD_SERVER_SB_BB_BET, squenceId,TexasGameServer.sbBbBet(sb_seatid, gGsers[sb_seatid].round_chip, bb_seatid, gGsers[bb_seatid].round_chip));
-				
 				//翻牌前枪口位开始
-				action_seatid = (bb_seatid+1)%mConfig.table_max_user;
-				
+				op_seatid = (bb_seatid+1)%mConfig.table_max_user;
 			}else{
-				
-				action_seatid = sb_seatid;
+				op_seatid = sb_seatid;
 			}
 		}else{
-			action_seatid = (action_seatid+1) %mConfig.table_max_user;
+			op_seatid = (op_seatid+1) %mConfig.table_max_user;
 		}
 		
 		//如果只有一个可操作的人，则牌局一直自动走到底
@@ -453,7 +452,7 @@ public class GTable extends Table {
 			return;
 		}else{
 			//寻找下一个操作seatid
-		    int next_seatId_index = action_seatid;
+		    int next_seatId_index = op_seatid;
 			for(int i = 0 ;i<this.mConfig.table_max_user -1;i++){
 	        		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
 		     		if(null ==gGsers[r_next_seatId_index] 
@@ -463,7 +462,7 @@ public class GTable extends Table {
 		     			continue;
 		     		}
 		    		if(gGsers[r_next_seatId_index].round_chip < max_round_chip) {
-		    			action_seatid = r_next_seatId_index;
+		    			op_seatid = r_next_seatId_index;
 		    			break;
 		    		}else if(r_next_seatId_index == max_round_chip_seatid){//说明大家下注额是一样了，进入下一圈
 		    			nextStep();
@@ -472,11 +471,11 @@ public class GTable extends Table {
 	        }
 			
 			op_call_chip = max_round_chip;
-			op_min_raise_chip = Math.min(max_round_chip *2,gGsers[action_seatid].chip);
-			op_max_raise_chip = gGsers[action_seatid].chip;
+			op_min_raise_chip = Math.min(max_round_chip *2,gGsers[op_seatid].chip);
+			op_max_raise_chip = gGsers[op_seatid].chip;
 
 			squenceId++;
-			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction(preActionUser,max_round_chip,action_seatid,op_min_raise_chip,op_max_raise_chip,op_call_chip));
+			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction(preActionUser,max_round_chip,op_seatid,op_min_raise_chip,op_max_raise_chip,op_call_chip));
 		}
 	}
 	
@@ -514,8 +513,8 @@ public class GTable extends Table {
 		cardFlags |= Long.MAX_VALUE;
 		squenceId = 0;
 		
-		action_seatid = -1;
-		action_set = 0;
+		op_seatid = -1;
+		op_sets = 0;
 		
 		Arrays.fill(flop, (byte)0);
 		Arrays.fill(turn, (byte)0);
@@ -536,8 +535,8 @@ public class GTable extends Table {
 		bb_seatid = -1;
 		btn_seateId =-1;
 		
-		action_seatid = -1;
-		action_set = 0;
+		op_seatid = -1;
+		op_sets = 0;
 		
 		Arrays.fill(flop, (byte)0);
 		Arrays.fill(turn, (byte)0);
