@@ -529,7 +529,7 @@ public class GTable extends Table {
      		}
 		}
 		
-		if(bet_user_count == 1) {
+		if(bet_user_count <= 1) {
 			nextStep();
 			return;
 		}else{
