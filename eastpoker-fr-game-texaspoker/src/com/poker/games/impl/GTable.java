@@ -471,7 +471,7 @@ public class GTable extends Table {
 				}
 				
 				squenceId++;
-				broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, squenceId, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip));
+				broadcast(user,TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, squenceId, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip));
 				
 				next_option(user);
 			}
