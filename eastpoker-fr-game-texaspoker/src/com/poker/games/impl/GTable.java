@@ -558,6 +558,9 @@ public class GTable extends Table {
 		    		}
 	        }
 			
+			if(max_round_chip_seatid == -1){
+				max_round_chip_seatid = op_seatid;
+			}
 			op_call_chip 	  = max_round_chip;
 			op_min_raise_chip = Math.min(max_round_chip *2,gGsers[op_seatid].chip);
 			op_max_raise_chip = gGsers[op_seatid].chip;
