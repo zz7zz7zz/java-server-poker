@@ -1,10 +1,12 @@
 package com.poker.protocols;
 
 
+import com.poker.games.GDefine;
 import com.poker.games.Table;
 import com.poker.games.impl.GTable;
 import com.poker.games.impl.GUser;
-import com.poker.games.impl.GDefine.GStatus;
+import com.poker.games.impl.TexasDefine;
+import com.poker.games.impl.TexasDefine.GStatus;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.protocols.texaspoker.TexasGameStartProto.TexasGameStart;
 import com.poker.protocols.texaspoker.GameUserProto.GameUser;
@@ -17,7 +19,6 @@ import com.poker.protocols.texaspoker.TexasGameDealTurnProto.TexasGameDealTurn;
 import com.poker.protocols.texaspoker.TexasGameEndProto.Result;
 import com.poker.protocols.texaspoker.TexasGameEndProto.TexasGameEnd;
 import com.poker.protocols.texaspoker.TexasGameReconnectProto.TexasGameReconnect;
-import com.poker.protocols.texaspoker.TexasGameSbBbBetProto.TexasGameSbBbBet;
 import com.poker.protocols.texaspoker.TexasGameShowHandProto.TexasGameShowHand;
 import com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard;
 
@@ -199,16 +200,27 @@ public class TexasGameServer {
 			builder.addCards(self.handCard[i]);
 		}
 		
-		for(int i = 0 ;i < table.flop.length;i++){
-			builder.addCards(table.flop[i]);
-		}
+		int flop = table.step.ordinal();
+		int FLOP = TexasDefine.GStep.FLOP.ordinal();
+		int TRUN = TexasDefine.GStep.TRUN.ordinal();
+		int RIVER = TexasDefine.GStep.RIVER.ordinal();
 		
-		for(int i = 0 ;i < table.turn.length;i++){
-			builder.addCards(table.turn[i]);
+		if(flop >= FLOP){
+			for(int i = 0 ;i < table.flop.length;i++){
+				builder.addCardsFlop(table.flop[i]);
+			}
 		}
-		
-		for(int i = 0 ;i < table.river.length;i++){
-			builder.addCards(table.river[i]);
+
+		if(flop >= TRUN){
+			for(int i = 0 ;i < table.flop.length;i++){
+				builder.addCardsTrun(table.flop[i]);
+			}
+		}
+
+		if(flop >= RIVER){
+			for(int i = 0 ;i < table.flop.length;i++){
+				builder.addCardsRiver(table.flop[i]);
+			}
 		}
 		
 		builder.setNextOpSeatId(table.op_seatid);
@@ -219,7 +231,7 @@ public class TexasGameServer {
 		
 		builder.setRestActionTimeout(mGameConfig.table_action_timeout);
 		
-		//
+		//围观用户
 		gTableUsers = (GUser[])table.onLookers;
 		for(int i =0 ;i<gTableUsers.length;i++){
 			GUser user = gTableUsers[i];

@@ -10,8 +10,8 @@ import com.poker.games.GDefine.TableStatus;
 import com.poker.games.Room;
 import com.poker.games.Table;
 import com.poker.games.User;
-import com.poker.games.impl.GDefine.GStatus;
-import com.poker.games.impl.GDefine.GStep;
+import com.poker.games.impl.TexasDefine.GStatus;
+import com.poker.games.impl.TexasDefine.GStep;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.games.protocols.GBaseCmd;
@@ -268,10 +268,10 @@ public class GTable extends Table {
         		for(int j=0;j<user.handCard.length;j++) {
         			int cardIndex;
         			while(true){
-        				cardIndex= rd.nextInt(GDefine.POKER_ARRAY.length);
+        				cardIndex= rd.nextInt(TexasDefine.POKER_ARRAY.length);
     	    			//判断该位是否被拿取过了,再赋值
     	    			if(((cardFlags >>(cardIndex)) & 0x1) == 0x1){
-    	    				user.handCard[j]=GDefine.POKER_ARRAY[cardIndex];
+    	    				user.handCard[j]=TexasDefine.POKER_ARRAY[cardIndex];
     		    			cardFlags &= ~(1<<cardIndex);
     		    			break;
     	    			}
@@ -305,10 +305,10 @@ public class GTable extends Table {
     		for(int j=0;j<flop.length;j++) {
     			int cardIndex;
     			while(true){
-    				cardIndex= rd.nextInt(GDefine.POKER_ARRAY.length);
+    				cardIndex= rd.nextInt(TexasDefine.POKER_ARRAY.length);
 	    			//判断该位是否被拿取过了,再赋值
 	    			if(((cardFlags >>(cardIndex)) & 0x1) == 0x1){
-	    				flop[j]=GDefine.POKER_ARRAY[cardIndex];
+	    				flop[j]=TexasDefine.POKER_ARRAY[cardIndex];
 		    			cardFlags &= ~(1<<cardIndex);
 		    			break;
 	    			}
@@ -334,10 +334,10 @@ public class GTable extends Table {
     		for(int j=0;j<turn.length;j++) {
     			int cardIndex;
     			while(true){
-    				cardIndex= rd.nextInt(GDefine.POKER_ARRAY.length);
+    				cardIndex= rd.nextInt(TexasDefine.POKER_ARRAY.length);
 	    			//判断该位是否被拿取过了,再赋值
 	    			if(((cardFlags >>(cardIndex)) & 0x1) == 0x1){
-		    			turn[j]=GDefine.POKER_ARRAY[cardIndex];
+		    			turn[j]=TexasDefine.POKER_ARRAY[cardIndex];
 		    			cardFlags &= ~(1<<cardIndex);
 		    			break;
 	    			}
@@ -363,10 +363,10 @@ public class GTable extends Table {
     		for(int j=0;j<river.length;j++) {
     			int cardIndex;
     			while(true){
-    				cardIndex= rd.nextInt(GDefine.POKER_ARRAY.length);
+    				cardIndex= rd.nextInt(TexasDefine.POKER_ARRAY.length);
 	    			//判断该位是否被拿取过了,再赋值
 	    			if(((cardFlags >>(cardIndex)) & 0x1) == 0x1){
-	    				river[j]=GDefine.POKER_ARRAY[cardIndex];
+	    				river[j]=TexasDefine.POKER_ARRAY[cardIndex];
 		    			cardFlags &= ~(1<<cardIndex);
 		    			break;
 	    			}

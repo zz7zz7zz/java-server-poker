@@ -1,6 +1,6 @@
 package com.poker.games.impl;
 
-public class GDefine {
+public class TexasDefine {
 	
 	public static final byte[] POKER_ARRAY={
 		

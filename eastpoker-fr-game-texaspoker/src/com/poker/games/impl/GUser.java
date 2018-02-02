@@ -3,7 +3,7 @@ package com.poker.games.impl;
 import java.util.Arrays;
 
 import com.poker.games.User;
-import com.poker.games.impl.GDefine.GStatus;
+import com.poker.games.impl.TexasDefine.GStatus;
 import com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate;
 
 public class GUser extends User {
