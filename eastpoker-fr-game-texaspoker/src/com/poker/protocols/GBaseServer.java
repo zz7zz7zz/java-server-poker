@@ -27,6 +27,7 @@ public class GBaseServer {
 		configBuilder.setMaxUser(mGameConfig.table_max_user);
 		configBuilder.setMinChip(mGameConfig.table_min_chip);
 		configBuilder.setMaxChip(mGameConfig.table_max_chip);
+		configBuilder.setActionTimeout(mGameConfig.table_action_timeout);
 		int size = mGameConfig.table_ante.length;
 		for(int i = 0;i<size;i++){
 			configBuilder.addAnte(mGameConfig.table_ante[i]);
