@@ -1,0 +1,16 @@
+syntax="proto3";
+
+package com.poker.protocols.texaspoker.proto; 
+
+option java_package = "com.poker.protocols.texaspoker";
+option java_outer_classname = "TexasGameBroadcastNextOperateProto";
+
+message TexasGameBroadcastNextOperate{
+
+	int32   next_op_seatId  		= 1;
+	int64   next_op_call_chip 		= 2;
+	int64   next_op_min_raise_chip 	= 3;
+	int64   next_op_max_raise_chip 	= 4;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameBroadcastNextOperate.proto 

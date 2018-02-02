@@ -18,7 +18,8 @@ import com.poker.games.protocols.GBaseCmd;
 import com.poker.protocols.TexasCmd;
 import com.poker.protocols.TexasGameServer;
 import com.poker.protocols.texaspoker.TexasGameActionRequestProto.TexasGameActionRequest;
-import com.poker.protocols.texaspoker.TexasGameBroadcastActionProto.TexasGameBroadcastAction.Operate;
+import com.poker.protocols.texaspoker.TexasGameBroadcastUserActionProto.TexasGameBroadcastUserAction.Operate;
+
 
 public class GTable extends Table {
 	
@@ -29,6 +30,9 @@ public class GTable extends Table {
 	
 	public int squenceId = 0;
 	
+	public long ante;
+	public long sb_chip;
+	
 	public int sb_seatid = -1;
 	public int bb_seatid = -1;
 	public int btn_seateId =-1;
@@ -37,17 +41,14 @@ public class GTable extends Table {
 	public byte[] turn=new byte[1];
 	public byte[] river=new byte[1];
 	
-	public int op_seatid = -1;
-	public int op_sets = 0;
+	public int  op_seatid = -1;
+	public int  op_sets = 0;
 	public long op_call_chip ;
 	public long op_min_raise_chip ;
 	public long op_max_raise_chip ;
 	
 	public long max_round_chip = 0;
-	public int max_round_chip_seatid = 0;
-	
-	public long ante;
-	public long sb_chip;
+	public int  max_round_chip_seatid = 0;
 	
 	public long ante_all;
 	public long sb_force_bet;
@@ -128,7 +129,7 @@ public class GTable extends Table {
 	protected int dispatchTableMessage(User mUser,int cmd, byte[] data, int header_start, int header_length, int body_start,
 			int body_length) {
 		if(cmd == TexasCmd.CMD_CLIENT_WHO_ACTION_WHAT) {
-			action(mUser,data, body_start, body_length);
+			user_request_action((GUser)mUser,data, body_start, body_length);
 		}
 		return 0;
 	}
@@ -380,42 +381,103 @@ public class GTable extends Table {
 		next_option(null);
 	}
 	
-	public void action(User mUser,byte[] data, int body_start, int body_length) {
-		TexasGameActionRequest action = null;
-		try {
-			action = TexasGameActionRequest.parseFrom(data, body_start, body_length);
-		} catch (InvalidProtocolBufferException e) {
-			e.printStackTrace();
+	public void user_request_action(GUser mUser,byte[] data, int body_start, int body_length) {
+		
+		int ret = 0;
+		if(mUser.isFold ){
+			ret = -1;
+		}else if(mUser.isAllIn){
+			ret = -2;
+		}else if(!mUser.isPlaying()){
+			ret = -3;
+		}else if(mUser.seatId != op_seatid){
+			ret = -4;
+		}else if(table_status == TableStatus.TABLE_STATUS_WAIT){
+			ret = -5;
+		}else if(table_status == TableStatus.TABLE_STATUS_STOP){
+			ret = -6;
+		}else{
+			
+			TexasGameActionRequest action = null;
+			try {
+				action = TexasGameActionRequest.parseFrom(data, body_start, body_length);
+			} catch (InvalidProtocolBufferException e) {
+				e.printStackTrace();
+			}
+			
+			if(action == null) {
+				ret = -7;
+			}
+			
+			//判断操作是否合理
+			if((op_sets & action.getOperateValue()) <=0) {
+				ret =  -8 ;
+			}
+			
+			GUser user = ((GUser)mUser);
+			user.operate = action.getOperate();
+			long actBetChip = 0;
+			switch(action.getOperate()){
+			
+				case FOLD:
+					user.isFold  = true;
+					break;
+					
+				case CHECK:
+					break;
+					
+				case CALL:
+					{
+						long callChip = max_round_chip - user.round_chip;
+						if(user.chip >= callChip){
+							user.round_chip += callChip;
+							user.chip -= callChip;
+						}else{
+							user.round_chip += user.chip;
+							user.chip = 0;
+						}
+						actBetChip = user.round_chip;
+						user.isAllIn =(user.chip == 0);
+					}
+					break;
+			
+				case RAISE:
+					{
+						long betChip = action.getChip();
+						if(betChip <= op_min_raise_chip){
+							betChip = op_min_raise_chip;
+						}else if(betChip > op_max_raise_chip){
+							betChip = op_max_raise_chip;
+						}
+						if(user.chip >= betChip){
+							user.round_chip += betChip;
+							user.chip -= betChip;
+						}else{
+							user.round_chip += user.chip;
+							user.chip = 0;
+						}
+						actBetChip = user.round_chip;
+						user.isAllIn =(user.chip == 0);
+					}
+					break;
+					
+				default:
+					ret =  -9 ;
+					break;
+			}
+			
+			if(actBetChip > max_round_chip) {
+				max_round_chip = actBetChip;
+				max_round_chip_seatid = user.seatId;
+			}
+			
+			squenceId++;
+			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, squenceId, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip));
+			
+			next_option(user);
 		}
 		
-		if(action == null) {
-			return;
-		}
-		
-		if(action.getSeatId() != op_seatid) {
-			return;
-		}
-		
-		//判断操作是否合理
-		if((op_sets & action.getOperateValue()) <=0) {
-			return;
-		}
-		
-		if(action.getChip()>mUser.chip) {
-			return;
-		}
-		
-		GUser user = ((GUser)mUser);
-		user.operate = action.getOperate();
-		user.round_chip += action.getChip();
-		user.chip -= action.getChip();
-		
-		if(user.round_chip > max_round_chip) {
-			max_round_chip = user.round_chip;
-			max_round_chip_seatid = user.seatId;
-		}
-
-		next_option(user);
+		Logger.v("user_request_action ret " + ret);
 	}
 	
 	public void next_option(GUser preActionUser) {
@@ -433,7 +495,7 @@ public class GTable extends Table {
 			op_seatid = (op_seatid+1) %mConfig.table_max_user;
 		}
 		
-		//如果只有一个可操作的人，则牌局一直自动走到底
+		//如果只有一个可操作的玩家，则牌局一直自动走到底
 		int bet_user_count = 0;
 		GUser[] gGsers=(GUser[])users;
 		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
@@ -452,20 +514,26 @@ public class GTable extends Table {
 		}else{
 			//寻找下一个操作seatid
 		    int next_seatId_index = op_seatid;
-			for(int i = 0 ;i<this.mConfig.table_max_user -1;i++){
+			for(int i = 0 ;i<this.mConfig.table_max_user ;i++){
 	        		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
-		     		if(null ==gGsers[r_next_seatId_index] 
-		     				|| gGsers[r_next_seatId_index].play_status != GStatus.PLAY 
-		     				|| gGsers[r_next_seatId_index].operate !=Operate.FOLD
-		     				|| gGsers[r_next_seatId_index].chip > 0) {
-		     			continue;
-		     		}
-		    		if(gGsers[r_next_seatId_index].round_chip < max_round_chip) {
-		    			op_seatid = r_next_seatId_index;
-		    			break;
-		    		}else if(r_next_seatId_index == max_round_chip_seatid){//说明大家下注额是一样了，进入下一圈
+	        		
+	        		//说明大家下注额是一样了，进入下一圈
+	        		if(r_next_seatId_index == max_round_chip_seatid){
 		    			nextStep();
 		    			return;
+		    		}
+	        		
+		     		//对于不在游戏中，已经弃牌，AllIn的玩家不处理
+	        		if(null ==gGsers[r_next_seatId_index] 
+		     				|| gGsers[r_next_seatId_index].play_status != GStatus.PLAY 
+		     				|| gGsers[r_next_seatId_index].operate ==Operate.FOLD
+		     				|| gGsers[r_next_seatId_index].chip <= 0) {
+		     			continue;
+		     		}
+		    		
+	        		if(gGsers[r_next_seatId_index].round_chip < max_round_chip) {
+		    			op_seatid = r_next_seatId_index;
+		    			break;
 		    		}
 	        }
 			
@@ -474,11 +542,27 @@ public class GTable extends Table {
 			op_max_raise_chip = gGsers[op_seatid].chip;
 
 			squenceId++;
-			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_WHO_ACTION_WAHT, squenceId, TexasGameServer.broadcastUserAction(preActionUser,max_round_chip,op_seatid,op_min_raise_chip,op_max_raise_chip,op_call_chip));
+			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, squenceId, TexasGameServer.broadcastNextOperateUser(op_seatid,op_call_chip,op_min_raise_chip,op_max_raise_chip));
 		}
 	}
 	
 	private void nextStep(){
+		GUser[] gGsers=(GUser[])users;
+		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
+     		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY ) {
+     			continue;
+     		}
+     		
+     		gGsers[i].round_chip = 0;
+		}
+		
+		op_call_chip = 0;
+		op_min_raise_chip = Math.min(sb_chip * 2,users[op_seatid].chip);
+		op_max_raise_chip = users[op_seatid].chip;
+		
+		max_round_chip = 0;
+		max_round_chip_seatid = -1;
+		
 		if(step == GStep.PREFLOP) {
 			dealFlop();
 		}else if(step == GStep.FLOP) {

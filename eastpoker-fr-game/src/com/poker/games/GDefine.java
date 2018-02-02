@@ -4,7 +4,8 @@ public class GDefine {
 
 	public enum TableStatus{
 		TABLE_STATUS_PLAY(1),
-		TABLE_STATUS_STOP(2);
+		TABLE_STATUS_STOP(2),
+		TABLE_STATUS_WAIT(3);
 		
 		int code;
         private TableStatus(int code) {
