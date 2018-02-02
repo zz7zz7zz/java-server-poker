@@ -15,7 +15,6 @@ import com.poker.games.impl.TexasDefine.GStep;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.games.protocols.GBaseCmd;
-import com.poker.protocols.GBaseServer;
 import com.poker.protocols.TexasCmd;
 import com.poker.protocols.TexasGameServer;
 import com.poker.protocols.texaspoker.TexasGameActionRequestProto.TexasGameActionRequest;
@@ -71,11 +70,11 @@ public class GTable extends Table {
 		
 		//1。对进来的用户广播桌子上有哪些用户
 		squenceId++;
-		send2Access(mUser,GBaseCmd.CMD_SERVER_USERLOGIN, squenceId, GBaseServer.userLogin(gUser,this,mGameConfig));
+		send2Access(mUser,GBaseCmd.CMD_SERVER_USERLOGIN, squenceId, TexasGameServer.userLogin(gUser,this,mGameConfig));
 		
 		//2.对桌子上的用户广播谁进来类
 		squenceId++;
-		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, GBaseServer.broadUserLogin(gUser),mUser);
+		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, TexasGameServer.broadUserLogin(gUser),mUser);
 		
 		//3.判断游戏谁否可以开始了
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){
@@ -105,7 +104,7 @@ public class GTable extends Table {
 
 	@Override
 	protected int onTableUserExit(User mUser) {
-		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, GBaseServer.broadUserLogout(mUser),mUser);
+		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserLogout(mUser),mUser);
 		return 0;
 	}
 
@@ -113,7 +112,7 @@ public class GTable extends Table {
 
 	@Override
 	protected int onTableUserOffline(User mUser) {
-		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, GBaseServer.broadUserOffline(mUser.uid,mUser.onLineStatus),mUser);
+		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserOffline(mUser.uid,mUser.onLineStatus),mUser);
 		return 0;
 	}
 
