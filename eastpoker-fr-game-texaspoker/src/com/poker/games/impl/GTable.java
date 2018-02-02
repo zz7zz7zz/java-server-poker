@@ -418,6 +418,11 @@ public class GTable extends Table {
 						break;
 						
 					case CHECK:
+						//如果有人下注，这里是不能进行Check的
+						if(max_round_chip > 0){
+							ret =  -8 ;
+							user.operate = Operate.FOLD;
+						}
 						break;
 						
 					case CALL:
