@@ -407,69 +407,73 @@ public class GTable extends Table {
 			
 			if(action == null) {
 				ret = -7;
-			}
-			
-			GUser user = ((GUser)mUser);
-			user.operate = action.getOperate();
-			long actBetChip = 0;
-			switch(action.getOperate()){
-			
-				case FOLD:
-					user.isFold  = true;
-					break;
-					
-				case CHECK:
-					break;
-					
-				case CALL:
-					{
-						long callChip = max_round_chip - user.round_chip;
-						if(user.chip >= callChip){
-							user.round_chip += callChip;
-							user.chip -= callChip;
-						}else{
-							user.round_chip += user.chip;
-							user.chip = 0;
+			}else{
+				GUser user = ((GUser)mUser);
+				user.operate = action.getOperate();
+				long actBetChip = 0;
+				switch(action.getOperate()){
+				
+					case FOLD:
+						user.isFold  = true;
+						break;
+						
+					case CHECK:
+						break;
+						
+					case CALL:
+						{
+							long callChip = max_round_chip - user.round_chip;
+							if(user.chip >= callChip){
+								user.round_chip += callChip;
+								user.chip -= callChip;
+							}else{
+								user.round_chip += user.chip;
+								user.chip = 0;
+							}
+							actBetChip = user.round_chip;
+							user.isAllIn =(user.chip == 0);
 						}
-						actBetChip = user.round_chip;
-						user.isAllIn =(user.chip == 0);
-					}
-					break;
-			
-				case RAISE:
-					{
-						long betChip = action.getChip();
-						if(betChip <= op_min_raise_chip){
-							betChip = op_min_raise_chip;
-						}else if(betChip > op_max_raise_chip){
-							betChip = op_max_raise_chip;
+						break;
+				
+					case RAISE:
+						{
+							long betChip = action.getChip();
+							if(betChip <= op_min_raise_chip){
+								betChip = op_min_raise_chip;
+							}else if(betChip > op_max_raise_chip){
+								betChip = op_max_raise_chip;
+							}
+							if(user.chip >= betChip){
+								user.round_chip += betChip;
+								user.chip -= betChip;
+							}else{
+								user.round_chip += user.chip;
+								user.chip = 0;
+							}
+							actBetChip = user.round_chip;
+							user.isAllIn =(user.chip == 0);
 						}
-						if(user.chip >= betChip){
-							user.round_chip += betChip;
-							user.chip -= betChip;
-						}else{
-							user.round_chip += user.chip;
-							user.chip = 0;
-						}
-						actBetChip = user.round_chip;
-						user.isAllIn =(user.chip == 0);
-					}
-					break;
-					
-				default:
-					ret =  -9 ;
-					break;
+						break;
+						
+					default:
+						ret =  -9 ;
+						break;
+				}
+				
+				if(actBetChip > max_round_chip) {
+					max_round_chip = actBetChip;
+					max_round_chip_seatid = user.seatId;
+				}
+				
+				squenceId++;
+				broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, squenceId, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip));
+				
+				next_option(user);
 			}
-			
-			if(actBetChip > max_round_chip) {
-				max_round_chip = actBetChip;
-				max_round_chip_seatid = user.seatId;
-			}
-			
-			squenceId++;
-			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, squenceId, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip));
-			
-			next_option(user);
+		}
+		
+		if(ret <0){
+			//发送错误给客户端
 		}
 		
 		Logger.v("user_request_action ret " + ret);
