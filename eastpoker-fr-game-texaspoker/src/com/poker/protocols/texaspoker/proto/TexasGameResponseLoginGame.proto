@@ -1,0 +1,24 @@
+syntax="proto3";
+
+package com.poker.protocols.texaspoker.proto; 
+
+import "src/com/poker/protocols/texaspoker/proto/GameUser.proto";
+import "src/com/poker/protocols/texaspoker/proto/TexasGameConfig.proto";
+
+option java_package = "com.poker.protocols.texaspoker";
+option java_outer_classname = "TexasGameResponseLoginGameProto";
+
+message TexasGameResponseLoginGame{
+	
+	TexasGameConfig config  = 1; //桌子配置
+	
+	int32  seatId        	= 2;
+	int64  chip_total    	= 3;
+	int64  chip 		 	= 4;
+	int32  play_status      = 5;
+	
+	repeated GameUser users    = 6;//桌子上的用户  
+	repeated GameUser onLooker = 7; //旁观用户
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameResponseLoginGame.proto

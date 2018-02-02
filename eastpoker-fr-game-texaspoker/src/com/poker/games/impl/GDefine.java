@@ -14,7 +14,7 @@ public class GDefine {
 		    
 	};
 	
-	static enum GStep{
+	public static enum GStep{
 		START(1),
 		PREFLOP(2),
 		FLOP(3),
@@ -30,7 +30,7 @@ public class GDefine {
 	}
 	
 	
-	enum GStatus{
+	public static enum GStatus{
 		PLAY(1),
 		NOT_PLAY_SITDOWN(2),
 		NOT_PLAY_ONLOOKERS(3),

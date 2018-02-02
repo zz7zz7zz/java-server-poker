@@ -5,21 +5,7 @@ package com.poker.protocols.texaspoker.proto;
 option java_package = "com.poker.protocols.texaspoker";
 option java_outer_classname = "TexasGameStartProto";
 
-message Config{
-	int32  level      		 	= 1;//房间等级
-	string level_name       	= 2;//房间等级名称
-	
-	int32  min_user       		= 3;//每台桌子最小玩家数量
-	int32  max_user       		= 4;//每台桌子最大玩家数量
-	int64  min_chip 			= 5;//最小进入筹码
-	int64  max_chip 			= 6;//最大进入筹码
-	
-	int32  action_timeout       = 7;//操作超时时间
-	
-	repeated int64  ante  		= 8;//前注;数组意味着比赛场，如SNG
-	repeated int64  blind  		= 9; //大盲注;数组意味着比赛场，如SNG
-	repeated int32  blind_time  = 10;//每个盲注持续时间;数组意味着比赛场，如SNG
-}
+
 //游戏开始
 message TexasGameStart{
 	Config config 		= 1;//配置

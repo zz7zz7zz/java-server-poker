@@ -15,7 +15,7 @@ import com.poker.games.impl.GDefine.GStep;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.games.protocols.GBaseCmd;
-import com.poker.games.protocols.GBaseServer;
+import com.poker.protocols.GBaseServer;
 import com.poker.protocols.TexasCmd;
 import com.poker.protocols.TexasGameServer;
 import com.poker.protocols.texaspoker.TexasGameActionRequestProto.TexasGameActionRequest;
@@ -64,13 +64,16 @@ public class GTable extends Table {
 
 	@Override
 	protected int onTableUserFirstLogin(User mUser) {
+		
+		GUser gUser = (GUser)mUser;
+		
 		//1。对进来的用户广播桌子上有哪些用户
 		squenceId++;
-		send2Access(mUser,GBaseCmd.CMD_SERVER_USERLOGIN, squenceId, GBaseServer.userLogin(mUser.seatId,this));
+		send2Access(mUser,GBaseCmd.CMD_SERVER_USERLOGIN, squenceId, GBaseServer.userLogin(gUser,this,mGameConfig));
 		
 		//2.对桌子上的用户广播谁进来类
 		squenceId++;
-		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, GBaseServer.broadUserLogin(mUser),mUser);
+		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, GBaseServer.broadUserLogin(gUser),mUser);
 		
 		//3.判断游戏谁否可以开始了
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){
