@@ -566,7 +566,7 @@ public class GTable extends Table {
 			op_max_raise_chip = gGsers[op_seatid].chip;
 
 			squenceId++;
-			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, squenceId, TexasGameServer.broadcastNextOperateUser(op_seatid,op_call_chip,op_min_raise_chip,op_max_raise_chip));
+			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, squenceId, TexasGameServer.broadcastNextOperateUser(op_seatid,op_call_chip,op_min_raise_chip,op_max_raise_chip));
 		}
 	}
 	
