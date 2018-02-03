@@ -1,5 +1,7 @@
 package com.poker.games.impl;
 
+import java.util.ArrayList;
+
 public class TexasDefine {
 	
 	public static final byte[] POKER_ARRAY={
@@ -40,5 +42,13 @@ public class TexasDefine {
         private GStatus(int code) {
             this.code = code;
         }
+	}
+	
+	public static class Pot{
+		String name;//Pot名字
+		long pot_chips;//Pot下注额
+		ArrayList<Byte> seatIds = new ArrayList<>();
+		
+//		byte seatIds;//哪些座位上的人参与分成，按位运算
 	}
 }

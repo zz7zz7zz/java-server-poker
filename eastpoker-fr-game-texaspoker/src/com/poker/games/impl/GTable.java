@@ -1,6 +1,9 @@
 package com.poker.games.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Random;
 
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -12,6 +15,7 @@ import com.poker.games.Table;
 import com.poker.games.User;
 import com.poker.games.impl.TexasDefine.GStatus;
 import com.poker.games.impl.TexasDefine.GStep;
+import com.poker.games.impl.TexasDefine.Pot;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.games.protocols.GBaseCmd;
@@ -489,23 +493,6 @@ public class GTable extends Table {
 		
 		//说明是新的一轮开始
 		if(null == preActionUser){
-			
-			GUser[] gGsers=(GUser[])users;
-			for(int i = 0 ;i<this.mConfig.table_max_user;i++){
-	     		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY ) {
-	     			continue;
-	     		}
-	     		
-	     		gGsers[i].round_chip = 0;
-			}
-			
-			op_call_chip = 0;
-			op_min_raise_chip = Math.min(sb_chip * 2,users[op_seatid].chip);
-			op_max_raise_chip = users[op_seatid].chip;
-			
-			max_round_chip = 0;
-			max_round_chip_seatid = -1;
-			
 			if(step == GStep.PREFLOP){
 				//翻牌前枪口位开始
 				op_seatid = (bb_seatid+1)%mConfig.table_max_user;
@@ -568,7 +555,10 @@ public class GTable extends Table {
 		}
 	}
 	
-	private void nextStep(){		
+	private void nextStep(){
+		
+		handPots();
+		
 		if(step == GStep.PREFLOP) {
 			dealFlop();
 		}else if(step == GStep.FLOP) {
@@ -581,6 +571,136 @@ public class GTable extends Table {
 		}else{
 			stopGame();
 		}
+	}
+	
+	private ArrayList<Pot> potList = new ArrayList<Pot>();
+	PotComparator mPotComparator = new PotComparator();
+	static class PotComparator implements Comparator<GUser>  
+	{  
+		@Override
+		public int compare(GUser o1, GUser o2) {
+			if(o1.round_chip == o2.round_chip){
+				//按剩余金币再比较一下
+				if(o1.chip == o2.chip){
+					return 0;
+				}else if(o1.chip > o2.chip){
+					return 1;
+				}else{
+					return -1;
+				}
+			}else if(o1.round_chip > o2.round_chip){
+				return 1;
+			}else{
+				return -1;
+			}
+		}  
+	}  
+	
+	private void handPots(){
+		//如果有人下注才需要处理Pots
+		if(max_round_chip >=0){
+			
+			int pot_start_index = potList.size();
+			ArrayList<GUser> round_chip_users=new ArrayList<GUser>();//有下注金额的用户
+			ArrayList<GUser> share_pot_users=new ArrayList<GUser>();//参与分Pot用户
+			
+			GUser[] gUsers=(GUser[])users;
+			for(int i = 0 ;i<this.mConfig.table_max_user;i++){
+				//不在玩的，没有下注的不处理
+	     		if(null ==gUsers[i] || !gUsers[i].isPlaying() && gUsers[i].round_chip <= 0) {
+	     			continue;
+	     		}
+	     		round_chip_users.add(gUsers[i]);
+	     		if(!gUsers[i].isFold){
+	     			share_pot_users.add(gUsers[i]);
+	     		}
+			}
+
+			int round_chip_user_size= round_chip_users.size();
+			int share_pot_user_size = share_pot_users.size();
+			//说明下注人数大于1
+			if(share_pot_user_size>1){
+				//对每个人的按下注额按升序进行排序，看是否要进行分Pot
+				Collections.sort(share_pot_users, mPotComparator);
+				long min_round_chip = share_pot_users.get(0).round_chip;
+				long max_round_chip = share_pot_users.get(share_pot_user_size -1).round_chip;
+				
+				//大家下注额是一致的，不需要分Pot
+				if(min_round_chip == max_round_chip){
+					Pot mPot = new Pot();
+					mPot.name = step.name();
+					for (int i = 0; i < round_chip_user_size; i++) {
+						mPot.pot_chips += round_chip_users.get(i).round_chip;
+						round_chip_users.get(i).round_chip = 0;
+					}
+					for (int i = 0; i < share_pot_user_size; i++) {
+						mPot.seatIds.add(share_pot_users.get(i).seatId);
+					}
+					potList.add(mPot);
+				}else{
+					//大家下注额不一致，需要分Pot
+					int index = -1;
+					while(index<share_pot_user_size-1){
+						index++;
+						long minRoundChip = share_pot_users.get(index).round_chip;
+						if(minRoundChip>0){
+							Pot mPot = new Pot();
+							mPot.name = step.name();
+							mPot.pot_chips = 0;
+							for(int i =0;i<round_chip_user_size;i++){
+								if(round_chip_users.get(i).round_chip <= 0){
+									continue;
+								}
+								long r_round_chip = Math.min(minRoundChip, round_chip_users.get(i).round_chip);
+								mPot.pot_chips += r_round_chip;
+								round_chip_users.get(i).round_chip -= minRoundChip;
+							}
+							
+							for(int i =index;i<share_pot_user_size;i++){
+								mPot.seatIds.add(share_pot_users.get(i).seatId);
+							}
+							potList.add(mPot);
+						}
+					}
+				}
+			}else if(share_pot_user_size == 1){//只有一人分Pot
+				Pot mPot = new Pot();
+				mPot.name = step.name();
+				for (int i = 0; i < round_chip_user_size; i++) {
+					mPot.pot_chips+= round_chip_users.get(i).round_chip;
+					round_chip_users.get(i).round_chip = 0;
+				}
+				mPot.seatIds.add(share_pot_users.get(0).seatId);
+				potList.add(mPot);
+				
+			}else{
+
+			}
+			
+			//这一轮有新的下注，将Pot信息发送给客户端
+			if(potList.size() > pot_start_index){
+				for(int i= pot_start_index;i<potList.size();i++){
+					
+				}
+			}
+
+		}
+
+		//清空数据
+		GUser[] gGsers=(GUser[])users;
+		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
+     		if(null ==gGsers[i] || !gGsers[i].isPlaying()) {
+     			continue;
+     		}
+     		gGsers[i].round_chip = 0;
+		}
+
+		op_call_chip = 0;
+		op_min_raise_chip = 0;
+		op_max_raise_chip = 0;
+		
+		max_round_chip = 0;
+		max_round_chip_seatid = -1;
 	}
 	
 	public void showHands() {
@@ -633,6 +753,7 @@ public class GTable extends Table {
 	
 		max_round_chip = 0;
 		max_round_chip_seatid = 0;
+		potList.clear();
 	}
 	
 
