@@ -251,7 +251,7 @@ public class TexasGameServer {
 		TexasGameShowHand.Builder builder = TexasGameShowHand.newBuilder();
         GUser[] gGsers=(GUser[])table.users;
 		for(int i = 0;i<gGsers.length;i++){
-			if(null == gGsers[i]){
+			if(null == gGsers[i] || !gGsers[i].isPlaying() || gGsers[i].isFold){
 				continue;
 			}
 			UserCard.Builder usercardBuilder =  UserCard.newBuilder();
