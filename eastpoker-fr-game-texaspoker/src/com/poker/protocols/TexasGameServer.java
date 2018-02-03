@@ -394,8 +394,7 @@ public class TexasGameServer {
 			for(int j=0;j<gTableUsers[i].result.finalCards.length;j++) {
 				resultBuilder.addCards(gTableUsers[i].result.finalCards[i]);
 			}
-			resultBuilder.setWinChip(gTableUsers[i].result.winChip);
-			
+			resultBuilder.setWinChip(gTableUsers[i].win_chip);
 			resultBuilder.setChip(gTableUsers[i].chip);
 			builder.addMResults(resultBuilder);
 		}

@@ -47,12 +47,10 @@ public class CardUtil {
 		public TCard cardType;//牌的类型
 		public byte[] finalCards=new byte[5];//最好的牌型	
 		public int    value;//牌型的值，用于比较牌的大小
-		public long   winChip;//输赢情况
 		public void clear(){
 			cardType = TCard.NO;
 			Arrays.fill(finalCards, (byte)0);
 			value = 0;
-			winChip = 0;
 		}
 	}
 	

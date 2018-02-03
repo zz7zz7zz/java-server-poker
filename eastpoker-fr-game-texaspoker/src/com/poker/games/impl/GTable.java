@@ -694,9 +694,8 @@ public class GTable extends Table {
 		nextStep();
 	}
 	
-	public void stopGame() {
-		
-		//清空数据
+	//给每个玩家算牌型
+	public void calculateCardType(){
 		GUser[] gGsers=(GUser[])users;
 		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
      		if(null ==gGsers[i] || !gGsers[i].isPlaying() || gGsers[i].isFold) {
@@ -704,6 +703,64 @@ public class GTable extends Table {
      		}
      		CardUtil.getCardResult(gGsers[i].handCard, flop, turn, river, gGsers[i].result);
 		}
+	}
+	
+	//算Pot
+	public void calculatePot(){
+		
+		ArrayList<GUser> winer = new ArrayList<>();
+		
+		for(int i = potList.size()-1; i>=0 ; i--){
+			Pot mPot = potList.get(i);
+			if(mPot.seatIds.size()<=0){
+				continue;
+			}
+			
+			winer.clear();
+			GUser user1 = null;
+			for (int j = 0; j < mPot.seatIds.size(); j++) {
+				GUser user = (GUser) users[mPot.seatIds.get(i)];
+				if(null == user || !user.isPlaying() || user.isFold){
+					continue;
+				}
+				
+				if(null == user1){
+					user1 = user;
+					winer.add(user);
+					continue;
+				}
+				
+				if(user.result.value > user1.result.value){
+					winer.clear();
+					winer.add(user);
+					user1 = user;
+				}else if(user.result.value == user1.result.value){
+					winer.add(user);
+				}
+			}
+			
+			int win_user_size = winer.size();
+			if(win_user_size == 0){
+				continue;
+			}
+			
+			long average_chip = mPot.pot_chips/win_user_size;//平均的
+			long extra_chip = mPot.pot_chips%win_user_size;//多出来的
+			for(int j = 0; j < win_user_size; ++j){
+				winer.get(j).win_chip += average_chip;
+				winer.get(j).chip += average_chip;
+			}
+			if(extra_chip != 0){
+				winer.get(win_user_size-1).win_chip += average_chip;
+				winer.get(win_user_size-1).chip += average_chip;
+			}
+		}
+	}
+	
+	public void stopGame() {
+		
+		calculateCardType();
+		calculatePot();
 		
 		squenceId++;
 		broadcast(null,TexasCmd.CMD_SERVER_GAME_END, squenceId, TexasGameServer.stop(this));

@@ -17,6 +17,7 @@ public class GUser extends User {
 	public boolean isFold;
 	public boolean isAllIn;
 	public Result result;
+	public long win_chip=0;
 	
 	public void reset(){
 		super.reset();
@@ -41,5 +42,6 @@ public class GUser extends User {
 		isFold = false;
 		isAllIn = false;
 		result.clear();
+		win_chip = 0;
 	}
 }
