@@ -520,7 +520,8 @@ public class GTable extends Table {
 		int bet_user_count = 0;
 		GUser[] gGsers=(GUser[])users;
 		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
-     		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY ) {
+     		//对于不在游戏中，已经弃牌，AllIn的玩家不处理
+    		if(null ==gGsers[i] || !gGsers[i].isPlaying() || gGsers[i].isFold|| gGsers[i].isAllIn) {
      			continue;
      		}
      		
@@ -545,10 +546,7 @@ public class GTable extends Table {
 		    		}
 	        		
 		     		//对于不在游戏中，已经弃牌，AllIn的玩家不处理
-	        		if(null ==gGsers[r_next_seatId_index] 
-		     				|| gGsers[r_next_seatId_index].play_status != GStatus.PLAY 
-		     				|| gGsers[r_next_seatId_index].operate ==Operate.FOLD
-		     				|| gGsers[r_next_seatId_index].chip <= 0) {
+	        		if(null ==gGsers[r_next_seatId_index] || !gGsers[r_next_seatId_index].isPlaying() || gGsers[r_next_seatId_index].isFold|| gGsers[r_next_seatId_index].isAllIn) {
 		     			continue;
 		     		}
 		    		

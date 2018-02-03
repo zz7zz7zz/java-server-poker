@@ -37,6 +37,6 @@ public class GUser extends User {
 		Arrays.fill(handCard, (byte)0);
 		
 		isFold = false;
-		isAllIn = true;
+		isAllIn = false;
 	}
 }
