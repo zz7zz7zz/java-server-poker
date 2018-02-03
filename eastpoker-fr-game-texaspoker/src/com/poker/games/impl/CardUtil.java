@@ -72,6 +72,7 @@ public class CardUtil {
 			ArrayList<Byte> value_cards_list = value_map.get(value);
 			if(null == value_cards_list){
 				value_cards_list = new ArrayList<>();
+				color_map.put(color, value_cards_list);
 			}
 			value_cards_list.add(hands[i]);
 		}
@@ -90,6 +91,7 @@ public class CardUtil {
 			ArrayList<Byte> value_cards_list = value_map.get(value);
 			if(null == value_cards_list){
 				value_cards_list = new ArrayList<>();
+				color_map.put(color, value_cards_list);
 			}
 			value_cards_list.add(flop[i]);
 		}
@@ -108,6 +110,7 @@ public class CardUtil {
 			ArrayList<Byte> value_cards_list = value_map.get(value);
 			if(null == value_cards_list){
 				value_cards_list = new ArrayList<>();
+				color_map.put(color, value_cards_list);
 			}
 			value_cards_list.add(trun[i]);
 		}
@@ -126,141 +129,183 @@ public class CardUtil {
 			ArrayList<Byte> value_cards_list = value_map.get(value);
 			if(null == value_cards_list){
 				value_cards_list = new ArrayList<>();
+				color_map.put(color, value_cards_list);
 			}
 			value_cards_list.add(river[i]);
 		}
 		
 		//看是否有同花顺
-		if(color_map.size()<=3){
-			for (Entry<Byte, ArrayList<Byte>> entry : color_map.entrySet()) {
-				ArrayList<Byte> color_cards_list= entry.getValue();
-				if(color_cards_list.size()>=5){
-					
-					Collections.sort(color_cards_list);
-					
-					int serial_count = 1;
-					int max_serial_count = 1;
-					int card_start = 0;
-					for(int i =color_cards_list.size()-1;i>0;i--){
-						if((color_cards_list.get(i)- color_cards_list.get(i-1)) == 1){
-							serial_count++;
-							max_serial_count = Math.max(serial_count, max_serial_count);
-							if(serial_count == 4 || serial_count == 5){//10,J,Q,K,A ;A,2,3,4,5
-								card_start = i-1;
+		if(value_map.size()>=5 && color_map.size()<=3){
+				for (Entry<Byte, ArrayList<Byte>> entry : color_map.entrySet()) {
+					ArrayList<Byte> color_cards_list= entry.getValue();
+					if(color_cards_list.size()>=5){
+						
+						Collections.sort(color_cards_list);
+						
+						int serial_count = 1;
+						int max_serial_count = 1;
+						int card_start = 0;
+						for(int i =color_cards_list.size()-1;i>0;i--){
+							if((color_cards_list.get(i)- color_cards_list.get(i-1)) == 1){
+								serial_count++;
+								max_serial_count = Math.max(serial_count, max_serial_count);
+								if(serial_count == 4 || serial_count == 5){//10,J,Q,K,A ;A,2,3,4,5
+									card_start = i-1;
+								}
+								if(serial_count == 5){
+									break;
+								}
+							}else{
+								serial_count =1;
 							}
-							if(serial_count == 5){
-								break;
-							}
-						}else{
-							serial_count =1;
 						}
-					}
-					if(max_serial_count == 4){
-						if(color_cards_list.get(card_start)%0x0F == 0x02 && color_cards_list.get(color_cards_list.size()-1)%0x0F == 0x0E){
+						if(max_serial_count == 4){
+							if(color_cards_list.get(card_start)%0x0F == 0x02 && color_cards_list.get(color_cards_list.size()-1)%0x0F == 0x0E){
+								ret.cardType = TCard.STRAIGHT_FLUSH;
+								for(int i = 0;i<4;i++){
+									ret.finalCards[i] = color_cards_list.get(card_start+i);
+								}
+								ret.finalCards[4] = color_cards_list.get(color_cards_list.size()-1);
+								ret.value = ret.cardType.ordinal()<<20  + 1;
+							}
+						}else if(max_serial_count == 5){
 							ret.cardType = TCard.STRAIGHT_FLUSH;
-							for(int i = 0;i<4;i++){
+							if(color_cards_list.get(card_start) == 0x0A){
+								ret.cardType = TCard.ROYAL_STRAIGHT_FLUSH;
+							}
+							for(int i = 0;i<ret.finalCards.length;i++){
 								ret.finalCards[i] = color_cards_list.get(card_start+i);
 							}
-							ret.finalCards[4] = color_cards_list.get(color_cards_list.size()-1);
-							ret.value = ret.cardType.ordinal()<<20  + 1;
+							ret.value = ret.cardType.ordinal()<<20 + ret.finalCards[0]%0x0F;
+						}else{
+							ret.cardType = TCard.FLUSH;
+							int size = color_cards_list.size();
+							for(int i = 0;i<ret.finalCards.length;i++){
+								ret.finalCards[i] = color_cards_list.get(size-5+i);
+							}
+							ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[0]%0x0F)<<16 + (ret.finalCards[1]%0x0F)<<12+ (ret.finalCards[2]%0x0F)<<8 + (ret.finalCards[3]%0x0F)<<4 + (ret.finalCards[4]%0x0F);
 						}
-					}else if(max_serial_count == 5){
-						ret.cardType = TCard.STRAIGHT_FLUSH;
-						if(color_cards_list.get(card_start) == 0x0A){
-							ret.cardType = TCard.ROYAL_STRAIGHT_FLUSH;
-						}
-						for(int i = 0;i<ret.finalCards.length;i++){
-							ret.finalCards[i] = color_cards_list.get(card_start+i);
-						}
-						ret.value = ret.cardType.ordinal()<<20 + ret.finalCards[0]%0x0F;
-					}else{
-						ret.cardType = TCard.FLUSH;
-						int size = color_cards_list.size();
-						for(int i = 0;i<ret.finalCards.length;i++){
-							ret.finalCards[i] = color_cards_list.get(size-5+i);
-						}
-						ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[0]%0x0F)<<16 + ret.finalCards[1]<<12+ ret.finalCards[2]<<8 + ret.finalCards[3]<<4 + ret.finalCards[4];
+						break;
 					}
-					break;
 				}
-			}
 		}
 		
 		//1.如果有同花顺以上的牌，则不需要再比牌了
 		if(ret.cardType == TCard.STRAIGHT_FLUSH || ret.cardType == TCard.ROYAL_STRAIGHT_FLUSH){
-			return ret;
-		}
-		
-		//2.看看是否有金刚
-		ArrayList<Pair> tmpList = new ArrayList<Pair>();
-		for (Entry<Byte, ArrayList<Byte>> entry : value_map.entrySet()) {
-			tmpList.add(new Pair(entry.getKey(),entry.getValue()));
-		}
-		Collections.sort(tmpList,new PairComparator());
-		if(tmpList.get(0).cards.size() == 4){
-			ret.cardType = TCard.FOUR;
-			for(int i = 0;i<4;i++){
-				ret.finalCards[i] = tmpList.get(0).cards.get(i);
+			//do Nothing
+		}else{
+			//2.看看是否有金刚
+			ArrayList<Pair> tmpList = new ArrayList<Pair>();
+			for (Entry<Byte, ArrayList<Byte>> entry : value_map.entrySet()) {
+				tmpList.add(new Pair(entry.getKey(),entry.getValue()));
 			}
+			Collections.sort(tmpList,new PairComparator());
 			
-			byte card = 0;
-			for(int i = 0;i < tmpList.size();i++){
-				if(tmpList.size() < 4){
-					if(card == 0){
-						card = tmpList.get(i).cards.get(0);
-					}else{
-						if(tmpList.get(i).cards.get(0)%0x0F > card%0x0F){
+			if(tmpList.get(0).cards.size() == 4){
+				ret.cardType = TCard.FOUR;
+				for(int i = 0;i<4;i++){
+					ret.finalCards[i] = tmpList.get(0).cards.get(i);
+				}
+				
+				byte card = 0;
+				for(int i = 0;i < tmpList.size();i++){
+					if(tmpList.size() < 4){
+						if(card == 0){
 							card = tmpList.get(i).cards.get(0);
+						}else{
+							if(tmpList.get(i).cards.get(0)%0x0F > card%0x0F){
+								card = tmpList.get(i).cards.get(0);
+							}
 						}
 					}
 				}
+				ret.finalCards[4] = card;
+				ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[4]%0x0F);
 			}
-			ret.finalCards[4] = card;
-			ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[4]%0x0F);
+			else if(tmpList.get(0).cards.size() == 3 && tmpList.get(1).cards.size() >=2){
+				ret.cardType = TCard.FULL_HOUSE;
+				ret.finalCards[0] = tmpList.get(0).cards.get(0);
+				ret.finalCards[1] = tmpList.get(0).cards.get(1);
+				ret.finalCards[2] = tmpList.get(0).cards.get(2);
+				ret.finalCards[3] = tmpList.get(1).cards.get(0);
+				ret.finalCards[4] = tmpList.get(1).cards.get(1);
+				ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[4]%0x0F)<<16;
+			}else if(ret.cardType == TCard.FLUSH){
+				//doNothing
+			}else {
+				//看看能不能成顺子
+				int serial_count = 1;
+				int max_serial_count = 1;
+				int card_start = 0;
+				for(int i =tmpList.size()-1;i>0;i--){
+					if((tmpList.get(i).color_value- tmpList.get(i-1).color_value) == 1){
+						serial_count++;
+						max_serial_count = Math.max(serial_count, max_serial_count);
+						if(serial_count == 4 || serial_count == 5){//10,J,Q,K,A ;A,2,3,4,5
+							card_start = i-1;
+						}
+						if(serial_count == 5){
+							break;
+						}
+					}else{
+						serial_count =1;
+					}
+				}
+				if(max_serial_count == 4){
+					if(tmpList.get(card_start).color_value == 0x02 && tmpList.get(tmpList.size()-1).color_value == 0x0E){
+						ret.cardType = TCard.STRAIGHT;
+						for(int i = 0;i<4;i++){
+							ret.finalCards[i] = tmpList.get(card_start+i).cards.get(0);
+						}
+						ret.finalCards[4] = tmpList.get(tmpList.size()-1).cards.get(0);
+						ret.value = ret.cardType.ordinal()<<20  + 1;
+					}
+				}else if(max_serial_count == 5){
+					ret.cardType = TCard.STRAIGHT;
+					for(int i = 0;i<ret.finalCards.length;i++){
+						ret.finalCards[i] = tmpList.get(card_start+i).cards.get(0);
+					}
+					ret.value = ret.cardType.ordinal()<<20 + ret.finalCards[0]%0x0F;
+				}
+				
+				if(ret.cardType != TCard.STRAIGHT){
+					if(tmpList.get(0).cards.size() == 3){
+						ret.cardType = TCard.SET;
+						ret.finalCards[0] = tmpList.get(0).cards.get(0);
+						ret.finalCards[1] = tmpList.get(0).cards.get(1);
+						ret.finalCards[2] = tmpList.get(0).cards.get(2);
+						ret.finalCards[3] = tmpList.get(1).cards.get(0);
+						ret.finalCards[4] = tmpList.get(2).cards.get(0);
+						ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[3]%0x0F) <<4 + ret.finalCards[4]%0x0F;
+					}else if(tmpList.get(0).cards.size() == 2 && tmpList.get(1).cards.size() == 2){
+						ret.cardType = TCard.TWO_PAIR;
+						ret.finalCards[0] = tmpList.get(0).cards.get(0);
+						ret.finalCards[1] = tmpList.get(0).cards.get(1);
+						ret.finalCards[2] = tmpList.get(1).cards.get(0);
+						ret.finalCards[3] = tmpList.get(1).cards.get(1);
+						ret.finalCards[4] = tmpList.get(2).cards.get(0);
+						ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[0]%0x0F)<<16 + (ret.finalCards[2]%0x0F)<<8 + (ret.finalCards[4]%0x0F) ;
+					}else if(tmpList.get(0).cards.size() == 2){
+						ret.cardType = TCard.TWO_PAIR;
+						ret.finalCards[0] = tmpList.get(0).cards.get(0);
+						ret.finalCards[1] = tmpList.get(0).cards.get(1);
+						ret.finalCards[2] = tmpList.get(1).cards.get(0);
+						ret.finalCards[3] = tmpList.get(2).cards.get(0);
+						ret.finalCards[4] = tmpList.get(3).cards.get(0);
+						ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[0]%0x0F)<<16 + (ret.finalCards[2]%0x0F)<<8 + (ret.finalCards[3]%0x0F)<<4 + (ret.finalCards[4]%0x0F) ;
+					}else{
+						ret.cardType = TCard.HIGHT;
+						ret.finalCards[0] = tmpList.get(0).cards.get(0);
+						ret.finalCards[1] = tmpList.get(1).cards.get(0);
+						ret.finalCards[2] = tmpList.get(2).cards.get(0);
+						ret.finalCards[3] = tmpList.get(3).cards.get(0);
+						ret.finalCards[4] = tmpList.get(4).cards.get(0);
+						ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[0]%0x0F)<<16 + (ret.finalCards[1]%0x0F)<<12+ (ret.finalCards[2]%0x0F)<<8 + (ret.finalCards[3]%0x0F)<<4 + (ret.finalCards[4]%0x0F) ;
+					}
+				}
+			}
+			
 		}
-		else if(tmpList.get(0).cards.size() == 3 && tmpList.get(1).cards.size() >=2){
-			ret.cardType = TCard.FULL_HOUSE;
-			ret.finalCards[0] = tmpList.get(0).cards.get(0);
-			ret.finalCards[1] = tmpList.get(0).cards.get(1);
-			ret.finalCards[2] = tmpList.get(0).cards.get(2);
-			ret.finalCards[3] = tmpList.get(1).cards.get(0);
-			ret.finalCards[4] = tmpList.get(1).cards.get(1);
-			ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[4]%0x0F)<<16;
-		}
-		else if(tmpList.get(0).cards.size() == 3){
-			ret.cardType = TCard.SET;
-			ret.finalCards[0] = tmpList.get(0).cards.get(0);
-			ret.finalCards[1] = tmpList.get(0).cards.get(1);
-			ret.finalCards[2] = tmpList.get(0).cards.get(2);
-			ret.finalCards[3] = tmpList.get(1).cards.get(0);
-			ret.finalCards[4] = tmpList.get(2).cards.get(0);
-			ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[3]%0x0F) <<4 + ret.finalCards[4]%0x0F;
-		}else if(tmpList.get(0).cards.size() == 2 && tmpList.get(1).cards.size() == 2){
-			ret.cardType = TCard.TWO_PAIR;
-			ret.finalCards[0] = tmpList.get(0).cards.get(0);
-			ret.finalCards[1] = tmpList.get(0).cards.get(1);
-			ret.finalCards[2] = tmpList.get(1).cards.get(0);
-			ret.finalCards[3] = tmpList.get(1).cards.get(1);
-			ret.finalCards[4] = tmpList.get(2).cards.get(0);
-			ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[0]%0x0F)<<16 + (ret.finalCards[2]%0x0F)<<8 + (ret.finalCards[4]%0x0F) ;
-		}else if(tmpList.get(0).cards.size() == 2){
-			ret.cardType = TCard.TWO_PAIR;
-			ret.finalCards[0] = tmpList.get(0).cards.get(0);
-			ret.finalCards[1] = tmpList.get(0).cards.get(1);
-			ret.finalCards[2] = tmpList.get(1).cards.get(0);
-			ret.finalCards[3] = tmpList.get(2).cards.get(0);
-			ret.finalCards[4] = tmpList.get(3).cards.get(0);
-			ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[0]%0x0F)<<16 + (ret.finalCards[2]%0x0F)<<8 + (ret.finalCards[3]%0x0F)<<4 + (ret.finalCards[4]%0x0F) ;
-		}else{
-			ret.cardType = TCard.HIGHT;
-			ret.finalCards[0] = tmpList.get(0).cards.get(0);
-			ret.finalCards[1] = tmpList.get(1).cards.get(0);
-			ret.finalCards[2] = tmpList.get(2).cards.get(0);
-			ret.finalCards[3] = tmpList.get(3).cards.get(0);
-			ret.finalCards[4] = tmpList.get(4).cards.get(0);
-			ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[0]%0x0F)<<16 + (ret.finalCards[1]%0x0F)<<12+ (ret.finalCards[2]%0x0F)<<8 + (ret.finalCards[3]%0x0F)<<4 + (ret.finalCards[4]%0x0F) ;
-		}
-
 		return ret;
 	}
 	
