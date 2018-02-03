@@ -1,6 +1,7 @@
 package com.poker.games.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class TexasDefine {
 	
@@ -51,4 +52,25 @@ public class TexasDefine {
 		
 //		byte seatIds;//哪些座位上的人参与分成，按位运算
 	}
+	
+	public static class PotComparator implements Comparator<GUser>  
+	{  
+		@Override
+		public int compare(GUser o1, GUser o2) {
+			if(o1.round_chip == o2.round_chip){
+				//按剩余金币再比较一下
+				if(o1.chip == o2.chip){
+					return 0;
+				}else if(o1.chip > o2.chip){
+					return 1;
+				}else{
+					return -1;
+				}
+			}else if(o1.round_chip > o2.round_chip){
+				return 1;
+			}else{
+				return -1;
+			}
+		}  
+	} 
 }

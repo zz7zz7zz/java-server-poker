@@ -3,7 +3,6 @@ package com.poker.games.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Random;
 
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -16,6 +15,7 @@ import com.poker.games.User;
 import com.poker.games.impl.TexasDefine.GStatus;
 import com.poker.games.impl.TexasDefine.GStep;
 import com.poker.games.impl.TexasDefine.Pot;
+import com.poker.games.impl.TexasDefine.PotComparator;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.games.protocols.GBaseCmd;
@@ -59,6 +59,8 @@ public class GTable extends Table {
 	public long bb_force_bet;
 	
 	public GStep step;
+	private ArrayList<Pot> potList = new ArrayList<Pot>();
+	private PotComparator mPotComparator = new PotComparator();
 	
 	public GTable(Room mRoom,int tableId, Config mConfig,GameConfig mGameConfig,CardConfig mCardConfig) {
 		super(mRoom,tableId, mConfig);
@@ -418,6 +420,10 @@ public class GTable extends Table {
 				
 					case FOLD:
 						user.isFold  = true;
+						//如果一个用户弃牌了，从所有的Pot中将其删除，因为他将不参与分Pot
+						for(int i= 0;i< potList.size();i++){
+							potList.get(i).seatIds.remove((Byte)user.seatId);
+						}
 						break;
 						
 					case CHECK:
@@ -564,37 +570,13 @@ public class GTable extends Table {
 			dealTrun();
 		}else if(step == GStep.TRUN) {
 			dealRiver();
-			return;
 		}else if(step == GStep.RIVER) {
 			showHands();
 		}else{
 			stopGame();
 		}
 	}
-	
-	private ArrayList<Pot> potList = new ArrayList<Pot>();
-	PotComparator mPotComparator = new PotComparator();
-	static class PotComparator implements Comparator<GUser>  
-	{  
-		@Override
-		public int compare(GUser o1, GUser o2) {
-			if(o1.round_chip == o2.round_chip){
-				//按剩余金币再比较一下
-				if(o1.chip == o2.chip){
-					return 0;
-				}else if(o1.chip > o2.chip){
-					return 1;
-				}else{
-					return -1;
-				}
-			}else if(o1.round_chip > o2.round_chip){
-				return 1;
-			}else{
-				return -1;
-			}
-		}  
-	}  
-	
+ 
 	private void handPots(){
 		//如果有人下注才需要处理Pots
 		if(max_round_chip >=0){
@@ -707,8 +689,9 @@ public class GTable extends Table {
 	public void showHands() {
 		squenceId++;
 		broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_SHOW_HAND, squenceId, TexasGameServer.showHand(this));
-		
 		step = GStep.SHOWHAND;
+		
+		nextStep();
 	}
 	
 	public void stopGame() {
