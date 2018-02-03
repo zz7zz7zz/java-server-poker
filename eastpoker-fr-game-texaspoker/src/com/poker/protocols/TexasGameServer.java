@@ -383,18 +383,20 @@ public class TexasGameServer {
 	
 	public static byte[] stop(Table table){
 		TexasGameEnd.Builder builder = TexasGameEnd.newBuilder();
-		for(int i = 0;i<table.users.length;i++){
-			if(null == table.users[i]){
+		GUser[] gTableUsers = (GUser[])table.users;
+		for(int i = 0;i<gTableUsers.length;i++){
+			if(null == gTableUsers[i]){
 				continue;
 			}
 			Result.Builder resultBuilder = Result.newBuilder();
-			resultBuilder.setSeateId(table.users[i].seatId);
-			resultBuilder.setCardResult(0);
-			for(int j=0;j<5;j++) {
-				resultBuilder.addCards(i);
+			resultBuilder.setSeateId(gTableUsers[i].seatId);
+			resultBuilder.setCardResult(gTableUsers[i].result.cardType.ordinal());
+			for(int j=0;j<gTableUsers[i].result.finalCards.length;j++) {
+				resultBuilder.addCards(gTableUsers[i].result.finalCards[i]);
 			}
-			resultBuilder.setChip(0);
-			resultBuilder.setWinChip(0);
+			resultBuilder.setWinChip(gTableUsers[i].result.winChip);
+			
+			resultBuilder.setChip(gTableUsers[i].chip);
 			builder.addMResults(resultBuilder);
 		}
 		
