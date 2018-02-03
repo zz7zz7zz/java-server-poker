@@ -696,6 +696,15 @@ public class GTable extends Table {
 	
 	public void stopGame() {
 		
+		//清空数据
+		GUser[] gGsers=(GUser[])users;
+		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
+     		if(null ==gGsers[i] || !gGsers[i].isPlaying() || gGsers[i].isFold) {
+     			continue;
+     		}
+     		CardUtil.getCardResult(gGsers[i].handCard, flop, turn, river, gGsers[i].result);
+		}
+		
 		squenceId++;
 		broadcast(null,TexasCmd.CMD_SERVER_GAME_END, squenceId, TexasGameServer.stop(this));
 		

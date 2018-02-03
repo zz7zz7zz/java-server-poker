@@ -3,6 +3,7 @@ package com.poker.games.impl;
 import java.util.Arrays;
 
 import com.poker.games.User;
+import com.poker.games.impl.CardUtil.Result;
 import com.poker.games.impl.TexasDefine.GStatus;
 import com.poker.protocols.texaspoker.TexasGameBroadcastUserActionProto.TexasGameBroadcastUserAction.Operate;
 
@@ -15,6 +16,7 @@ public class GUser extends User {
 	public long round_chip = 0;
 	public boolean isFold;
 	public boolean isAllIn;
+	public Result result;
 	
 	public void reset(){
 		super.reset();
@@ -38,5 +40,6 @@ public class GUser extends User {
 		
 		isFold = false;
 		isAllIn = false;
+		result.clear();
 	}
 }

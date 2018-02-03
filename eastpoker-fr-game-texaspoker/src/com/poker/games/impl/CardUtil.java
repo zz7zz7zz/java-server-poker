@@ -1,6 +1,7 @@
 package com.poker.games.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ public class CardUtil {
 	public static String[] value= {"0","1","2","3","4","5","6","7","8","9","10","J","Q","K","A"};
 	
 	public static enum TCard{
+		NO(0),  //无
 		HIGHT(1),  //高牌
 		ONE_PAIR(2),//对子
 		TWO_PAIR(3),//两对
@@ -45,12 +47,16 @@ public class CardUtil {
 		public TCard cardType;//牌的类型
 		public byte[] finalCards=new byte[5];//最好的牌型	
 		public int    value;//牌型的值，用于比较牌的大小
+		
+		public void clear(){
+			cardType = TCard.NO;
+			Arrays.fill(finalCards, (byte)0);
+			value = 0;
+		}
 	}
 	
 	//--------------------------------------------------------
-	public Result getCardResult(byte[] hands,byte[] flop,byte[] trun,byte[] river) {
-		
-		Result ret = new Result();
+	public static void getCardResult(byte[] hands,byte[] flop,byte[] turn,byte[] river,Result result) {
 		
 		//花色
 		HashMap<Byte,ArrayList<Byte>> color_map = new HashMap<Byte,ArrayList<Byte>>();		
@@ -96,23 +102,23 @@ public class CardUtil {
 			value_cards_list.add(flop[i]);
 		}
 		
-		for(int i = 0;i<trun.length;i++) {
-			byte color = getColor(trun[i]);
-			byte value = getValue(trun[i]);
+		for(int i = 0;i<turn.length;i++) {
+			byte color = getColor(turn[i]);
+			byte value = getValue(turn[i]);
 			
 			ArrayList<Byte> color_cards_list = color_map.get(color);
 			if(null == color_cards_list){
 				color_cards_list = new ArrayList<>();
 				color_map.put(color, color_cards_list);
 			}
-			color_cards_list.add(trun[i]);
+			color_cards_list.add(turn[i]);
 			
 			ArrayList<Byte> value_cards_list = value_map.get(value);
 			if(null == value_cards_list){
 				value_cards_list = new ArrayList<>();
 				color_map.put(color, value_cards_list);
 			}
-			value_cards_list.add(trun[i]);
+			value_cards_list.add(turn[i]);
 		}
 		
 		for(int i = 0;i<river.length;i++) {
@@ -161,29 +167,29 @@ public class CardUtil {
 						}
 						if(max_serial_count == 4){
 							if(color_cards_list.get(card_start)%0x0F == 0x02 && color_cards_list.get(color_cards_list.size()-1)%0x0F == 0x0E){
-								ret.cardType = TCard.STRAIGHT_FLUSH;
+								result.cardType = TCard.STRAIGHT_FLUSH;
 								for(int i = 0;i<4;i++){
-									ret.finalCards[i] = color_cards_list.get(card_start+i);
+									result.finalCards[i] = color_cards_list.get(card_start+i);
 								}
-								ret.finalCards[4] = color_cards_list.get(color_cards_list.size()-1);
-								ret.value = ret.cardType.ordinal()<<20  + 1;
+								result.finalCards[4] = color_cards_list.get(color_cards_list.size()-1);
+								result.value = result.cardType.ordinal()<<20  + 1;
 							}
 						}else if(max_serial_count == 5){
-							ret.cardType = TCard.STRAIGHT_FLUSH;
+							result.cardType = TCard.STRAIGHT_FLUSH;
 							if(color_cards_list.get(card_start) == 0x0A){
-								ret.cardType = TCard.ROYAL_STRAIGHT_FLUSH;
+								result.cardType = TCard.ROYAL_STRAIGHT_FLUSH;
 							}
-							for(int i = 0;i<ret.finalCards.length;i++){
-								ret.finalCards[i] = color_cards_list.get(card_start+i);
+							for(int i = 0;i<result.finalCards.length;i++){
+								result.finalCards[i] = color_cards_list.get(card_start+i);
 							}
-							ret.value = ret.cardType.ordinal()<<20 + ret.finalCards[0]%0x0F;
+							result.value = result.cardType.ordinal()<<20 + result.finalCards[0]%0x0F;
 						}else{
-							ret.cardType = TCard.FLUSH;
+							result.cardType = TCard.FLUSH;
 							int size = color_cards_list.size();
-							for(int i = 0;i<ret.finalCards.length;i++){
-								ret.finalCards[i] = color_cards_list.get(size-5+i);
+							for(int i = 0;i<result.finalCards.length;i++){
+								result.finalCards[i] = color_cards_list.get(size-5+i);
 							}
-							ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[0]%0x0F)<<16 + (ret.finalCards[1]%0x0F)<<12+ (ret.finalCards[2]%0x0F)<<8 + (ret.finalCards[3]%0x0F)<<4 + (ret.finalCards[4]%0x0F);
+							result.value = result.cardType.ordinal()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[1]%0x0F)<<12+ (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F);
 						}
 						break;
 					}
@@ -191,7 +197,7 @@ public class CardUtil {
 		}
 		
 		//1.如果有同花顺以上的牌，则不需要再比牌了
-		if(ret.cardType == TCard.STRAIGHT_FLUSH || ret.cardType == TCard.ROYAL_STRAIGHT_FLUSH){
+		if(result.cardType == TCard.STRAIGHT_FLUSH || result.cardType == TCard.ROYAL_STRAIGHT_FLUSH){
 			//do Nothing
 		}else{
 			//2.看看是否有金刚
@@ -202,9 +208,9 @@ public class CardUtil {
 			Collections.sort(tmpList,new PairComparator());
 			
 			if(tmpList.get(0).cards.size() == 4){
-				ret.cardType = TCard.FOUR;
+				result.cardType = TCard.FOUR;
 				for(int i = 0;i<4;i++){
-					ret.finalCards[i] = tmpList.get(0).cards.get(i);
+					result.finalCards[i] = tmpList.get(0).cards.get(i);
 				}
 				
 				byte card = 0;
@@ -219,18 +225,18 @@ public class CardUtil {
 						}
 					}
 				}
-				ret.finalCards[4] = card;
-				ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[4]%0x0F);
+				result.finalCards[4] = card;
+				result.value = result.cardType.ordinal()<<20 + (result.finalCards[4]%0x0F);
 			}
 			else if(tmpList.get(0).cards.size() == 3 && tmpList.get(1).cards.size() >=2){
-				ret.cardType = TCard.FULL_HOUSE;
-				ret.finalCards[0] = tmpList.get(0).cards.get(0);
-				ret.finalCards[1] = tmpList.get(0).cards.get(1);
-				ret.finalCards[2] = tmpList.get(0).cards.get(2);
-				ret.finalCards[3] = tmpList.get(1).cards.get(0);
-				ret.finalCards[4] = tmpList.get(1).cards.get(1);
-				ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[4]%0x0F)<<16;
-			}else if(ret.cardType == TCard.FLUSH){
+				result.cardType = TCard.FULL_HOUSE;
+				result.finalCards[0] = tmpList.get(0).cards.get(0);
+				result.finalCards[1] = tmpList.get(0).cards.get(1);
+				result.finalCards[2] = tmpList.get(0).cards.get(2);
+				result.finalCards[3] = tmpList.get(1).cards.get(0);
+				result.finalCards[4] = tmpList.get(1).cards.get(1);
+				result.value = result.cardType.ordinal()<<20 + (result.finalCards[4]%0x0F)<<16;
+			}else if(result.cardType == TCard.FLUSH){
 				//doNothing
 			}else {
 				//看看能不能成顺子
@@ -253,60 +259,60 @@ public class CardUtil {
 				}
 				if(max_serial_count == 4){
 					if(tmpList.get(card_start).color_value == 0x02 && tmpList.get(tmpList.size()-1).color_value == 0x0E){
-						ret.cardType = TCard.STRAIGHT;
+						result.cardType = TCard.STRAIGHT;
 						for(int i = 0;i<4;i++){
-							ret.finalCards[i] = tmpList.get(card_start+i).cards.get(0);
+							result.finalCards[i] = tmpList.get(card_start+i).cards.get(0);
 						}
-						ret.finalCards[4] = tmpList.get(tmpList.size()-1).cards.get(0);
-						ret.value = ret.cardType.ordinal()<<20  + 1;
+						result.finalCards[4] = tmpList.get(tmpList.size()-1).cards.get(0);
+						result.value = result.cardType.ordinal()<<20  + 1;
 					}
 				}else if(max_serial_count == 5){
-					ret.cardType = TCard.STRAIGHT;
-					for(int i = 0;i<ret.finalCards.length;i++){
-						ret.finalCards[i] = tmpList.get(card_start+i).cards.get(0);
+					result.cardType = TCard.STRAIGHT;
+					for(int i = 0;i<result.finalCards.length;i++){
+						result.finalCards[i] = tmpList.get(card_start+i).cards.get(0);
 					}
-					ret.value = ret.cardType.ordinal()<<20 + ret.finalCards[0]%0x0F;
+					result.value = result.cardType.ordinal()<<20 + result.finalCards[0]%0x0F;
 				}
 				
-				if(ret.cardType != TCard.STRAIGHT){
+				if(result.cardType != TCard.STRAIGHT){
 					if(tmpList.get(0).cards.size() == 3){
-						ret.cardType = TCard.SET;
-						ret.finalCards[0] = tmpList.get(0).cards.get(0);
-						ret.finalCards[1] = tmpList.get(0).cards.get(1);
-						ret.finalCards[2] = tmpList.get(0).cards.get(2);
-						ret.finalCards[3] = tmpList.get(1).cards.get(0);
-						ret.finalCards[4] = tmpList.get(2).cards.get(0);
-						ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[3]%0x0F) <<4 + ret.finalCards[4]%0x0F;
+						result.cardType = TCard.SET;
+						result.finalCards[0] = tmpList.get(0).cards.get(0);
+						result.finalCards[1] = tmpList.get(0).cards.get(1);
+						result.finalCards[2] = tmpList.get(0).cards.get(2);
+						result.finalCards[3] = tmpList.get(1).cards.get(0);
+						result.finalCards[4] = tmpList.get(2).cards.get(0);
+						result.value = result.cardType.ordinal()<<20 + (result.finalCards[3]%0x0F) <<4 + result.finalCards[4]%0x0F;
 					}else if(tmpList.get(0).cards.size() == 2 && tmpList.get(1).cards.size() == 2){
-						ret.cardType = TCard.TWO_PAIR;
-						ret.finalCards[0] = tmpList.get(0).cards.get(0);
-						ret.finalCards[1] = tmpList.get(0).cards.get(1);
-						ret.finalCards[2] = tmpList.get(1).cards.get(0);
-						ret.finalCards[3] = tmpList.get(1).cards.get(1);
-						ret.finalCards[4] = tmpList.get(2).cards.get(0);
-						ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[0]%0x0F)<<16 + (ret.finalCards[2]%0x0F)<<8 + (ret.finalCards[4]%0x0F) ;
+						result.cardType = TCard.TWO_PAIR;
+						result.finalCards[0] = tmpList.get(0).cards.get(0);
+						result.finalCards[1] = tmpList.get(0).cards.get(1);
+						result.finalCards[2] = tmpList.get(1).cards.get(0);
+						result.finalCards[3] = tmpList.get(1).cards.get(1);
+						result.finalCards[4] = tmpList.get(2).cards.get(0);
+						result.value = result.cardType.ordinal()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[2]%0x0F)<<8 + (result.finalCards[4]%0x0F) ;
 					}else if(tmpList.get(0).cards.size() == 2){
-						ret.cardType = TCard.TWO_PAIR;
-						ret.finalCards[0] = tmpList.get(0).cards.get(0);
-						ret.finalCards[1] = tmpList.get(0).cards.get(1);
-						ret.finalCards[2] = tmpList.get(1).cards.get(0);
-						ret.finalCards[3] = tmpList.get(2).cards.get(0);
-						ret.finalCards[4] = tmpList.get(3).cards.get(0);
-						ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[0]%0x0F)<<16 + (ret.finalCards[2]%0x0F)<<8 + (ret.finalCards[3]%0x0F)<<4 + (ret.finalCards[4]%0x0F) ;
+						result.cardType = TCard.TWO_PAIR;
+						result.finalCards[0] = tmpList.get(0).cards.get(0);
+						result.finalCards[1] = tmpList.get(0).cards.get(1);
+						result.finalCards[2] = tmpList.get(1).cards.get(0);
+						result.finalCards[3] = tmpList.get(2).cards.get(0);
+						result.finalCards[4] = tmpList.get(3).cards.get(0);
+						result.value = result.cardType.ordinal()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F) ;
 					}else{
-						ret.cardType = TCard.HIGHT;
-						ret.finalCards[0] = tmpList.get(0).cards.get(0);
-						ret.finalCards[1] = tmpList.get(1).cards.get(0);
-						ret.finalCards[2] = tmpList.get(2).cards.get(0);
-						ret.finalCards[3] = tmpList.get(3).cards.get(0);
-						ret.finalCards[4] = tmpList.get(4).cards.get(0);
-						ret.value = ret.cardType.ordinal()<<20 + (ret.finalCards[0]%0x0F)<<16 + (ret.finalCards[1]%0x0F)<<12+ (ret.finalCards[2]%0x0F)<<8 + (ret.finalCards[3]%0x0F)<<4 + (ret.finalCards[4]%0x0F) ;
+						result.cardType = TCard.HIGHT;
+						result.finalCards[0] = tmpList.get(0).cards.get(0);
+						result.finalCards[1] = tmpList.get(1).cards.get(0);
+						result.finalCards[2] = tmpList.get(2).cards.get(0);
+						result.finalCards[3] = tmpList.get(3).cards.get(0);
+						result.finalCards[4] = tmpList.get(4).cards.get(0);
+						result.value = result.cardType.ordinal()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[1]%0x0F)<<12+ (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F) ;
 					}
 				}
 			}
 			
 		}
-		return ret;
+
 	}
 	
 	public static class Pair{
