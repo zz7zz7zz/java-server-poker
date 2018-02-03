@@ -57,7 +57,6 @@ public class GTable extends Table {
 	public long ante_all;
 	public long sb_force_bet;
 	public long bb_force_bet;
-	public long pots [] = new long[9];//最多9个pot
 	
 	public GStep step;
 	
@@ -679,11 +678,13 @@ public class GTable extends Table {
 			
 			//这一轮有新的下注，将Pot信息发送给客户端
 			if(potList.size() > pot_start_index){
+				long[] pots = new long[potList.size() - pot_start_index];
 				for(int i= pot_start_index;i<potList.size();i++){
-					
+					pots[i-pot_start_index] = potList.get(i).pot_chips;
 				}
+				squenceId++;
+				broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_POTS, squenceId, TexasGameServer.broadcastPots(pots));
 			}
-
 		}
 
 		//清空数据

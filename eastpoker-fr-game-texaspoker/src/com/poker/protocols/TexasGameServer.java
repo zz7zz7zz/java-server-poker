@@ -14,6 +14,7 @@ import com.poker.protocols.game.server.BroadcastUserReadyProto.BroadcastUserRead
 import com.poker.protocols.texaspoker.BroadcastUserLoginProto.BroadcastUserLogin;
 import com.poker.protocols.texaspoker.GameUserProto.GameUser;
 import com.poker.protocols.texaspoker.TexasGameBroadcastNextOperateProto.TexasGameBroadcastNextOperate;
+import com.poker.protocols.texaspoker.TexasGameBroadcastPotProto.TexasGameBroadcastPot;
 import com.poker.protocols.texaspoker.TexasGameBroadcastUserActionProto.TexasGameBroadcastUserAction;
 import com.poker.protocols.texaspoker.TexasGameBroadcastUserActionProto.TexasGameBroadcastUserAction.Operate;
 import com.poker.protocols.texaspoker.TexasGameConfigProto.TexasGameConfig;
@@ -232,6 +233,15 @@ public class TexasGameServer {
 		builder.setNextOpCallChip(op_call_chip);
 		builder.setNextOpMinRaiseChip(op_min_raise_chip);
 		builder.setNextOpMaxRaiseChip(op_max_raise_chip);
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+	
+	public static byte[] broadcastPots(long ... pots) {
+		TexasGameBroadcastPot.Builder builder = TexasGameBroadcastPot.newBuilder();
+		for(int i = 0 ;i<pots.length;i++){
+			builder.addPots(pots[i]);
+		}
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
