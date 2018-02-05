@@ -4,9 +4,9 @@ import com.poker.games.Table;
 import com.poker.games.User;
 import com.poker.games.impl.GTable;
 import com.poker.games.impl.GUser;
-import com.poker.games.impl.TexasDefine;
-import com.poker.games.impl.TexasDefine.GStatus;
 import com.poker.games.impl.config.GameConfig;
+import com.poker.games.impl.define.TexasDefine;
+import com.poker.games.impl.define.TexasDefine.UserStatus;
 import com.poker.protocols.texaspoker.TexasGameStartProto.TexasGameStart;
 import com.poker.protocols.game.server.BroadcastUserExitProto.BroadcastUserExit;
 import com.poker.protocols.game.server.BroadcastUserOfflineProto.BroadcastUserOffline;
@@ -142,7 +142,7 @@ public class TexasGameServer {
 	}
 	
 	//--------------------------------------------------------游戏指令----------------------------------------------------------------
-	public static byte[] start(int sb_seatid,int bb_seatid,int btn_seateId,long ante, long sb_round_chip,long bb_round_chip,GTable table){
+	public static byte[] gameStart(int sb_seatid,int bb_seatid,int btn_seateId,long ante, long sb_round_chip,long bb_round_chip,GTable table){
 		
 		TexasGameStart.Builder builder = TexasGameStart.newBuilder();
 		builder.setSbSeatId(sb_seatid);
@@ -156,7 +156,7 @@ public class TexasGameServer {
 		GUser[] gTableUsers = (GUser[])table.users;
 		for(int i =0 ;i<gTableUsers.length;i++){
 			GUser user = gTableUsers[i];
-			if(null  != user && user.play_status == GStatus.PLAY ){
+			if(null  != user && user.play_status == UserStatus.PLAY ){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
 				userBuild.setChip(user.chip);
@@ -325,9 +325,9 @@ public class TexasGameServer {
 		}
 		
 		int flop = table.step.ordinal();
-		int FLOP = TexasDefine.GStep.FLOP.ordinal();
-		int TRUN = TexasDefine.GStep.TRUN.ordinal();
-		int RIVER = TexasDefine.GStep.RIVER.ordinal();
+		int FLOP = TexasDefine.GameStep.FLOP.ordinal();
+		int TRUN = TexasDefine.GameStep.TRUN.ordinal();
+		int RIVER = TexasDefine.GameStep.RIVER.ordinal();
 		
 		if(flop >= FLOP){
 			for(int i = 0 ;i < table.flop.length;i++){
@@ -381,7 +381,7 @@ public class TexasGameServer {
 		return body;
 	}
 	
-	public static byte[] stop(Table table){
+	public static byte[] gameOver(Table table){
 		TexasGameEnd.Builder builder = TexasGameEnd.newBuilder();
 		GUser[] gTableUsers = (GUser[])table.users;
 		for(int i = 0;i<gTableUsers.length;i++){

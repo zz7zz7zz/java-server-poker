@@ -3,14 +3,14 @@ package com.poker.games.impl;
 import java.util.Arrays;
 
 import com.poker.games.User;
-import com.poker.games.impl.CardUtil.Result;
-import com.poker.games.impl.TexasDefine.GStatus;
+import com.poker.games.impl.define.TexasDefine.UserStatus;
+import com.poker.games.impl.define.TexasDefine.Result;
 import com.poker.protocols.texaspoker.TexasGameBroadcastUserActionProto.TexasGameBroadcastUserAction.Operate;
 
 public class GUser extends User {
 	
 	public byte[] handCard=new byte[2];
-	public GStatus play_status;
+	public UserStatus play_status;
 	public Operate operate;
 	
 	public long round_chip = 0;
@@ -25,18 +25,18 @@ public class GUser extends User {
 	}
 	
 	public boolean isPlaying(){
-		return play_status == GStatus.PLAY;
+		return play_status == UserStatus.PLAY;
 	}
 	
 	public void startGame(){
 		super.startGame();
-		play_status = GStatus.PLAY;
+		play_status = UserStatus.PLAY;
 	}
 	
 	public void stopGame(){
 		super.stopGame();
 		operate = Operate.FOLD;
-		play_status = GStatus.NOT_PLAY_SITDOWN;
+		play_status = UserStatus.NOT_PLAY_SITDOWN;
 		Arrays.fill(handCard, (byte)0);
 		
 		isFold = false;

@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import com.open.net.client.utils.CfgParser;
 import com.open.net.client.utils.TextUtils;
-import com.poker.games.impl.CardUtil;
+import com.poker.games.impl.define.PokerUtil;
 
 
 
@@ -146,7 +146,7 @@ public class CardConfig {
 		if(null !=cards && cards.length >0) {
 			StringBuilder sb = new StringBuilder(12);
 			for(int i=0;i<cards.length;i++) {
-				sb.append(CardUtil.formatCard(cards[i]));
+				sb.append(PokerUtil.formatCard(cards[i]));
 			}
 			return sb.toString();
 		}

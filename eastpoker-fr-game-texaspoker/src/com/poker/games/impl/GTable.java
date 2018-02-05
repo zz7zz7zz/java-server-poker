@@ -3,7 +3,9 @@ package com.poker.games.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Random;
+import java.util.Map.Entry;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
@@ -12,12 +14,18 @@ import com.poker.games.GDefine.TableStatus;
 import com.poker.games.Room;
 import com.poker.games.Table;
 import com.poker.games.User;
-import com.poker.games.impl.TexasDefine.GStatus;
-import com.poker.games.impl.TexasDefine.GStep;
-import com.poker.games.impl.TexasDefine.Pot;
-import com.poker.games.impl.TexasDefine.PotComparator;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
+import com.poker.games.impl.define.PokerUtil;
+import com.poker.games.impl.define.TexasDefine;
+import com.poker.games.impl.define.TexasDefine.UserStatus;
+import com.poker.games.impl.define.TexasDefine.GameStep;
+import com.poker.games.impl.define.TexasDefine.Pair;
+import com.poker.games.impl.define.TexasDefine.PairComparator;
+import com.poker.games.impl.define.TexasDefine.Pot;
+import com.poker.games.impl.define.TexasDefine.PotComparator;
+import com.poker.games.impl.define.TexasDefine.Result;
+import com.poker.games.impl.define.TexasDefine.TCard;
 import com.poker.games.protocols.GBaseCmd;
 import com.poker.protocols.TexasCmd;
 import com.poker.protocols.TexasGameServer;
@@ -58,7 +66,7 @@ public class GTable extends Table {
 	public long sb_force_bet;
 	public long bb_force_bet;
 	
-	public GStep step;
+	public GameStep step;
 	private ArrayList<Pot> potList = new ArrayList<Pot>();
 	private PotComparator mPotComparator = new PotComparator();
 	
@@ -215,7 +223,7 @@ public class GTable extends Table {
     	
 		//强制玩家交Ante,小盲大盲强制下盲注
 		for(int i =0;i<gGsers.length;i++) {
-     		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY) {
+     		if(null ==gGsers[i] || gGsers[i].play_status != UserStatus.PLAY) {
      			continue;
      		}
      		
@@ -242,9 +250,9 @@ public class GTable extends Table {
 		bb_force_bet = gGsers[bb_seatid].round_chip;
 		
     	squenceId++;
-    	broadcast(null,TexasCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.start(sb_seatid, bb_seatid, btn_seateId, ante_all,sb_force_bet,bb_force_bet,this));
+    	broadcast(null,TexasCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.gameStart(sb_seatid, bb_seatid, btn_seateId, ante_all,sb_force_bet,bb_force_bet,this));
     	
-  		step = GStep.START;
+  		step = GameStep.START;
 	}
 	
 	public void dealPreFlop() {
@@ -252,7 +260,7 @@ public class GTable extends Table {
         
 		if(mCardConfig.isEnable) {
 	        for(int i =0;i<gGsers.length;i++) {
-        		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY) {
+        		if(null ==gGsers[i] || gGsers[i].play_status != UserStatus.PLAY) {
         			continue;
         		}
         		
@@ -265,7 +273,7 @@ public class GTable extends Table {
 	        long t = System.currentTimeMillis();//获得当前时间的毫秒数
 	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
 	        for(int i =0;i<gGsers.length;i++) {
-        		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY) {
+        		if(null ==gGsers[i] || gGsers[i].play_status != UserStatus.PLAY) {
         			continue;
         		}
         		
@@ -286,7 +294,7 @@ public class GTable extends Table {
 		}
 		
 		for(int i =0;i<gGsers.length;i++) {
-     		if(null ==gGsers[i] || gGsers[i].play_status != GStatus.PLAY) {
+     		if(null ==gGsers[i] || gGsers[i].play_status != UserStatus.PLAY) {
      			continue;
      		}
      		
@@ -295,7 +303,7 @@ public class GTable extends Table {
         	send2Access(user,TexasCmd.CMD_SERVER_DEAL_PREFLOP, squenceId, TexasGameServer.dealPreFlop( user.handCard));
 	    }
 		 
-  		step = GStep.PREFLOP;
+  		step = GameStep.PREFLOP;
   		next_option(null);
 	}
 	
@@ -324,7 +332,7 @@ public class GTable extends Table {
 		squenceId++;
 		broadcast(null,TexasCmd.CMD_SERVER_DEAL_FLOP, squenceId, TexasGameServer.dealFlop(flop));
 		
-		step = GStep.FLOP;
+		step = GameStep.FLOP;
 		next_option(null);
 	}
 	
@@ -353,7 +361,7 @@ public class GTable extends Table {
 		squenceId++;
 		broadcast(null,TexasCmd.CMD_SERVER_DEAL_TURN, squenceId, TexasGameServer.dealTrun(turn));
 		
-  		step = GStep.TRUN;
+  		step = GameStep.TRUN;
 		next_option(null);
 	}
 	
@@ -382,7 +390,7 @@ public class GTable extends Table {
 		squenceId++;
 		broadcast(null,TexasCmd.CMD_SERVER_DEAL_RIVER, squenceId,TexasGameServer.dealRiver(river));
 		
-  		step = GStep.RIVER;
+  		step = GameStep.RIVER;
 		next_option(null);
 	}
 	
@@ -498,7 +506,7 @@ public class GTable extends Table {
 		
 		//说明是新的一轮开始
 		if(null == preActionUser){
-			if(step == GStep.PREFLOP){
+			if(step == GameStep.PREFLOP){
 				//翻牌前枪口位开始
 				op_seatid = (bb_seatid+1)%mConfig.table_max_user;
 			}else{
@@ -564,13 +572,13 @@ public class GTable extends Table {
 		
 		handPots();
 		
-		if(step == GStep.PREFLOP) {
+		if(step == GameStep.PREFLOP) {
 			dealFlop();
-		}else if(step == GStep.FLOP) {
+		}else if(step == GameStep.FLOP) {
 			dealTrun();
-		}else if(step == GStep.TRUN) {
+		}else if(step == GameStep.TRUN) {
 			dealRiver();
-		}else if(step == GStep.RIVER) {
+		}else if(step == GameStep.RIVER) {
 			showHands();
 		}else{
 			stopGame();
@@ -689,7 +697,7 @@ public class GTable extends Table {
 	public void showHands() {
 		squenceId++;
 		broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_SHOW_HAND, squenceId, TexasGameServer.showHand(this));
-		step = GStep.SHOWHAND;
+		step = GameStep.SHOWHAND;
 		
 		nextStep();
 	}
@@ -701,10 +709,269 @@ public class GTable extends Table {
      		if(null ==gGsers[i] || !gGsers[i].isPlaying() || gGsers[i].isFold) {
      			continue;
      		}
-     		CardUtil.getCardResult(gGsers[i].handCard, flop, turn, river, gGsers[i].result);
+     		getCardResult(gGsers[i].handCard, flop, turn, river, gGsers[i].result);
 		}
 	}
 	
+public static void getCardResult(byte[] hands,byte[] flop,byte[] turn,byte[] river,Result result) {
+		
+		//花色
+		HashMap<Byte,ArrayList<Byte>> color_map = new HashMap<Byte,ArrayList<Byte>>();		
+		//花值
+		HashMap<Byte,ArrayList<Byte>> value_map = new HashMap<Byte,ArrayList<Byte>>();	
+		
+		//----------------------花色数目-------------------------
+		for(int i = 0;i<hands.length;i++) {
+			byte color = PokerUtil.getColor(hands[i]);
+			byte value = PokerUtil.getValue(hands[i]);
+			
+			ArrayList<Byte> color_cards_list = color_map.get(color);
+			if(null == color_cards_list){
+				color_cards_list = new ArrayList<>();
+				color_map.put(color, color_cards_list);
+			}
+			color_cards_list.add(hands[i]);
+			
+			ArrayList<Byte> value_cards_list = value_map.get(value);
+			if(null == value_cards_list){
+				value_cards_list = new ArrayList<>();
+				color_map.put(color, value_cards_list);
+			}
+			value_cards_list.add(hands[i]);
+		}
+		
+		for(int i = 0;i<flop.length;i++) {
+			byte color = PokerUtil.getColor(flop[i]);
+			byte value = PokerUtil.getValue(flop[i]);
+			
+			ArrayList<Byte> color_cards_list = color_map.get(color);
+			if(null == color_cards_list){
+				color_cards_list = new ArrayList<>();
+				color_map.put(color, color_cards_list);
+			}
+			color_cards_list.add(flop[i]);
+			
+			ArrayList<Byte> value_cards_list = value_map.get(value);
+			if(null == value_cards_list){
+				value_cards_list = new ArrayList<>();
+				color_map.put(color, value_cards_list);
+			}
+			value_cards_list.add(flop[i]);
+		}
+		
+		for(int i = 0;i<turn.length;i++) {
+			byte color = PokerUtil.getColor(turn[i]);
+			byte value = PokerUtil.getValue(turn[i]);
+			
+			ArrayList<Byte> color_cards_list = color_map.get(color);
+			if(null == color_cards_list){
+				color_cards_list = new ArrayList<>();
+				color_map.put(color, color_cards_list);
+			}
+			color_cards_list.add(turn[i]);
+			
+			ArrayList<Byte> value_cards_list = value_map.get(value);
+			if(null == value_cards_list){
+				value_cards_list = new ArrayList<>();
+				color_map.put(color, value_cards_list);
+			}
+			value_cards_list.add(turn[i]);
+		}
+		
+		for(int i = 0;i<river.length;i++) {
+			byte color = PokerUtil.getColor(river[i]);
+			byte value = PokerUtil.getValue(river[i]);
+			
+			ArrayList<Byte> color_cards_list = color_map.get(color);
+			if(null == color_cards_list){
+				color_cards_list = new ArrayList<>();
+				color_map.put(color, color_cards_list);
+			}
+			color_cards_list.add(river[i]);
+			
+			ArrayList<Byte> value_cards_list = value_map.get(value);
+			if(null == value_cards_list){
+				value_cards_list = new ArrayList<>();
+				color_map.put(color, value_cards_list);
+			}
+			value_cards_list.add(river[i]);
+		}
+		
+		//看是否有同花顺
+		if(value_map.size()>=5 && color_map.size()<=3){
+				for (Entry<Byte, ArrayList<Byte>> entry : color_map.entrySet()) {
+					ArrayList<Byte> color_cards_list= entry.getValue();
+					if(color_cards_list.size()>=5){
+						
+						Collections.sort(color_cards_list);
+						
+						int serial_count = 1;
+						int max_serial_count = 1;
+						int card_start = 0;
+						for(int i =color_cards_list.size()-1;i>0;i--){
+							if((color_cards_list.get(i)- color_cards_list.get(i-1)) == 1){
+								serial_count++;
+								max_serial_count = Math.max(serial_count, max_serial_count);
+								if(serial_count == 4 || serial_count == 5){//10,J,Q,K,A ;A,2,3,4,5
+									card_start = i-1;
+								}
+								if(serial_count == 5){
+									break;
+								}
+							}else{
+								serial_count =1;
+							}
+						}
+						if(max_serial_count == 4){
+							if(color_cards_list.get(card_start)%0x0F == 0x02 && color_cards_list.get(color_cards_list.size()-1)%0x0F == 0x0E){
+								result.cardType = TCard.STRAIGHT_FLUSH;
+								for(int i = 0;i<4;i++){
+									result.finalCards[i] = color_cards_list.get(card_start+i);
+								}
+								result.finalCards[4] = color_cards_list.get(color_cards_list.size()-1);
+								result.value = result.cardType.ordinal()<<20  + 1;
+							}
+						}else if(max_serial_count == 5){
+							result.cardType = TCard.STRAIGHT_FLUSH;
+							if(color_cards_list.get(card_start) == 0x0A){
+								result.cardType = TCard.ROYAL_STRAIGHT_FLUSH;
+							}
+							for(int i = 0;i<result.finalCards.length;i++){
+								result.finalCards[i] = color_cards_list.get(card_start+i);
+							}
+							result.value = result.cardType.ordinal()<<20 + result.finalCards[0]%0x0F;
+						}else{
+							result.cardType = TCard.FLUSH;
+							int size = color_cards_list.size();
+							for(int i = 0;i<result.finalCards.length;i++){
+								result.finalCards[i] = color_cards_list.get(size-5+i);
+							}
+							result.value = result.cardType.ordinal()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[1]%0x0F)<<12+ (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F);
+						}
+						break;
+					}
+				}
+		}
+		
+		//1.如果有同花顺以上的牌，则不需要再比牌了
+		if(result.cardType == TCard.STRAIGHT_FLUSH || result.cardType == TCard.ROYAL_STRAIGHT_FLUSH){
+			//do Nothing
+		}else{
+			//2.看看是否有金刚
+			ArrayList<Pair> tmpList = new ArrayList<Pair>();
+			for (Entry<Byte, ArrayList<Byte>> entry : value_map.entrySet()) {
+				tmpList.add(new Pair(entry.getKey(),entry.getValue()));
+			}
+			Collections.sort(tmpList,new PairComparator());
+			
+			if(tmpList.get(0).cards.size() == 4){
+				result.cardType = TCard.FOUR;
+				for(int i = 0;i<4;i++){
+					result.finalCards[i] = tmpList.get(0).cards.get(i);
+				}
+				
+				byte card = 0;
+				for(int i = 0;i < tmpList.size();i++){
+					if(tmpList.size() < 4){
+						if(card == 0){
+							card = tmpList.get(i).cards.get(0);
+						}else{
+							if(tmpList.get(i).cards.get(0)%0x0F > card%0x0F){
+								card = tmpList.get(i).cards.get(0);
+							}
+						}
+					}
+				}
+				result.finalCards[4] = card;
+				result.value = result.cardType.ordinal()<<20 + (result.finalCards[4]%0x0F);
+			}
+			else if(tmpList.get(0).cards.size() == 3 && tmpList.get(1).cards.size() >=2){
+				result.cardType = TCard.FULL_HOUSE;
+				result.finalCards[0] = tmpList.get(0).cards.get(0);
+				result.finalCards[1] = tmpList.get(0).cards.get(1);
+				result.finalCards[2] = tmpList.get(0).cards.get(2);
+				result.finalCards[3] = tmpList.get(1).cards.get(0);
+				result.finalCards[4] = tmpList.get(1).cards.get(1);
+				result.value = result.cardType.ordinal()<<20 + (result.finalCards[4]%0x0F)<<16;
+			}else if(result.cardType == TCard.FLUSH){
+				//doNothing
+			}else {
+				//看看能不能成顺子
+				int serial_count = 1;
+				int max_serial_count = 1;
+				int card_start = 0;
+				for(int i =tmpList.size()-1;i>0;i--){
+					if((tmpList.get(i).color_value- tmpList.get(i-1).color_value) == 1){
+						serial_count++;
+						max_serial_count = Math.max(serial_count, max_serial_count);
+						if(serial_count == 4 || serial_count == 5){//10,J,Q,K,A ;A,2,3,4,5
+							card_start = i-1;
+						}
+						if(serial_count == 5){
+							break;
+						}
+					}else{
+						serial_count =1;
+					}
+				}
+				if(max_serial_count == 4){
+					if(tmpList.get(card_start).color_value == 0x02 && tmpList.get(tmpList.size()-1).color_value == 0x0E){
+						result.cardType = TCard.STRAIGHT;
+						for(int i = 0;i<4;i++){
+							result.finalCards[i] = tmpList.get(card_start+i).cards.get(0);
+						}
+						result.finalCards[4] = tmpList.get(tmpList.size()-1).cards.get(0);
+						result.value = result.cardType.ordinal()<<20  + 1;
+					}
+				}else if(max_serial_count == 5){
+					result.cardType = TCard.STRAIGHT;
+					for(int i = 0;i<result.finalCards.length;i++){
+						result.finalCards[i] = tmpList.get(card_start+i).cards.get(0);
+					}
+					result.value = result.cardType.ordinal()<<20 + result.finalCards[0]%0x0F;
+				}
+				
+				if(result.cardType != TCard.STRAIGHT){
+					if(tmpList.get(0).cards.size() == 3){
+						result.cardType = TCard.SET;
+						result.finalCards[0] = tmpList.get(0).cards.get(0);
+						result.finalCards[1] = tmpList.get(0).cards.get(1);
+						result.finalCards[2] = tmpList.get(0).cards.get(2);
+						result.finalCards[3] = tmpList.get(1).cards.get(0);
+						result.finalCards[4] = tmpList.get(2).cards.get(0);
+						result.value = result.cardType.ordinal()<<20 + (result.finalCards[3]%0x0F) <<4 + result.finalCards[4]%0x0F;
+					}else if(tmpList.get(0).cards.size() == 2 && tmpList.get(1).cards.size() == 2){
+						result.cardType = TCard.TWO_PAIR;
+						result.finalCards[0] = tmpList.get(0).cards.get(0);
+						result.finalCards[1] = tmpList.get(0).cards.get(1);
+						result.finalCards[2] = tmpList.get(1).cards.get(0);
+						result.finalCards[3] = tmpList.get(1).cards.get(1);
+						result.finalCards[4] = tmpList.get(2).cards.get(0);
+						result.value = result.cardType.ordinal()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[2]%0x0F)<<8 + (result.finalCards[4]%0x0F) ;
+					}else if(tmpList.get(0).cards.size() == 2){
+						result.cardType = TCard.TWO_PAIR;
+						result.finalCards[0] = tmpList.get(0).cards.get(0);
+						result.finalCards[1] = tmpList.get(0).cards.get(1);
+						result.finalCards[2] = tmpList.get(1).cards.get(0);
+						result.finalCards[3] = tmpList.get(2).cards.get(0);
+						result.finalCards[4] = tmpList.get(3).cards.get(0);
+						result.value = result.cardType.ordinal()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F) ;
+					}else{
+						result.cardType = TCard.HIGHT;
+						result.finalCards[0] = tmpList.get(0).cards.get(0);
+						result.finalCards[1] = tmpList.get(1).cards.get(0);
+						result.finalCards[2] = tmpList.get(2).cards.get(0);
+						result.finalCards[3] = tmpList.get(3).cards.get(0);
+						result.finalCards[4] = tmpList.get(4).cards.get(0);
+						result.value = result.cardType.ordinal()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[1]%0x0F)<<12+ (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F) ;
+					}
+				}
+			}
+			
+		}
+
+	}
+
 	//算Pot
 	public void calculatePot(){
 		
@@ -763,12 +1030,12 @@ public class GTable extends Table {
 		calculatePot();
 		
 		squenceId++;
-		broadcast(null,TexasCmd.CMD_SERVER_GAME_END, squenceId, TexasGameServer.stop(this));
+		broadcast(null,TexasCmd.CMD_SERVER_GAME_END, squenceId, TexasGameServer.gameOver(this));
 		
 		//--------------------------------------------------------------------------------
 		super.stopGame();
 		
-		step = GStep.STOP;
+		step = GameStep.STOP;
 		cardFlags |= Long.MAX_VALUE;
 		squenceId = 0;
 		
@@ -786,7 +1053,7 @@ public class GTable extends Table {
 	public void resetTable(){
 		super.resetTable();
 		
-		step = GStep.STOP;
+		step = GameStep.STOP;
 		cardFlags |= Long.MAX_VALUE;
 		squenceId = 0;
 		
@@ -805,6 +1072,4 @@ public class GTable extends Table {
 		max_round_chip_seatid = 0;
 		potList.clear();
 	}
-	
-
 }
