@@ -8,9 +8,7 @@ import com.poker.cmd.GameCmd;
 import com.poker.common.config.Config;
 import com.poker.games.define.UserPool;
 import com.poker.games.define.GameDefine.LoginResult;
-import com.poker.games.impl.GTable;
-import com.poker.games.impl.config.CardConfig;
-import com.poker.games.impl.config.GameConfig;
+import com.poker.games.impl.Table;
 import com.poker.games.protocols.BaseGameCmd;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 
@@ -18,26 +16,20 @@ import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 public class Room {
 	
 	private final String TAG = "Room";
+	
 	public HashMap<Long,AbsUser> userMap = new HashMap<>();
 	public AbsTable mTables[];
 	public short gameId;
 	public short gameSid;
 	
 	public Room(Config mConfig) {
-		
-		GameConfig mGameConfig = new GameConfig();
-		mGameConfig.initFileConfig("./conf-game/game.config");
-		
-		CardConfig mCardConfig = new CardConfig();
-		mCardConfig.initFileConfig("./conf-game/card.config");
-		
 		gameId = mConfig.game_id;
 		gameSid= mConfig.server_id;
 		
 		mTables = new AbsTable[mConfig.table_count];
 		for(int i=0;i<mConfig.table_count;i++){
 			int tableId = (mConfig.server_id << 16) + i;
-			mTables[i] = new GTable(tableId,mConfig,mGameConfig,mCardConfig);
+			mTables[i] = new Table(tableId,mConfig);
 		}
 		
 		//预先分配1/4桌子数目的用户，每次增长1/4桌子数目的用户

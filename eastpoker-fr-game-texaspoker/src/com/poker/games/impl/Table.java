@@ -35,8 +35,8 @@ import com.poker.protocols.texaspoker.TexasGameBroadcastUserActionProto.TexasGam
 
 public class Table extends AbsTable {
 	
-	public GameConfig mGameConfig;
-	public CardConfig mCardConfig;
+	public static GameConfig mGameConfig;
+	public static CardConfig mCardConfig;
 	
 	public long   cardFlags = Long.MAX_VALUE;
 	
@@ -70,9 +70,19 @@ public class Table extends AbsTable {
 	private ArrayList<Pot> potList = new ArrayList<Pot>();
 	private PotComparator mPotComparator = new PotComparator();
 	
-	public Table(Room mRoom,int tableId, Config mConfig,GameConfig mGameConfig,CardConfig mCardConfig) {
+	public Table(Room mRoom,int tableId, Config mConfig) {
 		super(mRoom,tableId, mConfig);
-		this.mCardConfig = mCardConfig;
+		
+		if(null == mGameConfig){
+			mGameConfig = new GameConfig();
+			mGameConfig.initFileConfig("./conf-game/game.config");
+		}
+
+		if(null == mCardConfig){
+			mCardConfig = new CardConfig();
+			mCardConfig.initFileConfig("./conf-game/card.config");
+		}
+
 		this.ante = mGameConfig.table_ante[0];
 		this.sb_chip = mGameConfig.table_blind[0];
 	}
