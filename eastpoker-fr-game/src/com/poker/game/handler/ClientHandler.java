@@ -12,7 +12,7 @@ import com.poker.data.DataTransfer;
 import com.poker.data.DistapchType;
 import com.poker.game.Main;
 import com.poker.games.Room;
-import com.poker.games.Table;
+import com.poker.games.AbsTable;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.protocols.game.server.GameServerProto;
@@ -73,7 +73,7 @@ public class ClientHandler extends AbsClientHandler{
 		builder.setTableCount(config.table_count);
 		builder.setTableMaxUser(config.table_max_user);
 		
-		for (Table table : mRoom.mTables) {
+		for (AbsTable table : mRoom.mTables) {
 			GameTableProto.GameTable.Builder tableBuilder = GameTableProto.GameTable.newBuilder();
 			tableBuilder.setTid(table.tableId);
 			tableBuilder.setCount(table.count);

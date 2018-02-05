@@ -2,7 +2,7 @@ package com.poker.games.define;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.poker.games.User;
+import com.poker.games.AbsUser;
 import com.poker.games.impl.GUser;
 
 /**
@@ -13,7 +13,7 @@ import com.poker.games.impl.GUser;
 
 public final class UserPool {
 
-    public static ConcurrentLinkedQueue<User> mQueen = new ConcurrentLinkedQueue<User>();
+    public static ConcurrentLinkedQueue<AbsUser> mQueen = new ConcurrentLinkedQueue<AbsUser>();
     public static int GROWTH = 10;
     
     //初始化
@@ -25,20 +25,20 @@ public final class UserPool {
     }
 
     //取
-    public static final User get(long uid){
+    public static final AbsUser get(long uid){
         if(mQueen.isEmpty()){
             for(int i =0;i<GROWTH;i++){
-            	 mQueen.add(new User());
+            	 mQueen.add(new AbsUser());
             }
         }
-        User ret= mQueen.poll();
+        AbsUser ret= mQueen.poll();
         ret.reset();
         ret.uid = uid;
         return ret;
     }
 
     //回收
-    public static final void release(User obj){
+    public static final void release(AbsUser obj){
         if(null != obj){
             obj.reset();
             mQueen.add(obj);

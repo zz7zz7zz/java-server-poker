@@ -18,8 +18,8 @@ import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 public class Room {
 	
 	private final String TAG = "Room";
-	public HashMap<Long,User> userMap = new HashMap<>();
-	public Table mTables[];
+	public HashMap<Long,AbsUser> userMap = new HashMap<>();
+	public AbsTable mTables[];
 	public short gameId;
 	public short gameSid;
 	
@@ -34,7 +34,7 @@ public class Room {
 		gameId = mConfig.game_id;
 		gameSid= mConfig.server_id;
 		
-		mTables = new Table[mConfig.table_count];
+		mTables = new AbsTable[mConfig.table_count];
 		for(int i=0;i<mConfig.table_count;i++){
 			int tableId = (mConfig.server_id << 16) + i;
 			mTables[i] = new GTable(tableId,mConfig,mGameConfig,mCardConfig);
@@ -56,8 +56,8 @@ public class Room {
 			return;
 		}
 		
-		Table mTable = null;
-		User mUser = userMap.get(uid);
+		AbsTable mTable = null;
+		AbsUser mUser = userMap.get(uid);
 		if(null != mUser){//说明之前在桌子上,替换上真实的桌子
 			if(mUser.tid >= 0){
 				mTable = mTables[mUser.tid & 0xff];
@@ -66,9 +66,9 @@ public class Room {
 		
 		if(cmd == GameCmd.CMD_LOGIN_GAME){
 			
-			Table.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());	
-			int accessId = Table.mInPacket.readInt();
-			int tableId  = Table.mInPacket.readInt();
+			AbsTable.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());	
+			int accessId = AbsTable.mInPacket.readInt();
+			int tableId  = AbsTable.mInPacket.readInt();
 			
 			int tableIdIndex = tableId & 0xff;
 			if(tableIdIndex <0 || tableIdIndex >= mTables.length){
@@ -76,7 +76,7 @@ public class Room {
 				return;
 			}
 			
-			Table mRequestTable = mTables[tableIdIndex];
+			AbsTable mRequestTable = mTables[tableIdIndex];
 			if(null == mTable){
 				mTable = mRequestTable;
 			}else{
@@ -105,8 +105,8 @@ public class Room {
     		
     		if(cmd == GameCmd.CMD_CHECK_GAME_STATUS){
     			
-    			Table.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());	
-    			int accessId = Table.mInPacket.readInt();
+    			AbsTable.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());	
+    			int accessId = AbsTable.mInPacket.readInt();
     			mUser.accessId =  accessId;
     			checkGameStatus(mUser,mTable);
     			
@@ -132,7 +132,7 @@ public class Room {
     	}
 	}
 	
-	private void checkGameStatus(User mUser , Table mTable){
+	private void checkGameStatus(AbsUser mUser , AbsTable mTable){
 		if(mTable.isUserInTable(mUser)){
 			loginGame(mUser,mTable);
 		}else{
@@ -141,7 +141,7 @@ public class Room {
 		}
 	}
 	
-	private void loginGame(User mUser , Table mTable){
+	private void loginGame(AbsUser mUser , AbsTable mTable){
 		LoginResult ret = mTable.onUserLogin(mUser);
 		if(ret != LoginResult.LOGIN_FAILED_FULL){
 			mUser.tid = mTable.tableId;
@@ -154,7 +154,7 @@ public class Room {
 		}
 	}
 	
-	public void logoutGame(User mUser , Table mTable){
+	public void logoutGame(AbsUser mUser , AbsTable mTable){
 		mTable.onUserExit(mUser);
 		
 		mTable.leaveRoom(mUser.uid);

@@ -2,12 +2,12 @@ package com.poker.games.impl;
 
 import java.util.Arrays;
 
-import com.poker.games.User;
+import com.poker.games.AbsUser;
 import com.poker.games.impl.define.TexasDefine.UserStatus;
 import com.poker.games.impl.define.TexasDefine.Result;
 import com.poker.protocols.texaspoker.TexasGameBroadcastUserActionProto.TexasGameBroadcastUserAction.Operate;
 
-public class GUser extends User {
+public class User extends AbsUser {
 	
 	public byte[] handCard=new byte[2];
 	public UserStatus play_status;

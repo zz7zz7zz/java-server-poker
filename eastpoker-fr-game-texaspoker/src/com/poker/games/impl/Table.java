@@ -11,8 +11,8 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
 import com.poker.common.config.Config;
 import com.poker.games.Room;
-import com.poker.games.Table;
-import com.poker.games.User;
+import com.poker.games.AbsTable;
+import com.poker.games.AbsUser;
 import com.poker.games.define.GameDefine.TableStatus;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
@@ -33,7 +33,7 @@ import com.poker.protocols.texaspoker.TexasGameActionRequestProto.TexasGameActio
 import com.poker.protocols.texaspoker.TexasGameBroadcastUserActionProto.TexasGameBroadcastUserAction.Operate;
 
 
-public class GTable extends Table {
+public class Table extends AbsTable {
 	
 	public GameConfig mGameConfig;
 	public CardConfig mCardConfig;
@@ -70,7 +70,7 @@ public class GTable extends Table {
 	private ArrayList<Pot> potList = new ArrayList<Pot>();
 	private PotComparator mPotComparator = new PotComparator();
 	
-	public GTable(Room mRoom,int tableId, Config mConfig,GameConfig mGameConfig,CardConfig mCardConfig) {
+	public Table(Room mRoom,int tableId, Config mConfig,GameConfig mGameConfig,CardConfig mCardConfig) {
 		super(mRoom,tableId, mConfig);
 		this.mCardConfig = mCardConfig;
 		this.ante = mGameConfig.table_ante[0];
@@ -78,9 +78,9 @@ public class GTable extends Table {
 	}
 
 	@Override
-	protected int onTableUserFirstLogin(User mUser) {
+	protected int onTableUserFirstLogin(AbsUser mUser) {
 		
-		GUser gUser = (GUser)mUser;
+		User gUser = (User)mUser;
 		
 		//1。对进来的用户广播桌子上有哪些用户
 		squenceId++;
@@ -105,10 +105,10 @@ public class GTable extends Table {
 
 
 	@Override
-	protected int onTableUserReLogin(User mUser) {
+	protected int onTableUserReLogin(AbsUser mUser) {
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){
 			squenceId++;
-			send2Access(mUser,TexasCmd.CMD_SERVER_RECONNECT, squenceId, TexasGameServer.reconnect(this,(GUser)mUser,mGameConfig));
+			send2Access(mUser,TexasCmd.CMD_SERVER_RECONNECT, squenceId, TexasGameServer.reconnect(this,(User)mUser,mGameConfig));
 			return 0;
 		}
 		return 0;
@@ -117,7 +117,7 @@ public class GTable extends Table {
 
 
 	@Override
-	protected int onTableUserExit(User mUser) {
+	protected int onTableUserExit(AbsUser mUser) {
 		broadcast(BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserLogout(mUser),mUser);
 		return 0;
 	}
@@ -125,7 +125,7 @@ public class GTable extends Table {
 
 
 	@Override
-	protected int onTableUserOffline(User mUser) {
+	protected int onTableUserOffline(AbsUser mUser) {
 		broadcast(BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserOffline(mUser.uid,mUser.onLineStatus),mUser);
 		return 0;
 	}
@@ -133,16 +133,16 @@ public class GTable extends Table {
 
 
 	@Override
-	protected int onTableUserReady(User mUser) {
+	protected int onTableUserReady(AbsUser mUser) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 	
 	@Override
-	protected int dispatchTableMessage(User mUser,int cmd, byte[] data, int header_start, int header_length, int body_start,
+	protected int dispatchTableMessage(AbsUser mUser,int cmd, byte[] data, int header_start, int header_length, int body_start,
 			int body_length) {
 		if(cmd == TexasCmd.CMD_CLIENT_ACTION) {
-			user_request_action((GUser)mUser,data, body_start, body_length);
+			user_request_action((User)mUser,data, body_start, body_length);
 		}
 		return 0;
 	}
@@ -158,7 +158,7 @@ public class GTable extends Table {
 		
         //1.设置每个玩家的游戏状态
 		int play_user_count = 0;
-		GUser[] gGsers=(GUser[])users;
+		User[] gGsers=(User[])users;
         for(int i =0;i<gGsers.length;i++) {
     		if(null ==gGsers[i]) {
     			continue;
@@ -256,7 +256,7 @@ public class GTable extends Table {
 	}
 	
 	public void dealPreFlop() {
-        GUser[] gGsers=(GUser[])users;
+        User[] gGsers=(User[])users;
         
 		if(mCardConfig.isEnable) {
 	        for(int i =0;i<gGsers.length;i++) {
@@ -264,7 +264,7 @@ public class GTable extends Table {
         			continue;
         		}
         		
-        		GUser user = gGsers[i];
+        		User user = gGsers[i];
         		for(int j=0;j<user.handCard.length;j++) {
         			user.handCard[j]=mCardConfig.user_cards[i][j];
         		}
@@ -277,7 +277,7 @@ public class GTable extends Table {
         			continue;
         		}
         		
-        		GUser user = gGsers[i];
+        		User user = gGsers[i];
         		for(int j=0;j<user.handCard.length;j++) {
         			int cardIndex;
         			while(true){
@@ -298,7 +298,7 @@ public class GTable extends Table {
      			continue;
      		}
      		
-     		GUser user = gGsers[i];
+     		User user = gGsers[i];
      		squenceId++;
         	send2Access(user,TexasCmd.CMD_SERVER_DEAL_PREFLOP, squenceId, TexasGameServer.dealPreFlop( user.handCard));
 	    }
@@ -394,7 +394,7 @@ public class GTable extends Table {
 		next_option(null);
 	}
 	
-	public void user_request_action(GUser mUser,byte[] data, int body_start, int body_length) {
+	public void user_request_action(User mUser,byte[] data, int body_start, int body_length) {
 		
 		int ret = 0;
 		if(mUser.isFold ){
@@ -421,7 +421,7 @@ public class GTable extends Table {
 			if(action == null) {
 				ret = -7;
 			}else{
-				GUser user = ((GUser)mUser);
+				User user = ((User)mUser);
 				user.operate = action.getOperate();
 				long actBetChip = 0;
 				switch(action.getOperate()){
@@ -501,7 +501,7 @@ public class GTable extends Table {
 		Logger.v("user_request_action ret " + ret);
 	}
 	
-	public void next_option(GUser preActionUser) {
+	public void next_option(User preActionUser) {
 		Logger.v(" step " + step);
 		
 		//说明是新的一轮开始
@@ -518,7 +518,7 @@ public class GTable extends Table {
 		
 		//如果只有一个可操作的玩家，则牌局一直自动走到底
 		int bet_user_count = 0;
-		GUser[] gGsers=(GUser[])users;
+		User[] gGsers=(User[])users;
 		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
      		//对于不在游戏中，已经弃牌，AllIn的玩家不处理
     		if(null ==gGsers[i] || !gGsers[i].isPlaying() || gGsers[i].isFold|| gGsers[i].isAllIn) {
@@ -590,10 +590,10 @@ public class GTable extends Table {
 		if(max_round_chip >=0){
 			
 			int pot_start_index = potList.size();
-			ArrayList<GUser> round_chip_users=new ArrayList<GUser>();//有下注金额的用户
-			ArrayList<GUser> share_pot_users=new ArrayList<GUser>();//参与分Pot用户
+			ArrayList<User> round_chip_users=new ArrayList<User>();//有下注金额的用户
+			ArrayList<User> share_pot_users=new ArrayList<User>();//参与分Pot用户
 			
-			GUser[] gUsers=(GUser[])users;
+			User[] gUsers=(User[])users;
 			for(int i = 0 ;i<this.mConfig.table_max_user;i++){
 				//不在玩的，没有下注的不处理
 	     		if(null ==gUsers[i] || !gUsers[i].isPlaying() && gUsers[i].round_chip <= 0) {
@@ -678,7 +678,7 @@ public class GTable extends Table {
 		}
 
 		//清空数据
-		GUser[] gGsers=(GUser[])users;
+		User[] gGsers=(User[])users;
 		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
      		if(null ==gGsers[i] || !gGsers[i].isPlaying()) {
      			continue;
@@ -704,7 +704,7 @@ public class GTable extends Table {
 	
 	//给每个玩家算牌型
 	public void calculateCardType(){
-		GUser[] gGsers=(GUser[])users;
+		User[] gGsers=(User[])users;
 		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
      		if(null ==gGsers[i] || !gGsers[i].isPlaying() || gGsers[i].isFold) {
      			continue;
@@ -975,7 +975,7 @@ public static void getCardResult(byte[] hands,byte[] flop,byte[] turn,byte[] riv
 	//算Pot
 	public void calculatePot(){
 		
-		ArrayList<GUser> winer = new ArrayList<>();
+		ArrayList<User> winer = new ArrayList<>();
 		
 		for(int i = potList.size()-1; i>=0 ; i--){
 			Pot mPot = potList.get(i);
@@ -984,9 +984,9 @@ public static void getCardResult(byte[] hands,byte[] flop,byte[] turn,byte[] riv
 			}
 			
 			winer.clear();
-			GUser user1 = null;
+			User user1 = null;
 			for (int j = 0; j < mPot.seatIds.size(); j++) {
-				GUser user = (GUser) users[mPot.seatIds.get(i)];
+				User user = (User) users[mPot.seatIds.get(i)];
 				if(null == user || !user.isPlaying() || user.isFold){
 					continue;
 				}

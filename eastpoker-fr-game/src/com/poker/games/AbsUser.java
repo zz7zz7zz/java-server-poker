@@ -1,6 +1,6 @@
 package com.poker.games;
 
-public class User {
+public class AbsUser {
 	
 	public long uid;//用户唯一Id
 	public String nick_name;//用户昵称

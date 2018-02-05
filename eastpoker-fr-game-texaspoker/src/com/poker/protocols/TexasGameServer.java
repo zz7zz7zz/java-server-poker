@@ -1,9 +1,9 @@
 package com.poker.protocols;
 
-import com.poker.games.Table;
-import com.poker.games.User;
-import com.poker.games.impl.GTable;
-import com.poker.games.impl.GUser;
+import com.poker.games.AbsTable;
+import com.poker.games.AbsUser;
+import com.poker.games.impl.Table;
+import com.poker.games.impl.User;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.games.impl.define.TexasDefine;
 import com.poker.games.impl.define.TexasDefine.UserStatus;
@@ -32,7 +32,7 @@ import com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard;
 public class TexasGameServer {
 	
 	//--------------------------------------------------------基础指令----------------------------------------------------------------
-	public static byte[] userLogin(GUser gUser,Table table,GameConfig mGameConfig){
+	public static byte[] userLogin(User gUser,AbsTable table,GameConfig mGameConfig){
 		TexasGameResponseLoginGame.Builder builder = TexasGameResponseLoginGame.newBuilder();
 		
 		//配置
@@ -59,9 +59,9 @@ public class TexasGameServer {
 		builder.setPlayStatus(gUser.play_status.ordinal());
 		
 		//桌子上其它人的信息
-		GUser[] gTableUsers = (GUser[])table.users;
+		User[] gTableUsers = (User[])table.users;
 		for(int i =0 ;i<gTableUsers.length;i++){
-			GUser user = gTableUsers[i];
+			User user = gTableUsers[i];
 			if(null  != user && user.seatId != gUser.seatId){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
@@ -78,9 +78,9 @@ public class TexasGameServer {
 		}
 		
 		//旁观用户信息
-		GUser[] onLookerUsers = (GUser[])table.users;
+		User[] onLookerUsers = (User[])table.users;
 		for(int i =0 ;i<onLookerUsers.length;i++){
-			GUser user = onLookerUsers[i];
+			User user = onLookerUsers[i];
 			if(null  != user){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
@@ -100,7 +100,7 @@ public class TexasGameServer {
 		return body;
 	}
 	
-	public static byte[] broadUserLogin(GUser mUser){
+	public static byte[] broadUserLogin(User mUser){
 		BroadcastUserLogin.Builder builder = BroadcastUserLogin.newBuilder();
 		
 		GameUser.Builder userBuild = GameUser.newBuilder();
@@ -119,14 +119,14 @@ public class TexasGameServer {
 		return body;
 	}
 	
-	public static byte[] broadUserLogout(User mUser){
+	public static byte[] broadUserLogout(AbsUser mUser){
 		BroadcastUserExit.Builder builder = BroadcastUserExit.newBuilder();
 		builder.setSeatId(mUser.seatId);
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
 	
-	public static byte[] broadUserReady(User mUser){
+	public static byte[] broadUserReady(AbsUser mUser){
 		BroadcastUserReady.Builder builder = BroadcastUserReady.newBuilder();
 		builder.setSeatId(mUser.seatId);
 		byte[] body = builder.build().toByteArray();
@@ -142,7 +142,7 @@ public class TexasGameServer {
 	}
 	
 	//--------------------------------------------------------游戏指令----------------------------------------------------------------
-	public static byte[] gameStart(int sb_seatid,int bb_seatid,int btn_seateId,long ante, long sb_round_chip,long bb_round_chip,GTable table){
+	public static byte[] gameStart(int sb_seatid,int bb_seatid,int btn_seateId,long ante, long sb_round_chip,long bb_round_chip,Table table){
 		
 		TexasGameStart.Builder builder = TexasGameStart.newBuilder();
 		builder.setSbSeatId(sb_seatid);
@@ -153,9 +153,9 @@ public class TexasGameServer {
 		builder.setSbForceBetChip(sb_round_chip);
 		builder.setBbForceBetChip(bb_round_chip);
 		
-		GUser[] gTableUsers = (GUser[])table.users;
+		User[] gTableUsers = (User[])table.users;
 		for(int i =0 ;i<gTableUsers.length;i++){
-			GUser user = gTableUsers[i];
+			User user = gTableUsers[i];
 			if(null  != user && user.play_status == UserStatus.PLAY ){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
@@ -246,10 +246,10 @@ public class TexasGameServer {
 		return body;
 	}
 	
-	public static byte[] showHand(Table table){
+	public static byte[] showHand(AbsTable table){
 		
 		TexasGameShowHand.Builder builder = TexasGameShowHand.newBuilder();
-        GUser[] gGsers=(GUser[])table.users;
+        User[] gGsers=(User[])table.users;
 		for(int i = 0;i<gGsers.length;i++){
 			if(null == gGsers[i] || !gGsers[i].isPlaying() || gGsers[i].isFold){
 				continue;
@@ -266,7 +266,7 @@ public class TexasGameServer {
 		return body;
 	}
 	
-	public static byte[] reconnect(GTable table, GUser self,GameConfig mGameConfig){
+	public static byte[] reconnect(Table table, User self,GameConfig mGameConfig){
 		TexasGameReconnect.Builder builder = TexasGameReconnect.newBuilder();
 		
 		//配置
@@ -287,9 +287,9 @@ public class TexasGameServer {
 		builder.setConfig(configBuilder);
 		
 		//
-		GUser[] gTableUsers = (GUser[])table.users;
+		User[] gTableUsers = (User[])table.users;
 		for(int i =0 ;i<gTableUsers.length;i++){
-			GUser user = gTableUsers[i];
+			User user = gTableUsers[i];
 			if(null  != user){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
@@ -356,9 +356,9 @@ public class TexasGameServer {
 		builder.setRestActionTimeout(mGameConfig.table_action_timeout);
 		
 		//围观用户
-		gTableUsers = (GUser[])table.onLookers;
+		gTableUsers = (User[])table.onLookers;
 		for(int i =0 ;i<gTableUsers.length;i++){
-			GUser user = gTableUsers[i];
+			User user = gTableUsers[i];
 			if(null  != user){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
@@ -381,9 +381,9 @@ public class TexasGameServer {
 		return body;
 	}
 	
-	public static byte[] gameOver(Table table){
+	public static byte[] gameOver(AbsTable table){
 		TexasGameEnd.Builder builder = TexasGameEnd.newBuilder();
-		GUser[] gTableUsers = (GUser[])table.users;
+		User[] gTableUsers = (User[])table.users;
 		for(int i = 0;i<gTableUsers.length;i++){
 			if(null == gTableUsers[i]){
 				continue;

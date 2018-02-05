@@ -14,27 +14,27 @@ import com.poker.packet.OutPacket;
 import com.poker.packet.PacketTransfer;
 import com.poker.protocols.server.ErrorServer;
 
-public abstract class Table {
+public abstract class AbsTable {
 	
 	public Room mRoom;
 	public final int tableId;
 	public Config mConfig;
 	
 	public TableStatus table_status;
-	public final User[] users;
-	public final User[] onLookers = new User[10];
+	public final AbsUser[] users;
+	public final AbsUser[] onLookers = new AbsUser[10];
 	public int count;
 
 	
 	static InPacket  mInPacket;
 	static OutPacket mOutPacket;
 	
-	public Table(Room mRoom , int tableId , Config mConfig) {
+	public AbsTable(Room mRoom , int tableId , Config mConfig) {
 		this.mRoom = mRoom;
 		this.tableId = tableId;
 		this.mConfig = mConfig;
 		
-		users = new User[mConfig.table_max_user];
+		users = new AbsUser[mConfig.table_max_user];
 		count=0;
 		
 		if(null == mInPacket){
@@ -47,7 +47,7 @@ public abstract class Table {
 		return count;
 	}
 	
-	public int userChangeSeat(User user,int new_seatId){
+	public int userChangeSeat(AbsUser user,int new_seatId){
 		
 		//新座位无效
 		if(new_seatId <0 || new_seatId>=users.length){
@@ -75,8 +75,8 @@ public abstract class Table {
 		return 1;
 	}
 	
-	public LoginResult userEnter(User user){
-		for (User u : users) {
+	public LoginResult userEnter(AbsUser user){
+		for (AbsUser u : users) {
 			if(null != u && u.uid == user.uid){
 				return LoginResult.LOGIN_SUCCESS_ALREADY_EXIST;
 			}
@@ -92,7 +92,7 @@ public abstract class Table {
 		return LoginResult.LOGIN_FAILED_FULL;
 	}
 	
-	public LogoutResult userExit(User user){
+	public LogoutResult userExit(AbsUser user){
 		for (int i = 0; i < users.length; i++) {
 			if(null != users[i] && users[i].uid == user.uid){
 				users[i] = null;
@@ -103,7 +103,7 @@ public abstract class Table {
 		return LogoutResult.LOGOUT_FAILED;
 	}
 	
-	public int userReady(User user){
+	public int userReady(AbsUser user){
 		for (int i = 0; i < users.length; i++) {
 			if(null != users[i] && users[i].uid == user.uid){
 				users[i].isReady = true;
@@ -114,7 +114,7 @@ public abstract class Table {
 	}
 	
 	
-	public int userOffline(User user){
+	public int userOffline(AbsUser user){
 		for (int i = 0; i < users.length; i++) {
 			if(null != users[i] && users[i].uid == user.uid){
 				users[i].onLineStatus = 0;
@@ -125,7 +125,7 @@ public abstract class Table {
 		return 0;
 	}
 	
-	public boolean isUserInTable(User user){
+	public boolean isUserInTable(AbsUser user){
 		for (int i = 0; i < users.length; i++) {
 			if(null != users[i] && users[i].uid == user.uid){
 				return true;
@@ -134,7 +134,7 @@ public abstract class Table {
 		return false;
 	}
 	//---------------------------------------------------------------------
-	public LoginResult onUserLogin(User mUser){
+	public LoginResult onUserLogin(AbsUser mUser){
 		LoginResult ret= userEnter(mUser);
 		if(ret == LoginResult.LOGIN_SUCCESS){
 			onTableUserFirstLogin(mUser);
@@ -146,7 +146,7 @@ public abstract class Table {
 		return ret;
 	};
 	
-	public LogoutResult onUserExit(User mUser){
+	public LogoutResult onUserExit(AbsUser mUser){
 		LogoutResult ret= userExit(mUser);
 		if(ret ==  LogoutResult.LOGOUT_SUCCESS){
 			onTableUserExit(mUser);
@@ -154,7 +154,7 @@ public abstract class Table {
 		return ret;
 	};
 	
-	public int onUserReady(User mUser){
+	public int onUserReady(AbsUser mUser){
 		if(userReady(mUser) == 1){
 			onTableUserReady(mUser);
 			return 1;
@@ -162,7 +162,7 @@ public abstract class Table {
 		return 0;
 	};
 	
-	public int onUserOffline(User mUser){
+	public int onUserOffline(AbsUser mUser){
 		if(userOffline(mUser) == 1){
 			onTableUserOffline(mUser);
 			return 1;
@@ -170,7 +170,7 @@ public abstract class Table {
 		return 0;
 	};
 	
-	public int onKickUser(User mUser , User kickedUser){
+	public int onKickUser(AbsUser mUser , AbsUser kickedUser){
 		return -1;
 	};
 	
@@ -215,7 +215,7 @@ public abstract class Table {
 		}
 	}
 	
-	public void enterRoom(long uid,Table table){
+	public void enterRoom(long uid,AbsTable table){
 		
 		mOutPacket.begin(0, AllocatorCmd.CMD_LOGIN_GAME);
 		mOutPacket.writeInt(table.tableId);
@@ -237,23 +237,23 @@ public abstract class Table {
 		Main.send2Dispatch(mTempBuff,0,length);	
 	}
 	
-	public void send2Access(User user,int cmd,int squenceId ,byte[] body){
+	public void send2Access(AbsUser user,int cmd,int squenceId ,byte[] body){
 		this.send2Access(user,cmd, squenceId, body, 0, body.length);
 	}
 
-	public int send2Access(User user,int cmd,int squenceId ,byte[] body,int offset ,int length){
+	public int send2Access(AbsUser user,int cmd,int squenceId ,byte[] body,int offset ,int length){
 		length = PacketTransfer.send2Access(user.accessId,mOutPacket.getPacket(), squenceId, user.uid, cmd, DistapchType.TYPE_P2P, body,offset,length);
 		Main.send2Dispatch(mOutPacket.getPacket(), 0, length);
 		return 1;
 	}
 	
-	public void broadcast(User user,int cmd,int squenceId ,byte[] body) {
+	public void broadcast(AbsUser user,int cmd,int squenceId ,byte[] body) {
 		this.broadcast(cmd, squenceId, body, null);
 	}
 	
-	public void broadcast(int cmd,int squenceId ,byte[] body,User user) {
+	public void broadcast(int cmd,int squenceId ,byte[] body,AbsUser user) {
 		for(int i =0 ;i<users.length;i++){
-			User mUser = users[i];
+			AbsUser mUser = users[i];
 			if(null != mUser && mUser != user){
 				send2Access(mUser,cmd,squenceId,body);
 			}
@@ -261,11 +261,11 @@ public abstract class Table {
 	}
 	
 	//------------------------------------子游戏必需实现的业务逻辑------------------------------------
-	protected abstract int onTableUserFirstLogin(User mUser);//用户首次进入这张桌子
-	protected abstract int onTableUserReLogin(User mUser);//相当于用户进行重连
-	protected abstract int onTableUserExit(User mUser);//用户退出桌子
-	protected abstract int onTableUserOffline(User mUser);//用户掉线
-	protected abstract int onTableUserReady(User mUser);//用户准备
-	protected abstract int dispatchTableMessage(User mUser,int cmd, byte[] data, int header_start, int header_length, int body_start,int body_length);
+	protected abstract int onTableUserFirstLogin(AbsUser mUser);//用户首次进入这张桌子
+	protected abstract int onTableUserReLogin(AbsUser mUser);//相当于用户进行重连
+	protected abstract int onTableUserExit(AbsUser mUser);//用户退出桌子
+	protected abstract int onTableUserOffline(AbsUser mUser);//用户掉线
+	protected abstract int onTableUserReady(AbsUser mUser);//用户准备
+	protected abstract int dispatchTableMessage(AbsUser mUser,int cmd, byte[] data, int header_start, int header_length, int body_start,int body_length);
 	protected abstract int onTimeOut();
 }

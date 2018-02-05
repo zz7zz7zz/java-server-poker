@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import com.poker.games.impl.GUser;
+import com.poker.games.impl.User;
 
 public class TexasDefine {
 	
@@ -86,10 +86,10 @@ public class TexasDefine {
 //		byte seatIds;//哪些座位上的人参与分成，按位运算
 	}
 	
-	public static class PotComparator implements Comparator<GUser>  
+	public static class PotComparator implements Comparator<User>  
 	{  
 		@Override
-		public int compare(GUser o1, GUser o2) {
+		public int compare(User o1, User o2) {
 			if(o1.round_chip == o2.round_chip){
 				//按剩余金币再比较一下
 				if(o1.chip == o2.chip){
