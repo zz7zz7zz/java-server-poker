@@ -1,6 +1,6 @@
 package com.poker.games.protocols;
 
-public final class GBaseCmd {
+public final class GameCmd {
 	
 	public static final int CMD_SERVER_USERLOGIN   				= 0x1001; 
 	public static final int CMD_SERVER_BROAD_USERLOGIN   		= 0x1002; 

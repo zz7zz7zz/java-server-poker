@@ -1,7 +1,8 @@
-package com.poker.games;
+package com.poker.games.define;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.poker.games.User;
 import com.poker.games.impl.GUser;
 
 /**

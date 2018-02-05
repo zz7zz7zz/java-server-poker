@@ -6,8 +6,8 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
 import com.poker.cmd.GameCmd;
 import com.poker.common.config.Config;
-import com.poker.games.GDefine.LoginResult;
-import com.poker.games.GDefine.LogoutResult;
+import com.poker.games.define.UserPool;
+import com.poker.games.define.GameDefine.LoginResult;
 import com.poker.games.impl.GTable;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
@@ -155,7 +155,7 @@ public class Room {
 	}
 	
 	public void logoutGame(User mUser , Table mTable){
-		LogoutResult ret = mTable.onUserExit(mUser);
+		mTable.onUserExit(mUser);
 		
 		mTable.leaveRoom(mUser.uid);
 		UserPool.release(mUser);

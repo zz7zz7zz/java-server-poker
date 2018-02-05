@@ -10,10 +10,10 @@ import java.util.Map.Entry;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
 import com.poker.common.config.Config;
-import com.poker.games.GDefine.TableStatus;
 import com.poker.games.Room;
 import com.poker.games.Table;
 import com.poker.games.User;
+import com.poker.games.define.GameDefine.TableStatus;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.games.impl.define.PokerUtil;
@@ -26,7 +26,7 @@ import com.poker.games.impl.define.TexasDefine.Pot;
 import com.poker.games.impl.define.TexasDefine.PotComparator;
 import com.poker.games.impl.define.TexasDefine.Result;
 import com.poker.games.impl.define.TexasDefine.TCard;
-import com.poker.games.protocols.GBaseCmd;
+import com.poker.games.protocols.GameCmd;
 import com.poker.protocols.TexasCmd;
 import com.poker.protocols.TexasGameServer;
 import com.poker.protocols.texaspoker.TexasGameActionRequestProto.TexasGameActionRequest;
@@ -84,11 +84,11 @@ public class GTable extends Table {
 		
 		//1。对进来的用户广播桌子上有哪些用户
 		squenceId++;
-		send2Access(mUser,GBaseCmd.CMD_SERVER_USERLOGIN, squenceId, TexasGameServer.userLogin(gUser,this,mGameConfig));
+		send2Access(mUser,GameCmd.CMD_SERVER_USERLOGIN, squenceId, TexasGameServer.userLogin(gUser,this,mGameConfig));
 		
 		//2.对桌子上的用户广播谁进来类
 		squenceId++;
-		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, TexasGameServer.broadUserLogin(gUser),mUser);
+		broadcast(GameCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, TexasGameServer.broadUserLogin(gUser),mUser);
 		
 		//3.判断游戏谁否可以开始了
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){
@@ -118,7 +118,7 @@ public class GTable extends Table {
 
 	@Override
 	protected int onTableUserExit(User mUser) {
-		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserLogout(mUser),mUser);
+		broadcast(GameCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserLogout(mUser),mUser);
 		return 0;
 	}
 
@@ -126,7 +126,7 @@ public class GTable extends Table {
 
 	@Override
 	protected int onTableUserOffline(User mUser) {
-		broadcast(GBaseCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserOffline(mUser.uid,mUser.onLineStatus),mUser);
+		broadcast(GameCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserOffline(mUser.uid,mUser.onLineStatus),mUser);
 		return 0;
 	}
 

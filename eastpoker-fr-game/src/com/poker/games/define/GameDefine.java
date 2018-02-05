@@ -1,6 +1,6 @@
-package com.poker.games;
+package com.poker.games.define;
 
-public class GDefine {
+public class GameDefine {
 
 	public enum TableStatus{
 		TABLE_STATUS_PLAY(1),
@@ -13,7 +13,7 @@ public class GDefine {
         }
 	}
 	
-	enum LoginResult{
+	public enum LoginResult{
 		LOGIN_SUCCESS(1),
 		LOGIN_SUCCESS_ALREADY_EXIST(2),
 		LOGIN_FAILED_FULL(3);
@@ -24,7 +24,7 @@ public class GDefine {
         }
 	}
 	
-	enum LogoutResult{
+	public enum LogoutResult{
 		LOGOUT_SUCCESS(1),
 		LOGOUT_FAILED(2);
 		
