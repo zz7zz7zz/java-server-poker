@@ -1,4 +1,4 @@
-1.用户进入 0x1001
+1.用户进入 0x2001
 	public static byte[] userLogin(int seatId,Table table){
 		ResponseLoginGame.Builder builder = ResponseLoginGame.newBuilder();
 		builder.setSeatId(seatId);
@@ -22,7 +22,7 @@
 	}
 	
 
-2.广播用户进入 0x1002
+2.广播用户进入 0x2002
 	public static byte[] broadUserLogin(User mUser){
 		BroadcastUserLogin.Builder builder = BroadcastUserLogin.newBuilder();
 		
@@ -41,10 +41,10 @@
 	}
 	
 
-3.用户退出         0x1003
+3.用户退出         0x2003
 
 
-4.广播用户退出 0x1004
+4.广播用户退出 0x2004
 	public static byte[] broadUserLogout(User mUser){
 		BroadcastUserExit.Builder builder = BroadcastUserExit.newBuilder();
 		builder.setSeatId(mUser.seatId);
@@ -53,10 +53,10 @@
 	}
 	
 	
-5.用户准备         0x1005
+5.用户准备         0x2005
 	
 	
-6.广播用户准备   0x1006
+6.广播用户准备   0x2006
 	public static byte[] broadUserReady(User mUser){
 		BroadcastUserReady.Builder builder = BroadcastUserReady.newBuilder();
 		builder.setSeatId(mUser.seatId);
@@ -64,7 +64,7 @@
 		return body;
 	}
 	
-7.广播用户掉线 0x1007
+7.广播用户掉线 0x2007
 		public static byte[] broadUserOffline(long uid,int status){
 		BroadcastUserOffline.Builder builder = BroadcastUserOffline.newBuilder();
 		builder.setUid(uid);
