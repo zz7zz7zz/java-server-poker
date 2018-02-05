@@ -141,7 +141,7 @@ public class GTable extends Table {
 	@Override
 	protected int dispatchTableMessage(User mUser,int cmd, byte[] data, int header_start, int header_length, int body_start,
 			int body_length) {
-		if(cmd == TexasCmd.CMD_CLIENT_WHO_ACTION_WHAT) {
+		if(cmd == TexasCmd.CMD_CLIENT_ACTION) {
 			user_request_action((GUser)mUser,data, body_start, body_length);
 		}
 		return 0;
@@ -1030,7 +1030,7 @@ public static void getCardResult(byte[] hands,byte[] flop,byte[] turn,byte[] riv
 		calculatePot();
 		
 		squenceId++;
-		broadcast(null,TexasCmd.CMD_SERVER_GAME_END, squenceId, TexasGameServer.gameOver(this));
+		broadcast(null,TexasCmd.CMD_SERVER_GAME_OVER, squenceId, TexasGameServer.gameOver(this));
 		
 		//--------------------------------------------------------------------------------
 		super.stopGame();
