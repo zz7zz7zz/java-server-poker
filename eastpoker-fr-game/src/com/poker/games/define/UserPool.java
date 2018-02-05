@@ -3,7 +3,7 @@ package com.poker.games.define;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.poker.games.AbsUser;
-import com.poker.games.impl.GUser;
+import com.poker.games.impl.User;
 
 /**
  * author       :   long
@@ -20,7 +20,7 @@ public final class UserPool {
     public static final void init(int user_init_size,int growth){
     	GROWTH = growth;
         for (int i = 0;i< user_init_size;i++){
-            mQueen.add(new GUser());
+            mQueen.add(new User());
         }
     }
 

@@ -29,7 +29,7 @@ public class Room {
 		mTables = new AbsTable[mConfig.table_count];
 		for(int i=0;i<mConfig.table_count;i++){
 			int tableId = (mConfig.server_id << 16) + i;
-			mTables[i] = new Table(tableId,mConfig);
+			mTables[i] = new Table(this,tableId,mConfig);
 		}
 		
 		//预先分配1/4桌子数目的用户，每次增长1/4桌子数目的用户

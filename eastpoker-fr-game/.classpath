@@ -8,7 +8,7 @@
 	<classpathentry kind="lib" path="libs/open.net.client.jar" sourcepath="/java-socket-client"/>
 	<classpathentry kind="lib" path="libs/open.net.server.jar" sourcepath="/java-socket-server"/>
 	<classpathentry kind="lib" path="libs/protobuf-java-3.5.1.jar"/>
-	<classpathentry kind="lib" path="libs/gameimpl.jar"/>
+	<classpathentry kind="lib" path="libs/game.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/eastpoker-fr-protocol"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
