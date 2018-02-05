@@ -269,7 +269,7 @@ public class TexasGameServer {
 	public static byte[] reconnect(Table table, User self,GameConfig mGameConfig){
 		TexasGameReconnect.Builder builder = TexasGameReconnect.newBuilder();
 		
-		//配置
+		//配置信息
 		TexasGameConfig.Builder configBuilder = TexasGameConfig.newBuilder();
 		configBuilder.setLevel(mGameConfig.level);
 		configBuilder.setLevelName(mGameConfig.level_name);
@@ -286,7 +286,7 @@ public class TexasGameServer {
 		}
 		builder.setConfig(configBuilder);
 		
-		//
+		//玩家列表
 		User[] gTableUsers = (User[])table.users;
 		for(int i =0 ;i<gTableUsers.length;i++){
 			User user = gTableUsers[i];
@@ -310,7 +310,7 @@ public class TexasGameServer {
 			}
 		}
 		
-		//
+		//大小盲注信息
 		builder.setTableStatus(table.table_status.ordinal());
 		builder.setBtnSeatId(table.btn_seateId);
 		builder.setSbSeatId(table.sb_seatid);
@@ -320,6 +320,7 @@ public class TexasGameServer {
 		builder.setSbForceBetChip(table.sb_force_bet);
 		builder.setBbForceBetChip(table.bb_force_bet);
 
+		//牌的信息
 		for(int i = 0 ;i < self.handCard.length;i++){
 			builder.addCards(self.handCard[i]);
 		}
@@ -347,13 +348,20 @@ public class TexasGameServer {
 			}
 		}
 		
+		//当前操作人信息
 		builder.setNextOpSeatId(table.op_seatid);
 		builder.setNextOpCallChip(table.op_call_chip);
 		builder.setNextOpMinRaiseChip(table.op_min_raise_chip);
 		builder.setNextOpMaxRaiseChip(table.op_max_raise_chip);
 		builder.setMaxRoundChip(table.max_round_chip);
 		
+		//下一个操作者剩余操作时间
 		builder.setRestActionTimeout(mGameConfig.table_action_timeout);
+		
+		//Pot信息
+		for(int i = 0 ;i<table.potList.size();i++){
+			builder.addPots(table.potList.get(i).pot_chips);
+		}
 		
 		//围观用户
 		gTableUsers = (User[])table.onLookers;

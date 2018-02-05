@@ -13,21 +13,22 @@ option java_outer_classname = "TexasGameReconnectProto";
 message TexasGameReconnect{
 	
 	//配置信息
-	TexasGameConfig config 		   = 1;//桌子配置
+	TexasGameConfig config 		    = 1;//桌子配置
 	
 	//自己的用户信息以及其它用户信息
-	repeated  GameUser  users     = 2;//桌子上的用户
+	repeated  GameUser  users       = 2;//桌子上的用户
 
-	//桌子信息
+	//大小盲注信息
 	int32  table_status             = 3;//桌子状态	
 	int32  btn_seatId   			= 4;//按钮位桌位id
 	int32  sb_seatId   				= 5;//小盲桌位id
 	int32  bb_seatId   				= 6;//大盲桌位id
 	
 	int64  ante_all   				= 7;//大盲桌位id
-	int64  sb_force_bet_chip   			= 8;//大盲桌位id
-	int64  bb_force_bet_chip   			= 9;//大盲桌位id
+	int64  sb_force_bet_chip   		= 8;//大盲桌位id
+	int64  bb_force_bet_chip   		= 9;//大盲桌位id
 	
+	//牌的信息
 	repeated int32  cards 		    = 10;//底牌
 	repeated int32  cards_flop 	    = 11;//底牌
 	repeated int32  cards_trun 	    = 12;//转牌
@@ -40,12 +41,14 @@ message TexasGameReconnect{
 	int64   next_op_max_raise_chip 	= 17;
 	int64   max_round_chip 			= 18;
 	
-	
-	int32   rest_action_timeout     = 19;//剩余的操作超时时间
+	//剩余的操作超时时间
+	int32   rest_action_timeout     = 19;
 	
 	//Pot信息
-		
-	repeated  GameUser  onLooker   = 20;//旁观用户
+	repeated int64  pots   			= 20;
+	
+	//围观用户
+	repeated  GameUser  onLooker    = 21;
 }
 
 // protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameReconnect.proto 

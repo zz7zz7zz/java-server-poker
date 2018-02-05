@@ -89,7 +89,7 @@ public final class TexasGameReconnectProto {
 
     /**
      * <pre>
-     *桌子信息
+     *大小盲注信息
      * </pre>
      *
      * <code>int32 table_status = 3;</code>
@@ -152,7 +152,7 @@ public final class TexasGameReconnectProto {
 
     /**
      * <pre>
-     *底牌
+     *牌的信息
      * </pre>
      *
      * <code>repeated int32 cards = 10;</code>
@@ -160,7 +160,7 @@ public final class TexasGameReconnectProto {
     java.util.List<java.lang.Integer> getCardsList();
     /**
      * <pre>
-     *底牌
+     *牌的信息
      * </pre>
      *
      * <code>repeated int32 cards = 10;</code>
@@ -168,7 +168,7 @@ public final class TexasGameReconnectProto {
     int getCardsCount();
     /**
      * <pre>
-     *底牌
+     *牌的信息
      * </pre>
      *
      * <code>repeated int32 cards = 10;</code>
@@ -290,44 +290,69 @@ public final class TexasGameReconnectProto {
 
     /**
      * <pre>
-     *旁观用户
+     *Pot信息
      * </pre>
      *
-     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+     * <code>repeated int64 pots = 20;</code>
+     */
+    java.util.List<java.lang.Long> getPotsList();
+    /**
+     * <pre>
+     *Pot信息
+     * </pre>
+     *
+     * <code>repeated int64 pots = 20;</code>
+     */
+    int getPotsCount();
+    /**
+     * <pre>
+     *Pot信息
+     * </pre>
+     *
+     * <code>repeated int64 pots = 20;</code>
+     */
+    long getPots(int index);
+
+    /**
+     * <pre>
+     *围观用户
+     * </pre>
+     *
+     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
      */
     java.util.List<com.poker.protocols.texaspoker.GameUserProto.GameUser> 
         getOnLookerList();
     /**
      * <pre>
-     *旁观用户
+     *围观用户
      * </pre>
      *
-     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
      */
     com.poker.protocols.texaspoker.GameUserProto.GameUser getOnLooker(int index);
     /**
      * <pre>
-     *旁观用户
+     *围观用户
      * </pre>
      *
-     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
      */
     int getOnLookerCount();
     /**
      * <pre>
-     *旁观用户
+     *围观用户
      * </pre>
      *
-     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
      */
     java.util.List<? extends com.poker.protocols.texaspoker.GameUserProto.GameUserOrBuilder> 
         getOnLookerOrBuilderList();
     /**
      * <pre>
-     *旁观用户
+     *围观用户
      * </pre>
      *
-     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
      */
     com.poker.protocols.texaspoker.GameUserProto.GameUserOrBuilder getOnLookerOrBuilder(
         int index);
@@ -367,6 +392,7 @@ public final class TexasGameReconnectProto {
       nextOpMaxRaiseChip_ = 0L;
       maxRoundChip_ = 0L;
       restActionTimeout_ = 0;
+      pots_ = java.util.Collections.emptyList();
       onLooker_ = java.util.Collections.emptyList();
     }
 
@@ -572,10 +598,31 @@ public final class TexasGameReconnectProto {
               restActionTimeout_ = input.readInt32();
               break;
             }
-            case 162: {
+            case 160: {
               if (!((mutable_bitField0_ & 0x00080000) == 0x00080000)) {
-                onLooker_ = new java.util.ArrayList<com.poker.protocols.texaspoker.GameUserProto.GameUser>();
+                pots_ = new java.util.ArrayList<java.lang.Long>();
                 mutable_bitField0_ |= 0x00080000;
+              }
+              pots_.add(input.readInt64());
+              break;
+            }
+            case 162: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00080000) == 0x00080000) && input.getBytesUntilLimit() > 0) {
+                pots_ = new java.util.ArrayList<java.lang.Long>();
+                mutable_bitField0_ |= 0x00080000;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                pots_.add(input.readInt64());
+              }
+              input.popLimit(limit);
+              break;
+            }
+            case 170: {
+              if (!((mutable_bitField0_ & 0x00100000) == 0x00100000)) {
+                onLooker_ = new java.util.ArrayList<com.poker.protocols.texaspoker.GameUserProto.GameUser>();
+                mutable_bitField0_ |= 0x00100000;
               }
               onLooker_.add(
                   input.readMessage(com.poker.protocols.texaspoker.GameUserProto.GameUser.parser(), extensionRegistry));
@@ -605,6 +652,9 @@ public final class TexasGameReconnectProto {
           cardsRiver_ = java.util.Collections.unmodifiableList(cardsRiver_);
         }
         if (((mutable_bitField0_ & 0x00080000) == 0x00080000)) {
+          pots_ = java.util.Collections.unmodifiableList(pots_);
+        }
+        if (((mutable_bitField0_ & 0x00100000) == 0x00100000)) {
           onLooker_ = java.util.Collections.unmodifiableList(onLooker_);
         }
         this.unknownFields = unknownFields.build();
@@ -716,7 +766,7 @@ public final class TexasGameReconnectProto {
     private int tableStatus_;
     /**
      * <pre>
-     *桌子信息
+     *大小盲注信息
      * </pre>
      *
      * <code>int32 table_status = 3;</code>
@@ -807,7 +857,7 @@ public final class TexasGameReconnectProto {
     private java.util.List<java.lang.Integer> cards_;
     /**
      * <pre>
-     *底牌
+     *牌的信息
      * </pre>
      *
      * <code>repeated int32 cards = 10;</code>
@@ -818,7 +868,7 @@ public final class TexasGameReconnectProto {
     }
     /**
      * <pre>
-     *底牌
+     *牌的信息
      * </pre>
      *
      * <code>repeated int32 cards = 10;</code>
@@ -828,7 +878,7 @@ public final class TexasGameReconnectProto {
     }
     /**
      * <pre>
-     *底牌
+     *牌的信息
      * </pre>
      *
      * <code>repeated int32 cards = 10;</code>
@@ -1005,24 +1055,59 @@ public final class TexasGameReconnectProto {
       return restActionTimeout_;
     }
 
-    public static final int ONLOOKER_FIELD_NUMBER = 20;
+    public static final int POTS_FIELD_NUMBER = 20;
+    private java.util.List<java.lang.Long> pots_;
+    /**
+     * <pre>
+     *Pot信息
+     * </pre>
+     *
+     * <code>repeated int64 pots = 20;</code>
+     */
+    public java.util.List<java.lang.Long>
+        getPotsList() {
+      return pots_;
+    }
+    /**
+     * <pre>
+     *Pot信息
+     * </pre>
+     *
+     * <code>repeated int64 pots = 20;</code>
+     */
+    public int getPotsCount() {
+      return pots_.size();
+    }
+    /**
+     * <pre>
+     *Pot信息
+     * </pre>
+     *
+     * <code>repeated int64 pots = 20;</code>
+     */
+    public long getPots(int index) {
+      return pots_.get(index);
+    }
+    private int potsMemoizedSerializedSize = -1;
+
+    public static final int ONLOOKER_FIELD_NUMBER = 21;
     private java.util.List<com.poker.protocols.texaspoker.GameUserProto.GameUser> onLooker_;
     /**
      * <pre>
-     *旁观用户
+     *围观用户
      * </pre>
      *
-     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
      */
     public java.util.List<com.poker.protocols.texaspoker.GameUserProto.GameUser> getOnLookerList() {
       return onLooker_;
     }
     /**
      * <pre>
-     *旁观用户
+     *围观用户
      * </pre>
      *
-     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
      */
     public java.util.List<? extends com.poker.protocols.texaspoker.GameUserProto.GameUserOrBuilder> 
         getOnLookerOrBuilderList() {
@@ -1030,30 +1115,30 @@ public final class TexasGameReconnectProto {
     }
     /**
      * <pre>
-     *旁观用户
+     *围观用户
      * </pre>
      *
-     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
      */
     public int getOnLookerCount() {
       return onLooker_.size();
     }
     /**
      * <pre>
-     *旁观用户
+     *围观用户
      * </pre>
      *
-     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
      */
     public com.poker.protocols.texaspoker.GameUserProto.GameUser getOnLooker(int index) {
       return onLooker_.get(index);
     }
     /**
      * <pre>
-     *旁观用户
+     *围观用户
      * </pre>
      *
-     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+     * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
      */
     public com.poker.protocols.texaspoker.GameUserProto.GameUserOrBuilder getOnLookerOrBuilder(
         int index) {
@@ -1146,8 +1231,15 @@ public final class TexasGameReconnectProto {
       if (restActionTimeout_ != 0) {
         output.writeInt32(19, restActionTimeout_);
       }
+      if (getPotsList().size() > 0) {
+        output.writeUInt32NoTag(162);
+        output.writeUInt32NoTag(potsMemoizedSerializedSize);
+      }
+      for (int i = 0; i < pots_.size(); i++) {
+        output.writeInt64NoTag(pots_.get(i));
+      }
       for (int i = 0; i < onLooker_.size(); i++) {
-        output.writeMessage(20, onLooker_.get(i));
+        output.writeMessage(21, onLooker_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -1273,9 +1365,23 @@ public final class TexasGameReconnectProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(19, restActionTimeout_);
       }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < pots_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeInt64SizeNoTag(pots_.get(i));
+        }
+        size += dataSize;
+        if (!getPotsList().isEmpty()) {
+          size += 2;
+          size += com.google.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        potsMemoizedSerializedSize = dataSize;
+      }
       for (int i = 0; i < onLooker_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(20, onLooker_.get(i));
+          .computeMessageSize(21, onLooker_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -1334,6 +1440,8 @@ public final class TexasGameReconnectProto {
           == other.getMaxRoundChip());
       result = result && (getRestActionTimeout()
           == other.getRestActionTimeout());
+      result = result && getPotsList()
+          .equals(other.getPotsList());
       result = result && getOnLookerList()
           .equals(other.getOnLookerList());
       result = result && unknownFields.equals(other.unknownFields);
@@ -1404,6 +1512,10 @@ public final class TexasGameReconnectProto {
           getMaxRoundChip());
       hash = (37 * hash) + REST_ACTION_TIMEOUT_FIELD_NUMBER;
       hash = (53 * hash) + getRestActionTimeout();
+      if (getPotsCount() > 0) {
+        hash = (37 * hash) + POTS_FIELD_NUMBER;
+        hash = (53 * hash) + getPotsList().hashCode();
+      }
       if (getOnLookerCount() > 0) {
         hash = (37 * hash) + ONLOOKER_FIELD_NUMBER;
         hash = (53 * hash) + getOnLookerList().hashCode();
@@ -1589,9 +1701,11 @@ public final class TexasGameReconnectProto {
 
         restActionTimeout_ = 0;
 
+        pots_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00080000);
         if (onLookerBuilder_ == null) {
           onLooker_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00080000);
+          bitField0_ = (bitField0_ & ~0x00100000);
         } else {
           onLookerBuilder_.clear();
         }
@@ -1666,10 +1780,15 @@ public final class TexasGameReconnectProto {
         result.nextOpMaxRaiseChip_ = nextOpMaxRaiseChip_;
         result.maxRoundChip_ = maxRoundChip_;
         result.restActionTimeout_ = restActionTimeout_;
+        if (((bitField0_ & 0x00080000) == 0x00080000)) {
+          pots_ = java.util.Collections.unmodifiableList(pots_);
+          bitField0_ = (bitField0_ & ~0x00080000);
+        }
+        result.pots_ = pots_;
         if (onLookerBuilder_ == null) {
-          if (((bitField0_ & 0x00080000) == 0x00080000)) {
+          if (((bitField0_ & 0x00100000) == 0x00100000)) {
             onLooker_ = java.util.Collections.unmodifiableList(onLooker_);
-            bitField0_ = (bitField0_ & ~0x00080000);
+            bitField0_ = (bitField0_ & ~0x00100000);
           }
           result.onLooker_ = onLooker_;
         } else {
@@ -1825,11 +1944,21 @@ public final class TexasGameReconnectProto {
         if (other.getRestActionTimeout() != 0) {
           setRestActionTimeout(other.getRestActionTimeout());
         }
+        if (!other.pots_.isEmpty()) {
+          if (pots_.isEmpty()) {
+            pots_ = other.pots_;
+            bitField0_ = (bitField0_ & ~0x00080000);
+          } else {
+            ensurePotsIsMutable();
+            pots_.addAll(other.pots_);
+          }
+          onChanged();
+        }
         if (onLookerBuilder_ == null) {
           if (!other.onLooker_.isEmpty()) {
             if (onLooker_.isEmpty()) {
               onLooker_ = other.onLooker_;
-              bitField0_ = (bitField0_ & ~0x00080000);
+              bitField0_ = (bitField0_ & ~0x00100000);
             } else {
               ensureOnLookerIsMutable();
               onLooker_.addAll(other.onLooker_);
@@ -1842,7 +1971,7 @@ public final class TexasGameReconnectProto {
               onLookerBuilder_.dispose();
               onLookerBuilder_ = null;
               onLooker_ = other.onLooker_;
-              bitField0_ = (bitField0_ & ~0x00080000);
+              bitField0_ = (bitField0_ & ~0x00100000);
               onLookerBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getOnLookerFieldBuilder() : null;
@@ -2347,7 +2476,7 @@ public final class TexasGameReconnectProto {
       private int tableStatus_ ;
       /**
        * <pre>
-       *桌子信息
+       *大小盲注信息
        * </pre>
        *
        * <code>int32 table_status = 3;</code>
@@ -2357,7 +2486,7 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *桌子信息
+       *大小盲注信息
        * </pre>
        *
        * <code>int32 table_status = 3;</code>
@@ -2370,7 +2499,7 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *桌子信息
+       *大小盲注信息
        * </pre>
        *
        * <code>int32 table_status = 3;</code>
@@ -2619,7 +2748,7 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *底牌
+       *牌的信息
        * </pre>
        *
        * <code>repeated int32 cards = 10;</code>
@@ -2630,7 +2759,7 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *底牌
+       *牌的信息
        * </pre>
        *
        * <code>repeated int32 cards = 10;</code>
@@ -2640,7 +2769,7 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *底牌
+       *牌的信息
        * </pre>
        *
        * <code>repeated int32 cards = 10;</code>
@@ -2650,7 +2779,7 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *底牌
+       *牌的信息
        * </pre>
        *
        * <code>repeated int32 cards = 10;</code>
@@ -2664,7 +2793,7 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *底牌
+       *牌的信息
        * </pre>
        *
        * <code>repeated int32 cards = 10;</code>
@@ -2677,7 +2806,7 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *底牌
+       *牌的信息
        * </pre>
        *
        * <code>repeated int32 cards = 10;</code>
@@ -2692,7 +2821,7 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *底牌
+       *牌的信息
        * </pre>
        *
        * <code>repeated int32 cards = 10;</code>
@@ -3166,12 +3295,106 @@ public final class TexasGameReconnectProto {
         return this;
       }
 
+      private java.util.List<java.lang.Long> pots_ = java.util.Collections.emptyList();
+      private void ensurePotsIsMutable() {
+        if (!((bitField0_ & 0x00080000) == 0x00080000)) {
+          pots_ = new java.util.ArrayList<java.lang.Long>(pots_);
+          bitField0_ |= 0x00080000;
+         }
+      }
+      /**
+       * <pre>
+       *Pot信息
+       * </pre>
+       *
+       * <code>repeated int64 pots = 20;</code>
+       */
+      public java.util.List<java.lang.Long>
+          getPotsList() {
+        return java.util.Collections.unmodifiableList(pots_);
+      }
+      /**
+       * <pre>
+       *Pot信息
+       * </pre>
+       *
+       * <code>repeated int64 pots = 20;</code>
+       */
+      public int getPotsCount() {
+        return pots_.size();
+      }
+      /**
+       * <pre>
+       *Pot信息
+       * </pre>
+       *
+       * <code>repeated int64 pots = 20;</code>
+       */
+      public long getPots(int index) {
+        return pots_.get(index);
+      }
+      /**
+       * <pre>
+       *Pot信息
+       * </pre>
+       *
+       * <code>repeated int64 pots = 20;</code>
+       */
+      public Builder setPots(
+          int index, long value) {
+        ensurePotsIsMutable();
+        pots_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *Pot信息
+       * </pre>
+       *
+       * <code>repeated int64 pots = 20;</code>
+       */
+      public Builder addPots(long value) {
+        ensurePotsIsMutable();
+        pots_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *Pot信息
+       * </pre>
+       *
+       * <code>repeated int64 pots = 20;</code>
+       */
+      public Builder addAllPots(
+          java.lang.Iterable<? extends java.lang.Long> values) {
+        ensurePotsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, pots_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *Pot信息
+       * </pre>
+       *
+       * <code>repeated int64 pots = 20;</code>
+       */
+      public Builder clearPots() {
+        pots_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00080000);
+        onChanged();
+        return this;
+      }
+
       private java.util.List<com.poker.protocols.texaspoker.GameUserProto.GameUser> onLooker_ =
         java.util.Collections.emptyList();
       private void ensureOnLookerIsMutable() {
-        if (!((bitField0_ & 0x00080000) == 0x00080000)) {
+        if (!((bitField0_ & 0x00100000) == 0x00100000)) {
           onLooker_ = new java.util.ArrayList<com.poker.protocols.texaspoker.GameUserProto.GameUser>(onLooker_);
-          bitField0_ |= 0x00080000;
+          bitField0_ |= 0x00100000;
          }
       }
 
@@ -3180,10 +3403,10 @@ public final class TexasGameReconnectProto {
 
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public java.util.List<com.poker.protocols.texaspoker.GameUserProto.GameUser> getOnLookerList() {
         if (onLookerBuilder_ == null) {
@@ -3194,10 +3417,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public int getOnLookerCount() {
         if (onLookerBuilder_ == null) {
@@ -3208,10 +3431,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public com.poker.protocols.texaspoker.GameUserProto.GameUser getOnLooker(int index) {
         if (onLookerBuilder_ == null) {
@@ -3222,10 +3445,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public Builder setOnLooker(
           int index, com.poker.protocols.texaspoker.GameUserProto.GameUser value) {
@@ -3243,10 +3466,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public Builder setOnLooker(
           int index, com.poker.protocols.texaspoker.GameUserProto.GameUser.Builder builderForValue) {
@@ -3261,10 +3484,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public Builder addOnLooker(com.poker.protocols.texaspoker.GameUserProto.GameUser value) {
         if (onLookerBuilder_ == null) {
@@ -3281,10 +3504,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public Builder addOnLooker(
           int index, com.poker.protocols.texaspoker.GameUserProto.GameUser value) {
@@ -3302,10 +3525,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public Builder addOnLooker(
           com.poker.protocols.texaspoker.GameUserProto.GameUser.Builder builderForValue) {
@@ -3320,10 +3543,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public Builder addOnLooker(
           int index, com.poker.protocols.texaspoker.GameUserProto.GameUser.Builder builderForValue) {
@@ -3338,10 +3561,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public Builder addAllOnLooker(
           java.lang.Iterable<? extends com.poker.protocols.texaspoker.GameUserProto.GameUser> values) {
@@ -3357,15 +3580,15 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public Builder clearOnLooker() {
         if (onLookerBuilder_ == null) {
           onLooker_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00080000);
+          bitField0_ = (bitField0_ & ~0x00100000);
           onChanged();
         } else {
           onLookerBuilder_.clear();
@@ -3374,10 +3597,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public Builder removeOnLooker(int index) {
         if (onLookerBuilder_ == null) {
@@ -3391,10 +3614,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public com.poker.protocols.texaspoker.GameUserProto.GameUser.Builder getOnLookerBuilder(
           int index) {
@@ -3402,10 +3625,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public com.poker.protocols.texaspoker.GameUserProto.GameUserOrBuilder getOnLookerOrBuilder(
           int index) {
@@ -3416,10 +3639,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public java.util.List<? extends com.poker.protocols.texaspoker.GameUserProto.GameUserOrBuilder> 
            getOnLookerOrBuilderList() {
@@ -3431,10 +3654,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public com.poker.protocols.texaspoker.GameUserProto.GameUser.Builder addOnLookerBuilder() {
         return getOnLookerFieldBuilder().addBuilder(
@@ -3442,10 +3665,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public com.poker.protocols.texaspoker.GameUserProto.GameUser.Builder addOnLookerBuilder(
           int index) {
@@ -3454,10 +3677,10 @@ public final class TexasGameReconnectProto {
       }
       /**
        * <pre>
-       *旁观用户
+       *围观用户
        * </pre>
        *
-       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 20;</code>
+       * <code>repeated .com.poker.protocols.texaspoker.proto.GameUser onLooker = 21;</code>
        */
       public java.util.List<com.poker.protocols.texaspoker.GameUserProto.GameUser.Builder> 
            getOnLookerBuilderList() {
@@ -3470,7 +3693,7 @@ public final class TexasGameReconnectProto {
           onLookerBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               com.poker.protocols.texaspoker.GameUserProto.GameUser, com.poker.protocols.texaspoker.GameUserProto.GameUser.Builder, com.poker.protocols.texaspoker.GameUserProto.GameUserOrBuilder>(
                   onLooker_,
-                  ((bitField0_ & 0x00080000) == 0x00080000),
+                  ((bitField0_ & 0x00100000) == 0x00100000),
                   getParentForChildren(),
                   isClean());
           onLooker_ = null;
@@ -3545,7 +3768,7 @@ public final class TexasGameReconnectProto {
       "rotocols.texaspoker.proto\0327src/com/poker" +
       "/protocols/texaspoker/proto/GameUser.pro" +
       "to\032>src/com/poker/protocols/texaspoker/p" +
-      "roto/TexasGameConfig.proto\"\350\004\n\022TexasGame" +
+      "roto/TexasGameConfig.proto\"\366\004\n\022TexasGame" +
       "Reconnect\022E\n\006config\030\001 \001(\01325.com.poker.pr" +
       "otocols.texaspoker.proto.TexasGameConfig" +
       "\022=\n\005users\030\002 \003(\0132..com.poker.protocols.te" +
@@ -3559,10 +3782,11 @@ public final class TexasGameReconnectProto {
       "ext_op_call_chip\030\017 \001(\003\022\036\n\026next_op_min_ra" +
       "ise_chip\030\020 \001(\003\022\036\n\026next_op_max_raise_chip" +
       "\030\021 \001(\003\022\026\n\016max_round_chip\030\022 \001(\003\022\033\n\023rest_a" +
-      "ction_timeout\030\023 \001(\005\022@\n\010onLooker\030\024 \003(\0132.." +
-      "com.poker.protocols.texaspoker.proto.Gam" +
-      "eUserB9\n\036com.poker.protocols.texaspokerB" +
-      "\027TexasGameReconnectProtob\006proto3"
+      "ction_timeout\030\023 \001(\005\022\014\n\004pots\030\024 \003(\003\022@\n\010onL" +
+      "ooker\030\025 \003(\0132..com.poker.protocols.texasp" +
+      "oker.proto.GameUserB9\n\036com.poker.protoco" +
+      "ls.texaspokerB\027TexasGameReconnectProtob\006" +
+      "proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -3583,7 +3807,7 @@ public final class TexasGameReconnectProto {
     internal_static_com_poker_protocols_texaspoker_proto_TexasGameReconnect_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_poker_protocols_texaspoker_proto_TexasGameReconnect_descriptor,
-        new java.lang.String[] { "Config", "Users", "TableStatus", "BtnSeatId", "SbSeatId", "BbSeatId", "AnteAll", "SbForceBetChip", "BbForceBetChip", "Cards", "CardsFlop", "CardsTrun", "CardsRiver", "NextOpSeatId", "NextOpCallChip", "NextOpMinRaiseChip", "NextOpMaxRaiseChip", "MaxRoundChip", "RestActionTimeout", "OnLooker", });
+        new java.lang.String[] { "Config", "Users", "TableStatus", "BtnSeatId", "SbSeatId", "BbSeatId", "AnteAll", "SbForceBetChip", "BbForceBetChip", "Cards", "CardsFlop", "CardsTrun", "CardsRiver", "NextOpSeatId", "NextOpCallChip", "NextOpMinRaiseChip", "NextOpMaxRaiseChip", "MaxRoundChip", "RestActionTimeout", "Pots", "OnLooker", });
     com.poker.protocols.texaspoker.GameUserProto.getDescriptor();
     com.poker.protocols.texaspoker.TexasGameConfigProto.getDescriptor();
   }
