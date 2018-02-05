@@ -285,3 +285,45 @@ public final class TexasCmd {
 	}
 
 2.11游戏结束，进行结算 0x4FFF
+	public static byte[] gameOver(AbsTable table){
+		TexasGameEnd.Builder builder = TexasGameEnd.newBuilder();
+		User[] gTableUsers = (User[])table.users;
+		for(int i = 0;i<gTableUsers.length;i++){
+			if(null == gTableUsers[i]){
+				continue;
+			}
+			Result.Builder resultBuilder = Result.newBuilder();
+			resultBuilder.setSeateId(gTableUsers[i].seatId);
+			resultBuilder.setCardResult(gTableUsers[i].result.cardType.ordinal());
+			for(int j=0;j<gTableUsers[i].result.finalCards.length;j++) {
+				resultBuilder.addCards(gTableUsers[i].result.finalCards[i]);
+			}
+			resultBuilder.setWinChip(gTableUsers[i].win_chip);
+			resultBuilder.setChip(gTableUsers[i].chip);
+			builder.addMResults(resultBuilder);
+		}
+		
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+	
+//-----------------------------------其它--------------------------------------------
+牌型定义：
+	public static enum TCard{
+		NO(0),  //无
+		HIGHT(1),  //高牌
+		ONE_PAIR(2),//对子
+		TWO_PAIR(3),//两对
+		SET(4),		//三条
+		STRAIGHT(5),//顺子
+		FLUSH(6),//同花
+		FULL_HOUSE(7),//葫芦
+		FOUR(8),//金刚
+		STRAIGHT_FLUSH(9),//同花顺
+		ROYAL_STRAIGHT_FLUSH(10);//皇家同花顺
+		
+		int code;
+		TCard(int code){
+			this.code = code;
+		}
+	}
