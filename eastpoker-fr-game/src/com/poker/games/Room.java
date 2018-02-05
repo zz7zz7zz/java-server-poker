@@ -11,7 +11,7 @@ import com.poker.games.define.GameDefine.LoginResult;
 import com.poker.games.impl.GTable;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
-
+import com.poker.games.protocols.BaseGameCmd;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 
 
@@ -110,19 +110,19 @@ public class Room {
     			mUser.accessId =  accessId;
     			checkGameStatus(mUser,mTable);
     			
-        	}else if(cmd == GameCmd.CMD_USER_EXIT){
+        	}else if(cmd == BaseGameCmd.CMD_CLIENT_USER_EXIT){
         		
         		logoutGame(mUser,mTable);
         		
-        	}else if(cmd == GameCmd.CMD_USER_READY){
+        	}else if(cmd == BaseGameCmd.CMD_CLIENT_USER_READY){
         		
     			mTable.onUserReady(mUser);
     			
-        	}else if(cmd == GameCmd.CMD_USER_OFFLINE){
+        	}else if(cmd == BaseGameCmd.CMD_CLIENT_KICK_USER){
         		
         		mTable.onUserOffline(mUser);
         		
-        	}else if(cmd == GameCmd.CMD_KICK_USER){
+        	}else if(cmd == BaseGameCmd.CMD_CLIENT_OFFLINE){
         		
         		mTable.onKickUser(mUser, null);
         		
