@@ -17,7 +17,7 @@ public final class TexasCmd {
 
 	public static final int CMD_SERVER_BROADCAST_USER_ACTION 		= 0x4006; //广播 谁做了什么操作
 	public static final int CMD_SERVER_BROADCAST_NEXT_OPERATE 		= 0x4007; //下一个操作者是谁
-	public static final int CMD_SERVER_BROADCAST_POTS 		        = 0x4008; //广播一局结束后，有几个Pot
+	public static final int CMD_SERVER_BROADCAST_POTS 		        = 0x4008; //广播一轮结束后，有几个Pot
 	public static final int CMD_SERVER_BROADCAST_SHOW_HAND 			= 0x4009; //广播集体秀牌
 	
 	public static final int CMD_SERVER_RECONNECT 	    			= 0x400A; //客户端请求重连

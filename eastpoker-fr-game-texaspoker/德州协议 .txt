@@ -4,7 +4,7 @@ public final class TexasCmd {
 	
 	//客户端发起   （游戏业务命令字）,范围是0x3001~0x3FFF
 	public static final int CMD_CLIENT_ACTION						= 0x3001; //谁做了什么操作
-	public static final int CMD_CLIENT_SHOW_HAND 					= 0x3002; //谁秀牌
+	public static final int CMD_CLIENT_SHOW_HAND 					= 0x3002; //秀牌
 	public static final int CMD_CLIENT_RECONNECT 					= 0x3003; //客户端数据不对，请求重连
 	
 	//客户端返回   （游戏业务命令字）,范围是0x4001~0x4FFF
@@ -24,7 +24,264 @@ public final class TexasCmd {
 	public static final int CMD_SERVER_GAME_OVER 	    			= 0x4FFF; //游戏结束，进行结算
 }
 
-//-----------------------------------二、命令字详解--------------------------------------------
+//-----------------------------------二、命令字详解（Client）--------------------------------------------
 
-1.用户执行什么操作
+1.1用户执行什么操作 0x3001
+	TexasGameClient.action(Operate operate,long chip);
 
+1.2.秀牌 0x3002
+
+1.3.请求重连 0x3003
+
+//-----------------------------------三、命令字详解（Server）--------------------------------------------
+
+2.1游戏开始 0x4001
+	public static byte[] gameStart(int sb_seatid,int bb_seatid,int btn_seateId,long ante, long sb_round_chip,long bb_round_chip,Table table){
+			
+		TexasGameStart.Builder builder = TexasGameStart.newBuilder();
+		builder.setSbSeatId(sb_seatid);
+		builder.setBbSeatId(bb_seatid);
+		builder.setBtnSeatId(btn_seateId);
+		
+		builder.setAnteAll(ante);
+		builder.setSbForceBetChip(sb_round_chip);
+		builder.setBbForceBetChip(bb_round_chip);
+		
+		User[] gTableUsers = (User[])table.users;
+		for(int i =0 ;i<gTableUsers.length;i++){
+			User user = gTableUsers[i];
+			if(null  != user && user.play_status == UserStatus.PLAY ){
+				GameUser.Builder userBuild = GameUser.newBuilder();
+				userBuild.setSeatId(user.seatId);
+				userBuild.setChip(user.chip);
+				userBuild.setChipTotal(user.chip_total);
+				userBuild.setRoundChip(user.round_chip);
+				
+				builder.addUser(userBuild);
+			}
+		}
+		
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+
+	
+2.2发底牌 0x4002
+	public static byte[] dealPreFlop(byte[] cards){
+		
+		TexasGameDealPreFlop.Builder builder = TexasGameDealPreFlop.newBuilder();
+		for(int i = 0;i<cards.length;i++){
+			builder.addCards(cards[i]);
+		}
+		
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+	
+	
+2.3发翻牌0x4003
+	public static byte[] dealFlop(byte[] cards){
+		
+		TexasGameDealFlop.Builder builder = TexasGameDealFlop.newBuilder();
+		for(int i = 0;i<cards.length;i++){
+			builder.addCards(cards[i]);
+		}
+		
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+
+2.4发转牌 0x4004
+	public static byte[] dealTrun(byte[] cards){
+		
+		TexasGameDealTurn.Builder builder = TexasGameDealTurn.newBuilder();
+		for(int i = 0;i<cards.length;i++){
+			builder.addCards(cards[i]);
+		}
+		
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+
+2.5/发河牌 0x4005
+	public static byte[] dealRiver(byte[] cards){
+		
+		TexasGameDealRiver.Builder builder = TexasGameDealRiver.newBuilder();
+		for(int i = 0;i<cards.length;i++){
+			builder.addCards(cards[i]);
+		}
+		
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+
+2.6广播 谁做了什么操作0x4006
+	public static byte[] broadcastUserAction(int seateId , Operate operate , long chip ,long round_chip) {
+		TexasGameBroadcastUserAction.Builder builder = TexasGameBroadcastUserAction.newBuilder();
+		builder.setSeatId(seateId);
+		builder.setOperate(operate);
+		builder.setChip(chip);
+		builder.setRoundChip(round_chip);
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+	
+2.7广播 下一个操作者是谁0x4007
+	public static byte[] broadcastNextOperateUser(int op_seate_id ,long op_call_chip,long op_min_raise_chip,long op_max_raise_chip) {
+		TexasGameBroadcastNextOperate.Builder builder = TexasGameBroadcastNextOperate.newBuilder();
+		builder.setNextOpSeatId(op_seate_id);
+		builder.setNextOpCallChip(op_call_chip);
+		builder.setNextOpMinRaiseChip(op_min_raise_chip);
+		builder.setNextOpMaxRaiseChip(op_max_raise_chip);
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+	
+2.8广播一轮结束后，有几个Pot0x4008
+	public static byte[] broadcastPots(long ... pots) {
+		TexasGameBroadcastPot.Builder builder = TexasGameBroadcastPot.newBuilder();
+		for(int i = 0 ;i<pots.length;i++){
+			builder.addPots(pots[i]);
+		}
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+	
+2.9广播集体秀牌 0x4009
+	public static byte[] showHand(AbsTable table){
+		
+		TexasGameShowHand.Builder builder = TexasGameShowHand.newBuilder();
+        User[] gGsers=(User[])table.users;
+		for(int i = 0;i<gGsers.length;i++){
+			if(null == gGsers[i] || !gGsers[i].isPlaying() || gGsers[i].isFold){
+				continue;
+			}
+			UserCard.Builder usercardBuilder =  UserCard.newBuilder();
+			usercardBuilder.setSeateId(table.users[i].seatId);
+			for(int j = 0 ;j<gGsers[i].handCard.length;j++){
+				usercardBuilder.addCards(gGsers[i].handCard[j]);
+			}
+			builder.addMUserCards(usercardBuilder);
+		}
+	
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+
+2.10客户端请求重连 0x400A
+	public static byte[] reconnect(Table table, User self,GameConfig mGameConfig){
+		TexasGameReconnect.Builder builder = TexasGameReconnect.newBuilder();
+		
+		//配置
+		TexasGameConfig.Builder configBuilder = TexasGameConfig.newBuilder();
+		configBuilder.setLevel(mGameConfig.level);
+		configBuilder.setLevelName(mGameConfig.level_name);
+		configBuilder.setMinUser(mGameConfig.table_min_user);
+		configBuilder.setMaxUser(mGameConfig.table_max_user);
+		configBuilder.setMinChip(mGameConfig.table_min_chip);
+		configBuilder.setMaxChip(mGameConfig.table_max_chip);
+		configBuilder.setActionTimeout(mGameConfig.table_action_timeout);
+		int size = mGameConfig.table_ante.length;
+		for(int i = 0;i<size;i++){
+			configBuilder.addAnte(mGameConfig.table_ante[i]);
+			configBuilder.addBlind(mGameConfig.table_blind[i]);
+			configBuilder.addBlindTime(mGameConfig.table_blind_time[i]);
+		}
+		builder.setConfig(configBuilder);
+		
+		//
+		User[] gTableUsers = (User[])table.users;
+		for(int i =0 ;i<gTableUsers.length;i++){
+			User user = gTableUsers[i];
+			if(null  != user){
+				GameUser.Builder userBuild = GameUser.newBuilder();
+				userBuild.setSeatId(user.seatId);
+				
+				if(user.uid != self.uid){
+					userBuild.setUid(user.uid);
+					userBuild.setNickName(user.nick_name);
+					userBuild.setHeadPortrait(user.head_portrait);
+					userBuild.setLevel(user.level);
+				}
+				
+				userBuild.setOperate(user.operate.ordinal());
+				userBuild.setChip(user.chip);
+				userBuild.setChipTotal(user.chip_total);
+				userBuild.setPlayStatus(user.play_status.ordinal());
+				
+				builder.addUsers(userBuild);
+			}
+		}
+		
+		//
+		builder.setTableStatus(table.table_status.ordinal());
+		builder.setBtnSeatId(table.btn_seateId);
+		builder.setSbSeatId(table.sb_seatid);
+		builder.setSbSeatId(table.bb_seatid);
+
+		builder.setAnteAll(table.ante_all);
+		builder.setSbForceBetChip(table.sb_force_bet);
+		builder.setBbForceBetChip(table.bb_force_bet);
+
+		for(int i = 0 ;i < self.handCard.length;i++){
+			builder.addCards(self.handCard[i]);
+		}
+		
+		int flop = table.step.ordinal();
+		int FLOP = TexasDefine.GameStep.FLOP.ordinal();
+		int TRUN = TexasDefine.GameStep.TRUN.ordinal();
+		int RIVER = TexasDefine.GameStep.RIVER.ordinal();
+		
+		if(flop >= FLOP){
+			for(int i = 0 ;i < table.flop.length;i++){
+				builder.addCardsFlop(table.flop[i]);
+			}
+		}
+
+		if(flop >= TRUN){
+			for(int i = 0 ;i < table.flop.length;i++){
+				builder.addCardsTrun(table.flop[i]);
+			}
+		}
+
+		if(flop >= RIVER){
+			for(int i = 0 ;i < table.flop.length;i++){
+				builder.addCardsRiver(table.flop[i]);
+			}
+		}
+		
+		builder.setNextOpSeatId(table.op_seatid);
+		builder.setNextOpCallChip(table.op_call_chip);
+		builder.setNextOpMinRaiseChip(table.op_min_raise_chip);
+		builder.setNextOpMaxRaiseChip(table.op_max_raise_chip);
+		builder.setMaxRoundChip(table.max_round_chip);
+		
+		builder.setRestActionTimeout(mGameConfig.table_action_timeout);
+		
+		//围观用户
+		gTableUsers = (User[])table.onLookers;
+		for(int i =0 ;i<gTableUsers.length;i++){
+			User user = gTableUsers[i];
+			if(null  != user){
+				GameUser.Builder userBuild = GameUser.newBuilder();
+				userBuild.setSeatId(user.seatId);
+			
+				userBuild.setUid(user.uid);
+				userBuild.setNickName(user.nick_name);
+				userBuild.setHeadPortrait(user.head_portrait);
+				userBuild.setLevel(user.level);
+
+				userBuild.setOperate(user.operate.ordinal());
+				userBuild.setChip(user.chip);
+				userBuild.setChipTotal(user.chip_total);
+				userBuild.setPlayStatus(user.play_status.ordinal());
+				
+				builder.addUsers(userBuild);
+			}
+		}
+		
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+
+2.11游戏结束，进行结算 0x4FFF
