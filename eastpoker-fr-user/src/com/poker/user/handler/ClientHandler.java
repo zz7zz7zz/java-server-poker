@@ -108,11 +108,11 @@ public class ClientHandler extends AbsClientHandler{
 			gameSid = user.gameSid;
 			matchId = user.matchId;
 			matchSid = user.matchSid;
-		}
-		
-		if(user.accessId != accessId){
-			user.accessId = accessId;
-			//需要断掉旧的连接，以新的连接为准
+			
+			if(user.accessId != accessId){
+				user.accessId = accessId;
+				//需要告知对应的AccessServer 断掉旧的连接，以新的连接为准
+			}
 		}
 		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
@@ -130,7 +130,7 @@ public class ClientHandler extends AbsClientHandler{
 			
 			mOutPacket.begin(squenceId, AllocatorCmd.CMD_LOGIN_GAME);
 			mOutPacket.writeInt(accessId);//AccessId
-			mOutPacket.writeBytes(mSubPacket.buff, mSubPacket.body_start, mSubPacket.body_length);
+			mOutPacket.writeBytes(mSubPacket.buff, mSubPacket.header_start, mSubPacket.header_length+mSubPacket.body_length);
 			mOutPacket.end();
 			
 			int length = PacketTransfer.send2Alloc(request_gameid,mTempBuff, squenceId, uid,AllocatorCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
