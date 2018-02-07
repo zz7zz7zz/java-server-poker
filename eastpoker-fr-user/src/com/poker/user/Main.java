@@ -40,7 +40,7 @@ public class Main {
     	//1.1 服务器配置初始化:解析命令行参数
     	libArgsConfig = new ArgsConfig();
     	libArgsConfig.initArgsConfig(args);
-    	libArgsConfig.server_type = ServerIds.SERVER_LOGIN;
+    	libArgsConfig.server_type = ServerIds.SERVER_USER;
         
         //1.2 服务器配置初始化:作为客户端配置
         libClientConfig = new ClientConfig();
