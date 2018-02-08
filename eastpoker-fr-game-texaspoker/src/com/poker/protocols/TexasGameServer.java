@@ -59,9 +59,8 @@ public class TexasGameServer {
 		builder.setPlayStatus(gUser.play_status.ordinal());
 		
 		//桌子上其它人的信息
-		User[] gTableUsers = (User[])table.users;
-		for(int i =0 ;i<gTableUsers.length;i++){
-			User user = gTableUsers[i];
+		for(int i =0 ;i<table.users.length;i++){
+			User user = (User)table.users[i];
 			if(null  != user && user.seatId != gUser.seatId){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
@@ -78,9 +77,8 @@ public class TexasGameServer {
 		}
 		
 		//旁观用户信息
-		User[] onLookerUsers = (User[])table.users;
-		for(int i =0 ;i<onLookerUsers.length;i++){
-			User user = onLookerUsers[i];
+		for(int i =0 ;i<table.onLookers.length;i++){
+			User user = (User) table.onLookers[i];
 			if(null  != user){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
@@ -153,9 +151,8 @@ public class TexasGameServer {
 		builder.setSbForceBetChip(sb_round_chip);
 		builder.setBbForceBetChip(bb_round_chip);
 		
-		User[] gTableUsers = (User[])table.users;
-		for(int i =0 ;i<gTableUsers.length;i++){
-			User user = gTableUsers[i];
+		for(int i =0 ;i<table.users.length;i++){
+			User user = (User) table.users[i];
 			if(null  != user && user.play_status == UserStatus.PLAY ){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
@@ -249,15 +246,15 @@ public class TexasGameServer {
 	public static byte[] showHand(AbsTable table){
 		
 		TexasGameShowHand.Builder builder = TexasGameShowHand.newBuilder();
-        User[] gGsers=(User[])table.users;
-		for(int i = 0;i<gGsers.length;i++){
-			if(null == gGsers[i] || !gGsers[i].isPlaying() || gGsers[i].isFold){
+		for(int i =0 ;i<table.users.length;i++){
+			User user = (User) table.users[i];
+			if(null == user || !user.isPlaying() || user.isFold){
 				continue;
 			}
 			UserCard.Builder usercardBuilder =  UserCard.newBuilder();
 			usercardBuilder.setSeateId(table.users[i].seatId);
-			for(int j = 0 ;j<gGsers[i].handCard.length;j++){
-				usercardBuilder.addCards(gGsers[i].handCard[j]);
+			for(int j = 0 ;j<user.handCard.length;j++){
+				usercardBuilder.addCards(user.handCard[j]);
 			}
 			builder.addMUserCards(usercardBuilder);
 		}
@@ -287,9 +284,8 @@ public class TexasGameServer {
 		builder.setConfig(configBuilder);
 		
 		//玩家列表
-		User[] gTableUsers = (User[])table.users;
-		for(int i =0 ;i<gTableUsers.length;i++){
-			User user = gTableUsers[i];
+		for(int i =0 ;i<table.users.length;i++){
+			User user = (User) table.users[i];
 			if(null  != user){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
@@ -364,9 +360,8 @@ public class TexasGameServer {
 		}
 		
 		//围观用户
-		gTableUsers = (User[])table.onLookers;
-		for(int i =0 ;i<gTableUsers.length;i++){
-			User user = gTableUsers[i];
+		for(int i =0 ;i<table.onLookers.length;i++){
+			User user = (User) table.onLookers[i];
 			if(null  != user){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
@@ -391,19 +386,19 @@ public class TexasGameServer {
 	
 	public static byte[] gameOver(AbsTable table){
 		TexasGameEnd.Builder builder = TexasGameEnd.newBuilder();
-		User[] gTableUsers = (User[])table.users;
-		for(int i = 0;i<gTableUsers.length;i++){
-			if(null == gTableUsers[i]){
+		for(int i = 0;i<table.users.length;i++){
+			User user = (User) table.users[i];
+			if(null == user){
 				continue;
 			}
 			Result.Builder resultBuilder = Result.newBuilder();
-			resultBuilder.setSeateId(gTableUsers[i].seatId);
-			resultBuilder.setCardResult(gTableUsers[i].result.cardType.ordinal());
-			for(int j=0;j<gTableUsers[i].result.finalCards.length;j++) {
-				resultBuilder.addCards(gTableUsers[i].result.finalCards[i]);
+			resultBuilder.setSeateId(user.seatId);
+			resultBuilder.setCardResult(user.result.cardType.ordinal());
+			for(int j=0;j<user.result.finalCards.length;j++) {
+				resultBuilder.addCards(user.result.finalCards[i]);
 			}
-			resultBuilder.setWinChip(gTableUsers[i].win_chip);
-			resultBuilder.setChip(gTableUsers[i].chip);
+			resultBuilder.setWinChip(user.win_chip);
+			resultBuilder.setChip(user.chip);
 			builder.addMResults(resultBuilder);
 		}
 		
