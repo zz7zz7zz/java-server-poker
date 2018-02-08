@@ -82,7 +82,7 @@ public class ClientHandler extends AbsClientHandler{
 	        	
 	        	attachUser = UserPool.get(uid);
 	        	attachUser.socketId = socketId;
-		        mConnection.attach(user);
+		        mConnection.attach(attachUser);
 		        Main.userMap.put(uid, attachUser); 
 		        
 		        ret = 1;
