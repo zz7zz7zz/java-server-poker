@@ -61,14 +61,7 @@ public class ClientHandler extends AbsClientHandler{
 		int ret = 0;
 		AbstractServerClient mConnection = GServer.getClient(socketId);
 		if(null != mConnection){
-			int cmd 		= BasePacket.getCmd(mSubPacket.buff, mSubPacket.header_start);
-			int sequenceId 	= BasePacket.getSequenceId(mSubPacket.buff, mSubPacket.header_start);
-			
-			//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
-			byte[] mTempBuff = mOutPacket.getPacket();
-			
-			int length 		= BasePacket.buildClientPacekt(mTempBuff, sequenceId, cmd, (byte)0,mSubPacket.buff,mSubPacket.body_start, mSubPacket.body_length);
-	        Main.mServerHandler.unicast(mConnection, mTempBuff,0,length);
+	        Main.mServerHandler.unicast(mConnection, mSubPacket.buff,mSubPacket.header_start,mSubPacket.length);
 	        User attachUser = (User)mConnection.getAttachment();
 	        if(null == attachUser){//1.说明是新的连接，新的登录
 	        	

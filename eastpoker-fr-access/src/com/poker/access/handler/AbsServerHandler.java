@@ -7,6 +7,7 @@ import com.open.net.server.object.AbstractServerClient;
 import com.open.net.server.object.AbstractServerMessageProcessor;
 import com.open.util.log.Logger;
 import com.poker.data.DataPacket;
+import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.access.Main;
@@ -56,19 +57,19 @@ public abstract class AbsServerHandler extends AbstractServerMessageProcessor{
 	@Override
 	public void unicast(AbstractServerClient client, byte[] src, int offset, int length) {
 		super.unicast(client, src, offset, length);
-		Logger.v("output_packet_unicast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+		Logger.v("output_packet_unicast cmd 0x" + Integer.toHexString(BasePacket.getCmd(src, offset)) + " length " + length);
 	}
 
 	@Override
 	public void multicast(AbstractServerClient[] clients, byte[] src, int offset, int length) {
 		super.multicast(clients, src, offset, length);
-		Logger.v("output_packet_multicast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+		Logger.v("output_packet_multicast cmd 0x" + Integer.toHexString(BasePacket.getCmd(src, offset)) + " length " + length);
 	}
 
 	@Override
 	public void broadcast(byte[] src, int offset, int length) {
 		super.broadcast(src, offset, length);
-		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(BasePacket.getCmd(src, offset)) + " length " + length);
 	}
 	
 	@Override
