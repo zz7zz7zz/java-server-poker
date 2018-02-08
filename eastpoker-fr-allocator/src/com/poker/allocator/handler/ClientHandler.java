@@ -283,7 +283,7 @@ public class ClientHandler extends AbsClientHandler{
 	
 	public int findTable(int request_gameid , int request_gamelevel){
 		//debug ----写死-----
-		int ret_tableId = 65536;
+		int ret_tableId = 0;
 		//TODO
 
 		return ret_tableId;
