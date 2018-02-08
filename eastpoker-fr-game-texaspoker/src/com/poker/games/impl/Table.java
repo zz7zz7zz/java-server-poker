@@ -116,10 +116,13 @@ public class Table extends AbsTable {
 
 	@Override
 	protected int onTableUserReLogin(AbsUser mUser) {
-		if(table_status == TableStatus.TABLE_STATUS_PLAY){
+		if(table_status == TableStatus.TABLE_STATUS_PLAY){//处于游戏中，表示重连
 			squenceId++;
 			send2Access(mUser,TexasCmd.CMD_SERVER_RECONNECT, squenceId, TexasGameServer.reconnect(this,(User)mUser,mGameConfig));
 			return 0;
+		}else{//游戏暂停中，直接返回登录即可
+			squenceId++;
+			send2Access(mUser,BaseGameCmd.CMD_SERVER_USERLOGIN, squenceId, TexasGameServer.userLogin((User)mUser,this,mGameConfig));
 		}
 		return 0;
 	}
