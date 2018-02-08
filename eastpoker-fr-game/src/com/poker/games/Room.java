@@ -155,13 +155,14 @@ public class Room {
 	}
 	
 //	public static void main(String arg[]){
-//		int sid = 1;
-//		int tid = (sid<<16) + 5;
-//		System.out.println(tid);
+//		int sid = 0;
+//		int index = 0;
+//		int tid = (sid<<16) + index;
+//		System.out.println("A " + tid);
 //		
-//		int index = tid & 0xff;
-//		int sidout= (tid>>16);
-//		System.out.println(sidout);
-//		System.out.println(index);
+//		int outindex = tid & 0xff;
+//		int outsid= (tid>>16);
+//		System.out.println("B " + outsid);
+//		System.out.println("B " + outindex);
 //	}
 }
