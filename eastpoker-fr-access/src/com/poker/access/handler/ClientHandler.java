@@ -102,9 +102,9 @@ public class ClientHandler extends AbsClientHandler{
 				//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 				byte[] mTempBuff = mOutPacket.getPacket();
 				
-				int length 		= BasePacket.buildClientPacekt(mTempBuff, sequenceId, cmd, (byte)0,mInPacket.getPacket(),0,mInPacket.getLength());
+				int length 		= BasePacket.buildClientPacekt(mTempBuff, sequenceId, cmd, (byte)0,mInPacket.getPacket(),0,mDispatchPacket.getData().size());
 		        Main.mServerHandler.unicast(mConnection, mTempBuff,0,length);
-			}else {//这里有可能在登录的瞬间又掉线了
+			}else {
 				ret = 2;
 			}
 		}
