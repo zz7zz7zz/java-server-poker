@@ -105,7 +105,7 @@ public class Table extends AbsTable {
 			return 0;
 		}
 		
-		if(getUserCount()>=this.mConfig.table_max_user) {
+		if(getUserCount()>=this.mConfig.table_min_user) {
 			startGame();
 		}
 		
