@@ -10,6 +10,7 @@ import com.poker.cmd.LoginCmd;
 import com.poker.cmd.UserCmd;
 import com.poker.data.DataPacket;
 import com.poker.data.DistapchType;
+import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.packet.PacketInfo;
@@ -73,7 +74,7 @@ public class ClientHandler extends AbsClientHandler{
 		mOutPacket.writeLong(uid);//额外的数据
 		//发给客户端的包
 		byte[] resp_data = LoginServer.responseLogin(squenceId, uid,"粤B"+uid%100000,"http://img0.bdstatic.com/static/searchresult/img/logo-2X_b99594a.png",1);
-		int length = DataPacket.write(mTempBuff, squenceId, LoginCmd.CMD_LOGIN_RESPONSE, (byte)0, resp_data, 0, resp_data.length);
+		int length = BasePacket.buildClientPacekt(mTempBuff, squenceId, LoginCmd.CMD_LOGIN_RESPONSE, (byte)0, resp_data, 0, resp_data.length);
 		mOutPacket.writeBytes(mTempBuff,0,length);
 		mOutPacket.end();
 		

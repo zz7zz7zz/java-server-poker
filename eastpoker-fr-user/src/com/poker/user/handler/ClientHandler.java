@@ -148,8 +148,9 @@ public class ClientHandler extends AbsClientHandler{
 		short gameSid = mInPacket.readShort();
 		
 		User user = Main.userMap.get(uid);
-		if(null != user){
+		if(null == user){
 			user = UserPool.get(uid);
+			Main.userMap.put(uid, user);
 		}
 		
 		user.tableId = tid;

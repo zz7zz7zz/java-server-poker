@@ -221,6 +221,10 @@ public class BasePacket {
 		offset += size;
 	}
 	
+    public static int buildClientPacekt(byte[] writeBuff, int squenceId, int cmd , byte encrypt, byte[] body){
+    	return buildClientPacekt(writeBuff,squenceId,cmd,PACKET_FLAG,PACKET_VERSION,encrypt,PACKET_HEADER_EXTEND,body,0,body.length);
+    }
+    
     public static int buildClientPacekt(byte[] writeBuff, int squenceId, int cmd , byte encrypt, byte[] body,int bodyOffset,int bodyLength){
     	return buildClientPacekt(writeBuff,squenceId,cmd,PACKET_FLAG,PACKET_VERSION,encrypt,PACKET_HEADER_EXTEND,body,bodyOffset,bodyLength);
     }
