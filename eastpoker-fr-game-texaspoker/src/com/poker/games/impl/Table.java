@@ -66,7 +66,7 @@ public class Table extends AbsTable {
 	public long sb_force_bet;
 	public long bb_force_bet;
 	
-	public GameStep step;
+	public GameStep step = GameStep.STOP;
 	public ArrayList<Pot> potList = new ArrayList<Pot>();
 	private PotComparator mPotComparator = new PotComparator();
 	
