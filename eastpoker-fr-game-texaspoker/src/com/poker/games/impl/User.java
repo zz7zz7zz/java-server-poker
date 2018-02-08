@@ -16,7 +16,7 @@ public class User extends AbsUser {
 	public long round_chip = 0;
 	public boolean isFold;
 	public boolean isAllIn;
-	public Result result;
+	public Result result = new Result();
 	public long win_chip=0;
 	
 	public void reset(){
