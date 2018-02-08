@@ -68,8 +68,10 @@ public abstract class AbsTable {
 		if(user.seatId != -1){//不等于-1：说明是已经在桌子上的用户进行换座位；等于-1：说明是新用户第一次进入
 			users[user.seatId] = null;
 			users[new_seatId] = user;
+			user.seatId = new_seatId;
 		}else{
 			users[new_seatId] = user;
+			user.seatId = new_seatId;
 			count++;
 		}
 		return 1;
@@ -84,6 +86,7 @@ public abstract class AbsTable {
 		
 		for(int i = 0;i<users.length;i++){
 			if(null == users[i]){
+				user.seatId = i;
 				users[i] = user;
 				count++;
 				return LoginResult.LOGIN_SUCCESS;

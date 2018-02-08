@@ -440,7 +440,7 @@ public class Table extends AbsTable {
 						user.isFold  = true;
 						//如果一个用户弃牌了，从所有的Pot中将其删除，因为他将不参与分Pot
 						for(int i= 0;i< potList.size();i++){
-							potList.get(i).seatIds.remove((Byte)user.seatId);
+							potList.get(i).seatIds.remove(user.seatId);
 						}
 						break;
 						

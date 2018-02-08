@@ -9,7 +9,7 @@ public class AbsUser {
 	public long chip;//用户筹码
 	public int level;//用户等级
 	
-	public byte seatId = -1;//座位id
+	public int seatId = -1;//座位id
 	
 	public int tid;
 	public int accessId = -1;

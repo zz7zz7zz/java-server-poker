@@ -81,7 +81,7 @@ public class TexasDefine {
 	public static class Pot{
 		public String name;//Pot名字
 		public long pot_chips;//Pot下注额
-		public ArrayList<Byte> seatIds = new ArrayList<>();
+		public ArrayList<Integer> seatIds = new ArrayList<>();
 		
 //		byte seatIds;//哪些座位上的人参与分成，按位运算
 	}
