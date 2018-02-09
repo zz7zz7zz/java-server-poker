@@ -321,9 +321,8 @@ public class Table extends AbsTable {
 		
         //1.设置每个玩家的游戏状态
 		int play_user_count = 0;
-		User[] gGsers=(User[])users;
-        for(int i =0;i<gGsers.length;i++) {
-    		if(null ==gGsers[i]) {
+        for(int i =0;i<users.length;i++) {
+    		if(null ==users[i]) {
     			continue;
     		}
     		play_user_count++;
@@ -345,10 +344,10 @@ public class Table extends AbsTable {
         }else{//说明是游戏持续
         	next_seatId_index = sb_seatid+1;
         }
-    	if(null == gGsers[next_seatId_index]){
+    	if(null == users[next_seatId_index]){
         	for(int i = 1 ;i<this.mConfig.table_max_user;i++){
         		int r_next_seatId_index = (next_seatId_index - i + this.mConfig.table_max_user)%this.mConfig.table_max_user;
-            	if(null != gGsers[r_next_seatId_index]){
+            	if(null != users[r_next_seatId_index]){
             		next_seatId_index = r_next_seatId_index;
             		break;
             	}
@@ -358,10 +357,10 @@ public class Table extends AbsTable {
     	
         //2.2找小盲位
     	next_seatId_index = (btn_seateId+1)%this.mConfig.table_max_user;
-        if(null == gGsers[next_seatId_index]){
+        if(null == users[next_seatId_index]){
         	for(int i = 1 ;i<this.mConfig.table_max_user;i++){
         		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
-            	if(null != gGsers[r_next_seatId_index]){
+            	if(null != users[r_next_seatId_index]){
             		next_seatId_index = r_next_seatId_index;
             		break;
             	}
@@ -371,10 +370,10 @@ public class Table extends AbsTable {
         		
        //2.3找大盲位
     	next_seatId_index = (sb_seatid+1)%this.mConfig.table_max_user;
-    	if(null == gGsers[next_seatId_index]){
+    	if(null == users[next_seatId_index]){
         	for(int i = 1 ;i<this.mConfig.table_max_user;i++){
         		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
-            	if(null != gGsers[r_next_seatId_index]){
+            	if(null != users[r_next_seatId_index]){
             		next_seatId_index = r_next_seatId_index;
             		break;
             	}
@@ -385,32 +384,32 @@ public class Table extends AbsTable {
     	//3.发送游戏开始数据
     	
 		//强制玩家交Ante,小盲大盲强制下盲注
-		for(int i =0;i<gGsers.length;i++) {
-     		if(null ==gGsers[i] || gGsers[i].play_status != UserStatus.PLAY) {
+		for(int i =0;i<users.length;i++) {
+     		if(null ==users[i] || users[i].play_status != UserStatus.PLAY) {
      			continue;
      		}
      		
-     		long user_ante = gGsers[i].chip > ante ? gGsers[i].chip : ante;
-     		gGsers[i].chip -= user_ante;
+     		long user_ante = users[i].chip > ante ? users[i].chip : ante;
+     		users[i].chip -= user_ante;
      		ante_all += user_ante;
 	    }
 		
-		gGsers[sb_seatid].round_chip =  gGsers[sb_seatid].chip > sb_chip ? sb_chip : gGsers[sb_seatid].chip;
-		gGsers[sb_seatid].chip -= gGsers[sb_seatid].round_chip;
+		users[sb_seatid].round_chip =  users[sb_seatid].chip > sb_chip ? sb_chip : users[sb_seatid].chip;
+		users[sb_seatid].chip -= users[sb_seatid].round_chip;
 		
-		gGsers[bb_seatid].round_chip =  gGsers[bb_seatid].chip > sb_chip*2 ? sb_chip*2 : gGsers[bb_seatid].chip;
-		gGsers[bb_seatid].chip -= gGsers[bb_seatid].round_chip;
+		users[bb_seatid].round_chip =  users[bb_seatid].chip > sb_chip*2 ? sb_chip*2 : users[bb_seatid].chip;
+		users[bb_seatid].chip -= users[bb_seatid].round_chip;
 		
-		if(gGsers[bb_seatid].round_chip > gGsers[sb_seatid].round_chip){
-			max_round_chip = gGsers[bb_seatid].round_chip;
+		if(users[bb_seatid].round_chip > users[sb_seatid].round_chip){
+			max_round_chip = users[bb_seatid].round_chip;
 			max_round_chip_seatid = bb_seatid;
 		}else{
-			max_round_chip = gGsers[sb_seatid].round_chip;
+			max_round_chip = users[sb_seatid].round_chip;
 			max_round_chip_seatid = sb_seatid;
 		}
 		
-		sb_force_bet = gGsers[sb_seatid].round_chip;
-		bb_force_bet = gGsers[bb_seatid].round_chip;
+		sb_force_bet = users[sb_seatid].round_chip;
+		bb_force_bet = users[bb_seatid].round_chip;
 		
     	squenceId++;
     	broadcastToClient(TexasCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.gameStart(sb_seatid, bb_seatid, btn_seateId, ante_all,sb_force_bet,bb_force_bet,this),null);
@@ -419,15 +418,14 @@ public class Table extends AbsTable {
 	}
 	
 	public void dealPreFlop() {
-        User[] gGsers=(User[])users;
         
 		if(mCardConfig.isEnable) {
-	        for(int i =0;i<gGsers.length;i++) {
-        		if(null ==gGsers[i] || gGsers[i].play_status != UserStatus.PLAY) {
+	        for(int i =0;i<users.length;i++) {
+        		if(null ==users[i] || users[i].play_status != UserStatus.PLAY) {
         			continue;
         		}
         		
-        		User user = gGsers[i];
+        		User user = users[i];
         		for(int j=0;j<user.handCard.length;j++) {
         			user.handCard[j]=mCardConfig.user_cards[i][j];
         		}
@@ -435,12 +433,12 @@ public class Table extends AbsTable {
 		}else {
 	        long t = System.currentTimeMillis();//获得当前时间的毫秒数
 	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
-	        for(int i =0;i<gGsers.length;i++) {
-        		if(null ==gGsers[i] || gGsers[i].play_status != UserStatus.PLAY) {
+	        for(int i =0;i<users.length;i++) {
+        		if(null ==users[i] || users[i].play_status != UserStatus.PLAY) {
         			continue;
         		}
         		
-        		User user = gGsers[i];
+        		User user = users[i];
         		for(int j=0;j<user.handCard.length;j++) {
         			int cardIndex;
         			while(true){
@@ -456,12 +454,12 @@ public class Table extends AbsTable {
 	        }
 		}
 		
-		for(int i =0;i<gGsers.length;i++) {
-     		if(null ==gGsers[i] || gGsers[i].play_status != UserStatus.PLAY) {
+		for(int i =0;i<users.length;i++) {
+     		if(null ==users[i] || users[i].play_status != UserStatus.PLAY) {
      			continue;
      		}
      		
-     		User user = gGsers[i];
+     		User user = users[i];
      		squenceId++;
      		sendToClient(TexasCmd.CMD_SERVER_DEAL_PREFLOP, squenceId, TexasGameServer.dealPreFlop( user.handCard),user);
 	    }
@@ -681,14 +679,13 @@ public class Table extends AbsTable {
 		
 		//如果只有一个可操作的玩家，则牌局一直自动走到底
 		int bet_user_count = 0;
-		User[] gGsers=(User[])users;
 		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
      		//对于不在游戏中，已经弃牌，AllIn的玩家不处理
-    		if(null ==gGsers[i] || !gGsers[i].isPlaying() || gGsers[i].isFold|| gGsers[i].isAllIn) {
+    		if(null ==users[i] || !users[i].isPlaying() || users[i].isFold|| users[i].isAllIn) {
      			continue;
      		}
      		
-     		if(gGsers[i].chip>0) {
+     		if(users[i].chip>0) {
      			bet_user_count++;
      		}
 		}
@@ -709,11 +706,11 @@ public class Table extends AbsTable {
 		    		}
 	        		
 		     		//对于不在游戏中，已经弃牌，AllIn的玩家不处理
-	        		if(null ==gGsers[r_next_seatId_index] || !gGsers[r_next_seatId_index].isPlaying() || gGsers[r_next_seatId_index].isFold|| gGsers[r_next_seatId_index].isAllIn) {
+	        		if(null ==users[r_next_seatId_index] || !users[r_next_seatId_index].isPlaying() || users[r_next_seatId_index].isFold|| users[r_next_seatId_index].isAllIn) {
 		     			continue;
 		     		}
 		    		
-	        		if(gGsers[r_next_seatId_index].round_chip < max_round_chip) {
+	        		if(users[r_next_seatId_index].round_chip < max_round_chip) {
 		    			op_seatid = r_next_seatId_index;
 		    			break;
 		    		}
@@ -723,8 +720,8 @@ public class Table extends AbsTable {
 				max_round_chip_seatid = op_seatid;
 			}
 			op_call_chip 	  = max_round_chip;
-			op_min_raise_chip = Math.min(max_round_chip *2,gGsers[op_seatid].chip);
-			op_max_raise_chip = gGsers[op_seatid].chip;
+			op_min_raise_chip = Math.min(max_round_chip *2,users[op_seatid].chip);
+			op_max_raise_chip = users[op_seatid].chip;
 
 			squenceId++;
 			broadcastToClient(TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, squenceId, TexasGameServer.broadcastNextOperateUser(op_seatid,op_call_chip,op_min_raise_chip,op_max_raise_chip),null);
@@ -841,12 +838,11 @@ public class Table extends AbsTable {
 		}
 
 		//清空数据
-		User[] gGsers=(User[])users;
 		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
-     		if(null ==gGsers[i] || !gGsers[i].isPlaying()) {
+     		if(null ==users[i] || !users[i].isPlaying()) {
      			continue;
      		}
-     		gGsers[i].round_chip = 0;
+     		users[i].round_chip = 0;
 		}
 
 		op_call_chip = 0;
@@ -867,12 +863,11 @@ public class Table extends AbsTable {
 	
 	//给每个玩家算牌型
 	public void calculateCardType(){
-		User[] gGsers=(User[])users;
 		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
-     		if(null ==gGsers[i] || !gGsers[i].isPlaying() || gGsers[i].isFold) {
+     		if(null ==users[i] || !users[i].isPlaying() || users[i].isFold) {
      			continue;
      		}
-     		getCardResult(gGsers[i].handCard, flop, turn, river, gGsers[i].result);
+     		getCardResult(users[i].handCard, flop, turn, river, users[i].result);
 		}
 	}
 	
