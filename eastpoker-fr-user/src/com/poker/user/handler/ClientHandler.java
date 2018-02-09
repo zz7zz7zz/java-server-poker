@@ -54,6 +54,7 @@ public class ClientHandler extends AbsClientHandler{
 	public void checkGameStatus(int squenceId ,byte[] data, int header_start, int header_length, int body_start, int body_length) throws InvalidProtocolBufferException{
 		DispatchPacket mDispatchPacket = DispatchPacket.parseFrom(data,body_start,body_length);
 		long uid = mDispatchPacket.getDispatchChainList(0).getUid();
+		mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());
 		int accessId  = mInPacket.readInt();
 		
 		User user = Main.userMap.get(uid);
@@ -66,13 +67,13 @@ public class ClientHandler extends AbsClientHandler{
 			
 			//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 			byte[] mTempBuff = mInPacket.getPacket();
-			if(tableId > 0){//说明在游戏中，需要重新进入游戏
+			if(tableId >= 0){//说明在游戏中，需要重新进入游戏
 				
 				mOutPacket.begin(squenceId, GameCmd.CMD_CHECK_GAME_STATUS);
 				mOutPacket.writeInt(accessId);//AccessId
 				mOutPacket.end();
 				
-				int length = PacketTransfer.send2Game(gameId,gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_CHECK_GAME_STATUS, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
+				int length = PacketTransfer.send2Game(gameId,gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_CHECK_GAME_STATUS, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 				send2Dispatch(mTempBuff,0,length);	
 			}
 			
@@ -117,7 +118,7 @@ public class ClientHandler extends AbsClientHandler{
 		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		if(tableId > 0){//说明在游戏中，需要重新进入游戏
+		if(tableId >= 0){//说明在游戏中，需要重新进入游戏
 			
 			mOutPacket.begin(squenceId, GameCmd.CMD_LOGIN_GAME);
 			mOutPacket.writeInt(accessId);//AccessId

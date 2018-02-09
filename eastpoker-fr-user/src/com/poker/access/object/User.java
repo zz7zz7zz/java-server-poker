@@ -14,7 +14,7 @@ public class User {
 	public short matchSid;
 	public short matchId;
 	
-	public int tableId;
+	public int tableId = -1;
 	
 	public void reset(){
 		uid = 0;
@@ -27,6 +27,6 @@ public class User {
 		matchSid = 0;
 		matchId = 0;
 		
-		tableId = 0;
+		tableId = -1;
 	}
 }
