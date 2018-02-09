@@ -97,11 +97,11 @@ public class ClientHandler extends AbsClientHandler{
 		int request_gameid = mRequestLoginGame.getGameid();
 		int request_gamelevel = mRequestLoginGame.getLevel();
 		
-		int tableId = 0;
-		short gameId = 0;
-		short gameSid = 0;
-		short matchId = 0;
-		short matchSid = 0;
+		int tableId = -1;
+		short gameId = -1;
+		short gameSid = -1;
+		short matchId =-1;
+		short matchSid = -1;
 		User user = Main.userMap.get(uid);
 		if(null != user){
 			tableId = user.tableId;
