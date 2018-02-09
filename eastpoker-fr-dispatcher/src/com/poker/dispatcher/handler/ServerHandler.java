@@ -10,8 +10,9 @@ import com.open.net.server.object.AbstractServerClient;
 import com.open.net.server.object.AbstractServerMessageProcessor;
 import com.open.net.server.utils.TextUtils;
 import com.open.util.log.Logger;
+import com.poker.cmd.Cmd;
 import com.poker.cmd.DispatchCmd;
-import com.poker.data.DataPacket;
+import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.protocols.server.DispatchChainProto.DispatchChain;
@@ -37,9 +38,9 @@ public class ServerHandler extends AbsServerHandler{
 	public void dispatchMessage(AbstractServerClient client, byte[] data, int header_start, int header_length,
 			int body_start, int body_length) {
     	try {
-    		int cmd   = DataPacket.getCmd(data, header_start);
-    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
-    		
+    		int cmd   = BasePacket.getCmd(data, header_start);
+          	Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
+          	
     		if(cmd == DispatchCmd.CMD_DISPATCH_REGISTER){
     			register(client, data, body_start,body_length);
     		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA_GAME_GROUP){

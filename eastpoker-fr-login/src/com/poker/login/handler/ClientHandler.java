@@ -6,9 +6,9 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.util.log.Logger;
+import com.poker.cmd.Cmd;
 import com.poker.cmd.LoginCmd;
 import com.poker.cmd.UserCmd;
-import com.poker.data.DataPacket;
 import com.poker.data.DistapchType;
 import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
@@ -33,8 +33,8 @@ public class ClientHandler extends AbsClientHandler{
 	public void dispatchMessage(AbstractClient client, byte[] data, int header_start, int header_length, int body_start,
 			int body_length) {
     	try {
-    		int cmd   = DataPacket.getCmd(data, header_start);
-    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + LoginCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
+    		int cmd   = BasePacket.getCmd(data, header_start);
+    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
     		
         	if(cmd == LoginCmd.CMD_LOGIN_REQUEST){
         		login(client, data, body_start, body_length, 1, this);

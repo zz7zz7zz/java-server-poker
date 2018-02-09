@@ -5,14 +5,14 @@ import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.util.log.Logger;
 import com.poker.cmd.AllocatorCmd;
-import com.poker.cmd.DispatchCmd;
+import com.poker.cmd.Cmd;
 import com.poker.common.config.Config;
-import com.poker.data.DataPacket;
 import com.poker.data.DataTransfer;
 import com.poker.data.DistapchType;
 import com.poker.game.Main;
 import com.poker.games.Room;
 import com.poker.games.AbsTable;
+import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.protocols.game.server.GameServerProto;
@@ -29,8 +29,8 @@ public class ClientHandler extends AbsClientHandler{
 	public void dispatchMessage(AbstractClient client, byte[] data, int header_start, int header_length, int body_start,
 			int body_length) {
 		try {
-     		int cmd = DataPacket.getCmd(data, header_start);
-    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
+			int cmd   = BasePacket.getCmd(data, header_start);
+    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
     		
     		//先判断游戏外逻辑，再判断游戏内逻辑
         	if(cmd == AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){

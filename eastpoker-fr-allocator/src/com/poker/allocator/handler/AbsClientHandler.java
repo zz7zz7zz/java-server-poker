@@ -9,7 +9,9 @@ import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.util.log.Logger;
 import com.poker.allocator.Main;
+import com.poker.cmd.Cmd;
 import com.poker.data.DataPacket;
+import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 
@@ -43,7 +45,9 @@ public abstract class AbsClientHandler extends AbstractClientMessageProcessor {
 	@Override
 	public void send(AbstractClient mClient, byte[] src, int offset, int length) {
 		super.send(mClient, src, offset, length);
-		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(DataPacket.getCmd(src, offset)) + " length " + length);
+		
+		int cmd   = BasePacket.getCmd(src, offset);
+		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd)+ " length " + length);
 	}
 		
 	//----------------------------------------------------------------------

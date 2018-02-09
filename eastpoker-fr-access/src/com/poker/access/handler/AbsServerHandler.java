@@ -13,6 +13,7 @@ import com.poker.packet.OutPacket;
 import com.poker.access.Main;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
+import com.poker.cmd.Cmd;
 
 public abstract class AbsServerHandler extends AbstractServerMessageProcessor{
 
@@ -57,19 +58,25 @@ public abstract class AbsServerHandler extends AbstractServerMessageProcessor{
 	@Override
 	public void unicast(AbstractServerClient client, byte[] src, int offset, int length) {
 		super.unicast(client, src, offset, length);
-		Logger.v("output_packet_unicast cmd 0x" + Integer.toHexString(BasePacket.getCmd(src, offset)) + " length " + length);
+		
+		int cmd   = BasePacket.getCmd(src, offset);
+		Logger.v("output_packet_unicast cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd)+ " length " + length);
 	}
 
 	@Override
 	public void multicast(AbstractServerClient[] clients, byte[] src, int offset, int length) {
 		super.multicast(clients, src, offset, length);
-		Logger.v("output_packet_multicast cmd 0x" + Integer.toHexString(BasePacket.getCmd(src, offset)) + " length " + length);
+		
+		int cmd   = BasePacket.getCmd(src, offset);
+		Logger.v("output_packet_multicast cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd)+ " length " + length);
 	}
 
 	@Override
 	public void broadcast(byte[] src, int offset, int length) {
 		super.broadcast(src, offset, length);
-		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(BasePacket.getCmd(src, offset)) + " length " + length);
+		
+		int cmd   = BasePacket.getCmd(src, offset);
+		Logger.v("output_packet_broadcast cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd)+ " length " + length);
 	}
 	
 	@Override

@@ -7,8 +7,8 @@ import com.open.util.log.Logger;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
 import com.poker.cmd.AllocatorCmd;
+import com.poker.cmd.Cmd;
 import com.poker.cmd.GameCmd;
-import com.poker.cmd.LoginCmd;
 import com.poker.cmd.UserCmd;
 import com.poker.data.DistapchType;
 import com.poker.packet.BasePacket;
@@ -33,9 +33,9 @@ public class ClientHandler extends AbsClientHandler{
 		
 		try {
     		int cmd   = BasePacket.getCmd(data, header_start);
+    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
+    		
     		int squenceId = BasePacket.getSequenceId(data, header_start);
-    		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + LoginCmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
-        	
     		if(cmd == UserCmd.CMD_CHECK_GAME_STATUS){
         		checkGameStatus(squenceId,data, header_start,header_length,body_start, body_length);
         	}else if(cmd == UserCmd.CMD_LOGIN_GAME){

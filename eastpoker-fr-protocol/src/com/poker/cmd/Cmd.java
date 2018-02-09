@@ -25,7 +25,7 @@ public class Cmd {
 				return SystemCmd.getCmdString(cmd);
 			}
 			
-			return "unknown_gameimpl-cmd";
+			return "unknown_gameimpl_cmd";
 		}
 	}
 }

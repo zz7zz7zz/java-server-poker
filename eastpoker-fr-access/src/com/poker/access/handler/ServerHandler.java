@@ -5,10 +5,10 @@ import com.open.util.log.Logger;
 import com.poker.access.Main;
 import com.poker.access.object.User;
 import com.poker.base.ServerIds;
-import com.poker.cmd.DispatchCmd;
+import com.poker.cmd.Cmd;
 import com.poker.cmd.LoginCmd;
-import com.poker.data.DataPacket;
 import com.poker.data.DistapchType;
+import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.packet.PacketTransfer;
@@ -20,8 +20,8 @@ public class ServerHandler extends AbsServerHandler{
 	}
 
 	public void dispatchMessage(AbstractServerClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
-		int cmd   = DataPacket.getCmd(data, header_start);
-      	Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + DispatchCmd.getCmdString(cmd) + " length " + DataPacket.getLength(data,header_start));
+		int cmd   = BasePacket.getCmd(data, header_start);
+      	Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
       	
 		User user = (User)client.getAttachment();
 		if(cmd != LoginCmd.CMD_LOGIN_REQUEST && null == user){//非登录指令/非心跳指令，一律必需先登录
@@ -30,7 +30,7 @@ public class ServerHandler extends AbsServerHandler{
 		}	
 		
 		int server = cmd >> 16;
-      	int squenceId = DataPacket.getSequenceId(data,header_start);
+      	int squenceId = BasePacket.getSequenceId(data,header_start);
       	//如果Server大于0，则将数据转发至对应的server
       	if(server > 0){
       		int length = 0;
