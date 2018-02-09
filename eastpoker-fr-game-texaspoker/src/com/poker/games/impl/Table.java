@@ -318,19 +318,14 @@ public class Table extends AbsTable {
 	public void startGame() {
 		super.startGame();
 		
-		//更新用户游戏状态
-		for (int i = 0; i < users.length; i++) {
-			if(null != users[i]){
-				users[i].startGame();
-			}
-		}
-		
         //1.设置每个玩家的游戏状态
 		int play_user_count = 0;
         for(int i =0;i<users.length;i++) {
     		if(null ==users[i]) {
     			continue;
     		}
+    		users[i].startGame();
+    		users[i].chip = this.mConfig.table_init_chip;
     		play_user_count++;
         }
         
