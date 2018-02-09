@@ -14,6 +14,6 @@ public final class LoginCmd {
 		}else if(cmd == CMD_LOGIN_RESPONSE){
 			return "cmd_login_response";
 		}
-		return "unknown";
+		return "unknown_logincmd";
 	}
 }

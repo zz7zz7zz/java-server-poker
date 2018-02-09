@@ -19,8 +19,10 @@ public final class AllocatorCmd {
 			return "cmd_gameserver_to_allocator_update_roominfo";
 		}else if(cmd == CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){
 			return "cmd_allocator_broadcast_get_roominfo";
+		}else if(cmd == CMD_LOGIN_GAME){
+			return "cmd_login_game";
 		}
-		return "unknown";
+		return "unknown_allocatorcmd";
 	}
 	
 }

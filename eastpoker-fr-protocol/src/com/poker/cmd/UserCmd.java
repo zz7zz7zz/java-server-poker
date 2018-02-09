@@ -10,4 +10,16 @@ public class UserCmd {
 	public static int CMD_ENTER_ROOM 				= (ServerIds.SERVER_USER <<16) + 0x1003;//0x50003进入房间
 	public static int CMD_LEAVE_ROOM 				= (ServerIds.SERVER_USER <<16) + 0x1004;//0x50004退出房间
 
+	public static String getCmdString(int cmd){
+		if(cmd == CMD_LOGIN_GAME){
+			return "cmd_login_game";
+		}else if(cmd == CMD_CHECK_GAME_STATUS){
+			return "cmd_check_game_status";
+		}else if(cmd == CMD_ENTER_ROOM){
+			return "cmd_enter_room";
+		}else if(cmd == CMD_LEAVE_ROOM){
+			return "cmd_leave_room";
+		}
+		return "unknown_usercmd";
+	}
 }

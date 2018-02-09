@@ -20,4 +20,11 @@ public final class BaseGameCmd {
 	public static final int CMD_SERVER_BROAD_USERREADY   		= 0x2006; 
 	
 	public static final int CMD_SERVER_BROAD_USEROFFLINE  		= 0x2007;//用户掉线
+	
+	//登录错误类型
+	public static final int CMD_SERVER_LOGIN_ERR 				= 0x2100;
+	
+	
+	//----------------------------------------------------------------
+	public static final int ERR_CODE_LOGIN_TABLE_FULL = 1;//桌子满了
 }

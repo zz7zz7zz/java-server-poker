@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
-import com.poker.cmd.SystemCmd;
 import com.poker.common.config.Config;
 import com.poker.games.Room;
 import com.poker.games.AbsTable;
@@ -107,7 +106,7 @@ public class Table extends AbsTable {
 		}else if(ret == LoginResult.LOGIN_SUCCESS_ALREADY_EXIST){
 			onReLogin(mUser);
 		}else if(ret == LoginResult.LOGIN_FAILED_FULL){
-			sendToClient(SystemCmd.CMD_ERR,0,ErrorServer.error(SystemCmd.ERR_CODE_LOGIN_FAILED_TABLE_FULL,""),mUser);
+			sendToClient(BaseGameCmd.CMD_SERVER_LOGIN_ERR,0,ErrorServer.error(BaseGameCmd.ERR_CODE_LOGIN_TABLE_FULL,""),mUser);
 		}
 		return ret;
 	};
