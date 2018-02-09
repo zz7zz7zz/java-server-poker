@@ -1,7 +1,6 @@
 package com.poker.games;
 
 import com.poker.cmd.AllocatorCmd;
-import com.poker.cmd.SystemCmd;
 import com.poker.cmd.UserCmd;
 import com.poker.common.config.Config;
 import com.poker.data.DistapchType;
@@ -9,23 +8,18 @@ import com.poker.game.Main;
 import com.poker.games.define.GameDefine.LoginResult;
 import com.poker.games.define.GameDefine.LogoutResult;
 import com.poker.games.define.GameDefine.TableStatus;
+import com.poker.games.impl.User;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.packet.PacketTransfer;
-import com.poker.protocols.server.ErrorServer;
 
 public abstract class AbsTable {
 	
 	public Room mRoom;
 	public final int tableId;
 	public Config mConfig;
-	
 	public TableStatus table_status;
-	public final AbsUser[] users;
-	public final AbsUser[] onLookers = new AbsUser[10];
-	public int count;
 
-	
 	static InPacket  mInPacket;
 	static OutPacket mOutPacket;
 	
@@ -34,188 +28,23 @@ public abstract class AbsTable {
 		this.tableId = tableId;
 		this.mConfig = mConfig;
 		
-		users = new AbsUser[mConfig.table_max_user];
-		count=0;
-		
 		if(null == mInPacket){
 			mInPacket = new InPacket(Main.libClientConfig.packet_max_length_tcp);
 			mOutPacket= new OutPacket(Main.libClientConfig.packet_max_length_tcp);
 		}
 	}
-
-	public int getUserCount(){
-		return count;
-	}
 	
-	public int userChangeSeat(AbsUser user,int new_seatId){
-		
-		//新座位无效
-		if(new_seatId <0 || new_seatId>=users.length){
-			return -1;
-		}
-		
-		//已经是该座位了
-		if(user.seatId == new_seatId){
-			return -2;
-		}
-		
-		//新座位已经有其它人了
-		if(null != users[new_seatId]){
-			return -3;
-		}
-		
-		
-		if(user.seatId != -1){//不等于-1：说明是已经在桌子上的用户进行换座位；等于-1：说明是新用户第一次进入
-			users[user.seatId] = null;
-			users[new_seatId] = user;
-			user.seatId = new_seatId;
-		}else{
-			users[new_seatId] = user;
-			user.seatId = new_seatId;
-			count++;
-		}
-		return 1;
-	}
-	
-	public LoginResult userEnter(AbsUser user){
-		for (AbsUser u : users) {
-			if(null != u && u.uid == user.uid){
-				return LoginResult.LOGIN_SUCCESS_ALREADY_EXIST;
-			}
-		}
-		
-		for(int i = 0;i<users.length;i++){
-			if(null == users[i]){
-				user.seatId = i;
-				users[i] = user;
-				count++;
-				return LoginResult.LOGIN_SUCCESS;
-			}
-		}
-		return LoginResult.LOGIN_FAILED_FULL;
-	}
-	
-	public LogoutResult userExit(AbsUser user){
-		for (int i = 0; i < users.length; i++) {
-			if(null != users[i] && users[i].uid == user.uid){
-				users[i] = null;
-				count--;
-				return LogoutResult.LOGOUT_SUCCESS;
-			}
-		}
-		return LogoutResult.LOGOUT_FAILED;
-	}
-	
-	public int userReady(AbsUser user){
-		for (int i = 0; i < users.length; i++) {
-			if(null != users[i] && users[i].uid == user.uid){
-				users[i].isReady = true;
-				return 1;
-			}
-		}
-		return 0;
-	}
-	
-	
-	public int userOffline(AbsUser user){
-		for (int i = 0; i < users.length; i++) {
-			if(null != users[i] && users[i].uid == user.uid){
-				users[i].onLineStatus = 0;
-				users[i].accessId = -1;
-				return 1;
-			}
-		}
-		return 0;
-	}
-	
-	public boolean isUserInTable(AbsUser user){
-		for (int i = 0; i < users.length; i++) {
-			if(null != users[i] && users[i].uid == user.uid){
-				return true;
-			}
-		}
-		return false;
-	}
 	//---------------------------------------------------------------------
-	public LoginResult onUserLogin(AbsUser mUser){
-		LoginResult ret= userEnter(mUser);
-		if(ret == LoginResult.LOGIN_SUCCESS){
-			onTableUserFirstLogin(mUser);
-		}else if(ret == LoginResult.LOGIN_SUCCESS_ALREADY_EXIST){
-			onTableUserReLogin(mUser);
-		}else if(ret == LoginResult.LOGIN_FAILED_FULL){
-			send2Access(mUser,SystemCmd.CMD_ERR,0,ErrorServer.error(SystemCmd.ERR_CODE_LOGIN_FAILED_TABLE_FULL,""));
-		}
-		return ret;
-	};
-	
-	public LogoutResult onUserExit(AbsUser mUser){
-		LogoutResult ret= userExit(mUser);
-		if(ret ==  LogoutResult.LOGOUT_SUCCESS){
-			onTableUserExit(mUser);
-		}
-		return ret;
-	};
-	
-	public int onUserReady(AbsUser mUser){
-		if(userReady(mUser) == 1){
-			onTableUserReady(mUser);
-			return 1;
-		}
-		return 0;
-	};
-	
-	public int onUserOffline(AbsUser mUser){
-		if(userOffline(mUser) == 1){
-			onTableUserOffline(mUser);
-			return 1;
-		}
-		return 0;
-	};
-	
-	public int onKickUser(AbsUser mUser , AbsUser kickedUser){
-		return -1;
-	};
-	
-	public int onSendCmd(int cmd, byte[] data, int offset, int length){
-		return -1;
-	}
-	
 	protected void startGame(){
 		table_status = TableStatus.TABLE_STATUS_PLAY;
-		//更新用户游戏状态
-		for (int i = 0; i < users.length; i++) {
-			if(null != users[i]){
-				users[i].startGame();
-			}
-		}
 	}
 	
 	protected void stopGame(){
 		table_status = TableStatus.TABLE_STATUS_STOP;
-		//更新用户游戏状态，
-		for (int i = 0; i < users.length; i++) {
-			if(null != users[i]){
-				
-				users[i].stopGame();
-				
-				//将不在线的用户踢出去
-				if(users[i].isOffline()){
-					mRoom.logoutGame(users[i], this);
-					users[i] = null;
-				}
-			}
-		}
 	}
 	
 	public void resetTable(){
 		table_status = TableStatus.TABLE_STATUS_STOP;
-		for (int i = 0; i < users.length; i++) {
-			if(null != users[i]){
-				users[i].stopGame();
-				users[i] = null;
-			}
-		}
 	}
 	
 	public void enterRoom(long uid,AbsTable table){
@@ -235,40 +64,38 @@ public abstract class AbsTable {
 	public void leaveRoom(long uid){
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		
 		int length = PacketTransfer.send2User(0, mTempBuff, 0, uid, UserCmd.CMD_LEAVE_ROOM, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
 		Main.send2Dispatch(mTempBuff,0,length);	
 	}
 	
-	public void send2Access(AbsUser user,int cmd,int squenceId ,byte[] body){
-		this.send2Access(user,cmd, squenceId, body, 0, body.length);
+	protected void send2Access(int cmd,int squenceId ,byte[] body,User user){
+		this.send2Access(cmd, squenceId, body, 0, body.length,user);
 	}
 
-	public int send2Access(AbsUser user,int cmd,int squenceId ,byte[] body,int offset ,int length){
+	protected int send2Access(int cmd,int squenceId ,byte[] body,int offset ,int length,User user){
 		length = PacketTransfer.send2Access(user.accessId,mOutPacket.getPacket(), squenceId, user.uid, cmd, DistapchType.TYPE_P2P, body,offset,length);
 		Main.send2Dispatch(mOutPacket.getPacket(), 0, length);
 		return 1;
 	}
 	
-	public void broadcast(AbsUser user,int cmd,int squenceId ,byte[] body) {
-		this.broadcast(cmd, squenceId, body, null);
-	}
-	
-	public void broadcast(int cmd,int squenceId ,byte[] body,AbsUser user) {
-		for(int i =0 ;i<users.length;i++){
-			AbsUser mUser = users[i];
-			if(null != mUser && mUser != user){
-				send2Access(mUser,cmd,squenceId,body);
-			}
-		}
-	}
-	
 	//------------------------------------子游戏必需实现的业务逻辑------------------------------------
-	protected abstract int onTableUserFirstLogin(AbsUser mUser);//用户首次进入这张桌子
-	protected abstract int onTableUserReLogin(AbsUser mUser);//相当于用户进行重连
-	protected abstract int onTableUserExit(AbsUser mUser);//用户退出桌子
-	protected abstract int onTableUserOffline(AbsUser mUser);//用户掉线
-	protected abstract int onTableUserReady(AbsUser mUser);//用户准备
-	protected abstract int dispatchTableMessage(AbsUser mUser,int cmd, byte[] data, int header_start, int header_length, int body_start,int body_length);
-	protected abstract int onTimeOut();
+	//游戏基础接口(非游戏内接口)
+	public abstract LoginResult onUserLogin(User mUser);
+	public abstract int onUserReady(User mUser);
+	public abstract LogoutResult onUserExit(User mUser);
+	
+	public abstract int getUserCount();
+	public abstract int onUserOffline(User mUser);
+	public abstract int onKickUser(User mUser,User kickedUser);
+	public abstract boolean isUserInTable(User mUser);
+
+	//发数据接口
+	protected abstract int sendToClient(int cmd,int squenceId ,byte[] body,User user);//用户准备
+	protected abstract int broadcastToClient(int cmd,int squenceId ,byte[] body,User user);//用户准备
+	
+	//定时器回调接口
+	public abstract int onTimeOut();
+	
+	//游戏内接口数据
+	public abstract int dispatchTableMessage(User mUser,int cmd, byte[] data, int header_start, int header_length, int body_start,int body_length);
 }

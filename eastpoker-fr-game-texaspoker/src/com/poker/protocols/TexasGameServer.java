@@ -1,6 +1,5 @@
 package com.poker.protocols;
 
-import com.poker.games.AbsTable;
 import com.poker.games.AbsUser;
 import com.poker.games.impl.Table;
 import com.poker.games.impl.User;
@@ -32,7 +31,7 @@ import com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard;
 public class TexasGameServer {
 	
 	//--------------------------------------------------------基础指令----------------------------------------------------------------
-	public static byte[] userLogin(User gUser,AbsTable table,GameConfig mGameConfig){
+	public static byte[] userLogin(User gUser,Table table,GameConfig mGameConfig){
 		TexasGameResponseLoginGame.Builder builder = TexasGameResponseLoginGame.newBuilder();
 		
 		//配置
@@ -243,7 +242,7 @@ public class TexasGameServer {
 		return body;
 	}
 	
-	public static byte[] showHand(AbsTable table){
+	public static byte[] showHand(Table table){
 		
 		TexasGameShowHand.Builder builder = TexasGameShowHand.newBuilder();
 		for(int i =0 ;i<table.users.length;i++){
@@ -384,7 +383,7 @@ public class TexasGameServer {
 		return body;
 	}
 	
-	public static byte[] gameOver(AbsTable table){
+	public static byte[] gameOver(Table table){
 		TexasGameEnd.Builder builder = TexasGameEnd.newBuilder();
 		for(int i = 0;i<table.users.length;i++){
 			User user = (User) table.users[i];

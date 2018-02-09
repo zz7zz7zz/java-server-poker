@@ -9,10 +9,12 @@ import java.util.Map.Entry;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
+import com.poker.cmd.SystemCmd;
 import com.poker.common.config.Config;
 import com.poker.games.Room;
 import com.poker.games.AbsTable;
-import com.poker.games.AbsUser;
+import com.poker.games.define.GameDefine.LoginResult;
+import com.poker.games.define.GameDefine.LogoutResult;
 import com.poker.games.define.GameDefine.TableStatus;
 import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
@@ -29,6 +31,7 @@ import com.poker.games.impl.define.TexasDefine.TCard;
 import com.poker.games.protocols.BaseGameCmd;
 import com.poker.protocols.TexasCmd;
 import com.poker.protocols.TexasGameServer;
+import com.poker.protocols.server.ErrorServer;
 import com.poker.protocols.texaspoker.TexasGameActionRequestProto.TexasGameActionRequest;
 import com.poker.protocols.texaspoker.TexasGameBroadcastUserActionProto.TexasGameBroadcastUserAction.Operate;
 
@@ -38,6 +41,12 @@ public class Table extends AbsTable {
 	public static GameConfig mGameConfig;
 	public static CardConfig mCardConfig;
 	
+	//-----------------------------------------------------
+	public final User[] users;
+	public final User[] onLookers = new User[10];
+	public int count;
+	
+	//-----------------------------------------------------
 	public long   cardFlags = Long.MAX_VALUE;
 	
 	public int squenceId = 0;
@@ -73,6 +82,9 @@ public class Table extends AbsTable {
 	public Table(Room mRoom,int tableId, Config mConfig) {
 		super(mRoom,tableId, mConfig);
 		
+		users = new User[mConfig.table_max_user];
+		count=0;
+		
 		if(null == mGameConfig){
 			mGameConfig = new GameConfig();
 			mGameConfig.initFileConfig("./conf-game/game.config");
@@ -88,17 +100,159 @@ public class Table extends AbsTable {
 	}
 
 	@Override
-	protected int onTableUserFirstLogin(AbsUser mUser) {
+	public LoginResult onUserLogin(User mUser){
+		LoginResult ret= userlogin(mUser);
+		if(ret == LoginResult.LOGIN_SUCCESS){
+			onFirstLogin(mUser);
+		}else if(ret == LoginResult.LOGIN_SUCCESS_ALREADY_EXIST){
+			onReLogin(mUser);
+		}else if(ret == LoginResult.LOGIN_FAILED_FULL){
+			sendToClient(SystemCmd.CMD_ERR,0,ErrorServer.error(SystemCmd.ERR_CODE_LOGIN_FAILED_TABLE_FULL,""),mUser);
+		}
+		return ret;
+	};
+	
+	@Override
+	public int onUserReady(User mUser){
+		if(userReady(mUser) == 1){
+			broadcastToClient(BaseGameCmd.CMD_SERVER_BROAD_USERREADY, squenceId, TexasGameServer.broadUserReady(mUser),mUser);
+			return 1;
+		}
+		return 0;
+	};
+	
+	@Override
+	public LogoutResult onUserExit(User mUser){
+		LogoutResult ret= userExit(mUser);
+		if(ret ==  LogoutResult.LOGOUT_SUCCESS){
+			broadcastToClient(BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserLogout(mUser),mUser);
+		}
+		return ret;
+	};
+	
+	@Override
+	public int getUserCount(){
+		return count;
+	}
+	
+	@Override
+	public int onUserOffline(User mUser){
+		if(userOffline(mUser) == 1){
+			broadcastToClient(BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserOffline(mUser.uid,mUser.onLineStatus),mUser);
+			return 1;
+		}
+		return 0;
+	};
+	
+	@Override
+	public int onKickUser(User mUser , User kickedUser){
+		return -1;
+	};
+	
+	@Override
+	public boolean isUserInTable(User user){
+		for (int i = 0; i < users.length; i++) {
+			if(null != users[i] && users[i].uid == user.uid){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	protected int sendToClient(int cmd, int squenceId, byte[] body, User user) {
+		send2Access(cmd,squenceId,body,user);
+		return 0;
+	}
+	
+	@Override
+	protected int broadcastToClient(int cmd, int squenceId, byte[] body, User user) {
+		for(int i =0 ;i<users.length;i++){
+			User mUser = (User) users[i];
+			if(null != mUser && mUser != user && mUser.isPlaying() && !mUser.isOffline()){
+				send2Access(cmd,squenceId,body,mUser);
+			}
+		}
+		return 0;
+	}
+	
+	@Override
+	public int dispatchTableMessage(User mUser,int cmd, byte[] data, int header_start, int header_length, int body_start,
+			int body_length) {
+		if(cmd == TexasCmd.CMD_CLIENT_ACTION) {
+			user_request_action((User)mUser,data, body_start, body_length);
+		}
+		return 0;
+	}
+
+	@Override
+	public int onTimeOut() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	//----------------------------------------
+	public LoginResult userlogin(User user){
+		for (User u : users) {
+			if(null != u && u.uid == user.uid){
+				return LoginResult.LOGIN_SUCCESS_ALREADY_EXIST;
+			}
+		}
+		
+		for(int i = 0;i<users.length;i++){
+			if(null == users[i]){
+				user.seatId = i;
+				users[i] = user;
+				count++;
+				return LoginResult.LOGIN_SUCCESS;
+			}
+		}
+		return LoginResult.LOGIN_FAILED_FULL;
+	}
+	
+	public int userReady(User user){
+		for (int i = 0; i < users.length; i++) {
+			if(null != users[i] && users[i].uid == user.uid){
+				users[i].isReady = true;
+				return 1;
+			}
+		}
+		return 0;
+	}
+	
+	public LogoutResult userExit(User user){
+		for (int i = 0; i < users.length; i++) {
+			if(null != users[i] && users[i].uid == user.uid){
+				users[i] = null;
+				count--;
+				return LogoutResult.LOGOUT_SUCCESS;
+			}
+		}
+		return LogoutResult.LOGOUT_FAILED;
+	}
+	
+	public int userOffline(User user){
+		for (int i = 0; i < users.length; i++) {
+			if(null != users[i] && users[i].uid == user.uid){
+				users[i].onLineStatus = 0;
+				users[i].accessId = -1;
+				return 1;
+			}
+		}
+		return 0;
+	}
+	
+	protected int onFirstLogin(User mUser) {
 		
 		User gUser = (User)mUser;
 		
 		//1。对进来的用户广播桌子上有哪些用户
 		squenceId++;
-		send2Access(mUser,BaseGameCmd.CMD_SERVER_USERLOGIN, squenceId, TexasGameServer.userLogin(gUser,this,mGameConfig));
+		sendToClient(BaseGameCmd.CMD_SERVER_USERLOGIN, squenceId, TexasGameServer.userLogin(gUser,this,mGameConfig),mUser);
 		
 		//2.对桌子上的用户广播谁进来类
 		squenceId++;
-		broadcast(BaseGameCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, TexasGameServer.broadUserLogin(gUser),mUser);
+		broadcastToClient(BaseGameCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, TexasGameServer.broadUserLogin(gUser),mUser);
 		
 		//3.判断游戏谁否可以开始了
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){
@@ -112,62 +266,58 @@ public class Table extends AbsTable {
 		return 0;
 	}
 
-
-
-	@Override
-	protected int onTableUserReLogin(AbsUser mUser) {
+	protected int onReLogin(User mUser) {
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){//处于游戏中，表示重连
 			squenceId++;
-			send2Access(mUser,TexasCmd.CMD_SERVER_RECONNECT, squenceId, TexasGameServer.reconnect(this,(User)mUser,mGameConfig));
+			sendToClient(TexasCmd.CMD_SERVER_RECONNECT, squenceId, TexasGameServer.reconnect(this,(User)mUser,mGameConfig),mUser);
 			return 0;
 		}else{//游戏暂停中，直接返回登录即可
 			squenceId++;
-			send2Access(mUser,BaseGameCmd.CMD_SERVER_USERLOGIN, squenceId, TexasGameServer.userLogin((User)mUser,this,mGameConfig));
+			sendToClient(BaseGameCmd.CMD_SERVER_USERLOGIN, squenceId, TexasGameServer.userLogin((User)mUser,this,mGameConfig),mUser);
 		}
 		return 0;
 	}
-
-
-
-	@Override
-	protected int onTableUserExit(AbsUser mUser) {
-		broadcast(BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserLogout(mUser),mUser);
-		return 0;
-	}
-
-
-
-	@Override
-	protected int onTableUserOffline(AbsUser mUser) {
-		broadcast(BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserOffline(mUser.uid,mUser.onLineStatus),mUser);
-		return 0;
-	}
-
-
-
-	@Override
-	protected int onTableUserReady(AbsUser mUser) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-	@Override
-	protected int dispatchTableMessage(AbsUser mUser,int cmd, byte[] data, int header_start, int header_length, int body_start,
-			int body_length) {
-		if(cmd == TexasCmd.CMD_CLIENT_ACTION) {
-			user_request_action((User)mUser,data, body_start, body_length);
+		
+	public int userChangeSeat(User user,int new_seatId){
+		
+		//新座位无效
+		if(new_seatId <0 || new_seatId>=users.length){
+			return -1;
 		}
-		return 0;
+		
+		//已经是该座位了
+		if(user.seatId == new_seatId){
+			return -2;
+		}
+		
+		//新座位已经有其它人了
+		if(null != users[new_seatId]){
+			return -3;
+		}
+		
+		
+		if(user.seatId != -1){//不等于-1：说明是已经在桌子上的用户进行换座位；等于-1：说明是新用户第一次进入
+			users[user.seatId] = null;
+			users[new_seatId] = user;
+			user.seatId = new_seatId;
+		}else{
+			users[new_seatId] = user;
+			user.seatId = new_seatId;
+			count++;
+		}
+		return 1;
 	}
 
-	@Override
-	protected int onTimeOut() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 	//-------------------------------------------------------
 	public void startGame() {
 		super.startGame();
+		
+		//更新用户游戏状态
+		for (int i = 0; i < users.length; i++) {
+			if(null != users[i]){
+				users[i].startGame();
+			}
+		}
 		
         //1.设置每个玩家的游戏状态
 		int play_user_count = 0;
@@ -263,7 +413,7 @@ public class Table extends AbsTable {
 		bb_force_bet = gGsers[bb_seatid].round_chip;
 		
     	squenceId++;
-    	broadcast(null,TexasCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.gameStart(sb_seatid, bb_seatid, btn_seateId, ante_all,sb_force_bet,bb_force_bet,this));
+    	broadcastToClient(TexasCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.gameStart(sb_seatid, bb_seatid, btn_seateId, ante_all,sb_force_bet,bb_force_bet,this),null);
     	
   		step = GameStep.START;
 	}
@@ -313,7 +463,7 @@ public class Table extends AbsTable {
      		
      		User user = gGsers[i];
      		squenceId++;
-        	send2Access(user,TexasCmd.CMD_SERVER_DEAL_PREFLOP, squenceId, TexasGameServer.dealPreFlop( user.handCard));
+     		sendToClient(TexasCmd.CMD_SERVER_DEAL_PREFLOP, squenceId, TexasGameServer.dealPreFlop( user.handCard),user);
 	    }
 		 
   		step = GameStep.PREFLOP;
@@ -343,7 +493,7 @@ public class Table extends AbsTable {
 		}
   		
 		squenceId++;
-		broadcast(null,TexasCmd.CMD_SERVER_DEAL_FLOP, squenceId, TexasGameServer.dealFlop(flop));
+		broadcastToClient(TexasCmd.CMD_SERVER_DEAL_FLOP, squenceId, TexasGameServer.dealFlop(flop),null);
 		
 		step = GameStep.FLOP;
 		next_option(null);
@@ -372,7 +522,7 @@ public class Table extends AbsTable {
 		}
 
 		squenceId++;
-		broadcast(null,TexasCmd.CMD_SERVER_DEAL_TURN, squenceId, TexasGameServer.dealTrun(turn));
+		broadcastToClient(TexasCmd.CMD_SERVER_DEAL_TURN, squenceId, TexasGameServer.dealTrun(turn),null);
 		
   		step = GameStep.TRUN;
 		next_option(null);
@@ -401,7 +551,7 @@ public class Table extends AbsTable {
 		}
   		
 		squenceId++;
-		broadcast(null,TexasCmd.CMD_SERVER_DEAL_RIVER, squenceId,TexasGameServer.dealRiver(river));
+		broadcastToClient(TexasCmd.CMD_SERVER_DEAL_RIVER, squenceId,TexasGameServer.dealRiver(river),null);
 		
   		step = GameStep.RIVER;
 		next_option(null);
@@ -501,7 +651,7 @@ public class Table extends AbsTable {
 				}
 				
 				squenceId++;
-				broadcast(user,TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, squenceId, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip));
+				broadcastToClient(TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, squenceId, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip),user);
 				
 				next_option(user);
 			}
@@ -577,7 +727,7 @@ public class Table extends AbsTable {
 			op_max_raise_chip = gGsers[op_seatid].chip;
 
 			squenceId++;
-			broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, squenceId, TexasGameServer.broadcastNextOperateUser(op_seatid,op_call_chip,op_min_raise_chip,op_max_raise_chip));
+			broadcastToClient(TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, squenceId, TexasGameServer.broadcastNextOperateUser(op_seatid,op_call_chip,op_min_raise_chip,op_max_raise_chip),null);
 		}
 	}
 	
@@ -686,7 +836,7 @@ public class Table extends AbsTable {
 					pots[i-pot_start_index] = potList.get(i).pot_chips;
 				}
 				squenceId++;
-				broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_POTS, squenceId, TexasGameServer.broadcastPots(pots));
+				broadcastToClient(TexasCmd.CMD_SERVER_BROADCAST_POTS, squenceId, TexasGameServer.broadcastPots(pots),null);
 			}
 		}
 
@@ -709,7 +859,7 @@ public class Table extends AbsTable {
 	
 	public void showHands() {
 		squenceId++;
-		broadcast(null,TexasCmd.CMD_SERVER_BROADCAST_SHOW_HAND, squenceId, TexasGameServer.showHand(this));
+		broadcastToClient(TexasCmd.CMD_SERVER_BROADCAST_SHOW_HAND, squenceId, TexasGameServer.showHand(this),null);
 		step = GameStep.SHOWHAND;
 		
 		nextStep();
@@ -726,7 +876,7 @@ public class Table extends AbsTable {
 		}
 	}
 	
-public static void getCardResult(byte[] hands,byte[] flop,byte[] turn,byte[] river,Result result) {
+	public static void getCardResult(byte[] hands,byte[] flop,byte[] turn,byte[] river,Result result) {
 		
 		//花色
 		HashMap<Byte,ArrayList<Byte>> color_map = new HashMap<Byte,ArrayList<Byte>>();		
@@ -1043,11 +1193,25 @@ public static void getCardResult(byte[] hands,byte[] flop,byte[] turn,byte[] riv
 		calculatePot();
 		
 		squenceId++;
-		broadcast(null,TexasCmd.CMD_SERVER_GAME_OVER, squenceId, TexasGameServer.gameOver(this));
+		broadcastToClient(TexasCmd.CMD_SERVER_GAME_OVER, squenceId, TexasGameServer.gameOver(this),null);
 		
 		//--------------------------------------------------------------------------------
 		super.stopGame();
 		
+		//更新用户游戏状态，
+		for (int i = 0; i < users.length; i++) {
+			if(null != users[i]){
+				
+				users[i].stopGame();
+				
+				//将不在线的用户踢出去
+				if(users[i].isOffline()){
+					mRoom.logoutGame(users[i], this);
+					users[i] = null;
+				}
+			}
+		}
+				
 		step = GameStep.STOP;
 		cardFlags |= Long.MAX_VALUE;
 		squenceId = 0;
@@ -1065,6 +1229,13 @@ public static void getCardResult(byte[] hands,byte[] flop,byte[] turn,byte[] riv
 
 	public void resetTable(){
 		super.resetTable();
+		
+		for (int i = 0; i < users.length; i++) {
+			if(null != users[i]){
+				users[i].stopGame();
+				users[i] = null;
+			}
+		}
 		
 		step = GameStep.STOP;
 		cardFlags |= Long.MAX_VALUE;

@@ -76,7 +76,7 @@ public class ClientHandler extends AbsClientHandler{
 		for (AbsTable table : mRoom.mTables) {
 			GameTableProto.GameTable.Builder tableBuilder = GameTableProto.GameTable.newBuilder();
 			tableBuilder.setTid(table.tableId);
-			tableBuilder.setCount(table.count);
+			tableBuilder.setCount(table.getUserCount());
 			builder.addTableList(tableBuilder);
 		}
 		

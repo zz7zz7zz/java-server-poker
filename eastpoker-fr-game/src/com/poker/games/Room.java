@@ -9,6 +9,7 @@ import com.poker.common.config.Config;
 import com.poker.games.define.UserPool;
 import com.poker.games.define.GameDefine.LoginResult;
 import com.poker.games.impl.Table;
+import com.poker.games.impl.User;
 import com.poker.games.protocols.BaseGameCmd;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 
@@ -17,8 +18,8 @@ public class Room {
 	
 	private final String TAG = "Room";
 	
-	public HashMap<Long,AbsUser> userMap = new HashMap<>();
-	public AbsTable mTables[];
+	public HashMap<Long,User> userMap = new HashMap<>();
+	public Table mTables[];
 	public short gameId;
 	public short gameSid;
 	
@@ -26,7 +27,7 @@ public class Room {
 		gameId = mConfig.game_id;
 		gameSid= mConfig.server_id;
 		
-		mTables = new AbsTable[mConfig.table_count];
+		mTables = new Table[mConfig.table_count];
 		for(int i=0;i<mConfig.table_count;i++){
 			int tableId = (mConfig.server_id << 16) + i;
 			mTables[i] = new Table(this,tableId,mConfig);
@@ -48,8 +49,8 @@ public class Room {
 			return;
 		}
 		
-		AbsTable mTable = null;
-		AbsUser mUser = userMap.get(uid);
+		Table mTable = null;
+		User mUser = userMap.get(uid);
 		if(null != mUser){//说明之前在桌子上,替换上真实的桌子
 			if(mUser.tid >= 0){
 				mTable = mTables[mUser.tid & 0xff];
@@ -68,7 +69,7 @@ public class Room {
 				return;
 			}
 			
-			AbsTable mRequestTable = mTables[tableIdIndex];
+			Table mRequestTable = mTables[tableIdIndex];
 			if(null == mTable){
 				mTable = mRequestTable;
 			}else{
@@ -124,7 +125,7 @@ public class Room {
     	}
 	}
 	
-	private void checkGameStatus(AbsUser mUser , AbsTable mTable){
+	private void checkGameStatus(User mUser , Table mTable){
 		if(mTable.isUserInTable(mUser)){
 			loginGame(mUser,mTable);
 		}else{
@@ -133,7 +134,7 @@ public class Room {
 		}
 	}
 	
-	private void loginGame(AbsUser mUser , AbsTable mTable){
+	private void loginGame(User mUser , Table mTable){
 		LoginResult ret = mTable.onUserLogin(mUser);
 		if(ret != LoginResult.LOGIN_FAILED_FULL){
 			mUser.tid = mTable.tableId;
@@ -146,7 +147,7 @@ public class Room {
 		}
 	}
 	
-	public void logoutGame(AbsUser mUser , AbsTable mTable){
+	public void logoutGame(User mUser , AbsTable mTable){
 		mTable.onUserExit(mUser);
 		
 		mTable.leaveRoom(mUser.uid);
