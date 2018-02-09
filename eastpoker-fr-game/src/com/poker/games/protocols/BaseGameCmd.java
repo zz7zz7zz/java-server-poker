@@ -27,4 +27,34 @@ public final class BaseGameCmd {
 	
 	//----------------------------------------------------------------
 	public static final int ERR_CODE_LOGIN_TABLE_FULL = 1;//桌子满了
+	
+	
+	public static String getCmdString(int cmd){
+		if(cmd == CMD_CLIENT_USER_EXIT){
+			return "cmd_client_user_exit";
+		}else if(cmd == CMD_CLIENT_USER_READY){
+			return "cmd_client_user_ready";
+		}else if(cmd == CMD_CLIENT_KICK_USER){
+			return "cmd_client_kick_user";
+		}else if(cmd == CMD_CLIENT_OFFLINE){
+			return "cmd_client_offline";
+		}else if(cmd == CMD_SERVER_USERLOGIN){
+			return "cmd_server_userlogin";
+		}else if(cmd == CMD_SERVER_BROAD_USERLOGIN){
+			return "cmd_server_broad_userlogin";
+		}else if(cmd == CMD_SERVER_USERLOGOUT){
+			return "cmd_server_userlogout";
+		}else if(cmd == CMD_SERVER_BROAD_USERLOGOUT){
+			return "cmd_server_broad_userlogout";
+		}else if(cmd == CMD_SERVER_USERREADY){
+			return "cmd_server_userready";
+		}else if(cmd == CMD_SERVER_BROAD_USERREADY){
+			return "cmd_server_broad_userready";
+		}else if(cmd == CMD_SERVER_BROAD_USEROFFLINE){
+			return "cmd_server_broad_useroffline";
+		}else if(cmd == CMD_SERVER_LOGIN_ERR){
+			return "cmd_server_login_err";
+		}
+		return "";
+	}
 }

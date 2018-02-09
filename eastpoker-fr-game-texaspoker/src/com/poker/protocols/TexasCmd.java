@@ -22,4 +22,37 @@ public final class TexasCmd {
 	
 	public static final int CMD_SERVER_RECONNECT 	    			= 0x400A; //客户端请求重连
 	public static final int CMD_SERVER_GAME_OVER 	    			= 0x4FFF; //游戏结束，进行结算
+	
+	public static String getCmdString(int cmd){
+		if(cmd == CMD_CLIENT_ACTION){
+			return "cmd_client_action";
+		}else if(cmd == CMD_CLIENT_SHOW_HAND){
+			return "cmd_client_show_hand";
+		}else if(cmd == CMD_CLIENT_RECONNECT){
+			return "cmd_client_reconnect";
+		}else if(cmd == CMD_SERVER_GAME_START){
+			return "cmd_server_game_start";
+		}else if(cmd == CMD_SERVER_DEAL_PREFLOP){
+			return "cmd_server_deal_preflop";
+		}else if(cmd == CMD_SERVER_DEAL_FLOP){
+			return "cmd_server_deal_flop";
+		}else if(cmd == CMD_SERVER_DEAL_TURN){
+			return "cmd_server_deal_turn";
+		}else if(cmd == CMD_SERVER_DEAL_RIVER){
+			return "cmd_server_deal_river";
+		}else if(cmd == CMD_SERVER_BROADCAST_USER_ACTION){
+			return "cmd_server_broadcast_user_action";
+		}else if(cmd == CMD_SERVER_BROADCAST_NEXT_OPERATE){
+			return "cmd_server_broadcast_next_operate";
+		}else if(cmd == CMD_SERVER_BROADCAST_POTS){
+			return "cmd_server_broadcast_pots";
+		}else if(cmd == CMD_SERVER_BROADCAST_SHOW_HAND){
+			return "cmd_server_broadcast_show_hand";
+		}else if(cmd == CMD_SERVER_RECONNECT){
+			return "cmd_server_reconnect";
+		}else if(cmd == CMD_SERVER_GAME_OVER){
+			return "cmd_server_game_over";
+		}
+		return "";
+	}
 }

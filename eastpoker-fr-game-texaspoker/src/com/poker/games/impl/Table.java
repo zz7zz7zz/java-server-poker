@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
+import com.poker.cmd.Cmd;
+import com.poker.cmd.Cmd.ICmdRecognizer;
 import com.poker.common.config.Config;
 import com.poker.games.Room;
 import com.poker.games.AbsTable;
@@ -92,6 +94,13 @@ public class Table extends AbsTable {
 		if(null == mCardConfig){
 			mCardConfig = new CardConfig();
 			mCardConfig.initFileConfig("./conf-game/card.config");
+			
+	        Cmd.AddCmdRecognizer(new ICmdRecognizer() {
+				@Override
+				public String getCmdString(int cmd) {
+					return TexasCmd.getCmdString(cmd);
+				}
+			});
 		}
 
 		this.ante = mGameConfig.table_ante[0];

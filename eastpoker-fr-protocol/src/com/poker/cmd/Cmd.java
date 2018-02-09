@@ -1,5 +1,7 @@
 package com.poker.cmd;
 
+import java.util.ArrayList;
+
 import com.poker.base.ServerIds;
 
 public class Cmd {
@@ -25,7 +27,24 @@ public class Cmd {
 				return SystemCmd.getCmdString(cmd);
 			}
 			
+			int size = cmdListener.size();
+			for(int i = 0;i<size;i++){
+				String ret = cmdListener.get(i).getCmdString(cmd);
+				if(null != ret && ret.length() > 0){
+					return ret;
+				}
+			}
 			return "unknown_gameimpl_cmd";
 		}
+	}
+	
+	private static ArrayList<ICmdRecognizer> cmdListener = new ArrayList<ICmdRecognizer>();
+	public static void AddCmdRecognizer(ICmdRecognizer listener){
+		cmdListener.remove(listener);
+		cmdListener.add(listener);
+	}
+	
+	public interface ICmdRecognizer{
+		public String getCmdString(int cmd);
 	}
 }

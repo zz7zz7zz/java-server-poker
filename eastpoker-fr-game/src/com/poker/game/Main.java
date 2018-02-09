@@ -15,10 +15,13 @@ import com.open.net.server.utils.NetUtil;
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
 import com.poker.base.ServerIds;
+import com.poker.cmd.Cmd;
+import com.poker.cmd.Cmd.ICmdRecognizer;
 import com.poker.common.config.Config;
 import com.poker.data.DataPacket;
 import com.poker.game.handler.ClientHandler;
 import com.poker.games.Room;
+import com.poker.games.protocols.BaseGameCmd;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.packet.PacketTransfer;
@@ -110,6 +113,12 @@ public class Main {
     private static void initGlobalFields(int packet_max_length_tcp){    	
     	PacketTransfer.init(libArgsConfig.server_type, libArgsConfig.id);
         mRoom = new Room(mServerConfig);
+        Cmd.AddCmdRecognizer(new ICmdRecognizer() {
+			@Override
+			public String getCmdString(int cmd) {
+				return BaseGameCmd.getCmdString(cmd);
+			}
+		});
     }
     
     //---------------------------------------Monitor----------------------------------------------------

@@ -73,7 +73,7 @@ public class Room {
 			if(null == mTable){
 				mTable = mRequestTable;
 			}else{
-				Logger.v(TAG+ "error uid  req.tid " + tableId + " req.tid.index "+ tableIdIndex+ " realtid "+mUser.tid + " realIndex" + (mUser.tid & 0xff));
+				Logger.v(TAG+ "error uid  req.tid " + tableId + " req.tid.index "+ tableIdIndex+ " realtid "+mUser.tid + " realIndex " + (mUser.tid & 0xff));
 			}
 			
 			
