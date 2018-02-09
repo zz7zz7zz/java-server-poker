@@ -177,7 +177,7 @@ public class Table extends AbsTable {
 	protected int broadcastToClient(int cmd, int squenceId, byte[] body, User user) {
 		for(int i =0 ;i<users.length;i++){
 			User mUser = (User) users[i];
-			if(null != mUser && mUser != user && mUser.isPlaying() && mUser.isOnLine()){
+			if(null != mUser && mUser != user && mUser.isOnLine()){
 				send2Access(cmd,squenceId,body,mUser);
 			}
 		}
@@ -252,15 +252,13 @@ public class Table extends AbsTable {
 	
 	protected int onFirstLogin(User mUser) {
 		
-		User gUser = (User)mUser;
-		
 		//1。对进来的用户广播桌子上有哪些用户
 		squenceId++;
-		sendToClient(BaseGameCmd.CMD_SERVER_USERLOGIN, squenceId, TexasGameServer.userLogin(gUser,this,mGameConfig),mUser);
+		sendToClient(BaseGameCmd.CMD_SERVER_USERLOGIN, squenceId, TexasGameServer.userLogin(mUser,this,mGameConfig),mUser);
 		
 		//2.对桌子上的用户广播谁进来类
 		squenceId++;
-		broadcastToClient(BaseGameCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, TexasGameServer.broadUserLogin(gUser),mUser);
+		broadcastToClient(BaseGameCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, TexasGameServer.broadUserLogin(mUser),mUser);
 		
 		//3.判断游戏谁否可以开始了
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){
