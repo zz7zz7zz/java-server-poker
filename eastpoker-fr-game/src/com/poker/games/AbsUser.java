@@ -13,7 +13,7 @@ public class AbsUser {
 	
 	public int tid;
 	public int accessId = -1;
-	public int onLineStatus;//1在线，2掉线
+	public boolean isOnLine = true;//1在线，2掉线
 	public boolean isReady;
 	
 	public void reset(){
@@ -27,7 +27,7 @@ public class AbsUser {
 		seatId = -1;
 		tid = -1;
 		accessId = -1;
-		onLineStatus = 1;
+		isOnLine = false;
 		isReady = false;
 	}
 	
@@ -39,7 +39,11 @@ public class AbsUser {
 		
 	}
 	
-	public boolean isOffline(){
-		return onLineStatus == 2;
+	public void setOnLine(boolean isOnLine){
+		this.isOnLine = isOnLine;
+	}
+	
+	public boolean isOnLine(){
+		return this.isOnLine;
 	}
 }
