@@ -130,10 +130,10 @@ public class TexasGameServer {
 		return body;
 	}
 	
-	public static byte[] broadUserOffline(long uid,int status){
+	public static byte[] broadUserOffline(long uid,boolean isOnLine){
 		BroadcastUserOffline.Builder builder = BroadcastUserOffline.newBuilder();
 		builder.setUid(uid);
-		builder.setStatus(status);
+		builder.setStatus(isOnLine ? 1 : 0);
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}

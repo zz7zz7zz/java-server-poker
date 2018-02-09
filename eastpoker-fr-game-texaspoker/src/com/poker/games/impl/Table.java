@@ -138,7 +138,7 @@ public class Table extends AbsTable {
 	@Override
 	public int onUserOffline(User mUser){
 		if(userOffline(mUser) == 1){
-			broadcastToClient(BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserOffline(mUser.uid,mUser.onLineStatus),mUser);
+			broadcastToClient(BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserOffline(mUser.uid,mUser.isOnLine()),mUser);
 			return 1;
 		}
 		return 0;
@@ -169,7 +169,7 @@ public class Table extends AbsTable {
 	protected int broadcastToClient(int cmd, int squenceId, byte[] body, User user) {
 		for(int i =0 ;i<users.length;i++){
 			User mUser = (User) users[i];
-			if(null != mUser && mUser != user && mUser.isPlaying() && !mUser.isOffline()){
+			if(null != mUser && mUser != user && mUser.isPlaying() && mUser.isOnLine()){
 				send2Access(cmd,squenceId,body,mUser);
 			}
 		}
@@ -234,7 +234,7 @@ public class Table extends AbsTable {
 	public int userOffline(User user){
 		for (int i = 0; i < users.length; i++) {
 			if(null != users[i] && users[i].uid == user.uid){
-				users[i].onLineStatus = 0;
+				users[i].setOnLine(false);
 				users[i].accessId = -1;
 				return 1;
 			}
@@ -1200,7 +1200,7 @@ public class Table extends AbsTable {
 				users[i].stopGame();
 				
 				//将不在线的用户踢出去
-				if(users[i].isOffline()){
+				if(!users[i].isOnLine()){
 					mRoom.logoutGame(users[i], this);
 					users[i] = null;
 				}
