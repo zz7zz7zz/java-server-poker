@@ -81,7 +81,7 @@ public class Room {
     			mUser = UserPool.get(uid);
     		}
     		mUser.accessId = accessId;
-    		
+    		mUser.setOnLine(true);
     		loginGame(mUser,mTable);
     		
     	}else{
@@ -101,6 +101,7 @@ public class Room {
     			AbsTable.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());	
     			int accessId = AbsTable.mInPacket.readInt();
     			mUser.accessId =  accessId;
+    			mUser.setOnLine(true);
     			checkGameStatus(mUser,mTable);
     			
         	}else if(cmd == BaseGameCmd.CMD_CLIENT_USER_EXIT){
@@ -108,18 +109,27 @@ public class Room {
         		logoutGame(mUser,mTable);
         		
         	}else if(cmd == BaseGameCmd.CMD_CLIENT_USER_READY){
-        		
+        		mUser.accessId = mDispatchPacket.getDispatchChainList(0).getSrcServerId();
+        		mUser.setOnLine(true);
     			mTable.onUserReady(mUser);
     			
-        	}else if(cmd == BaseGameCmd.CMD_CLIENT_KICK_USER){
-        		
-        		mTable.onUserOffline(mUser);
-        		
         	}else if(cmd == BaseGameCmd.CMD_CLIENT_OFFLINE){
         		
-        		mTable.onKickUser(mUser, null);
+        		mUser.setOnLine(false);
+        		mTable.onUserOffline(mUser);
+        		
+        	}else if(cmd == BaseGameCmd.CMD_CLIENT_KICK_USER){
+        		
+        		long kickedUid = 0;
+        		User kickedUser = userMap.get(kickedUid);
+        		int ret = mTable.onKickUser(mUser, kickedUser);
+        		if(ret > 0){
+        			logoutGame(kickedUser,mTable);
+        		}
         		
         	}else{
+        		mUser.accessId = mDispatchPacket.getDispatchChainList(0).getSrcServerId();
+        		mUser.setOnLine(true);
         		mTable.dispatchTableMessage(mUser,cmd, data, header_start, header_length, body_start, body_length);
         	}
     	}
