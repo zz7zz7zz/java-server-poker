@@ -390,7 +390,7 @@ public class Table extends AbsTable {
      			continue;
      		}
      		
-     		long user_ante = users[i].chip > ante ? users[i].chip : ante;
+     		long user_ante = users[i].chip > ante ? ante : users[i].chip;
      		users[i].chip -= user_ante;
      		ante_all += user_ante;
 	    }
