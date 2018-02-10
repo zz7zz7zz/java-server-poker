@@ -890,7 +890,7 @@ public class Table extends AbsTable {
 			ArrayList<Byte> value_cards_list = value_map.get(value);
 			if(null == value_cards_list){
 				value_cards_list = new ArrayList<>();
-				value_map.put(color, value_cards_list);
+				value_map.put(value, value_cards_list);
 			}
 			value_cards_list.add(hands[i]);
 		}
@@ -909,7 +909,7 @@ public class Table extends AbsTable {
 			ArrayList<Byte> value_cards_list = value_map.get(value);
 			if(null == value_cards_list){
 				value_cards_list = new ArrayList<>();
-				value_map.put(color, value_cards_list);
+				value_map.put(value, value_cards_list);
 			}
 			value_cards_list.add(flop[i]);
 		}
@@ -928,7 +928,7 @@ public class Table extends AbsTable {
 			ArrayList<Byte> value_cards_list = value_map.get(value);
 			if(null == value_cards_list){
 				value_cards_list = new ArrayList<>();
-				value_map.put(color, value_cards_list);
+				value_map.put(value, value_cards_list);
 			}
 			value_cards_list.add(turn[i]);
 		}
@@ -947,7 +947,7 @@ public class Table extends AbsTable {
 			ArrayList<Byte> value_cards_list = value_map.get(value);
 			if(null == value_cards_list){
 				value_cards_list = new ArrayList<>();
-				value_map.put(color, value_cards_list);
+				value_map.put(value, value_cards_list);
 			}
 			value_cards_list.add(river[i]);
 		}
