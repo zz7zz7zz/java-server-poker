@@ -102,22 +102,28 @@ public class Room {
     			AbsTable.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());	
     			int accessId = AbsTable.mInPacket.readInt();
     			mUser.accessId =  accessId;
-    			mUser.setOnLine(true);
-    			checkGameStatus(mUser,mTable);
+
+    			if(mTable.isUserInTable(mUser)){
+            		mTable.updateOnLineStatus(mUser,true);
+    				loginGame(mUser,mTable);
+    			}else{
+    				logoutGame(mUser,mTable);
+    			}
     			
         	}else if(cmd == BaseGameCmd.CMD_CLIENT_USER_EXIT){
         		
         		logoutGame(mUser,mTable);
         		
         	}else if(cmd == BaseGameCmd.CMD_CLIENT_USER_READY){
+        		
         		mUser.accessId = mDispatchPacket.getDispatchChainList(0).getSrcServerId();
-        		mUser.setOnLine(true);
+        		mTable.updateOnLineStatus(mUser,true);
+        		
     			mTable.onUserReady(mUser);
     			
         	}else if(cmd == BaseGameCmd.CMD_CLIENT_OFFLINE){
         		
-        		mUser.setOnLine(false);
-        		mTable.onUserOffline(mUser);
+        		mTable.updateOnLineStatus(mUser,false);
         		
         	}else if(cmd == BaseGameCmd.CMD_CLIENT_KICK_USER){
         		
@@ -129,19 +135,13 @@ public class Room {
         		}
         		
         	}else{
+        		
         		mUser.accessId = mDispatchPacket.getDispatchChainList(0).getSrcServerId();
-        		mUser.setOnLine(true);
+        		mTable.updateOnLineStatus(mUser,true);
+        		
         		mTable.dispatchTableMessage(mUser,cmd, data, header_start, header_length, body_start, body_length);
         	}
     	}
-	}
-	
-	private void checkGameStatus(User mUser , Table mTable){
-		if(mTable.isUserInTable(mUser)){
-			loginGame(mUser,mTable);
-		}else{
-			logoutGame(mUser,mTable);
-		}
 	}
 	
 	private void loginGame(User mUser , Table mTable){

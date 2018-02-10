@@ -119,7 +119,7 @@ public abstract class AbsTable {
 	public abstract LogoutResult onUserExit(User mUser);
 	
 	public abstract int getUserCount();
-	public abstract int onUserOffline(User mUser);
+	public abstract int updateOnLineStatus(User mUser,boolean isOnLine);
 	public abstract int onKickUser(User mUser,User kickedUser);
 	public abstract boolean isUserInTable(User mUser);
 

@@ -144,11 +144,14 @@ public class Table extends AbsTable {
 	}
 	
 	@Override
-	public int onUserOffline(User mUser){
-		if(userOffline(mUser)){
+	public int updateOnLineStatus(User mUser,boolean isOnLine){
+		//两个状态不一致
+		if(mUser.isOnLine() != isOnLine){
+			mUser.setOnLine(isOnLine);
 			broadcastToClient(BaseGameCmd.CMD_SERVER_BROAD_USEROFFLINE, squenceId, TexasGameServer.broadUserOffline(mUser.uid,mUser.isOnLine()),mUser);
 			return 1;
 		}
+
 		return 0;
 	};
 	
@@ -169,7 +172,9 @@ public class Table extends AbsTable {
 	
 	@Override
 	protected int sendToClient(int cmd, int squenceId, byte[] body, User user) {
-		send2Access(cmd,squenceId,body,user);
+		if(user.isOnLine()){
+			send2Access(cmd,squenceId,body,user);
+		}
 		return 0;
 	}
 	
@@ -237,17 +242,6 @@ public class Table extends AbsTable {
 			}
 		}
 		return LogoutResult.LOGOUT_FAILED;
-	}
-	
-	public boolean userOffline(User user){
-		for (int i = 0; i < users.length; i++) {
-			if(null != users[i] && users[i].uid == user.uid){
-				users[i].setOnLine(false);
-				users[i].accessId = -1;
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	protected int onFirstLogin(User mUser) {
