@@ -145,8 +145,8 @@ public class Table extends AbsTable {
 	
 	@Override
 	public int onUserOffline(User mUser){
-		if(userOffline(mUser) == 1){
-			broadcastToClient(BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserOffline(mUser.uid,mUser.isOnLine()),mUser);
+		if(userOffline(mUser)){
+			broadcastToClient(BaseGameCmd.CMD_SERVER_BROAD_USEROFFLINE, squenceId, TexasGameServer.broadUserOffline(mUser.uid,mUser.isOnLine()),mUser);
 			return 1;
 		}
 		return 0;
@@ -239,15 +239,15 @@ public class Table extends AbsTable {
 		return LogoutResult.LOGOUT_FAILED;
 	}
 	
-	public int userOffline(User user){
+	public boolean userOffline(User user){
 		for (int i = 0; i < users.length; i++) {
 			if(null != users[i] && users[i].uid == user.uid){
 				users[i].setOnLine(false);
 				users[i].accessId = -1;
-				return 1;
+				return true;
 			}
 		}
-		return 0;
+		return false;
 	}
 	
 	protected int onFirstLogin(User mUser) {
