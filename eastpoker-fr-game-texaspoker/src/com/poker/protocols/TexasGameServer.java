@@ -55,7 +55,7 @@ public class TexasGameServer {
 		builder.setSeatId(gUser.seatId);
 		builder.setChipTotal(gUser.chip);
 		builder.setChip(gUser.chip);
-		builder.setPlayStatus(gUser.play_status.ordinal());
+		builder.setPlayStatus(gUser.play_status.getValue());
 		
 		//桌子上其它人的信息
 		for(int i =0 ;i<table.users.length;i++){
@@ -69,7 +69,7 @@ public class TexasGameServer {
 				userBuild.setLevel(user.level);
 				userBuild.setChip(user.chip);
 				userBuild.setChipTotal(user.chip_total);
-				userBuild.setPlayStatus(user.play_status.ordinal());
+				userBuild.setPlayStatus(user.play_status.getValue());
 				
 				builder.addUsers(userBuild);
 			}
@@ -87,7 +87,7 @@ public class TexasGameServer {
 				userBuild.setLevel(user.level);
 				userBuild.setChip(user.chip);
 				userBuild.setChipTotal(user.chip_total);
-				userBuild.setPlayStatus(user.play_status.ordinal());
+				userBuild.setPlayStatus(user.play_status.getValue());
 
 				builder.addOnLooker(userBuild);
 			}
@@ -108,7 +108,7 @@ public class TexasGameServer {
 		userBuild.setLevel(mUser.level);
 		userBuild.setChip(mUser.chip);
 		userBuild.setChipTotal(mUser.chip_total);
-		userBuild.setPlayStatus(mUser.play_status.ordinal());
+		userBuild.setPlayStatus(mUser.play_status.getValue());
 
 		builder.setUsers(userBuild);
 		
@@ -296,17 +296,17 @@ public class TexasGameServer {
 					userBuild.setLevel(user.level);
 				}
 				
-				userBuild.setOperate(user.operate.ordinal());
+				userBuild.setOperate(user.operate.getNumber());
 				userBuild.setChip(user.chip);
 				userBuild.setChipTotal(user.chip_total);
-				userBuild.setPlayStatus(user.play_status.ordinal());
+				userBuild.setPlayStatus(user.play_status.getValue());
 				
 				builder.addUsers(userBuild);
 			}
 		}
 		
 		//大小盲注信息
-		builder.setTableStatus(table.table_status.ordinal());
+		builder.setTableStatus(table.table_status.getValue());
 		builder.setBtnSeatId(table.btn_seateId);
 		builder.setSbSeatId(table.sb_seatid);
 		builder.setSbSeatId(table.bb_seatid);
@@ -320,10 +320,10 @@ public class TexasGameServer {
 			builder.addCards(self.handCard[i]);
 		}
 		
-		int flop = table.step.ordinal();
-		int FLOP = TexasDefine.GameStep.FLOP.ordinal();
-		int TRUN = TexasDefine.GameStep.TRUN.ordinal();
-		int RIVER = TexasDefine.GameStep.RIVER.ordinal();
+		int flop = table.step.getValue();
+		int FLOP = TexasDefine.GameStep.FLOP.getValue();
+		int TRUN = TexasDefine.GameStep.TRUN.getValue();
+		int RIVER = TexasDefine.GameStep.RIVER.getValue();
 		
 		if(flop >= FLOP){
 			for(int i = 0 ;i < table.flop.length;i++){
@@ -370,10 +370,10 @@ public class TexasGameServer {
 				userBuild.setHeadPortrait(user.head_portrait);
 				userBuild.setLevel(user.level);
 
-				userBuild.setOperate(user.operate.ordinal());
+				userBuild.setOperate(user.operate.getNumber());
 				userBuild.setChip(user.chip);
 				userBuild.setChipTotal(user.chip_total);
-				userBuild.setPlayStatus(user.play_status.ordinal());
+				userBuild.setPlayStatus(user.play_status.getValue());
 				
 				builder.addUsers(userBuild);
 			}
@@ -392,7 +392,7 @@ public class TexasGameServer {
 			}
 			Result.Builder resultBuilder = Result.newBuilder();
 			resultBuilder.setSeateId(user.seatId);
-			resultBuilder.setCardResult(user.result.cardType.ordinal());
+			resultBuilder.setCardResult(user.result.cardType.getValue());
 			for(int j=0;j<user.result.finalCards.length;j++) {
 				resultBuilder.addCards(user.result.finalCards[i]);
 			}
