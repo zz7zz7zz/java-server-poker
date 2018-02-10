@@ -1,4 +1,4 @@
-package com.poker.games.protocols;
+package com.poker.cmd;
 
 
 public final class BaseGameCmd {

@@ -4,7 +4,9 @@ import com.open.net.server.object.AbstractServerClient;
 import com.open.util.log.Logger;
 import com.poker.access.Main;
 import com.poker.access.object.User;
+import com.poker.access.object.UserPool;
 import com.poker.base.ServerIds;
+import com.poker.cmd.BaseGameCmd;
 import com.poker.cmd.Cmd;
 import com.poker.cmd.LoginCmd;
 import com.poker.data.DistapchType;
@@ -17,6 +19,28 @@ public class ServerHandler extends AbsServerHandler{
 
 	public ServerHandler(InPacket mInPacket, OutPacket mOutPacket) {
 		super(mInPacket, mOutPacket);
+	}
+
+	@Override
+	public void onClientExit(AbstractServerClient client) {
+
+		User attachUser = (User)client.getAttachment();
+        if(null != attachUser){
+        	//掉线
+        	if(attachUser.gameId>0){
+        		int squenceId = 0;
+        		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
+        		byte[] mTempBuff = mInPacket.getPacket();
+        		int length = PacketTransfer.send2Game(attachUser.gameId, attachUser.gameSid, mTempBuff, squenceId, attachUser.uid, BaseGameCmd.CMD_CLIENT_OFFLINE, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
+        		send2Dispatch(mTempBuff,0,length);	
+        	}
+        	
+        	//删除链接
+        	Main.userMap.remove(attachUser.uid);
+        	UserPool.release(attachUser);
+        }
+        
+		super.onClientExit(client);
 	}
 
 	public void dispatchMessage(AbstractServerClient client ,byte[] data,int header_start,int header_length,int body_start,int body_length){
