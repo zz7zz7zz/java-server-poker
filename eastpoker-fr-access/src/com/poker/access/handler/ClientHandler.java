@@ -34,7 +34,7 @@ public class ClientHandler extends AbsClientHandler{
     		
 			if(cmd == LoginCmd.CMD_LOGIN_RESPONSE){
             	onClinetLogin(client, mDispatchPacket);
-            }if(cmd == AccessCmd.CMD_LOGIN_GAME){
+            }else if(cmd == AccessCmd.CMD_LOGIN_GAME){
             	onLoginGame(client, mDispatchPacket);
             }else {
             	sendDataToClient(client, mDispatchPacket);
