@@ -416,6 +416,8 @@ public class Table extends AbsTable {
     	broadcastToClient(TexasCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.gameStart(sb_seatid, bb_seatid, btn_seateId, ante_all,sb_force_bet,bb_force_bet,this),null);
     	
   		step = GameStep.START;
+  		
+  		dealPreFlop();
 	}
 	
 	public void dealPreFlop() {

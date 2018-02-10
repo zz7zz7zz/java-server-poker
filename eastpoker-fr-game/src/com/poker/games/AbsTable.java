@@ -1,5 +1,6 @@
 package com.poker.games;
 
+import com.poker.cmd.AccessCmd;
 import com.poker.cmd.AllocatorCmd;
 import com.poker.cmd.UserCmd;
 import com.poker.common.config.Config;
@@ -47,9 +48,9 @@ public abstract class AbsTable {
 		table_status = TableStatus.TABLE_STATUS_STOP;
 	}
 	
-	public void enterRoom(long uid,AbsTable table){
-		
-		mOutPacket.begin(0, AllocatorCmd.CMD_LOGIN_GAME);
+	public void enterRoom2Access(User user,AbsTable table){
+		int squenceId = 0;
+		mOutPacket.begin(squenceId, AccessCmd.CMD_LOGIN_GAME);
 		mOutPacket.writeInt(table.tableId);
 		mOutPacket.writeShort(mRoom.gameId);
 		mOutPacket.writeShort(mRoom.gameSid);
@@ -57,14 +58,47 @@ public abstract class AbsTable {
 		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		int length = PacketTransfer.send2User(0, mTempBuff, 0, uid, UserCmd.CMD_ENTER_ROOM, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		int length = PacketTransfer.send2Access(user.accessId, mTempBuff, squenceId, user.uid, AccessCmd.CMD_LOGIN_GAME, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 		Main.send2Dispatch(mTempBuff,0,length);	
 	}
 	
-	public void leaveRoom(long uid){
+	public void enterRoom2Alloc(User user,AbsTable table){
+
+	}
+	
+	public void enterRoom2User(User user,AbsTable table){
+		int squenceId = 0;
+		int dst_server_id = 0;
+		mOutPacket.begin(squenceId, AllocatorCmd.CMD_LOGIN_GAME);
+		mOutPacket.writeInt(table.tableId);
+		mOutPacket.writeShort(mRoom.gameId);
+		mOutPacket.writeShort(mRoom.gameSid);
+		mOutPacket.end();
+		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		int length = PacketTransfer.send2User(0, mTempBuff, 0, uid, UserCmd.CMD_LEAVE_ROOM, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
+		int length = PacketTransfer.send2User(dst_server_id, mTempBuff, squenceId, user.uid, UserCmd.CMD_ENTER_ROOM, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		Main.send2Dispatch(mTempBuff,0,length);	
+	}
+	
+	public void leaveRoom2Access(User user){
+		int squenceId = 0;
+		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
+		byte[] mTempBuff = mInPacket.getPacket();
+		int length = PacketTransfer.send2User(user.accessId, mTempBuff, squenceId, user.uid, AccessCmd.CMD_LOGINOUT_GAME, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
+		Main.send2Dispatch(mTempBuff,0,length);	
+	}
+	
+	public void leaveRoom2Alloc(User user){
+
+	}
+	
+	public void leaveRoom2User(User user){
+		int squenceId = 0;
+		int dst_server_id = 0;
+		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
+		byte[] mTempBuff = mInPacket.getPacket();
+		int length = PacketTransfer.send2User(dst_server_id, mTempBuff, squenceId, user.uid, UserCmd.CMD_LEAVE_ROOM, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  0);
 		Main.send2Dispatch(mTempBuff,0,length);	
 	}
 	

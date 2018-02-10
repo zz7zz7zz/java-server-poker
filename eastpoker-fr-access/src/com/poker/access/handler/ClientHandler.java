@@ -9,6 +9,7 @@ import com.open.util.log.Logger;
 import com.poker.access.Main;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
+import com.poker.cmd.AccessCmd;
 import com.poker.cmd.Cmd;
 import com.poker.cmd.LoginCmd;
 import com.poker.packet.BasePacket;
@@ -33,6 +34,8 @@ public class ClientHandler extends AbsClientHandler{
     		
 			if(cmd == LoginCmd.CMD_LOGIN_RESPONSE){
             	onClinetLogin(client, mDispatchPacket);
+            }if(cmd == AccessCmd.CMD_LOGIN_GAME){
+            	onLoginGame(client, mDispatchPacket);
             }else {
             	sendDataToClient(client, mDispatchPacket);
             }
@@ -85,6 +88,26 @@ public class ClientHandler extends AbsClientHandler{
 		}
 
 		Logger.v("onClinetLogin socketId " + socketId + " uid "+ uid + " ret " + ret);
+	}
+	
+	public void onLoginGame(AbstractClient mClient , DispatchPacket mDispatchPacket){
+		long uid = mDispatchPacket.getDispatchChainList(0).getUid();
+		mInPacket.copyFrom(mDispatchPacket.getData());
+		
+		int tid       = mInPacket.readInt();
+		short gameId  = mInPacket.readShort();
+		short gameSid = mInPacket.readShort();
+
+
+		User user = Main.userMap.get(uid);
+		if(null != user){//说明之前已经连接上了,断掉老的链接
+			user.gameId = gameId;
+			user.gameSid= gameSid;
+			user.tid    = tid;
+			
+			Logger.v("onLoginGame socketId  uid "+ uid);
+		}
+
 	}
 	
 	public void sendDataToClient(AbstractClient mClient , DispatchPacket mDispatchPacket){

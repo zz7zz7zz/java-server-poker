@@ -7,21 +7,25 @@ public class User {
 	public long socketId;
 	public long socketHeartBeatTime;
 	
-	public int gameSid;
-	public int gameId;
+	public short gameSid;
+	public short gameId;
 	
-	public int matchSid;
-	public int matchId;
+	public short matchSid;
+	public short matchId;
+	
+	public int tid;
 	
 	public void reset(){
-		uid = 0;
-		socketId = 0;
-		socketHeartBeatTime = 0;
+		uid = -1;
+		socketId = -1;
+		socketHeartBeatTime = -1;
 		
-		gameSid = 0;
-		gameId = 0;
+		gameSid = -1;
+		gameId = -1;
 		
-		matchSid = 0;
-		matchId = 0;
+		matchSid = -1;
+		matchId = -1;
+		
+		tid   = -1;
 	}
 }

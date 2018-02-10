@@ -139,8 +139,7 @@ public class Room {
 		if(mTable.isUserInTable(mUser)){
 			loginGame(mUser,mTable);
 		}else{
-			mTable.leaveRoom(mUser.uid);
-			UserPool.release(mUser);
+			logoutGame(mUser,mTable);
 		}
 	}
 	
@@ -149,10 +148,19 @@ public class Room {
 		if(ret != LoginResult.LOGIN_FAILED_FULL){
 			mUser.tid = mTable.tableId;
 			userMap.put(mUser.uid, mUser);
-			mTable.enterRoom(mUser.uid, mTable);
-			//更新桌子人数
+			
+			//向Access更新用户游戏信息
+			mTable.enterRoom2Access(mUser, mTable);
+			
+			//向Alloc更新桌子人数
+			mTable.enterRoom2Alloc(mUser, mTable);
+			
+			//向User更新用户状态
+			mTable.enterRoom2User(mUser, mTable);
+			
 		}else{
-			mTable.leaveRoom(mUser.uid);
+			//logoutGame(mUser,mTable);
+			
 			UserPool.release(mUser);
 		}
 	}
@@ -160,9 +168,14 @@ public class Room {
 	public void logoutGame(User mUser , AbsTable mTable){
 		mTable.onUserExit(mUser);
 		
-		mTable.leaveRoom(mUser.uid);
+		//向Access更新用户游戏信息
+		mTable.leaveRoom2Access(mUser);
+		//向Alloc更新桌子人数
+		mTable.leaveRoom2Alloc(mUser);
+		//向User更新用户状态
+		mTable.leaveRoom2User(mUser);
+		
 		UserPool.release(mUser);
-		//更新桌子人数
 	}
 	
 //	public static void main(String arg[]){
