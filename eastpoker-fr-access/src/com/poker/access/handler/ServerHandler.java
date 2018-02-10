@@ -60,6 +60,19 @@ public class ServerHandler extends AbsServerHandler{
       			byte[] mTempBuff = mInPacket.getPacket();
       			length = PacketTransfer.send2User(0,mTempBuff, squenceId, user.uid,cmd,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
           		send2Dispatch(mTempBuff,0,length);
+      		}else{
+    			if(cmd < 0x1001){//系统处理
+    				Logger.v("unhandled sys_cmd ");
+    			}else{//游戏处理
+    				if(user.gameId>0){//说明处于游戏中
+    	      			//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
+    	      			byte[] mTempBuff = mInPacket.getPacket();
+    	      			length = PacketTransfer.send2Game(user.gameId, user.gameSid,mTempBuff, squenceId, user.uid,cmd,DistapchType.TYPE_P2P,data,header_start,  header_length + body_length);
+    	          		send2Dispatch(mTempBuff,0,length);
+    				}else{
+    					Logger.v("unhandled game_cmd ");
+    				}
+    			}
       		}
       	}
 	}
