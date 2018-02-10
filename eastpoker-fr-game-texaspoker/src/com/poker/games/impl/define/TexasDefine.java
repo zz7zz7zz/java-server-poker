@@ -29,23 +29,34 @@ public class TexasDefine {
 		SHOWHAND(6),
 		STOP(7);
 		
-		int code;
-        private GameStep(int code) {
-            this.code = code;
+		private final int value;
+		
+        private GameStep(int value) {
+            this.value = value;
         }
+        
+		public int getValue() {
+			return value;
+		}
 	}
 	
 	
 	public static enum UserStatus{
-		PLAY(1),
-		NOT_PLAY_SITDOWN(2),
-		NOT_PLAY_ONLOOKERS(3),
-		NOT_PLAY_WAIT(4);
+
+		NOT_PLAY_SITDOWN(1),
+		NOT_PLAY_ONLOOKERS(2),
+		NOT_PLAY_WAIT(3),
+		PLAY(4);
 		
-		int code;
-        private UserStatus(int code) {
-            this.code = code;
+		private final int value;
+		
+        private UserStatus(int value) {
+            this.value = value;
         }
+        
+		public int getValue() {
+			return value;
+		}
 	}
 	
 	public static enum TCard{
@@ -61,9 +72,14 @@ public class TexasDefine {
 		STRAIGHT_FLUSH(9),//同花顺
 		ROYAL_STRAIGHT_FLUSH(10);//皇家同花顺
 		
-		int code;
-		TCard(int code){
-			this.code = code;
+		private final int value;
+		
+		TCard(int value){
+			this.value = value;
+		}
+		
+		public int getValue() {
+			return value;
 		}
 	}
 	
