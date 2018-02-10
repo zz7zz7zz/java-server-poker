@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
+import com.open.net.server.utils.ExceptionUtil;
 import com.open.util.log.Logger;
 import com.poker.cmd.AllocatorCmd;
 import com.poker.cmd.Cmd;
@@ -49,8 +50,9 @@ public class ClientHandler extends AbsClientHandler{
         		on_login_game(client, data, body_start, body_length, 1, this);
         	
         	}
-		} catch (InvalidProtocolBufferException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			Logger.v(ExceptionUtil.getStackTraceString(e));
 		}
 	}
 	

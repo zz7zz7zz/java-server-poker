@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.server.object.AbstractServerClient;
 import com.open.net.server.object.AbstractServerMessageProcessor;
+import com.open.net.server.utils.ExceptionUtil;
 import com.open.net.server.utils.TextUtils;
 import com.open.util.log.Logger;
 import com.poker.cmd.Cmd;
@@ -50,8 +51,9 @@ public class ServerHandler extends AbsServerHandler{
     		}else{
     			dispatch(client, data, header_start,header_length,body_start, body_length,this);
     		}
-		} catch (InvalidProtocolBufferException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			Logger.v(ExceptionUtil.getStackTraceString(e));
 		}
 	}
 	

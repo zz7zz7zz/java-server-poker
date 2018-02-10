@@ -3,6 +3,7 @@ package com.poker.game.handler;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
+import com.open.net.server.utils.ExceptionUtil;
 import com.open.util.log.Logger;
 import com.poker.cmd.AllocatorCmd;
 import com.poker.cmd.Cmd;
@@ -38,8 +39,9 @@ public class ClientHandler extends AbsClientHandler{
         	}else{
         		Main.mRoom.dispatchRoomMessage(cmd, data, header_start, header_length, body_start, body_length);
         	}
-		} catch (InvalidProtocolBufferException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			Logger.v(ExceptionUtil.getStackTraceString(e));
 		}
 	}
 	

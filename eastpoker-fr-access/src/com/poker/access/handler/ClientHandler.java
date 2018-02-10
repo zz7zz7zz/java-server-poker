@@ -1,10 +1,10 @@
 package com.poker.access.handler;
 
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.net.client.object.AbstractClient;
 import com.open.net.server.GServer;
 import com.open.net.server.object.AbstractServerClient;
+import com.open.net.server.utils.ExceptionUtil;
 import com.open.util.log.Logger;
 import com.poker.access.Main;
 import com.poker.access.object.User;
@@ -40,8 +40,9 @@ public class ClientHandler extends AbsClientHandler{
             	sendDataToClient(client, mDispatchPacket);
             }
             
-		} catch (InvalidProtocolBufferException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			Logger.v(ExceptionUtil.getStackTraceString(e));
 		}
 	}
 	
