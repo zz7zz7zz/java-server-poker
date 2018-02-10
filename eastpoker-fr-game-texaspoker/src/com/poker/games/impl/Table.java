@@ -1141,7 +1141,7 @@ public class Table extends AbsTable {
 			winer.clear();
 			User user1 = null;
 			for (int j = 0; j < mPot.seatIds.size(); j++) {
-				User user = (User) users[mPot.seatIds.get(i)];
+				User user = (User) users[mPot.seatIds.get(j)];
 				if(null == user || !user.isPlaying() || user.isFold){
 					continue;
 				}
