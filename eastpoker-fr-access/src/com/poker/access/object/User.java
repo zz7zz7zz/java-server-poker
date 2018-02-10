@@ -28,4 +28,12 @@ public class User {
 		
 		tid   = -1;
 	}
+
+	@Override
+	public String toString() {
+		return "User [uid=" + uid + ", socketId=" + socketId + ", socketHeartBeatTime=" + socketHeartBeatTime
+				+ ", gameSid=" + gameSid + ", gameId=" + gameId + ", matchSid=" + matchSid + ", matchId=" + matchId
+				+ ", tid=" + tid + "]";
+	}
+	
 }
