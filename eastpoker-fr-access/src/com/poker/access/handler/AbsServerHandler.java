@@ -106,6 +106,21 @@ public abstract class AbsServerHandler extends AbstractServerMessageProcessor{
         			int next_pkg_length = 16384;//16KB
         			if(msg_length >= DataPacket.Header.HEADER_OFFSET_SEQUENCEID){//可以读出包体的长度,尽量传递真实的长度
         				next_pkg_length = DataPacket.getLength(msg.data,header_start);
+        				
+        				//有种特殊情况是整个包体结构为：包(16)=包头(16)+扩展包头(0)+包体(0)
+        				if(next_pkg_length == base_header_length){
+                			
+        					int body_start 		= header_start  + base_header_length;
+                			int body_length     = 0;
+                			
+                			dispatchMessage(client,msg.data,header_start,base_header_length,body_start,body_length);
+                			
+                			msg_offset += next_pkg_length;
+                			msg_length -= next_pkg_length;
+                			
+                			full_packet_count++;
+                			continue;
+        				}
         			}
     				client.mReceivingMsg = MessageBuffer.getInstance().buildWithCapacity(next_pkg_length,msg.data,msg.offset+msg_offset,msg_length);
 
@@ -120,6 +135,21 @@ public abstract class AbsServerHandler extends AbstractServerMessageProcessor{
 					int next_pkg_length = 16384;//16KB
         			if(msg_length >= DataPacket.Header.HEADER_OFFSET_SEQUENCEID){//可以读出包体的长度,尽量传递真实的长度
         				next_pkg_length = DataPacket.getLength(msg.data,header_start);
+        				
+        				//有种特殊情况是整个包体结构为：包(16+x)=包头(16)+扩展包头(x)+包体(0)
+        				if(next_pkg_length == header_length){
+                			
+        					int body_start 		= header_start  + header_length;
+                			int body_length     = 0;
+                			
+                			dispatchMessage(client,msg.data,header_start,header_length,body_start,body_length);
+                			
+                			msg_offset += next_pkg_length;
+                			msg_length -= next_pkg_length;
+                			
+                			full_packet_count++;
+                			continue;
+        				}
         			}
     				client.mReceivingMsg = MessageBuffer.getInstance().buildWithCapacity(next_pkg_length,msg.data,msg.offset+msg_offset,msg_length);
 
@@ -183,8 +213,23 @@ public abstract class AbsServerHandler extends AbstractServerMessageProcessor{
         				code = -201;//不足包头
         				half_packet_count++;
     					break;
-    				}else if(msg_length == 0){
-        				code = -202;//足包头,但数据读取完了
+    				}else if(msg_length == 0){//足包头,但数据读取完了
+    					
+        				//有种特殊情况是整个包体结构为：包(16)=包头(16)+扩展包头(0)+包体(0)
+    					int header_start 	= client.mReceivingMsg.offset;
+    					int next_pkg_length   = DataPacket.getLength(client.mReceivingMsg.data, header_start);
+        				if(next_pkg_length == base_header_length){
+                			
+        					int body_start 		= header_start  + base_header_length;
+                			int body_length     = 0;
+                			
+                			dispatchMessage(client,client.mReceivingMsg.data,header_start,base_header_length,body_start,body_length);
+                			
+                			full_packet_count++;
+                			continue;
+        				}
+        				
+        				code = -202;
         				half_packet_count++;
     					break;
     				}
@@ -210,8 +255,22 @@ public abstract class AbsServerHandler extends AbstractServerMessageProcessor{
     					code = -203;//不足扩展包头
         				half_packet_count++;
     					break;
-    				}else if(msg_length == 0){
-        				code = -204;//足扩展包头,但数据读取完了
+    				}else if(msg_length == 0){//足扩展包头,但数据读取完了
+    					
+    					//有种特殊情况是整个包体结构为：包(16+x)=包头(16)+扩展包头(x)+包体(0)
+    					int next_pkg_length   = DataPacket.getLength(client.mReceivingMsg.data, header_start);
+        				if(next_pkg_length == header_length){
+                			
+        					int body_start 		= header_start  + header_length;
+                			int body_length     = 0;
+                			
+                			dispatchMessage(client,client.mReceivingMsg.data,header_start,header_length,body_start,body_length);
+                			
+                			full_packet_count++;
+                			continue;
+        				}
+        				
+        				code = -204;
         				half_packet_count++;
     					break;
     				}
