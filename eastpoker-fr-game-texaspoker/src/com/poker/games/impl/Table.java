@@ -984,7 +984,7 @@ public class Table extends AbsTable {
 									result.finalCards[i] = color_cards_list.get(card_start+i);
 								}
 								result.finalCards[4] = color_cards_list.get(color_cards_list.size()-1);
-								result.value = result.cardType.ordinal()<<20  + 1;
+								result.value = result.cardType.getValue()<<20  + 1;
 							}
 						}else if(max_serial_count == 5){
 							result.cardType = TCard.STRAIGHT_FLUSH;
@@ -994,14 +994,14 @@ public class Table extends AbsTable {
 							for(int i = 0;i<result.finalCards.length;i++){
 								result.finalCards[i] = color_cards_list.get(card_start+i);
 							}
-							result.value = result.cardType.ordinal()<<20 + result.finalCards[0]%0x0F;
+							result.value = result.cardType.getValue()<<20 + result.finalCards[0]%0x0F;
 						}else{
 							result.cardType = TCard.FLUSH;
 							int size = color_cards_list.size();
 							for(int i = 0;i<result.finalCards.length;i++){
 								result.finalCards[i] = color_cards_list.get(size-5+i);
 							}
-							result.value = result.cardType.ordinal()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[1]%0x0F)<<12+ (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F);
+							result.value = result.cardType.getValue()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[1]%0x0F)<<12+ (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F);
 						}
 						break;
 					}
@@ -1038,7 +1038,7 @@ public class Table extends AbsTable {
 					}
 				}
 				result.finalCards[4] = card;
-				result.value = result.cardType.ordinal()<<20 + (result.finalCards[4]%0x0F);
+				result.value = result.cardType.getValue()<<20 + (result.finalCards[4]%0x0F);
 			}
 			else if(tmpList.get(0).cards.size() == 3 && tmpList.get(1).cards.size() >=2){
 				result.cardType = TCard.FULL_HOUSE;
@@ -1047,7 +1047,7 @@ public class Table extends AbsTable {
 				result.finalCards[2] = tmpList.get(0).cards.get(2);
 				result.finalCards[3] = tmpList.get(1).cards.get(0);
 				result.finalCards[4] = tmpList.get(1).cards.get(1);
-				result.value = result.cardType.ordinal()<<20 + (result.finalCards[4]%0x0F)<<16;
+				result.value = result.cardType.getValue()<<20 + (result.finalCards[4]%0x0F)<<16;
 			}else if(result.cardType == TCard.FLUSH){
 				//doNothing
 			}else {
@@ -1076,14 +1076,14 @@ public class Table extends AbsTable {
 							result.finalCards[i] = tmpList.get(card_start+i).cards.get(0);
 						}
 						result.finalCards[4] = tmpList.get(tmpList.size()-1).cards.get(0);
-						result.value = result.cardType.ordinal()<<20  + 1;
+						result.value = result.cardType.getValue()<<20  + 1;
 					}
 				}else if(max_serial_count == 5){
 					result.cardType = TCard.STRAIGHT;
 					for(int i = 0;i<result.finalCards.length;i++){
 						result.finalCards[i] = tmpList.get(card_start+i).cards.get(0);
 					}
-					result.value = result.cardType.ordinal()<<20 + result.finalCards[0]%0x0F;
+					result.value = result.cardType.getValue()<<20 + result.finalCards[0]%0x0F;
 				}
 				
 				if(result.cardType != TCard.STRAIGHT){
@@ -1094,7 +1094,7 @@ public class Table extends AbsTable {
 						result.finalCards[2] = tmpList.get(0).cards.get(2);
 						result.finalCards[3] = tmpList.get(1).cards.get(0);
 						result.finalCards[4] = tmpList.get(2).cards.get(0);
-						result.value = result.cardType.ordinal()<<20 + (result.finalCards[3]%0x0F) <<4 + result.finalCards[4]%0x0F;
+						result.value = result.cardType.getValue()<<20 + (result.finalCards[3]%0x0F) <<4 + result.finalCards[4]%0x0F;
 					}else if(tmpList.get(0).cards.size() == 2 && tmpList.get(1).cards.size() == 2){
 						result.cardType = TCard.TWO_PAIR;
 						result.finalCards[0] = tmpList.get(0).cards.get(0);
@@ -1102,7 +1102,7 @@ public class Table extends AbsTable {
 						result.finalCards[2] = tmpList.get(1).cards.get(0);
 						result.finalCards[3] = tmpList.get(1).cards.get(1);
 						result.finalCards[4] = tmpList.get(2).cards.get(0);
-						result.value = result.cardType.ordinal()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[2]%0x0F)<<8 + (result.finalCards[4]%0x0F) ;
+						result.value = result.cardType.getValue()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[2]%0x0F)<<8 + (result.finalCards[4]%0x0F) ;
 					}else if(tmpList.get(0).cards.size() == 2){
 						result.cardType = TCard.TWO_PAIR;
 						result.finalCards[0] = tmpList.get(0).cards.get(0);
@@ -1110,7 +1110,7 @@ public class Table extends AbsTable {
 						result.finalCards[2] = tmpList.get(1).cards.get(0);
 						result.finalCards[3] = tmpList.get(2).cards.get(0);
 						result.finalCards[4] = tmpList.get(3).cards.get(0);
-						result.value = result.cardType.ordinal()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F) ;
+						result.value = result.cardType.getValue()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F) ;
 					}else{
 						result.cardType = TCard.HIGHT;
 						result.finalCards[0] = tmpList.get(0).cards.get(0);
@@ -1118,7 +1118,7 @@ public class Table extends AbsTable {
 						result.finalCards[2] = tmpList.get(2).cards.get(0);
 						result.finalCards[3] = tmpList.get(3).cards.get(0);
 						result.finalCards[4] = tmpList.get(4).cards.get(0);
-						result.value = result.cardType.ordinal()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[1]%0x0F)<<12+ (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F) ;
+						result.value = result.cardType.getValue()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[1]%0x0F)<<12+ (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F) ;
 					}
 				}
 			}
