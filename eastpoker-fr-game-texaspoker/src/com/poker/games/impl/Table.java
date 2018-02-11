@@ -984,7 +984,7 @@ public class Table extends AbsTable {
 									result.finalCards[i] = color_cards_list.get(card_start+i);
 								}
 								result.finalCards[4] = color_cards_list.get(color_cards_list.size()-1);
-								result.value = result.cardType.getValue()<<20  + 1;
+								result.value = result.cardType.getValue()<<20  + ((result.finalCards[0]%max_value)<<16);
 							}
 						}else if(max_serial_count == 5){
 							result.cardType = TCard.STRAIGHT_FLUSH;
@@ -994,14 +994,14 @@ public class Table extends AbsTable {
 							for(int i = 0;i<result.finalCards.length;i++){
 								result.finalCards[i] = color_cards_list.get(card_start+i);
 							}
-							result.value = result.cardType.getValue()<<20 + result.finalCards[0]%max_value;
+							result.value = (result.cardType.getValue()<<20) + ((result.finalCards[0]%max_value)<<16);
 						}else{
 							result.cardType = TCard.FLUSH;
 							int size = color_cards_list.size();
 							for(int i = 0;i<result.finalCards.length;i++){
 								result.finalCards[i] = color_cards_list.get(size-5+i);
 							}
-							result.value = result.cardType.getValue()<<20 + (result.finalCards[0]%max_value)<<16 + (result.finalCards[1]%max_value)<<12+ (result.finalCards[2]%max_value)<<8 + (result.finalCards[3]%max_value)<<4 + (result.finalCards[4]%max_value);
+							result.value = (result.cardType.getValue()<<20) + ((result.finalCards[0]%max_value)<<16) + ((result.finalCards[1]%max_value)<<12)+ ((result.finalCards[2]%max_value)<<8) + ((result.finalCards[3]%max_value)<<4) + ((result.finalCards[4]%max_value));
 						}
 						break;
 					}
