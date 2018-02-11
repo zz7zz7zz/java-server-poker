@@ -869,7 +869,7 @@ public class Table extends AbsTable {
 	}
 	
 	public static void calculateCardResult(byte[] hands,byte[] flop,byte[] turn,byte[] river,Result result) {
-		
+		byte max_value = 16;
 		//花色
 		HashMap<Byte,ArrayList<Byte>> color_map = new HashMap<Byte,ArrayList<Byte>>();		
 		//花值
@@ -978,7 +978,7 @@ public class Table extends AbsTable {
 							}
 						}
 						if(max_serial_count == 4){
-							if(color_cards_list.get(card_start)%0x0F == 0x02 && color_cards_list.get(color_cards_list.size()-1)%0x0F == 0x0E){
+							if(color_cards_list.get(card_start)%max_value == 0x02 && color_cards_list.get(color_cards_list.size()-1)%max_value == 0x0E){
 								result.cardType = TCard.STRAIGHT_FLUSH;
 								for(int i = 0;i<4;i++){
 									result.finalCards[i] = color_cards_list.get(card_start+i);
@@ -994,14 +994,14 @@ public class Table extends AbsTable {
 							for(int i = 0;i<result.finalCards.length;i++){
 								result.finalCards[i] = color_cards_list.get(card_start+i);
 							}
-							result.value = result.cardType.getValue()<<20 + result.finalCards[0]%0x0F;
+							result.value = result.cardType.getValue()<<20 + result.finalCards[0]%max_value;
 						}else{
 							result.cardType = TCard.FLUSH;
 							int size = color_cards_list.size();
 							for(int i = 0;i<result.finalCards.length;i++){
 								result.finalCards[i] = color_cards_list.get(size-5+i);
 							}
-							result.value = result.cardType.getValue()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[1]%0x0F)<<12+ (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F);
+							result.value = result.cardType.getValue()<<20 + (result.finalCards[0]%max_value)<<16 + (result.finalCards[1]%max_value)<<12+ (result.finalCards[2]%max_value)<<8 + (result.finalCards[3]%max_value)<<4 + (result.finalCards[4]%max_value);
 						}
 						break;
 					}
@@ -1031,14 +1031,14 @@ public class Table extends AbsTable {
 						if(card == 0){
 							card = tmpList.get(i).cards.get(0);
 						}else{
-							if(tmpList.get(i).cards.get(0)%0x0F > card%0x0F){
+							if(tmpList.get(i).cards.get(0)%max_value > card%max_value){
 								card = tmpList.get(i).cards.get(0);
 							}
 						}
 					}
 				}
 				result.finalCards[4] = card;
-				result.value = result.cardType.getValue()<<20 + (result.finalCards[4]%0x0F);
+				result.value = result.cardType.getValue()<<20 + (result.finalCards[4]%max_value);
 			}
 			else if(tmpList.get(0).cards.size() == 3 && tmpList.get(1).cards.size() >=2){
 				result.cardType = TCard.FULL_HOUSE;
@@ -1047,7 +1047,7 @@ public class Table extends AbsTable {
 				result.finalCards[2] = tmpList.get(0).cards.get(2);
 				result.finalCards[3] = tmpList.get(1).cards.get(0);
 				result.finalCards[4] = tmpList.get(1).cards.get(1);
-				result.value = result.cardType.getValue()<<20 + (result.finalCards[4]%0x0F)<<16;
+				result.value = (result.cardType.getValue()<<20) + ((result.finalCards[0]%max_value)<<16)+ ((result.finalCards[3]%max_value)<<12);
 			}else if(result.cardType == TCard.FLUSH){
 				//doNothing
 			}else {
@@ -1083,7 +1083,7 @@ public class Table extends AbsTable {
 					for(int i = 0;i<result.finalCards.length;i++){
 						result.finalCards[i] = tmpList.get(card_start+i).cards.get(0);
 					}
-					result.value = result.cardType.getValue()<<20 + result.finalCards[0]%0x0F;
+					result.value = result.cardType.getValue()<<20 + result.finalCards[0]%max_value;
 				}
 				
 				if(result.cardType != TCard.STRAIGHT){
@@ -1094,7 +1094,7 @@ public class Table extends AbsTable {
 						result.finalCards[2] = tmpList.get(0).cards.get(2);
 						result.finalCards[3] = tmpList.get(1).cards.get(0);
 						result.finalCards[4] = tmpList.get(2).cards.get(0);
-						result.value = result.cardType.getValue()<<20 + (result.finalCards[3]%0x0F) <<4 + result.finalCards[4]%0x0F;
+						result.value = result.cardType.getValue()<<20 + (result.finalCards[3]%max_value) <<4 + result.finalCards[4]%max_value;
 					}else if(tmpList.get(0).cards.size() == 2 && tmpList.get(1).cards.size() == 2){
 						result.cardType = TCard.TWO_PAIR;
 						result.finalCards[0] = tmpList.get(0).cards.get(0);
@@ -1102,7 +1102,7 @@ public class Table extends AbsTable {
 						result.finalCards[2] = tmpList.get(1).cards.get(0);
 						result.finalCards[3] = tmpList.get(1).cards.get(1);
 						result.finalCards[4] = tmpList.get(2).cards.get(0);
-						result.value = result.cardType.getValue()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[2]%0x0F)<<8 + (result.finalCards[4]%0x0F) ;
+						result.value = result.cardType.getValue()<<20 + (result.finalCards[0]%max_value)<<16 + (result.finalCards[2]%max_value)<<8 + (result.finalCards[4]%max_value) ;
 					}else if(tmpList.get(0).cards.size() == 2){
 						result.cardType = TCard.TWO_PAIR;
 						result.finalCards[0] = tmpList.get(0).cards.get(0);
@@ -1110,7 +1110,7 @@ public class Table extends AbsTable {
 						result.finalCards[2] = tmpList.get(1).cards.get(0);
 						result.finalCards[3] = tmpList.get(2).cards.get(0);
 						result.finalCards[4] = tmpList.get(3).cards.get(0);
-						result.value = result.cardType.getValue()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F) ;
+						result.value = result.cardType.getValue()<<20 + (result.finalCards[0]%max_value)<<16 + (result.finalCards[2]%max_value)<<8 + (result.finalCards[3]%max_value)<<4 + (result.finalCards[4]%max_value) ;
 					}else{
 						result.cardType = TCard.HIGHT;
 						result.finalCards[0] = tmpList.get(0).cards.get(0);
@@ -1118,7 +1118,7 @@ public class Table extends AbsTable {
 						result.finalCards[2] = tmpList.get(2).cards.get(0);
 						result.finalCards[3] = tmpList.get(3).cards.get(0);
 						result.finalCards[4] = tmpList.get(4).cards.get(0);
-						result.value = result.cardType.getValue()<<20 + (result.finalCards[0]%0x0F)<<16 + (result.finalCards[1]%0x0F)<<12+ (result.finalCards[2]%0x0F)<<8 + (result.finalCards[3]%0x0F)<<4 + (result.finalCards[4]%0x0F) ;
+						result.value = result.cardType.getValue()<<20 + (result.finalCards[0]%max_value)<<16 + (result.finalCards[1]%max_value)<<12+ (result.finalCards[2]%max_value)<<8 + (result.finalCards[3]%max_value)<<4 + (result.finalCards[4]%max_value) ;
 					}
 				}
 			}
