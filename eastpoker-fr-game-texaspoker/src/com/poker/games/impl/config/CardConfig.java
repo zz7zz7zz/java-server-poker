@@ -445,7 +445,7 @@ public class CardConfig {
 	public static void min_two_pair(){
 		byte[] flop ={0x02,0x12,0x23};
 		byte[] turn ={0x27};
-		byte[] river ={0x16};
+		byte[] river ={0x15};
 		
 		Result result = new Result();
 		byte[] hands  = {0x13,0x04};
