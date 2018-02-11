@@ -97,7 +97,7 @@ public class TexasDefine {
 		@Override
 		public String toString() {
 			return "Result [cardType=" +cardType.name()+ ":"+cardType.getValue() + ", finalCards=" + PokerUtil.toHexString(finalCards) + PokerUtil.toSymbol(finalCards)+ ", value=" + value
-					+ "]";
+					+" resolveValue "+ PokerUtil.resolveValue(value)+ "]";
 		}
 	}
 	
