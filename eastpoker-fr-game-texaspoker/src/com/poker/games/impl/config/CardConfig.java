@@ -275,7 +275,7 @@ public class CardConfig {
 	}
 	
 	public static void min_straight_flush(){
-		byte[] flop ={0x04,0x05,0x06};
+		byte[] flop ={0x04,0x05,0x0e};
 		byte[] turn ={0x12};
 		byte[] river ={0x13};
 		
@@ -392,7 +392,7 @@ public class CardConfig {
 		byte[] river ={0x18};
 		
 		Result result = new Result();
-		byte[] hands  = {0x15,0x06};
+		byte[] hands  = {0x15,0x0e};
 		Table.calculateCardResult(hands, flop, turn, river, result);
 		
 		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
@@ -473,10 +473,10 @@ public class CardConfig {
 	public static void min_one_pair(){
 		byte[] flop ={0x02,0x12,0x23};
 		byte[] turn ={0x24};
-		byte[] river ={0x19};
+		byte[] river ={0x18};
 		
 		Result result = new Result();
-		byte[] hands  = {0x16,0x07};
+		byte[] hands  = {0x17,0x05};
 		Table.calculateCardResult(hands, flop, turn, river, result);
 		
 		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
