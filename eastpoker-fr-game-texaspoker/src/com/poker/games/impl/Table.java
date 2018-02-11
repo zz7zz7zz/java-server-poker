@@ -864,11 +864,11 @@ public class Table extends AbsTable {
      		if(null ==users[i] || !users[i].isPlaying() || users[i].isFold) {
      			continue;
      		}
-     		getCardResult(users[i].handCard, flop, turn, river, users[i].result);
+     		calculateCardResult(users[i].handCard, flop, turn, river, users[i].result);
 		}
 	}
 	
-	public static void getCardResult(byte[] hands,byte[] flop,byte[] turn,byte[] river,Result result) {
+	public static void calculateCardResult(byte[] hands,byte[] flop,byte[] turn,byte[] river,Result result) {
 		
 		//花色
 		HashMap<Byte,ArrayList<Byte>> color_map = new HashMap<Byte,ArrayList<Byte>>();		
