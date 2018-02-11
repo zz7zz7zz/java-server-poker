@@ -4,7 +4,9 @@ import java.util.HashMap;
 
 import com.open.net.client.utils.CfgParser;
 import com.open.net.client.utils.TextUtils;
+import com.poker.games.impl.Table;
 import com.poker.games.impl.define.PokerUtil;
+import com.poker.games.impl.define.TexasDefine.Result;
 
 
 
@@ -146,7 +148,7 @@ public class CardConfig {
 		if(null !=cards && cards.length >0) {
 			StringBuilder sb = new StringBuilder(12);
 			for(int i=0;i<cards.length;i++) {
-				sb.append(PokerUtil.formatCard(cards[i]));
+				sb.append(PokerUtil.toSymbol(cards[i]));
 			}
 			return sb.toString();
 		}
@@ -178,4 +180,32 @@ public class CardConfig {
 //		System.out.println((Long.toHexString(Long.MAX_VALUE)));
 //		System.out.println(-1%6);
 //	}
+	
+	public static void main(String arg[]) {
+		
+
+		byte[] flop ={0x2a,0x3a,0x09};
+		byte[] turn ={0x19};
+		byte[] river ={0x29};
+		
+		Result result = new Result();
+		byte[] hands  = {0x0e,0x1e};
+		Table.calculateCardResult(hands, flop, turn, river, result);
+		
+		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+		System.out.println(result.toString());
+		
+		System.out.println("--------------------");
+		
+		Result result2 = new Result();
+		byte[] hands2  = {0x0d,0x1d};
+		Table.calculateCardResult(hands2, flop, turn, river, result2);
+		
+		System.out.println(PokerUtil.toHexString(hands2)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+		System.out.println(PokerUtil.toSymbol(hands2)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+		System.out.println(result2.toString());
+		
+		System.out.println("--------------------");
+	}
 }
