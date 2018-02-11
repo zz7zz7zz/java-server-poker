@@ -184,7 +184,7 @@ public class CardConfig {
 	public static void main(String arg[]) {
 		
 
-		byte[] flop ={0x2a,0x3a,0x09};
+		byte[] flop ={0x2e,0x3e,0x09};
 		byte[] turn ={0x19};
 		byte[] river ={0x29};
 		

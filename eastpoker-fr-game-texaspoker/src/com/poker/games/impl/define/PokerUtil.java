@@ -65,7 +65,7 @@ public final class PokerUtil {
 		
 		card = (byte) (value >> 0 & 0xF);
 		if(card>0){
-			sb.append(" card " + values[getValue(card)]);
+			sb.append(" " + values[getValue(card)]);
 		}
 		
 		sb.append(" ]");

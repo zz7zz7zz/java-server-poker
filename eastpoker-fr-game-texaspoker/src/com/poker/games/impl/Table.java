@@ -1021,32 +1021,23 @@ public class Table extends AbsTable {
 			
 			if(tmpList.get(0).cards.size() == 4){
 				result.cardType = TCard.FOUR;
+				
 				for(int i = 0;i<4;i++){
 					result.finalCards[i] = tmpList.get(0).cards.get(i);
 				}
+				result.finalCards[4] = tmpList.get(1).cards.get(0);
 				
-				byte card = 0;
-				for(int i = 0;i < tmpList.size();i++){
-					if(tmpList.size() < 4){
-						if(card == 0){
-							card = tmpList.get(i).cards.get(0);
-						}else{
-							if(tmpList.get(i).cards.get(0)%max_value > card%max_value){
-								card = tmpList.get(i).cards.get(0);
-							}
-						}
-					}
-				}
-				result.finalCards[4] = card;
-				result.value = result.cardType.getValue()<<20 + (result.finalCards[4]%max_value);
+				result.value = (result.cardType.getValue()<<20) +((result.finalCards[0]%max_value)<<16)+ ((result.finalCards[4]%max_value)<<12);
 			}
 			else if(tmpList.get(0).cards.size() == 3 && tmpList.get(1).cards.size() >=2){
 				result.cardType = TCard.FULL_HOUSE;
+				
 				result.finalCards[0] = tmpList.get(0).cards.get(0);
 				result.finalCards[1] = tmpList.get(0).cards.get(1);
 				result.finalCards[2] = tmpList.get(0).cards.get(2);
 				result.finalCards[3] = tmpList.get(1).cards.get(0);
 				result.finalCards[4] = tmpList.get(1).cards.get(1);
+				
 				result.value = (result.cardType.getValue()<<20) + ((result.finalCards[0]%max_value)<<16)+ ((result.finalCards[3]%max_value)<<12);
 			}else if(result.cardType == TCard.FLUSH){
 				//doNothing
