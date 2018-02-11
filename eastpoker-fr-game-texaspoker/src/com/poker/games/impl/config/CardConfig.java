@@ -304,7 +304,7 @@ public class CardConfig {
 	
 	public static void min_four(){
 		byte[] flop ={0x02,0x12,0x22};
-		byte[] turn ={0x15};
+		byte[] turn ={0x14};
 		byte[] river ={0x13};
 		
 		Result result = new Result();

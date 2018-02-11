@@ -1076,6 +1076,13 @@ public class Table extends AbsTable {
 					result.finalCards[i] = tmpList.get(0).cards.get(i);
 				}
 				result.finalCards[4] = tmpList.get(1).cards.get(0);
+				//取一张最大的牌
+				for(int i = 2;i<tmpList.size();i++){
+					if(tmpList.get(i).cards.get(0)>result.finalCards[4]){
+						result.finalCards[4] = tmpList.get(i).cards.get(0);
+					}
+				}
+				
 				result.value = (result.cardType.getValue()<<20) +((result.finalCards[0]%max_value)<<16)+ ((result.finalCards[4]%max_value)<<12);
 			}
 			else if(tmpList.get(0).cards.size() == 3 && tmpList.get(1).cards.size() >=2){
