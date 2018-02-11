@@ -13,7 +13,27 @@ public final class PokerUtil {
 		return (byte) (card & 0x0F);
 	}
 	
-	public final static String formatCard(byte card) {
+	public final static String toSymbol(byte card) {
 		return colr[getColor(card)]+value[getValue(card)];
+	}
+	
+	public final static String toSymbol(byte[] card) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("[");
+		for(int i =0;i<card.length;i++){
+			sb.append(" "+toSymbol(card[i]));
+		}
+		sb.append(" ]");
+		return sb.toString();
+	}
+	
+	public final static String toHexString(byte[] card) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("[");
+		for(int i =0;i<card.length;i++){
+			sb.append(" 0x"+Integer.toHexString(card[i]));
+		}
+		sb.append(" ]");
+		return sb.toString();
 	}
 }

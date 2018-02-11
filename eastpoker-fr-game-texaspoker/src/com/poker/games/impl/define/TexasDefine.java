@@ -87,10 +87,17 @@ public class TexasDefine {
 		public TCard cardType;//牌的类型
 		public byte[] finalCards=new byte[5];//最好的牌型	
 		public int    value;//牌型的值，用于比较牌的大小
+		
 		public void clear(){
 			cardType = TCard.NO;
 			Arrays.fill(finalCards, (byte)0);
 			value = 0;
+		}
+
+		@Override
+		public String toString() {
+			return "Result [cardType=" +cardType.name()+ ":"+cardType.getValue() + ", finalCards=" + PokerUtil.toHexString(finalCards) + PokerUtil.toSymbol(finalCards)+ ", value=" + value
+					+ "]";
 		}
 	}
 	
