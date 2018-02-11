@@ -19,10 +19,10 @@ import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.packet.PacketInfo;
 import com.poker.packet.PacketTransfer;
-import com.poker.protocols.game.GameServerProto;
-import com.poker.protocols.game.GameServerProto.GameServer;
-import com.poker.protocols.game.GameTableProto.GameTable;
 import com.poker.protocols.game.client.RequestLoginGameProto.RequestLoginGame;
+import com.poker.protocols.game.server.GameServerProto;
+import com.poker.protocols.game.server.GameServerProto.GameServer;
+import com.poker.protocols.game.server.GameTableProto.GameTable;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 
 
