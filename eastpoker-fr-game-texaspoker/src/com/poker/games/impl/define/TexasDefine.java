@@ -84,9 +84,9 @@ public class TexasDefine {
 	}
 	
 	public static class Result{
-		public TCard cardType;//牌的类型
+		public TCard cardType = TCard.NO;//牌的类型
 		public byte[] finalCards=new byte[5];//最好的牌型	
-		public int    value;//牌型的值，用于比较牌的大小
+		public int    value = 0;//牌型的值，用于比较牌的大小
 		
 		public void clear(){
 			cardType = TCard.NO;
@@ -107,6 +107,17 @@ public class TexasDefine {
 		public ArrayList<Integer> seatIds = new ArrayList<>();
 		
 //		byte seatIds;//哪些座位上的人参与分成，按位运算
+	}
+	
+	//按牌值-进行倒序排序
+	public static class CardComparator implements Comparator<Byte>{
+
+		@Override
+		public int compare(Byte o1, Byte o2) {
+			// TODO Auto-generated method stub
+			return o2 - o1;
+		}
+
 	}
 	
 	public static class PotComparator implements Comparator<User>  
@@ -142,6 +153,7 @@ public class TexasDefine {
 		}
 	}
 	
+	//按牌值数目，再按牌值-进行倒序排序
 	public static class PairComparator implements Comparator<Pair>{
 		
 		@Override
@@ -151,6 +163,15 @@ public class TexasDefine {
 				return o2.color_value - o1.color_value;
 			}
 			return ret;
+		} 
+	}
+	
+	//按牌值-进行倒序排序
+	public static class PairComparator2 implements Comparator<Pair>{
+		
+		@Override
+		public int compare(Pair o1, Pair o2) {
+			return o2.color_value - o1.color_value;
 		} 
 	}
 }
