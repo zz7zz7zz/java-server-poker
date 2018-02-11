@@ -977,15 +977,13 @@ public class Table extends AbsTable {
 								serial_count =1;
 							}
 						}
-						if(max_serial_count == 4){
-							if(color_cards_list.get(card_start)%max_value == 0x02 && color_cards_list.get(color_cards_list.size()-1)%max_value == 0x0E){
-								result.cardType = TCard.STRAIGHT_FLUSH;
-								for(int i = 0;i<4;i++){
-									result.finalCards[i] = color_cards_list.get(card_start+i);
-								}
-								result.finalCards[4] = color_cards_list.get(color_cards_list.size()-1);
-								result.value = result.cardType.getValue()<<20  + ((result.finalCards[0]%max_value)<<16);
+						if(max_serial_count == 4 && (color_cards_list.get(card_start)%max_value == 0x02 && color_cards_list.get(color_cards_list.size()-1)%max_value == 0x0E)){
+							result.cardType = TCard.STRAIGHT_FLUSH;
+							for(int i = 0;i<4;i++){
+								result.finalCards[i] = color_cards_list.get(card_start+i);
 							}
+							result.finalCards[4] = color_cards_list.get(color_cards_list.size()-1);
+							result.value = result.cardType.getValue()<<20  + ((result.finalCards[0]%max_value)<<16);
 						}else if(max_serial_count == 5){
 							result.cardType = TCard.STRAIGHT_FLUSH;
 							if(color_cards_list.get(card_start) == 0x0A){
