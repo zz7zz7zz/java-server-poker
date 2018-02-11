@@ -184,12 +184,12 @@ public class CardConfig {
 	public static void main(String arg[]) {
 		
 
-		byte[] flop ={0x0a,0x0b,0x0c};
-		byte[] turn ={0x19};
+		byte[] flop ={0x0a,0x3b,0x0c};
+		byte[] turn ={0x39};
 		byte[] river ={0x29};
 		
 		Result result = new Result();
-		byte[] hands  = {0x0d,0x0e};
+		byte[] hands  = {0x09,0x0e};
 		Table.calculateCardResult(hands, flop, turn, river, result);
 		
 		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
