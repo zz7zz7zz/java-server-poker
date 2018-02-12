@@ -1,5 +1,7 @@
 package com.poker.games.impl;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,7 +44,8 @@ public class Table extends AbsTable {
 	public int count;
 	
 	//-----------------------------------------------------
-	public long   cardFlags = Long.MAX_VALUE;
+	public String game_squence_id ;//由gameId-gamelevel-gameserverid-timestamp
+	public long cardFlags = Long.MAX_VALUE;
 	
 	public int squenceId = 0;
 	
@@ -322,9 +325,10 @@ public class Table extends AbsTable {
         	return;
         }
         
-        //2.找出小盲，大盲位，按钮位
+        game_squence_id = String.format("%d-%d-%d-%d", mGameConfig.game_id,mGameConfig.level,super.mConfig.server_id,new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date(System.currentTimeMillis())));
         
-        //2.3找Button位
+        //2.找出按钮位 , 小盲，大盲位
+        //2.1找Button位
         int next_seatId_index = 0 ;
         if(btn_seateId == -1){//说明是游戏刚开始，没有持续
 			long t = System.currentTimeMillis();//获得当前时间的毫秒数
@@ -370,9 +374,8 @@ public class Table extends AbsTable {
     	}
     	bb_seatid = next_seatId_index;
     	
-    	//3.发送游戏开始数据
-    	
-		//强制玩家交Ante,小盲大盲强制下盲注
+
+		//3.强制玩家交Ante,小盲大盲强制下盲注
 		for(int i =0;i<users.length;i++) {
      		if(null ==users[i] || users[i].play_status != UserStatus.PLAY) {
      			continue;
@@ -400,6 +403,7 @@ public class Table extends AbsTable {
 		sb_force_bet = users[sb_seatid].round_chip;
 		bb_force_bet = users[bb_seatid].round_chip;
 		
+    	//4.发送游戏开始数据
     	squenceId++;
     	broadcastToClient(TexasCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.gameStart(sb_seatid, bb_seatid, btn_seateId, ante_all,sb_force_bet,bb_force_bet,this),null);
     	

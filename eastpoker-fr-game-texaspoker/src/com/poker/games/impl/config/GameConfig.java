@@ -9,7 +9,7 @@ import com.open.net.client.utils.CfgParser;
 
 public class GameConfig {
 
-	public int id;
+	public int game_id;
 	public int level;
 	public String level_name;
 	
@@ -37,7 +37,7 @@ public class GameConfig {
     protected void initFileConfig(HashMap<String,Object> map){
     	if(null !=map){
     		
-    		id = CfgParser.getInt(map, "Game","game_id");
+    		game_id = CfgParser.getInt(map, "Game","game_id");
     		level = CfgParser.getInt(map, "Game","level");
     		level_name = CfgParser.getString(map, "Game","level_name");
     		
@@ -79,7 +79,7 @@ public class GameConfig {
 
 	@Override
 	public String toString() {
-		return "GameConfig [id=" + id + ", level=" + level + ", level_name=" + level_name + ", table_count="
+		return "GameConfig [game_id=" + game_id + ", level=" + level + ", level_name=" + level_name + ", table_count="
 				+ table_count + ", table_min_user=" + table_min_user + ", table_max_user=" + table_max_user
 				+ ", table_min_chip=" + table_min_chip + ", table_max_chip=" + table_max_chip + ", table_init_chip="
 				+ table_init_chip + ", table_ante=" + Arrays.toString(table_ante) + ", table_blind="
