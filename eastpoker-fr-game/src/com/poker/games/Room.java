@@ -88,7 +88,7 @@ public class Room {
     	}else{
 
     		if(null == mUser){
-    			Logger.v(TAG+ " cmd be unable to handle user null " + uid + " cmd "+cmd);
+    			Logger.v(TAG+ " cmd be unable to handle user null " + uid + " cmd 0x"+Integer.toHexString(cmd));
 				return;
 			}
     		
