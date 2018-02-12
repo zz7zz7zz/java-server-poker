@@ -44,7 +44,7 @@ public class Table extends AbsTable {
 	public int count;
 	
 	//-----------------------------------------------------
-	public String game_sequence_id ;//由gameId-gamelevel-gameserverid-timestamp
+	public String game_sequence_id ="";//由gameId-gamelevel-gameserverid-timestamp
 	public long cardFlags = Long.MAX_VALUE;
 	
 	public int sequence_id = 0;
@@ -112,7 +112,8 @@ public class Table extends AbsTable {
 		}else if(ret == LoginResult.LOGIN_SUCCESS_ALREADY_EXIST){
 			onReLogin(mUser);
 		}else if(ret == LoginResult.LOGIN_FAILED_FULL){
-			sendToUser(BaseGameCmd.CMD_SERVER_LOGIN_ERR,0,ErrorServer.error(BaseGameCmd.ERR_CODE_LOGIN_TABLE_FULL,""),mUser);
+			sendToUser(BaseGameCmd.CMD_SERVER_LOGIN_ERR,++sequence_id,ErrorServer.error(BaseGameCmd.ERR_CODE_LOGIN_TABLE_FULL,""),mUser);
+	    	printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_LOGIN_ERR, "");
 		}
 		return ret;
 	};
@@ -120,7 +121,8 @@ public class Table extends AbsTable {
 	@Override
 	public int onUserReady(User mUser){
 		if(userReady(mUser) == 1){
-			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERREADY, sequence_id, TexasGameServer.broadUserReady(mUser),mUser);
+			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERREADY, ++sequence_id, TexasGameServer.broadUserReady(mUser),mUser);
+			printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_BROAD_USERREADY, "");
 			return 1;
 		}
 		return 0;
@@ -130,7 +132,8 @@ public class Table extends AbsTable {
 	public LogoutResult onUserExit(User mUser){
 		LogoutResult ret= userExit(mUser);
 		if(ret ==  LogoutResult.LOGOUT_SUCCESS){
-			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, sequence_id, TexasGameServer.broadUserLogout(mUser),mUser);
+			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, ++sequence_id, TexasGameServer.broadUserLogout(mUser),mUser);
+			printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, "");
 		}
 		return ret;
 	};
@@ -145,7 +148,8 @@ public class Table extends AbsTable {
 		//两个状态不一致
 		if(mUser.isOnLine() != isOnLine){
 			mUser.setOnLine(isOnLine);
-			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USEROFFLINE, sequence_id, TexasGameServer.broadUserOffline(mUser.uid,mUser.isOnLine()),mUser);
+			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USEROFFLINE, ++sequence_id, TexasGameServer.broadUserOffline(mUser.uid,mUser.isOnLine()),mUser);
+			printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_BROAD_USEROFFLINE, "");
 			return 1;
 		}
 
@@ -244,12 +248,12 @@ public class Table extends AbsTable {
 	protected int onFirstLogin(User mUser) {
 		
 		//1。对进来的用户广播桌子上有哪些用户
-		sequence_id++;
-		sendToUser(BaseGameCmd.CMD_SERVER_USERLOGIN, sequence_id, TexasGameServer.userLogin(mUser,this,mGameConfig),mUser);
+		sendToUser(BaseGameCmd.CMD_SERVER_USERLOGIN, ++sequence_id, TexasGameServer.userLogin(mUser,this,mGameConfig),mUser);
+		printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_USERLOGIN, "");
 		
 		//2.对桌子上的用户广播谁进来类
-		sequence_id++;
-		broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERLOGIN, sequence_id, TexasGameServer.broadUserLogin(mUser),mUser);
+		broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERLOGIN, ++sequence_id, TexasGameServer.broadUserLogin(mUser),mUser);
+		printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_BROAD_USERLOGIN, "");
 		
 		//3.判断游戏谁否可以开始了
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){
@@ -265,12 +269,13 @@ public class Table extends AbsTable {
 
 	protected int onReLogin(User mUser) {
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){//处于游戏中，表示重连
-			sequence_id++;
-			sendToUser(TexasCmd.CMD_SERVER_RECONNECT, sequence_id, TexasGameServer.reconnect(this,(User)mUser,mGameConfig),mUser);
+			sendToUser(TexasCmd.CMD_SERVER_RECONNECT, ++sequence_id, TexasGameServer.reconnect(this,(User)mUser,mGameConfig),mUser);
+			printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_RECONNECT, "");
 			return 0;
 		}else{//游戏暂停中，直接返回登录即可
 			sequence_id++;
-			sendToUser(BaseGameCmd.CMD_SERVER_USERLOGIN, sequence_id, TexasGameServer.userLogin((User)mUser,this,mGameConfig),mUser);
+			sendToUser(BaseGameCmd.CMD_SERVER_USERLOGIN, ++sequence_id, TexasGameServer.userLogin((User)mUser,this,mGameConfig),mUser);
+			printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_USERLOGIN, "");
 		}
 		return 0;
 	}
@@ -404,8 +409,7 @@ public class Table extends AbsTable {
 		bb_force_bet = users[bb_seatid].round_chip;
 		
     	//4.发送游戏开始数据
-    	sequence_id++;
-    	broadcastToUser(TexasCmd.CMD_SERVER_GAME_START, sequence_id, TexasGameServer.gameStart(btn_seateId,sb_seatid, bb_seatid, ante_all,sb_force_bet,bb_force_bet,this),null);
+    	broadcastToUser(TexasCmd.CMD_SERVER_GAME_START, ++sequence_id, TexasGameServer.gameStart(btn_seateId,sb_seatid, bb_seatid, ante_all,sb_force_bet,bb_force_bet,this),null);
     	printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_GAME_START, "");
     	
   		step = GameStep.START;
@@ -456,8 +460,8 @@ public class Table extends AbsTable {
      		}
      		
      		User user = users[i];
-     		sequence_id++;
-     		sendToUser(TexasCmd.CMD_SERVER_DEAL_PREFLOP, sequence_id, TexasGameServer.dealPreFlop( user.handCard),user);
+
+     		sendToUser(TexasCmd.CMD_SERVER_DEAL_PREFLOP, ++sequence_id, TexasGameServer.dealPreFlop( user.handCard),user);
         	printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_DEAL_PREFLOP, "");
 	    }
 		 
@@ -487,8 +491,7 @@ public class Table extends AbsTable {
     		}
 		}
   		
-		sequence_id++;
-		broadcastToUser(TexasCmd.CMD_SERVER_DEAL_FLOP, sequence_id, TexasGameServer.dealFlop(flop),null);
+		broadcastToUser(TexasCmd.CMD_SERVER_DEAL_FLOP, ++sequence_id, TexasGameServer.dealFlop(flop),null);
     	printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_DEAL_FLOP, "");
     	
 		step = GameStep.FLOP;
@@ -517,8 +520,7 @@ public class Table extends AbsTable {
     		}
 		}
 
-		sequence_id++;
-		broadcastToUser(TexasCmd.CMD_SERVER_DEAL_TURN, sequence_id, TexasGameServer.dealTrun(turn),null);
+		broadcastToUser(TexasCmd.CMD_SERVER_DEAL_TURN, ++sequence_id, TexasGameServer.dealTrun(turn),null);
     	printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_DEAL_TURN, "");
     	
   		step = GameStep.TRUN;
@@ -547,8 +549,7 @@ public class Table extends AbsTable {
     		}
 		}
   		
-		sequence_id++;
-		broadcastToUser(TexasCmd.CMD_SERVER_DEAL_RIVER, sequence_id,TexasGameServer.dealRiver(river),null);
+		broadcastToUser(TexasCmd.CMD_SERVER_DEAL_RIVER, ++sequence_id,TexasGameServer.dealRiver(river),null);
     	printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_DEAL_RIVER, "");
     	
   		step = GameStep.RIVER;
@@ -648,8 +649,7 @@ public class Table extends AbsTable {
 					max_round_chip_seatid = user.seatId;
 				}
 				
-				sequence_id++;
-				broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, sequence_id, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip),user);
+				broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, ++sequence_id, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip),user);
 				printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, "");
 				
 				next_option(user);
@@ -724,8 +724,7 @@ public class Table extends AbsTable {
 			op_min_raise_chip = Math.min(max_round_chip *2,users[op_seatid].chip);
 			op_max_raise_chip = users[op_seatid].chip;
 
-			sequence_id++;
-			broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, sequence_id, TexasGameServer.broadcastNextOperateUser(op_seatid,op_call_chip,op_min_raise_chip,op_max_raise_chip),null);
+			broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, ++sequence_id, TexasGameServer.broadcastNextOperateUser(op_seatid,op_call_chip,op_min_raise_chip,op_max_raise_chip),null);
 			printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, "");
 		}
 	}
@@ -834,8 +833,8 @@ public class Table extends AbsTable {
 				for(int i= pot_start_index;i<potList.size();i++){
 					pots[i-pot_start_index] = potList.get(i).pot_chips;
 				}
-				sequence_id++;
-				broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_POTS, sequence_id, TexasGameServer.broadcastPots(pots),null);
+
+				broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_POTS, ++sequence_id, TexasGameServer.broadcastPots(pots),null);
 				printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_POTS, "");
 			}
 		}
@@ -857,8 +856,8 @@ public class Table extends AbsTable {
 	}
 	
 	public void showHands() {
-		sequence_id++;
-		broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_SHOW_HAND, sequence_id, TexasGameServer.showHand(this),null);
+
+		broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_SHOW_HAND, ++sequence_id, TexasGameServer.showHand(this),null);
 		printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_SHOW_HAND, "");
 		
 		step = GameStep.SHOWHAND;
@@ -932,8 +931,7 @@ public class Table extends AbsTable {
 		calculateCardType();
 		calculatePot();
 		
-		sequence_id++;
-		broadcastToUser(TexasCmd.CMD_SERVER_GAME_OVER, sequence_id, TexasGameServer.gameOver(this),null);
+		broadcastToUser(TexasCmd.CMD_SERVER_GAME_OVER, ++sequence_id, TexasGameServer.gameOver(this),null);
 		printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_GAME_OVER, "");
 		
 		//--------------------------------------------------------------------------------
