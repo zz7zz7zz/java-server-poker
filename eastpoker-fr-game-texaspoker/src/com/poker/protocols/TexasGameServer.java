@@ -394,7 +394,7 @@ public class TexasGameServer {
 			resultBuilder.setSeateId(user.seatId);
 			resultBuilder.setCardResult(user.result.cardType.getValue());
 			for(int j=0;j<user.result.finalCards.length;j++) {
-				resultBuilder.addCards(user.result.finalCards[i]);
+				resultBuilder.addCards(user.result.finalCards[j]);
 			}
 			resultBuilder.setWinChip(user.win_chip);
 			resultBuilder.setChip(user.chip);
