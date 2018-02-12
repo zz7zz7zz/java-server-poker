@@ -737,15 +737,17 @@ public class Table extends AbsTable {
 	
 	private void nextStep(){
 		
-		handPots();
-		
 		if(step == GameStep.PREFLOP) {
+			handPots();
 			dealFlop();
 		}else if(step == GameStep.FLOP) {
+			handPots();
 			dealTrun();
 		}else if(step == GameStep.TRUN) {
+			handPots();
 			dealRiver();
 		}else if(step == GameStep.RIVER) {
+			handPots();
 			showHands();
 		}else{
 			stopGame();
