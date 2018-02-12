@@ -37,7 +37,7 @@ public class GameConfig {
     protected void initFileConfig(HashMap<String,Object> map){
     	if(null !=map){
     		
-    		game_id = CfgParser.getInt(map, "Game","game_id");
+    		game_id = CfgParser.getInt(map, "Game","id");
     		level = CfgParser.getInt(map, "Game","level");
     		level_name = CfgParser.getString(map, "Game","level_name");
     		
