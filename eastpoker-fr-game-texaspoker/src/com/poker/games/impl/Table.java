@@ -44,10 +44,10 @@ public class Table extends AbsTable {
 	public int count;
 	
 	//-----------------------------------------------------
-	public String game_squence_id ;//由gameId-gamelevel-gameserverid-timestamp
+	public String game_sequence_id ;//由gameId-gamelevel-gameserverid-timestamp
 	public long cardFlags = Long.MAX_VALUE;
 	
-	public int squenceId = 0;
+	public int sequence_id = 0;
 	
 	public long ante;
 	public long sb_chip;
@@ -120,7 +120,7 @@ public class Table extends AbsTable {
 	@Override
 	public int onUserReady(User mUser){
 		if(userReady(mUser) == 1){
-			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERREADY, squenceId, TexasGameServer.broadUserReady(mUser),mUser);
+			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERREADY, sequence_id, TexasGameServer.broadUserReady(mUser),mUser);
 			return 1;
 		}
 		return 0;
@@ -130,7 +130,7 @@ public class Table extends AbsTable {
 	public LogoutResult onUserExit(User mUser){
 		LogoutResult ret= userExit(mUser);
 		if(ret ==  LogoutResult.LOGOUT_SUCCESS){
-			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, squenceId, TexasGameServer.broadUserLogout(mUser),mUser);
+			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, sequence_id, TexasGameServer.broadUserLogout(mUser),mUser);
 		}
 		return ret;
 	};
@@ -145,7 +145,7 @@ public class Table extends AbsTable {
 		//两个状态不一致
 		if(mUser.isOnLine() != isOnLine){
 			mUser.setOnLine(isOnLine);
-			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USEROFFLINE, squenceId, TexasGameServer.broadUserOffline(mUser.uid,mUser.isOnLine()),mUser);
+			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USEROFFLINE, sequence_id, TexasGameServer.broadUserOffline(mUser.uid,mUser.isOnLine()),mUser);
 			return 1;
 		}
 
@@ -244,12 +244,12 @@ public class Table extends AbsTable {
 	protected int onFirstLogin(User mUser) {
 		
 		//1。对进来的用户广播桌子上有哪些用户
-		squenceId++;
-		sendToUser(BaseGameCmd.CMD_SERVER_USERLOGIN, squenceId, TexasGameServer.userLogin(mUser,this,mGameConfig),mUser);
+		sequence_id++;
+		sendToUser(BaseGameCmd.CMD_SERVER_USERLOGIN, sequence_id, TexasGameServer.userLogin(mUser,this,mGameConfig),mUser);
 		
 		//2.对桌子上的用户广播谁进来类
-		squenceId++;
-		broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERLOGIN, squenceId, TexasGameServer.broadUserLogin(mUser),mUser);
+		sequence_id++;
+		broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERLOGIN, sequence_id, TexasGameServer.broadUserLogin(mUser),mUser);
 		
 		//3.判断游戏谁否可以开始了
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){
@@ -265,12 +265,12 @@ public class Table extends AbsTable {
 
 	protected int onReLogin(User mUser) {
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){//处于游戏中，表示重连
-			squenceId++;
-			sendToUser(TexasCmd.CMD_SERVER_RECONNECT, squenceId, TexasGameServer.reconnect(this,(User)mUser,mGameConfig),mUser);
+			sequence_id++;
+			sendToUser(TexasCmd.CMD_SERVER_RECONNECT, sequence_id, TexasGameServer.reconnect(this,(User)mUser,mGameConfig),mUser);
 			return 0;
 		}else{//游戏暂停中，直接返回登录即可
-			squenceId++;
-			sendToUser(BaseGameCmd.CMD_SERVER_USERLOGIN, squenceId, TexasGameServer.userLogin((User)mUser,this,mGameConfig),mUser);
+			sequence_id++;
+			sendToUser(BaseGameCmd.CMD_SERVER_USERLOGIN, sequence_id, TexasGameServer.userLogin((User)mUser,this,mGameConfig),mUser);
 		}
 		return 0;
 	}
@@ -325,7 +325,7 @@ public class Table extends AbsTable {
         	return;
         }
         
-        game_squence_id = String.format("%d-%d-%d-%d", mGameConfig.game_id,mGameConfig.level,super.mConfig.server_id,new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date(System.currentTimeMillis())));
+        game_sequence_id = String.format("%d-%d-%d-%d", mGameConfig.game_id,mGameConfig.level,super.mConfig.server_id,new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date(System.currentTimeMillis())));
         
         //2.找出按钮位 , 小盲，大盲位
         //2.1找Button位
@@ -404,8 +404,9 @@ public class Table extends AbsTable {
 		bb_force_bet = users[bb_seatid].round_chip;
 		
     	//4.发送游戏开始数据
-    	squenceId++;
-    	broadcastToUser(TexasCmd.CMD_SERVER_GAME_START, squenceId, TexasGameServer.gameStart(sb_seatid, bb_seatid, btn_seateId, ante_all,sb_force_bet,bb_force_bet,this),null);
+    	sequence_id++;
+    	broadcastToUser(TexasCmd.CMD_SERVER_GAME_START, sequence_id, TexasGameServer.gameStart(btn_seateId,sb_seatid, bb_seatid, ante_all,sb_force_bet,bb_force_bet,this),null);
+    	printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_GAME_START, "");
     	
   		step = GameStep.START;
   		
@@ -455,8 +456,9 @@ public class Table extends AbsTable {
      		}
      		
      		User user = users[i];
-     		squenceId++;
-     		sendToUser(TexasCmd.CMD_SERVER_DEAL_PREFLOP, squenceId, TexasGameServer.dealPreFlop( user.handCard),user);
+     		sequence_id++;
+     		sendToUser(TexasCmd.CMD_SERVER_DEAL_PREFLOP, sequence_id, TexasGameServer.dealPreFlop( user.handCard),user);
+        	printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_DEAL_PREFLOP, "");
 	    }
 		 
   		step = GameStep.PREFLOP;
@@ -485,9 +487,10 @@ public class Table extends AbsTable {
     		}
 		}
   		
-		squenceId++;
-		broadcastToUser(TexasCmd.CMD_SERVER_DEAL_FLOP, squenceId, TexasGameServer.dealFlop(flop),null);
-		
+		sequence_id++;
+		broadcastToUser(TexasCmd.CMD_SERVER_DEAL_FLOP, sequence_id, TexasGameServer.dealFlop(flop),null);
+    	printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_DEAL_FLOP, "");
+    	
 		step = GameStep.FLOP;
 		next_option(null);
 	}
@@ -514,9 +517,10 @@ public class Table extends AbsTable {
     		}
 		}
 
-		squenceId++;
-		broadcastToUser(TexasCmd.CMD_SERVER_DEAL_TURN, squenceId, TexasGameServer.dealTrun(turn),null);
-		
+		sequence_id++;
+		broadcastToUser(TexasCmd.CMD_SERVER_DEAL_TURN, sequence_id, TexasGameServer.dealTrun(turn),null);
+    	printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_DEAL_TURN, "");
+    	
   		step = GameStep.TRUN;
 		next_option(null);
 	}
@@ -543,9 +547,10 @@ public class Table extends AbsTable {
     		}
 		}
   		
-		squenceId++;
-		broadcastToUser(TexasCmd.CMD_SERVER_DEAL_RIVER, squenceId,TexasGameServer.dealRiver(river),null);
-		
+		sequence_id++;
+		broadcastToUser(TexasCmd.CMD_SERVER_DEAL_RIVER, sequence_id,TexasGameServer.dealRiver(river),null);
+    	printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_DEAL_RIVER, "");
+    	
   		step = GameStep.RIVER;
 		next_option(null);
 	}
@@ -643,8 +648,9 @@ public class Table extends AbsTable {
 					max_round_chip_seatid = user.seatId;
 				}
 				
-				squenceId++;
-				broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, squenceId, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip),user);
+				sequence_id++;
+				broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, sequence_id, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip),user);
+				printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, "");
 				
 				next_option(user);
 			}
@@ -718,8 +724,9 @@ public class Table extends AbsTable {
 			op_min_raise_chip = Math.min(max_round_chip *2,users[op_seatid].chip);
 			op_max_raise_chip = users[op_seatid].chip;
 
-			squenceId++;
-			broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, squenceId, TexasGameServer.broadcastNextOperateUser(op_seatid,op_call_chip,op_min_raise_chip,op_max_raise_chip),null);
+			sequence_id++;
+			broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, sequence_id, TexasGameServer.broadcastNextOperateUser(op_seatid,op_call_chip,op_min_raise_chip,op_max_raise_chip),null);
+			printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, "");
 		}
 	}
 	
@@ -827,8 +834,9 @@ public class Table extends AbsTable {
 				for(int i= pot_start_index;i<potList.size();i++){
 					pots[i-pot_start_index] = potList.get(i).pot_chips;
 				}
-				squenceId++;
-				broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_POTS, squenceId, TexasGameServer.broadcastPots(pots),null);
+				sequence_id++;
+				broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_POTS, sequence_id, TexasGameServer.broadcastPots(pots),null);
+				printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_POTS, "");
 			}
 		}
 
@@ -849,10 +857,11 @@ public class Table extends AbsTable {
 	}
 	
 	public void showHands() {
-		squenceId++;
-		broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_SHOW_HAND, squenceId, TexasGameServer.showHand(this),null);
-		step = GameStep.SHOWHAND;
+		sequence_id++;
+		broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_SHOW_HAND, sequence_id, TexasGameServer.showHand(this),null);
+		printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_SHOW_HAND, "");
 		
+		step = GameStep.SHOWHAND;
 		nextStep();
 	}
 	
@@ -923,8 +932,9 @@ public class Table extends AbsTable {
 		calculateCardType();
 		calculatePot();
 		
-		squenceId++;
-		broadcastToUser(TexasCmd.CMD_SERVER_GAME_OVER, squenceId, TexasGameServer.gameOver(this),null);
+		sequence_id++;
+		broadcastToUser(TexasCmd.CMD_SERVER_GAME_OVER, sequence_id, TexasGameServer.gameOver(this),null);
+		printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_GAME_OVER, "");
 		
 		//--------------------------------------------------------------------------------
 		super.stopGame();
@@ -945,7 +955,7 @@ public class Table extends AbsTable {
 				
 		step = GameStep.STOP;
 		cardFlags |= Long.MAX_VALUE;
-		squenceId = 0;
+		sequence_id = 0;
 		
 		op_seatid = -1;
 		op_sets = 0;
@@ -970,7 +980,7 @@ public class Table extends AbsTable {
 		
 		step = GameStep.STOP;
 		cardFlags |= Long.MAX_VALUE;
-		squenceId = 0;
+		sequence_id = 0;
 		
 		sb_seatid = -1;
 		bb_seatid = -1;
@@ -986,5 +996,15 @@ public class Table extends AbsTable {
 		max_round_chip = 0;
 		max_round_chip_seatid = 0;
 		potList.clear();
+	}
+	
+	private static StringBuilder logSb = new StringBuilder(256);
+	public void printLog(String game_sequence_id,int sequence_id,int cmd ,String data){
+		logSb.delete( 0, logSb.length() );
+		logSb.append("game_sequence_id ").append(game_sequence_id);
+		logSb.append(" sequence_id ").append(sequence_id);
+		logSb.append(" cmd ").append(Integer.toHexString(cmd));
+		logSb.append(" data ").append(data);
+		Logger.v(logSb.toString());
 	}
 }

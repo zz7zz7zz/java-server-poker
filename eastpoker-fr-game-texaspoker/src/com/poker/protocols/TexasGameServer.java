@@ -139,13 +139,13 @@ public class TexasGameServer {
 	}
 	
 	//--------------------------------------------------------游戏指令----------------------------------------------------------------
-	public static byte[] gameStart(int sb_seatid,int bb_seatid,int btn_seateId,long ante, long sb_round_chip,long bb_round_chip,Table table){
+	public static byte[] gameStart(int btn_seateId,int sb_seatid,int bb_seatid,long ante, long sb_round_chip,long bb_round_chip,Table table){
 		
 		TexasGameStart.Builder builder = TexasGameStart.newBuilder();
+		builder.setBtnSeatId(btn_seateId);
 		builder.setSbSeatId(sb_seatid);
 		builder.setBbSeatId(bb_seatid);
-		builder.setBtnSeatId(btn_seateId);
-		
+
 		builder.setAnteAll(ante);
 		builder.setSbForceBetChip(sb_round_chip);
 		builder.setBbForceBetChip(bb_round_chip);
