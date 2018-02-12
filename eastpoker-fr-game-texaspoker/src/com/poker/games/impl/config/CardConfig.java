@@ -162,10 +162,10 @@ public class CardConfig {
 	
 
 	
-	public static void main(String arg[]) {
-		
-//		testCardConfig();
-	}
+//	public static void main(String arg[]) {
+//		
+////		testCardConfig();
+//	}
 	
 //	public static void testCardConfig(String arg[]) {
 //		CardConfig mCardConfig = new CardConfig();

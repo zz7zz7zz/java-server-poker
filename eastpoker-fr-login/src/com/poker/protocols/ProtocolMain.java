@@ -12,13 +12,13 @@ import com.poker.protocols.server.ServerProto;
 
 public class ProtocolMain {
 
-	public static void main(String []argc){
-		testLogin();
-//		testLoginResponse();
-//		testDispatchReg();
-//		testDispatch();
-		//testImMessage();
-	}
+//	public static void main(String []argc){
+//		testLogin();
+////		testLoginResponse();
+////		testDispatchReg();
+////		testDispatch();
+//		//testImMessage();
+//	}
 	
 	public static void testDispatch(){
 		

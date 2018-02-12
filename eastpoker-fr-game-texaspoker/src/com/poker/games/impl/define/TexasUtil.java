@@ -292,333 +292,333 @@ public final class TexasUtil {
 	}
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
-	public static void main(String arg[]) {
-		testCardType();
-	}
-	
-	public static void testCardType(){
-		System.out.println("\n royal_straight_flush");
-		royal_straight_flush();
-
-		System.out.println("\n max_straight_flush");
-		max_straight_flush();
-		
-		System.out.println("\n min_straight_flush");
-		min_straight_flush();
-
-		System.out.println("\n max_four");
-		max_four();
-		
-		System.out.println("\n min_four");
-		min_four();
-		
-		System.out.println("\n max_full_house");
-		max_full_house();
-		
-		System.out.println("\n min_full_house");
-		min_full_house();
-		
-		System.out.println("\n max_flush");
-		max_flush();
-		
-		System.out.println("\n min_flush");
-		min_flush();
-		
-		System.out.println("\n max_straight");
-		max_straight();
-		
-		System.out.println("\n min_straight");
-		min_straight();
-		
-		System.out.println("\n max_set");
-		max_set();
-		
-		System.out.println("\n min_set");
-		min_set();
-		
-		System.out.println("\n max_two_pair");
-		max_two_pair();
-		
-		System.out.println("\n min_two_pair");
-		min_two_pair();
-		
-		System.out.println("\n max_one_pair");
-		max_one_pair();
-		
-		System.out.println("\n min_one_pair");
-		min_one_pair();		
-		
-		System.out.println("\n max_high");
-		max_high();
-		
-		System.out.println("\n min_high");
-		min_high();	
-	}
-	
-	public static void royal_straight_flush(){
-		byte[] flop ={0x0a,0x0b,0x0c};
-		byte[] turn ={0x02};
-		byte[] river ={0x03};
-		
-		Result result = new Result();
-		byte[] hands  = {0x0d,0x0e};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void max_straight_flush(){
-		byte[] flop ={0x09,0x0a,0x0b};
-		byte[] turn ={0x12};
-		byte[] river ={0x13};
-		
-		Result result = new Result();
-		byte[] hands  = {0x0c,0x0d};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void min_straight_flush(){
-		byte[] flop ={0x04,0x05,0x0e};
-		byte[] turn ={0x12};
-		byte[] river ={0x13};
-		
-		Result result = new Result();
-		byte[] hands  = {0x02,0x03};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void max_four(){
-		byte[] flop ={0x0e,0x1e,0x2e};
-		byte[] turn ={0x12};
-		byte[] river ={0x13};
-		
-		Result result = new Result();
-		byte[] hands  = {0x3e,0x0d};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void min_four(){
-		byte[] flop ={0x02,0x12,0x22};
-		byte[] turn ={0x14};
-		byte[] river ={0x13};
-		
-		Result result = new Result();
-		byte[] hands  = {0x32,0x03};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void max_full_house(){
-		byte[] flop ={0x0e,0x1e,0x2e};
-		byte[] turn ={0x15};
-		byte[] river ={0x13};
-		
-		Result result = new Result();
-		byte[] hands  = {0x0d,0x1d};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void min_full_house(){
-		byte[] flop ={0x02,0x12,0x22};
-		byte[] turn ={0x15};
-		byte[] river ={0x17};
-		
-		Result result = new Result();
-		byte[] hands  = {0x33,0x03};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void max_flush(){
-		byte[] flop ={0x0e,0x0d,0x0c};
-		byte[] turn ={0x15};
-		byte[] river ={0x17};
-		
-		Result result = new Result();
-		byte[] hands  = {0x0b,0x09};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void min_flush(){
-		byte[] flop ={0x02,0x03,0x04};
-		byte[] turn ={0x15};
-		byte[] river ={0x17};
-		
-		Result result = new Result();
-		byte[] hands  = {0x05,0x07};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void max_straight(){
-		byte[] flop ={0x0e,0x0d,0x0c};
-		byte[] turn ={0x15};
-		byte[] river ={0x17};
-		
-		Result result = new Result();
-		byte[] hands  = {0x1a,0x1b};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void min_straight(){
-		byte[] flop ={0x02,0x03,0x04};
-		byte[] turn ={0x25};
-		byte[] river ={0x18};
-		
-		Result result = new Result();
-		byte[] hands  = {0x15,0x0e};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void max_set(){
-		byte[] flop ={0x0e,0x1e,0x2e};
-		byte[] turn ={0x15};
-		byte[] river ={0x17};
-		
-		Result result = new Result();
-		byte[] hands  = {0x0d,0x1c};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void min_set(){
-		byte[] flop ={0x02,0x12,0x22};
-		byte[] turn ={0x25};
-		byte[] river ={0x17};
-		
-		Result result = new Result();
-		byte[] hands  = {0x13,0x04};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void max_two_pair(){
-		byte[] flop ={0x0e,0x1e,0x2d};
-		byte[] turn ={0x15};
-		byte[] river ={0x17};
-		
-		Result result = new Result();
-		byte[] hands  = {0x0d,0x1c};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void min_two_pair(){
-		byte[] flop ={0x02,0x12,0x23};
-		byte[] turn ={0x27};
-		byte[] river ={0x15};
-		
-		Result result = new Result();
-		byte[] hands  = {0x13,0x04};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void max_one_pair(){
-		byte[] flop ={0x0e,0x1e,0x0d};
-		byte[] turn ={0x15};
-		byte[] river ={0x17};
-		
-		Result result = new Result();
-		byte[] hands  = {0x0b,0x1c};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void min_one_pair(){
-		byte[] flop ={0x02,0x12,0x23};
-		byte[] turn ={0x24};
-		byte[] river ={0x18};
-		
-		Result result = new Result();
-		byte[] hands  = {0x17,0x05};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void max_high(){
-		byte[] flop ={0x0e,0x1d,0x0c};
-		byte[] turn ={0x15};
-		byte[] river ={0x17};
-		
-		Result result = new Result();
-		byte[] hands  = {0x09,0x1b};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
-	
-	public static void min_high(){
-		byte[] flop ={0x02,0x13,0x24};
-		byte[] turn ={0x25};
-		byte[] river ={0x19};
-		
-		Result result = new Result();
-		byte[] hands  = {0x17,0x08};
-		calculateCardResult(hands, flop, turn, river, result);
-		
-		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
-		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
-		System.out.println(result.toString());
-	}
+//	public static void main(String arg[]) {
+//		testCardType();
+//	}
+//	
+//	public static void testCardType(){
+//		System.out.println("\n royal_straight_flush");
+//		royal_straight_flush();
+//
+//		System.out.println("\n max_straight_flush");
+//		max_straight_flush();
+//		
+//		System.out.println("\n min_straight_flush");
+//		min_straight_flush();
+//
+//		System.out.println("\n max_four");
+//		max_four();
+//		
+//		System.out.println("\n min_four");
+//		min_four();
+//		
+//		System.out.println("\n max_full_house");
+//		max_full_house();
+//		
+//		System.out.println("\n min_full_house");
+//		min_full_house();
+//		
+//		System.out.println("\n max_flush");
+//		max_flush();
+//		
+//		System.out.println("\n min_flush");
+//		min_flush();
+//		
+//		System.out.println("\n max_straight");
+//		max_straight();
+//		
+//		System.out.println("\n min_straight");
+//		min_straight();
+//		
+//		System.out.println("\n max_set");
+//		max_set();
+//		
+//		System.out.println("\n min_set");
+//		min_set();
+//		
+//		System.out.println("\n max_two_pair");
+//		max_two_pair();
+//		
+//		System.out.println("\n min_two_pair");
+//		min_two_pair();
+//		
+//		System.out.println("\n max_one_pair");
+//		max_one_pair();
+//		
+//		System.out.println("\n min_one_pair");
+//		min_one_pair();		
+//		
+//		System.out.println("\n max_high");
+//		max_high();
+//		
+//		System.out.println("\n min_high");
+//		min_high();	
+//	}
+//	
+//	public static void royal_straight_flush(){
+//		byte[] flop ={0x0a,0x0b,0x0c};
+//		byte[] turn ={0x02};
+//		byte[] river ={0x03};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x0d,0x0e};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void max_straight_flush(){
+//		byte[] flop ={0x09,0x0a,0x0b};
+//		byte[] turn ={0x12};
+//		byte[] river ={0x13};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x0c,0x0d};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void min_straight_flush(){
+//		byte[] flop ={0x04,0x05,0x0e};
+//		byte[] turn ={0x12};
+//		byte[] river ={0x13};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x02,0x03};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void max_four(){
+//		byte[] flop ={0x0e,0x1e,0x2e};
+//		byte[] turn ={0x12};
+//		byte[] river ={0x13};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x3e,0x0d};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void min_four(){
+//		byte[] flop ={0x02,0x12,0x22};
+//		byte[] turn ={0x14};
+//		byte[] river ={0x13};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x32,0x03};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void max_full_house(){
+//		byte[] flop ={0x0e,0x1e,0x2e};
+//		byte[] turn ={0x15};
+//		byte[] river ={0x13};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x0d,0x1d};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void min_full_house(){
+//		byte[] flop ={0x02,0x12,0x22};
+//		byte[] turn ={0x15};
+//		byte[] river ={0x17};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x33,0x03};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void max_flush(){
+//		byte[] flop ={0x0e,0x0d,0x0c};
+//		byte[] turn ={0x15};
+//		byte[] river ={0x17};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x0b,0x09};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void min_flush(){
+//		byte[] flop ={0x02,0x03,0x04};
+//		byte[] turn ={0x15};
+//		byte[] river ={0x17};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x05,0x07};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void max_straight(){
+//		byte[] flop ={0x0e,0x0d,0x0c};
+//		byte[] turn ={0x15};
+//		byte[] river ={0x17};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x1a,0x1b};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void min_straight(){
+//		byte[] flop ={0x02,0x03,0x04};
+//		byte[] turn ={0x25};
+//		byte[] river ={0x18};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x15,0x0e};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void max_set(){
+//		byte[] flop ={0x0e,0x1e,0x2e};
+//		byte[] turn ={0x15};
+//		byte[] river ={0x17};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x0d,0x1c};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void min_set(){
+//		byte[] flop ={0x02,0x12,0x22};
+//		byte[] turn ={0x25};
+//		byte[] river ={0x17};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x13,0x04};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void max_two_pair(){
+//		byte[] flop ={0x0e,0x1e,0x2d};
+//		byte[] turn ={0x15};
+//		byte[] river ={0x17};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x0d,0x1c};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void min_two_pair(){
+//		byte[] flop ={0x02,0x12,0x23};
+//		byte[] turn ={0x27};
+//		byte[] river ={0x15};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x13,0x04};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void max_one_pair(){
+//		byte[] flop ={0x0e,0x1e,0x0d};
+//		byte[] turn ={0x15};
+//		byte[] river ={0x17};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x0b,0x1c};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void min_one_pair(){
+//		byte[] flop ={0x02,0x12,0x23};
+//		byte[] turn ={0x24};
+//		byte[] river ={0x18};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x17,0x05};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void max_high(){
+//		byte[] flop ={0x0e,0x1d,0x0c};
+//		byte[] turn ={0x15};
+//		byte[] river ={0x17};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x09,0x1b};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
+//	
+//	public static void min_high(){
+//		byte[] flop ={0x02,0x13,0x24};
+//		byte[] turn ={0x25};
+//		byte[] river ={0x19};
+//		
+//		Result result = new Result();
+//		byte[] hands  = {0x17,0x08};
+//		calculateCardResult(hands, flop, turn, river, result);
+//		
+//		System.out.println(PokerUtil.toHexString(hands)+PokerUtil.toHexString(flop)+PokerUtil.toHexString(turn)+PokerUtil.toHexString(river));
+//		System.out.println(PokerUtil.toSymbol(hands)+PokerUtil.toSymbol(flop)+PokerUtil.toSymbol(turn)+PokerUtil.toSymbol(river));
+//		System.out.println(result.toString());
+//	}
 	
 }
