@@ -1003,7 +1003,7 @@ public class Table extends AbsTable {
 		logSb.delete( 0, logSb.length() );
 		logSb.append("game_sequence_id ").append(game_sequence_id);
 		logSb.append(" sequence_id ").append(sequence_id);
-		logSb.append(" cmd ").append(Integer.toHexString(cmd));
+		logSb.append(" cmd 0x").append(Integer.toHexString(cmd));
 		logSb.append(" data ").append(data);
 		Logger.v(logSb.toString());
 	}
