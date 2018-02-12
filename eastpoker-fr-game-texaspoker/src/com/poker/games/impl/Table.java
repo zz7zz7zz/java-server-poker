@@ -325,7 +325,7 @@ public class Table extends AbsTable {
         	return;
         }
         
-        game_sequence_id = String.format("%d-%d-%d-%d", mGameConfig.game_id,mGameConfig.level,super.mConfig.server_id,new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date(System.currentTimeMillis())));
+        game_sequence_id = String.format("%d-%d-%d-%s", mGameConfig.game_id,mGameConfig.level,super.mConfig.server_id,new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date(System.currentTimeMillis())));
         
         //2.找出按钮位 , 小盲，大盲位
         //2.1找Button位
