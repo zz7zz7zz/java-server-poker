@@ -36,20 +36,19 @@ public final class TexasCmd {
 //-----------------------------------三、命令字详解（Server）--------------------------------------------
 
 2.1游戏开始 0x4001
-	public static byte[] gameStart(int sb_seatid,int bb_seatid,int btn_seateId,long ante, long sb_round_chip,long bb_round_chip,Table table){
-			
+	public static byte[] gameStart(int btn_seateId,int sb_seatid,int bb_seatid,long ante, long sb_round_chip,long bb_round_chip,Table table){
+		
 		TexasGameStart.Builder builder = TexasGameStart.newBuilder();
+		builder.setBtnSeatId(btn_seateId);
 		builder.setSbSeatId(sb_seatid);
 		builder.setBbSeatId(bb_seatid);
-		builder.setBtnSeatId(btn_seateId);
-		
+
 		builder.setAnteAll(ante);
 		builder.setSbForceBetChip(sb_round_chip);
 		builder.setBbForceBetChip(bb_round_chip);
 		
-		User[] gTableUsers = (User[])table.users;
-		for(int i =0 ;i<gTableUsers.length;i++){
-			User user = gTableUsers[i];
+		for(int i =0 ;i<table.users.length;i++){
+			User user = (User) table.users[i];
 			if(null  != user && user.play_status == UserStatus.PLAY ){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
@@ -190,9 +189,8 @@ public final class TexasCmd {
 		builder.setConfig(configBuilder);
 		
 		//玩家列表
-		User[] gTableUsers = (User[])table.users;
-		for(int i =0 ;i<gTableUsers.length;i++){
-			User user = gTableUsers[i];
+		for(int i =0 ;i<table.users.length;i++){
+			User user = (User) table.users[i];
 			if(null  != user){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
@@ -204,17 +202,17 @@ public final class TexasCmd {
 					userBuild.setLevel(user.level);
 				}
 				
-				userBuild.setOperate(user.operate.ordinal());
+				userBuild.setOperate(user.operate.getNumber());
 				userBuild.setChip(user.chip);
 				userBuild.setChipTotal(user.chip_total);
-				userBuild.setPlayStatus(user.play_status.ordinal());
+				userBuild.setPlayStatus(user.play_status.getValue());
 				
 				builder.addUsers(userBuild);
 			}
 		}
 		
 		//大小盲注信息
-		builder.setTableStatus(table.table_status.ordinal());
+		builder.setTableStatus(table.table_status.getValue());
 		builder.setBtnSeatId(table.btn_seateId);
 		builder.setSbSeatId(table.sb_seatid);
 		builder.setSbSeatId(table.bb_seatid);
@@ -228,10 +226,10 @@ public final class TexasCmd {
 			builder.addCards(self.handCard[i]);
 		}
 		
-		int flop = table.step.ordinal();
-		int FLOP = TexasDefine.GameStep.FLOP.ordinal();
-		int TRUN = TexasDefine.GameStep.TRUN.ordinal();
-		int RIVER = TexasDefine.GameStep.RIVER.ordinal();
+		int flop = table.step.getValue();
+		int FLOP = TexasDefine.GameStep.FLOP.getValue();
+		int TRUN = TexasDefine.GameStep.TRUN.getValue();
+		int RIVER = TexasDefine.GameStep.RIVER.getValue();
 		
 		if(flop >= FLOP){
 			for(int i = 0 ;i < table.flop.length;i++){
@@ -267,9 +265,8 @@ public final class TexasCmd {
 		}
 		
 		//围观用户
-		gTableUsers = (User[])table.onLookers;
-		for(int i =0 ;i<gTableUsers.length;i++){
-			User user = gTableUsers[i];
+		for(int i =0 ;i<table.onLookers.length;i++){
+			User user = (User) table.onLookers[i];
 			if(null  != user){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
@@ -279,10 +276,10 @@ public final class TexasCmd {
 				userBuild.setHeadPortrait(user.head_portrait);
 				userBuild.setLevel(user.level);
 
-				userBuild.setOperate(user.operate.ordinal());
+				userBuild.setOperate(user.operate.getNumber());
 				userBuild.setChip(user.chip);
 				userBuild.setChipTotal(user.chip_total);
-				userBuild.setPlayStatus(user.play_status.ordinal());
+				userBuild.setPlayStatus(user.play_status.getValue());
 				
 				builder.addUsers(userBuild);
 			}
@@ -293,21 +290,21 @@ public final class TexasCmd {
 	}
 
 2.11游戏结束，进行结算 0x4FFF
-	public static byte[] gameOver(AbsTable table){
+	public static byte[] gameOver(Table table){
 		TexasGameEnd.Builder builder = TexasGameEnd.newBuilder();
-		User[] gTableUsers = (User[])table.users;
-		for(int i = 0;i<gTableUsers.length;i++){
-			if(null == gTableUsers[i]){
+		for(int i = 0;i<table.users.length;i++){
+			User user = (User) table.users[i];
+			if(null == user){
 				continue;
 			}
 			Result.Builder resultBuilder = Result.newBuilder();
-			resultBuilder.setSeateId(gTableUsers[i].seatId);
-			resultBuilder.setCardResult(gTableUsers[i].result.cardType.ordinal());
-			for(int j=0;j<gTableUsers[i].result.finalCards.length;j++) {
-				resultBuilder.addCards(gTableUsers[i].result.finalCards[i]);
+			resultBuilder.setSeateId(user.seatId);
+			resultBuilder.setCardResult(user.result.cardType.getValue());
+			for(int j=0;j<user.result.finalCards.length;j++) {
+				resultBuilder.addCards(user.result.finalCards[i]);
 			}
-			resultBuilder.setWinChip(gTableUsers[i].win_chip);
-			resultBuilder.setChip(gTableUsers[i].chip);
+			resultBuilder.setWinChip(user.win_chip);
+			resultBuilder.setChip(user.chip);
 			builder.addMResults(resultBuilder);
 		}
 		
@@ -333,5 +330,26 @@ public final class TexasCmd {
 		int code;
 		TCard(int code){
 			this.code = code;
+		}
+	}
+	
+游戏进度定义：
+	public static enum GameStep{
+		START(1),
+		PREFLOP(2),
+		FLOP(3),
+		TRUN(4),
+		RIVER(5),
+		SHOWHAND(6),
+		STOP(7);
+		
+		private final int value;
+		
+        private GameStep(int value) {
+            this.value = value;
+        }
+        
+		public int getValue() {
+			return value;
 		}
 	}

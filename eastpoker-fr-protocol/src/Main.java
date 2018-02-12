@@ -45,6 +45,7 @@ public class Main {
 		
 		// -------------- 分割线：上面是发送方，将数据序列化后发送 --------------- 
 		byte[] byteArray = output.toByteArray(); 
+		System.out.println(" output obj " + obj.toString());
 		System.out.println(" output length " + byteArray.length + " toString " + new String(byteArray));
 
 		
