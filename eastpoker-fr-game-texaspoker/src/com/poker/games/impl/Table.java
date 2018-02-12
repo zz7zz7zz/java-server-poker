@@ -44,7 +44,7 @@ public class Table extends AbsTable {
 	public int count;
 	
 	//-----------------------------------------------------
-	public String game_sequence_id ="";//由gameId-gamelevel-gameserverid-timestamp
+	public String game_sequence_id ;//由gameId-gamelevel-gameserverid-timestamp
 	public long cardFlags = Long.MAX_VALUE;
 	
 	public int sequence_id = 0;
@@ -247,6 +247,14 @@ public class Table extends AbsTable {
 	
 	protected int onFirstLogin(User mUser) {
 		
+		int userCount = getUserCount();
+		
+		//每次进来桌子只有一个用户时，产生牌局id
+		if(userCount == 1){
+			this.sequence_id = 0;
+			this.game_sequence_id = String.format("%d-%d-%d-%s", mGameConfig.game_id,mGameConfig.level,super.mConfig.server_id,new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date(System.currentTimeMillis())));
+		}
+		
 		//1。对进来的用户广播桌子上有哪些用户
 		sendToUser(BaseGameCmd.CMD_SERVER_USERLOGIN, ++sequence_id, TexasGameServer.userLogin(mUser,this,mGameConfig),mUser);
 		printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_USERLOGIN, "");
@@ -260,7 +268,7 @@ public class Table extends AbsTable {
 			return 0;
 		}
 		
-		if(getUserCount()>=this.mConfig.table_min_user) {
+		if(userCount>=this.mConfig.table_min_user) {
 			startGame();
 		}
 		
@@ -329,8 +337,6 @@ public class Table extends AbsTable {
         	stopGame();
         	return;
         }
-        
-        game_sequence_id = String.format("%d-%d-%d-%s", mGameConfig.game_id,mGameConfig.level,super.mConfig.server_id,new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date(System.currentTimeMillis())));
         
         //2.找出按钮位 , 小盲，大盲位
         //2.1找Button位
@@ -978,6 +984,7 @@ public class Table extends AbsTable {
 		
 		step = GameStep.STOP;
 		cardFlags |= Long.MAX_VALUE;
+		game_sequence_id = String.format("%d-%d-%d-%s", mGameConfig.game_id,mGameConfig.level,super.mConfig.server_id,new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date(System.currentTimeMillis())));
 		sequence_id = 0;
 		
 		sb_seatid = -1;
