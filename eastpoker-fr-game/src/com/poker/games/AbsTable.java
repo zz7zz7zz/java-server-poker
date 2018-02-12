@@ -102,11 +102,11 @@ public abstract class AbsTable {
 		Main.send2Dispatch(mTempBuff,0,length);	
 	}
 	
-	protected void send2Access(int cmd,int squenceId ,byte[] body,User user){
-		this.send2Access(cmd, squenceId, body, 0, body.length,user);
+	protected void sendToClient(int cmd,int squenceId ,byte[] body,User user){
+		this.sendToClient(cmd, squenceId, body, 0, body.length,user);
 	}
 
-	protected int send2Access(int cmd,int squenceId ,byte[] body,int offset ,int length,User user){
+	protected int sendToClient(int cmd,int squenceId ,byte[] body,int offset ,int length,User user){
 		length = PacketTransfer.send2Access(user.accessId,mOutPacket.getPacket(), squenceId, user.uid, cmd, DistapchType.TYPE_P2P, body,offset,length);
 		Main.send2Dispatch(mOutPacket.getPacket(), 0, length);
 		return 1;
@@ -124,8 +124,8 @@ public abstract class AbsTable {
 	public abstract boolean isUserInTable(User mUser);
 
 	//发数据接口
-	protected abstract int sendToClient(int cmd,int squenceId ,byte[] body,User user);//用户准备
-	protected abstract int broadcastToClient(int cmd,int squenceId ,byte[] body,User user);//用户准备
+	protected abstract int sendToUser(int cmd,int squenceId ,byte[] body,User user);//用户准备
+	protected abstract int broadcastToUser(int cmd,int squenceId ,byte[] body,User user);//用户准备
 	
 	//定时器回调接口
 	public abstract int onTimeOut();
