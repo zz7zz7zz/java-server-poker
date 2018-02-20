@@ -756,7 +756,7 @@ public class Table extends AbsTable {
  
 	private void handPots(){
 		//如果有人下注才需要处理Pots
-		if(max_round_chip >=0){
+		if(max_round_chip >0){
 			
 			int pot_start_index = potList.size();
 			ArrayList<User> round_chip_users=new ArrayList<User>();//有下注金额的用户
@@ -787,12 +787,14 @@ public class Table extends AbsTable {
 				if(min_round_chip == max_round_chip){
 					Pot mPot = new Pot();
 					mPot.name = step.name();
+					mPot.pot_chips = 0;
 					for (int i = 0; i < round_chip_user_size; i++) {
 						mPot.pot_chips += round_chip_users.get(i).round_chip;
 						round_chip_users.get(i).round_chip = 0;
-					}
-					for (int i = 0; i < share_pot_user_size; i++) {
-						mPot.seatIds.add(share_pot_users.get(i).seatId);
+						
+						if(!round_chip_users.get(i).isFold) {
+							mPot.seatIds.add(round_chip_users.get(i).seatId);		
+						}
 					}
 					potList.add(mPot);
 				}else{
@@ -812,11 +814,12 @@ public class Table extends AbsTable {
 								long r_round_chip = Math.min(minRoundChip, round_chip_users.get(i).round_chip);
 								mPot.pot_chips += r_round_chip;
 								round_chip_users.get(i).round_chip -= minRoundChip;
+								
+								if(!round_chip_users.get(i).isFold) {
+									mPot.seatIds.add(round_chip_users.get(i).seatId);		
+								}
 							}
 							
-							for(int i =index;i<share_pot_user_size;i++){
-								mPot.seatIds.add(share_pot_users.get(i).seatId);
-							}
 							potList.add(mPot);
 						}
 					}
@@ -824,11 +827,16 @@ public class Table extends AbsTable {
 			}else if(share_pot_user_size == 1){//只有一人分Pot
 				Pot mPot = new Pot();
 				mPot.name = step.name();
+				mPot.pot_chips = 0;
 				for (int i = 0; i < round_chip_user_size; i++) {
 					mPot.pot_chips+= round_chip_users.get(i).round_chip;
 					round_chip_users.get(i).round_chip = 0;
+					
+					if(!round_chip_users.get(i).isFold) {
+						mPot.seatIds.add(round_chip_users.get(i).seatId);		
+					}
 				}
-				mPot.seatIds.add(share_pot_users.get(0).seatId);
+
 				potList.add(mPot);
 				
 			}else{
@@ -849,7 +857,7 @@ public class Table extends AbsTable {
 
 		//清空数据
 		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
-     		if(null ==users[i] || !users[i].isPlaying()) {
+     		if(null ==users[i]) {
      			continue;
      		}
      		users[i].round_chip = 0;
