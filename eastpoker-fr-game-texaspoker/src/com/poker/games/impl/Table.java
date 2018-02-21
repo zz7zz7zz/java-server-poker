@@ -684,70 +684,93 @@ public class Table extends AbsTable {
 			op_seatid = (preActionUser.seatId+1) %mConfig.table_max_user;
 		}
 		
-		//如果只有一个可操作的玩家，则牌局一直自动走到底
-		int bet_user_count = 0;
-		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
-     		//对于不在游戏中，已经弃牌，AllIn的玩家不处理
-    		if(null ==users[i] || !users[i].isPlaying() || users[i].isFold|| users[i].isAllIn) {
-     			continue;
-     		}
-     		
-     		if(users[i].chip>0) {
-     			bet_user_count++;
-     		}
-		}
-		
-		if(bet_user_count <= 1) {
-			nextStep();
-			return;
-		}else{
-			//寻找下一个操作seatid
-		    int next_seatId_index = op_seatid;
-			for(int i = 0 ;i<this.mConfig.table_max_user ;i++){
-	        		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
-	        		
-	        		//说明大家下注额是一样了，进入下一圈
-	        		if(r_next_seatId_index == max_round_chip_seatid){
-		    			nextStep();
-		    			return;
-		    		}
-	        		
-		     		//对于不在游戏中，已经弃牌，AllIn的玩家不处理
-	        		if(null ==users[r_next_seatId_index] || !users[r_next_seatId_index].isPlaying() || users[r_next_seatId_index].isFold|| users[r_next_seatId_index].isAllIn) {
+
+		if(max_round_chip > 0) {
+			
+			//如果只有一个可操作的玩家，则牌局走到底/结束
+			int action_user_count = 0;//可以下注的用户数
+			int allin_user_count = 0;//allin 的用户数
+			
+			for(int i = 0 ;i<this.mConfig.table_max_user;i++){
+	     		//对于不在游戏中，已经弃牌，AllIn的玩家不处理
+		    		if(null ==users[i] || !users[i].isPlaying() || users[i].isFold) {
 		     			continue;
 		     		}
+					
+		    			if(users[i].isAllIn) {
+		    				allin_user_count++;
+		    				continue;
+		    			}
 		    		
-	        		if(users[r_next_seatId_index].round_chip < max_round_chip) {
-		    			op_seatid = r_next_seatId_index;
-		    			break;
-		    		}
-	        }
-			
-			if(max_round_chip_seatid == -1){
-				max_round_chip_seatid = op_seatid;
+	
+		     		if(users[i].chip>0) {
+		     			if(users[i].seatId != max_round_chip_seatid) {
+		     	   			action_user_count++;
+		     			}
+		     		}
 			}
-			op_call_chip 	  = max_round_chip;
-			op_min_raise_chip = Math.min(max_round_chip *2,users[op_seatid].chip);
-			op_max_raise_chip = users[op_seatid].chip;
-
-			broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, ++sequence_id, TexasGameServer.broadcastNextOperateUser(op_seatid,op_call_chip,op_min_raise_chip,op_max_raise_chip),null);
-			printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, "");
+			
+			//说明游戏结束
+			if(action_user_count <= 0) {
+				if(allin_user_count > 0) {//自动走到摊牌阶段
+					nextStep(false);
+				}else {//直接结束游戏
+					nextStep(true);
+				}
+				
+				return;
+			}
 		}
+
+		//寻找下一个操作seatid
+	    int next_seatId_index = op_seatid;
+		for(int i = 0 ;i<this.mConfig.table_max_user ;i++){
+        		int r_next_seatId_index = (next_seatId_index + i)%this.mConfig.table_max_user;
+        		
+        		//说明大家下注额是一样了，进入下一圈
+        		if(r_next_seatId_index == max_round_chip_seatid){
+	    			nextStep(false);
+	    			return;
+	    		}
+        		
+	     		//对于不在游戏中，已经弃牌，AllIn的玩家不处理
+        		if(null ==users[r_next_seatId_index] || !users[r_next_seatId_index].isPlaying() || users[r_next_seatId_index].isFold|| users[r_next_seatId_index].isAllIn) {
+	     			continue;
+	     		}
+	    		
+        		if(users[r_next_seatId_index].round_chip < max_round_chip) {
+	    			op_seatid = r_next_seatId_index;
+	    			break;
+	    		}
+        }
+		
+		if(max_round_chip_seatid == -1){
+			max_round_chip_seatid = op_seatid;
+		}
+		op_call_chip 	  = max_round_chip;
+		op_min_raise_chip = Math.min(max_round_chip *2,users[op_seatid].chip);
+		op_max_raise_chip = users[op_seatid].chip;
+
+		broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, ++sequence_id, TexasGameServer.broadcastNextOperateUser(op_seatid,op_call_chip,op_min_raise_chip,op_max_raise_chip),null);
+		printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, "");
 	}
 	
-	private void nextStep(){
+	private void nextStep(boolean isGameOver){
+		
+		handPots();
+
+		if(isGameOver) {
+			stopGame();
+			return;
+		}
 		
 		if(step == GameStep.PREFLOP) {
-			handPots();
 			dealFlop();
 		}else if(step == GameStep.FLOP) {
-			handPots();
 			dealTrun();
 		}else if(step == GameStep.TRUN) {
-			handPots();
 			dealRiver();
 		}else if(step == GameStep.RIVER) {
-			handPots();
 			showHands();
 		}else{
 			stopGame();
@@ -877,7 +900,7 @@ public class Table extends AbsTable {
 		printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_SHOW_HAND, "");
 		
 		step = GameStep.SHOWHAND;
-		nextStep();
+		nextStep(false);
 	}
 	
 	//给每个玩家算牌型
@@ -943,8 +966,9 @@ public class Table extends AbsTable {
 	}
 	
 	public void stopGame() {
-		
-		calculateCardType();
+		if(step == GameStep.SHOWHAND) {
+			calculateCardType();
+		}
 		calculatePot();
 		
 		broadcastToUser(TexasCmd.CMD_SERVER_GAME_OVER, ++sequence_id, TexasGameServer.gameOver(this),null);
