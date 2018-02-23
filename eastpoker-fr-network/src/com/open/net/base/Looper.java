@@ -6,6 +6,12 @@ public final class Looper {
 	
 	private static final ArrayList<IPoller> mPollerList = new ArrayList<>();
 	
+	private static long SLEEP_MILLIS = 100;
+	
+	public static final void set_sleep_millis(long sleep_millis){
+		SLEEP_MILLIS = sleep_millis;
+	}
+	
 	public static final void register(IPoller mPooer) {
 		if(!mPollerList.contains(mPooer)) {
 			mPollerList.add(mPooer);
@@ -26,7 +32,7 @@ public final class Looper {
 					iPoller.onPoll();
 				}
 				
-				Thread.sleep(100);
+				Thread.sleep(SLEEP_MILLIS);
 			}
 			
 		} catch (InterruptedException e) {
