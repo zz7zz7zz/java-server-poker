@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
 
 public final class MainNioServer {
 
-    public static void main_start(String [] args){
+    public static void main_start(String [] args) throws IOException{
     	
     	//1.配置初始化
         ServerConfig mServerInfo = new ServerConfig();
@@ -31,13 +31,10 @@ public final class MainNioServer {
         //2.数据初始化
         GServer.init(mServerInfo, NioClient.class);
         
-        try {
-            NioServer mNioServer = new NioServer(mServerInfo,mMessageProcessor,mLogListener);
-            mNioServer.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } 
-        
+
+        NioServer mNioServer = new NioServer(mServerInfo,mMessageProcessor,mLogListener);
+        mNioServer.start();
+
         Looper.loop();
     }
 
