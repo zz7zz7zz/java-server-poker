@@ -57,6 +57,13 @@ public final class MainNioClient {
 		public void onConnectionFailed(AbstractClient mClient) {
 			System.out.println("onConnectionFailed");
 			
+			try {
+				Thread.sleep(500);
+				((NioClient)mClient).connect();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
 		}
 	};
 }

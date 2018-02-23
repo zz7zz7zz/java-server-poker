@@ -1,10 +1,10 @@
 package com.open.net.base;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public final class Looper {
 	
-	private static final ArrayList<IPoller> mPollerList = new ArrayList<>();
+	private static final LinkedList<IPoller> mPollerList = new LinkedList<>();
 	
 	private static long SLEEP_MILLIS = 100;
 	
