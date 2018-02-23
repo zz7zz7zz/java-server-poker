@@ -1,5 +1,6 @@
 package com.open.net.client.impl.tcp.nio;
 
+import com.open.net.base.Looper;
 import com.open.net.client.impl.tcp.nio.processor.NioReadWriteProcessor;
 import com.open.net.client.object.IConnectListener;
 import com.open.net.client.object.TcpAddress;
@@ -32,13 +33,15 @@ public final class NioConnector {
         @Override
         public synchronized void onConnectSuccess(NioReadWriteProcessor mSocketProcessor, SocketChannel socketChannel) throws IOException {
             if(mSocketProcessor != NioConnector.this.mSocketProcessor){//两个请求都不是同一个，说明是之前连接了，现在重连了
+            	Looper.unRegister(mSocketProcessor);
                 NioReadWriteProcessor dropProcessor = mSocketProcessor;
                 if(null != dropProcessor){
                     dropProcessor.close();
                 }
                 return;
             }
-
+            
+        	Looper.register(mSocketProcessor);
             state = STATE_CONNECT_SUCCESS;
             mClient.init(socketChannel);
 
@@ -49,14 +52,16 @@ public final class NioConnector {
 
         @Override
         public synchronized void onConnectFailed(NioReadWriteProcessor mSocketProcessor) {
-            if(mSocketProcessor != NioConnector.this.mSocketProcessor){//两个请求都不是同一个，说明是之前连接了，现在重连了
+        	if(mSocketProcessor != NioConnector.this.mSocketProcessor){//两个请求都不是同一个，说明是之前连接了，现在重连了
+            	Looper.unRegister(mSocketProcessor);
                 NioReadWriteProcessor dropProcessor = mSocketProcessor;
                 if(null != dropProcessor){
                     dropProcessor.close();
                 }
                 return;
             }
-
+        	
+        	Looper.unRegister(mSocketProcessor);
             state = STATE_CLOSE;
             connect();//try to connect next ip port
 

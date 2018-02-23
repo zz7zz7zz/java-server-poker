@@ -4,8 +4,9 @@ import java.io.IOException;
 
 public class Main {
 
-	public static void main(String []argc) throws IOException{
-		MainNioServer.main_start(argc);
+	public static void main(String []args) throws IOException{
+		MainNioClient.main_start(args);
+//		MainNioServer.main_start(args);
 	}
 	
 } 
