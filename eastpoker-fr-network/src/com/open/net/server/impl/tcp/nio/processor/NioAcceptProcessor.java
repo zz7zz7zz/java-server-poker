@@ -1,11 +1,11 @@
 package com.open.net.server.impl.tcp.nio.processor;
 
+import com.open.net.base.IPoller;
 import com.open.net.base.util.ExceptionUtil;
 import com.open.net.base.util.TextUtils;
 import com.open.net.server.impl.tcp.nio.NioClient;
 import com.open.net.server.object.AbstractServerMessageProcessor;
 import com.open.net.server.object.ServerConfig;
-import com.open.net.server.object.ServerLock;
 import com.open.net.server.object.ServerLog;
 import com.open.net.server.pools.ClientsPool;
 
@@ -22,26 +22,26 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * description  :  客户连接处理类
  */
 
-public final class NioAcceptProcessor implements Runnable
+public final class NioAcceptProcessor implements IPoller
 {
 	public static String TAG = "NioAcceptProcessor";
 	
     private ServerConfig mServerInfo;
-    private ServerLock mServerLock;
     private ConcurrentLinkedQueue<NioClient> mClientQueen;
     public AbstractServerMessageProcessor mMessageProcessor;
-
-    public NioAcceptProcessor(ServerConfig mServerInfo, ServerLock mServerLock, ConcurrentLinkedQueue<NioClient> mClientQueen,AbstractServerMessageProcessor mMessageProcessor) {
+    
+    private ServerSocketChannel mServerSocket;
+    
+    public NioAcceptProcessor(ServerConfig mServerInfo, ConcurrentLinkedQueue<NioClient> mClientQueen,AbstractServerMessageProcessor mMessageProcessor) {
         this.mServerInfo = mServerInfo;
-        this.mServerLock = mServerLock;
         this.mClientQueen = mClientQueen;
         this.mMessageProcessor = mMessageProcessor;
     }
 
-    public void run() {
+    public void bind() {
 
         try {
-            ServerSocketChannel mServerSocket = ServerSocketChannel.open();
+            mServerSocket = ServerSocketChannel.open();
 
             if(mServerInfo.port > 0 ){
                 if(mServerInfo.connect_backlog > 0 ){
@@ -67,29 +67,32 @@ public final class NioAcceptProcessor implements Runnable
                 }
             }
 
-            while (true){
-                SocketChannel mSocketClient = mServerSocket.accept();
-                if(null != mSocketClient){
-                	
-                    String [] clientInfo = mSocketClient.getRemoteAddress().toString().replace("/", "").split(":");
-                    String mHost = clientInfo[0];
-                    int mPort = Integer.valueOf(clientInfo[1]);
-                    
-                    NioClient mClient = (NioClient) ClientsPool.get();
-                    if(null != mClient){
-                        mClient.init(mHost,mPort,mSocketClient,mMessageProcessor);
-                        mClientQueen.add(mClient);
-                    }else{
-                    	ServerLog.getIns().log(TAG, "accept client success but ClientsPool.get() null Host "+ mHost + " port " + mPort );
-                    }
-                }else{
-                	ServerLog.getIns().log(TAG, "accept client null");
-                }
-            }
+            mServerSocket.configureBlocking(false);
         } catch (IOException e) {
         	ServerLog.getIns().log(TAG, ExceptionUtil.getStackTraceString(e));
         }
-
-        mServerLock.notifytEnding();
     }
+
+	@Override
+	public void onPoll() {
+        try {
+        	SocketChannel mSocketClient = mServerSocket.accept();
+            if(null != mSocketClient){
+            	
+                String [] clientInfo = mSocketClient.getRemoteAddress().toString().replace("/", "").split(":");
+                String mHost = clientInfo[0];
+                int mPort = Integer.valueOf(clientInfo[1]);
+                
+                NioClient mClient = (NioClient) ClientsPool.get();
+                if(null != mClient){
+                    mClient.init(mHost,mPort,mSocketClient,mMessageProcessor);
+                    mClientQueen.add(mClient);
+                }else{
+                	ServerLog.getIns().log(TAG, "accept client success but ClientsPool.get() null Host "+ mHost + " port " + mPort );
+                }
+            }
+        }catch (IOException e) {
+        	ServerLog.getIns().log(TAG, ExceptionUtil.getStackTraceString(e));
+        }
+	}
 }

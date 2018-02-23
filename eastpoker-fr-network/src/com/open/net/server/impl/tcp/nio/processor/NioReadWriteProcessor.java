@@ -1,5 +1,6 @@
 package com.open.net.server.impl.tcp.nio.processor;
 
+import com.open.net.base.IPoller;
 import com.open.net.base.util.ExceptionUtil;
 import com.open.net.server.GServer;
 import com.open.net.server.impl.tcp.nio.NioClient;
@@ -25,7 +26,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * description  :   数据读写处理类
  */
 
-public final class NioReadWriteProcessor implements Runnable {
+public final class NioReadWriteProcessor implements IPoller{
 
 	public static String TAG = "NioReadWriteProcessor";
 	
@@ -43,20 +44,6 @@ public final class NioReadWriteProcessor implements Runnable {
     }
 
     @Override
-    public void run() {
-
-        while(true){
-            try {
-            	onPoll();
-                Thread.sleep(5);
-            } catch (Exception e) {
-            	e.printStackTrace();
-				ServerLog.getIns().log(TAG, "run() Exception"  + ExceptionUtil.getStackTraceString(e));
-            }
-        }
-    }
-
-
 	public void onPoll() {
         try {
 

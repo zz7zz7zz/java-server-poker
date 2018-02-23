@@ -26,7 +26,7 @@ public final class Looper {
 					iPoller.onPoll();
 				}
 				
-				Thread.sleep(1);
+				Thread.sleep(100);
 			}
 			
 		} catch (InterruptedException e) {
