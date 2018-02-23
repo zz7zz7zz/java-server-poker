@@ -2,8 +2,8 @@ package com.poker.games.impl.config;
 
 import java.util.HashMap;
 
-import com.open.net.client.utils.CfgParser;
-import com.open.net.client.utils.TextUtils;
+import com.open.util.log.util.CfgParser;
+import com.open.util.log.util.TextUtils;
 import com.poker.games.impl.define.PokerUtil;
 
 public class CardConfig {

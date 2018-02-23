@@ -3,7 +3,8 @@ package com.poker.games.impl.config;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import com.open.net.client.utils.CfgParser;
+import com.open.util.log.util.CfgParser;
+
 
 
 

@@ -5,9 +5,8 @@
 	<classpathentry kind="lib" path="libs/commons-cli-1.4.jar"/>
 	<classpathentry kind="lib" path="libs/org.json.jar"/>
 	<classpathentry kind="lib" path="libs/open.util.log.jar"/>
-	<classpathentry kind="lib" path="libs/open.net.client.jar" sourcepath="/java-socket-client"/>
-	<classpathentry kind="lib" path="libs/open.net.server.jar" sourcepath="/java-socket-server"/>
 	<classpathentry kind="lib" path="libs/protobuf-java-3.5.1.jar" sourcepath="/protobuff"/>
+	<classpathentry kind="lib" path="libs/open.net.jar" sourcepath="/eastpoker-fr-network"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/eastpoker-fr-protocol"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

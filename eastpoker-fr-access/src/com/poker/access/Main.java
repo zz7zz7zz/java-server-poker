@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.open.net.base.Looper;
+import com.open.net.base.util.NetUtil;
 import com.open.net.client.GClient;
 import com.open.net.client.impl.tcp.nio.NioClient;
 import com.open.net.client.object.AbstractClient;
@@ -16,7 +18,7 @@ import com.open.net.server.object.ArgsConfig;
 import com.open.net.server.object.ServerConfig;
 import com.open.net.server.object.ServerLog;
 import com.open.net.server.object.ServerLog.LogListener;
-import com.open.net.server.utils.NetUtil;
+
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
 import com.poker.access.handler.ClientHandler;
@@ -40,7 +42,7 @@ import com.poker.protocols.Monitor;
 
 public class Main {
 
-    public static void main(String [] args){
+    public static void main(String [] args) throws IOException{
     	
         //----------------------------------------- 一、配置初始化 ------------------------------------------
     	//1.1 服务器配置初始化:解析命令行参数
@@ -83,16 +85,16 @@ public class Main {
     	
         //----------------------------------------- 三、服务器初始化 ------------------------------------------
     	Logger.v("-------Server------start---------");
-        try {
-            //3.1 数据初始化
-            GServer.init(libServerConfig, com.open.net.server.impl.tcp.nio.NioClient.class);
-            
-            //3.2 服务器初始化
-            NioServer mNioServer = new NioServer(libServerConfig,mServerHandler,mLogListener);
-            mNioServer.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } 
+
+        //3.1 数据初始化
+        GServer.init(libServerConfig, com.open.net.server.impl.tcp.nio.NioClient.class);
+        
+        //3.2 服务器初始化
+        NioServer mNioServer = new NioServer(libServerConfig,mServerHandler,mLogListener);
+        mNioServer.start();
+
+        Looper.loop();
+        
         Logger.v("-------Server------end---------");
         
         //----------------------------------------- 四、反注册关联服务器 ---------------------------------------

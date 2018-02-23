@@ -2,6 +2,8 @@ package com.poker.allocator;
 
 import java.util.Arrays;
 
+import com.open.net.base.Looper;
+import com.open.net.base.util.NetUtil;
 import com.open.net.client.GClient;
 import com.open.net.client.impl.tcp.nio.NioClient;
 import com.open.net.client.object.AbstractClient;
@@ -12,7 +14,7 @@ import com.open.net.client.object.TcpAddress;
 import com.open.net.server.object.ArgsConfig;
 import com.open.net.server.object.ServerLog;
 import com.open.net.server.object.ServerLog.LogListener;
-import com.open.net.server.utils.NetUtil;
+
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
 import com.poker.allocator.handler.ClientHandler;
@@ -70,14 +72,9 @@ public class Main {
     	register_dispatcher(mServerConfig,mTempBuff);//注册到Dispatcher
     	
         //----------------------------------------- 三、服务器初始化 ------------------------------------------
-    	while(true){
-    		try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				break;
-			}
-    	}
+        
+    	Looper.loop();
+        
         //----------------------------------------- 四、反注册关联服务器 ---------------------------------------
         unregister_dispatcher(mServerConfig);//反注册到服务监听器
         unregister_monitor(mServerConfig,new byte[512]);//反注册到服务监听器

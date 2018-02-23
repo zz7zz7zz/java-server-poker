@@ -3,9 +3,10 @@ package com.poker.common.config;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.open.net.base.util.CfgParser;
 import com.open.net.client.object.TcpAddress;
 import com.open.net.client.object.UdpAddress;
-import com.open.net.server.utils.CfgParser;
+
 
 public class Config {
 

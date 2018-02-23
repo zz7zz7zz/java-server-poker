@@ -6,7 +6,7 @@ public final class Looper {
 	
 	private static final LinkedList<IPoller> mPollerList = new LinkedList<>();
 	
-	private static long SLEEP_MILLIS = 100;
+	private static long SLEEP_MILLIS = 5;
 	
 	public static final void set_sleep_millis(long sleep_millis){
 		SLEEP_MILLIS = sleep_millis;

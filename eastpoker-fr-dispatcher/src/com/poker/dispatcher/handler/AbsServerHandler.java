@@ -41,12 +41,6 @@ public abstract class AbsServerHandler extends AbstractServerMessageProcessor{
 	public void onClientExit(AbstractServerClient client) {
 
 	}
-
-	@Override
-	public void onTimeTick() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	@Override
 	public void unicast(AbstractServerClient client, byte[] src, int offset, int length) {
