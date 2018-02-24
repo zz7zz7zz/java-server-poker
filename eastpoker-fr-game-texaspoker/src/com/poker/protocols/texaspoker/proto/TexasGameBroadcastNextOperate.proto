@@ -7,10 +7,11 @@ option java_outer_classname = "TexasGameBroadcastNextOperateProto";
 
 message TexasGameBroadcastNextOperate{
 
-	int32   next_op_seatId  		= 1;
-	int64   next_op_call_chip 		= 2;
-	int64   next_op_min_raise_chip 	= 3;
-	int64   next_op_max_raise_chip 	= 4;
+	int32   next_op_seatId  		= 1;//操作座位id
+	int32   next_op_sets  			= 2;//操作集合
+	int64   next_op_call_chip 		= 3;//call 
+	int64   next_op_min_raise_chip 	= 4;//最小raise
+	int64   next_op_max_raise_chip 	= 5;//最大raise
 }
 
 // protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameBroadcastNextOperate.proto 

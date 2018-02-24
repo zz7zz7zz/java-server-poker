@@ -751,7 +751,15 @@ public class Table extends AbsTable {
 		op_min_raise_chip = Math.min(max_round_chip *2,users[op_seatid].chip);
 		op_max_raise_chip = users[op_seatid].chip;
 
-		broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, ++sequence_id, TexasGameServer.broadcastNextOperateUser(op_seatid,op_call_chip,op_min_raise_chip,op_max_raise_chip),null);
+		op_sets = Operate.FOLD_VALUE | Operate.CHECK_VALUE | Operate.CALL_VALUE | Operate.RAISE_VALUE;
+		if(max_round_chip >0){
+			op_sets = (op_sets & ~ Operate.CHECK_VALUE);
+		}
+		if(max_round_chip >=users[op_seatid].chip){
+			op_sets = (op_sets & ~ Operate.RAISE_VALUE);
+		}
+		
+		broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, ++sequence_id, TexasGameServer.broadcastNextOperateUser(op_seatid,op_sets,op_call_chip,op_min_raise_chip,op_max_raise_chip),null);
 		printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, "");
 	}
 	

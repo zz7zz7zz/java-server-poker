@@ -7,10 +7,10 @@ option java_outer_classname = "TexasGameBroadcastUserActionProto";
 
 message TexasGameBroadcastUserAction{
 	enum Operate {
-	    FOLD 	= 0;
-	    CHECK 	= 1;
-	    CALL 	= 2;
-	    RAISE 	= 3;
+	    FOLD 	= 1;
+	    CHECK 	= 2;
+	    CALL 	= 4;
+	    RAISE 	= 8;
 	  }
   
 

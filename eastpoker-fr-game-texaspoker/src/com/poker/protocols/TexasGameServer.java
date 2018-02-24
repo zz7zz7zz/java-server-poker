@@ -223,9 +223,10 @@ public class TexasGameServer {
 	}
 	
 	//下一个操作者
-	public static byte[] broadcastNextOperateUser(int op_seate_id ,long op_call_chip,long op_min_raise_chip,long op_max_raise_chip) {
+	public static byte[] broadcastNextOperateUser(int op_seate_id ,int op_sets,long op_call_chip,long op_min_raise_chip,long op_max_raise_chip) {
 		TexasGameBroadcastNextOperate.Builder builder = TexasGameBroadcastNextOperate.newBuilder();
 		builder.setNextOpSeatId(op_seate_id);
+		builder.setNextOpSets(op_sets);
 		builder.setNextOpCallChip(op_call_chip);
 		builder.setNextOpMinRaiseChip(op_min_raise_chip);
 		builder.setNextOpMaxRaiseChip(op_max_raise_chip);
