@@ -697,41 +697,56 @@ public class Table extends AbsTable {
 		}
 		
 
-		if(max_round_chip > 0) {
-			
-			//如果只有一个可操作的玩家，则牌局走到底/结束
-			int action_user_count = 0;//可以下注的用户数
-			int allin_user_count = 0;//allin 的用户数
-			
-			for(int i = 0 ;i<this.mConfig.table_max_user;i++){
-	     		//对于不在游戏中，已经弃牌，AllIn的玩家不处理
-		    		if(null ==users[i] || !users[i].isPlaying() || users[i].isFold) {
-		     			continue;
-		     		}
-					
-		    			if(users[i].isAllIn) {
-		    				allin_user_count++;
-		    				continue;
-		    			}
-		    		
-	
-		     		if(users[i].chip>0) {
-		     			if(users[i].seatId != max_round_chip_seatid) {
-		     	   			action_user_count++;
-		     			}
-		     		}
-			}
-			
-			//说明游戏结束
-			if(action_user_count <= 0) {
-				if(allin_user_count > 0) {//自动走到摊牌阶段
-					nextStep(false);
-				}else {//直接结束游戏
-					nextStep(true);
+		//如果只有一个可操作的玩家，则牌局走到底/结束
+		int play_user_count 	= 0;//用户数
+		int allin_user_count 	= 0;//allin 用户数
+		int fold_user_count 	= 0;//fold 用户数
+		int action_user_count 	= 0;//可以操作的用户数
+		
+		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
+	 		//对于不在游戏中，已经弃牌，AllIn的玩家不处理
+	    		if(null ==users[i] || !users[i].isPlaying()) {
+	     			continue;
+	     		}
+				
+	    		play_user_count ++;
+	    		
+				if(users[i].isAllIn) {
+					allin_user_count++;
+					continue;
+				}
+	    		
+				if(users[i].isFold) {
+					fold_user_count++;
+					continue;
 				}
 				
-				return;
+				//本局中 没人 下注
+				//本局中 有人 下注，用户下注还未加到最大注，还有筹码可下
+				if(max_round_chip == 0){
+					action_user_count++;
+				}
+				else if(max_round_chip > 0 && users[i].round_chip < max_round_chip && users[i].chip>0) {
+	     	   		action_user_count++;
+	     		}
+		}
+		
+		//case 1: 当所有人都Allin/Fold，游戏结束
+		//case 2: 前面的人都Fold，游戏结束
+		//case 2: 当前面用户有下注，现在又没有人可以跟注时，游戏结束；
+		int rest_op_user_count = play_user_count - allin_user_count - fold_user_count;
+		boolean isGameOver =   (rest_op_user_count == 0) 
+				|| (rest_op_user_count == 1) && allin_user_count == 0
+		        || (rest_op_user_count == 1) && action_user_count == 0;
+		
+		//说明游戏结束
+		if(isGameOver) {
+			if(allin_user_count > 0) {//自动走到摊牌阶段
+				nextStep(false);
+			}else {//直接结束游戏
+				nextStep(true);
 			}
+			return;
 		}
 
 		//寻找下一个操作seatid
@@ -906,6 +921,7 @@ public class Table extends AbsTable {
      		users[i].round_chip = 0;
 		}
 
+		op_sets = 0; 
 		op_call_chip = 0;
 		op_min_raise_chip = 0;
 		op_max_raise_chip = 0;
