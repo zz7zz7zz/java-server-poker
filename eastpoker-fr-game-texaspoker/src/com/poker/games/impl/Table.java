@@ -589,80 +589,85 @@ public class Table extends AbsTable {
 			if(action == null) {
 				ret = -7;
 			}else{
-				Operate actOperate = Operate.valueOf(action.getOperate());
-				long actBetChip = 0;
-				
-				switch(actOperate){
-				
-					case FOLD:
-						mUser.isFold  = true;
-						//如果一个用户弃牌了，从所有的Pot中将其删除，因为他将不参与分Pot
-						for(int i= 0;i< potList.size();i++){
-							potList.get(i).seatIds.remove(mUser.seatId);
-						}
-						break;
-						
-					case CHECK:
-						//如果有人下注，这里是不能进行Check的
-						if(max_round_chip > 0){
-							ret =  -8 ;
-						}
-						break;
-						
-					case CALL:
-						{
-							long callChip = max_round_chip - mUser.round_chip;
-							if(mUser.chip >= callChip){
-								mUser.round_chip += callChip;
-								mUser.chip -= callChip;
-							}else{
-								mUser.round_chip += mUser.chip;
-								mUser.chip = 0;
-							}
-							actBetChip = mUser.round_chip;
-							mUser.isAllIn =(mUser.chip == 0);
-						}
-						break;
-				
-					case RAISE:
-						{
-							long betChip = action.getChip();
-							if(betChip <= op_min_raise_chip){
-								betChip = op_min_raise_chip;
-							}else if(betChip > op_max_raise_chip){
-								betChip = op_max_raise_chip;
-							}
-							if(mUser.chip >= betChip){
-								mUser.round_chip += betChip;
-								mUser.chip -= betChip;
-							}else{
-								mUser.round_chip += mUser.chip;
-								mUser.chip = 0;
-							}
-							actBetChip = mUser.round_chip;
-							mUser.isAllIn =(mUser.chip == 0);
-						}
-						break;
-						
-					default:
-						ret =  -9 ;
-						break;
-				}
-				
-				//所有条件都符合才算操作成功
-				if(ret == 0){
+				//用户的操作在操作之内才可以
+				boolean checkAction = (op_sets & action.getOperate())>0;
+				if(!checkAction){
+					ret = -8;
+				}else{
+					Operate actOperate = Operate.valueOf(action.getOperate());
+					long actBetChip = 0;
+					switch(actOperate){
 					
-					mUser.operate = actOperate;
+						case FOLD:
+							mUser.isFold  = true;
+							//如果一个用户弃牌了，从所有的Pot中将其删除，因为他将不参与分Pot
+							for(int i= 0;i< potList.size();i++){
+								potList.get(i).seatIds.remove(mUser.seatId);
+							}
+							break;
+							
+						case CHECK:
+							//如果有人下注，这里是不能进行Check的
+							if(max_round_chip > 0){
+								ret =  -9 ;
+							}
+							break;
+							
+						case CALL:
+							{
+								long callChip = max_round_chip - mUser.round_chip;
+								if(mUser.chip >= callChip){
+									mUser.round_chip += callChip;
+									mUser.chip -= callChip;
+								}else{
+									mUser.round_chip += mUser.chip;
+									mUser.chip = 0;
+								}
+								actBetChip = mUser.round_chip;
+								mUser.isAllIn =(mUser.chip == 0);
+							}
+							break;
 					
-					if(actBetChip > max_round_chip) {
-						max_round_chip = actBetChip;
-						max_round_chip_seatid = mUser.seatId;
+						case RAISE:
+							{
+								long betChip = action.getChip();
+								if(betChip <= op_min_raise_chip){
+									betChip = op_min_raise_chip;
+								}else if(betChip > op_max_raise_chip){
+									betChip = op_max_raise_chip;
+								}
+								if(mUser.chip >= betChip){
+									mUser.round_chip += betChip;
+									mUser.chip -= betChip;
+								}else{
+									mUser.round_chip += mUser.chip;
+									mUser.chip = 0;
+								}
+								actBetChip = mUser.round_chip;
+								mUser.isAllIn =(mUser.chip == 0);
+							}
+							break;
+							
+						default:
+							ret =  -10 ;
+							break;
 					}
 					
-					broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, ++sequence_id, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip),mUser);
-					printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, "");
-					
-					next_option(mUser);
+					//所有条件都符合才算操作成功
+					if(ret == 0){
+						
+						mUser.operate = actOperate;
+						
+						if(actBetChip > max_round_chip) {
+							max_round_chip = actBetChip;
+							max_round_chip_seatid = mUser.seatId;
+						}
+						
+						broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, ++sequence_id, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip),mUser);
+						printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, "");
+						
+						next_option(mUser);
+					}
 				}
 			}
 		}

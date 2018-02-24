@@ -139,7 +139,13 @@ public class Room {
         		mUser.accessId = mDispatchPacket.getDispatchChainList(0).getSrcServerId();
         		mTable.updateOnLineStatus(mUser,true);
         		
-        		mTable.dispatchTableMessage(mUser,cmd, data, header_start, header_length, body_start, body_length);
+        		AbsTable.mInPacket.copyFrom(mDispatchPacket.getData());	
+        		int _header_start 	= 0;
+        		int _header_length	= AbsTable.mInPacket.getHeaderLength();
+        		int _body_start 	= _header_start + _header_length;
+        		int _body_length 	= AbsTable.mInPacket.getLength() - _header_length;
+        		mTable.dispatchTableMessage(mUser,cmd, AbsTable.mInPacket.getPacket(), _header_start, _header_length, _body_start, _body_length);
+//        		mTable.dispatchTableMessage(mUser,cmd, data, header_start, header_length, body_start, body_length);
         	}
     	}
 	}
