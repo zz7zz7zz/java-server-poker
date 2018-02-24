@@ -791,7 +791,11 @@ public class Table extends AbsTable {
 		op_max_raise_chip = users[op_seatid].chip;
 
 		//用户没有筹码了
-		op_sets = Operate.FOLD.getValue() | Operate.CHECK.getValue();
+		op_sets = Operate.FOLD.getValue();
+		
+		if(op_call_chip == 0){
+			op_sets |= Operate.CHECK.getValue();
+		}
 		
 		long needChip = op_call_chip - users[op_seatid].round_chip;
 		
