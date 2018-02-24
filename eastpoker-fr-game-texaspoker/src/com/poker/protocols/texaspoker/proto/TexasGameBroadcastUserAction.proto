@@ -5,17 +5,10 @@ package com.poker.protocols.texaspoker.proto;
 option java_package = "com.poker.protocols.texaspoker";
 option java_outer_classname = "TexasGameBroadcastUserActionProto";
 
-message TexasGameBroadcastUserAction{
-	enum Operate {
-	    FOLD 	= 1;
-	    CHECK 	= 2;
-	    CALL 	= 4;
-	    RAISE 	= 8;
-	  }
-  
+message TexasGameBroadcastUserAction{  
 
 	int32   seatId  		= 1;
-	Operate operate 		= 2;
+	int32   operate 		= 2;
 	int64   chip    		= 3;
 	int64   round_chip      = 4;
 }

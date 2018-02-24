@@ -1,0 +1,15 @@
+syntax="proto3";
+
+package com.poker.protocols.texaspoker.proto; 
+
+option java_package = "com.poker.protocols.texaspoker";
+option java_outer_classname = "TexasGameErrorProto";
+
+message TexasGameError{  
+
+	int32   seatId  	= 1;
+	int32   err_code 	= 2;
+	string  err_msg    = 3;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameError.proto 

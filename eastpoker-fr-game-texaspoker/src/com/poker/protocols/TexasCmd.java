@@ -21,6 +21,7 @@ public final class TexasCmd {
 	public static final int CMD_SERVER_BROADCAST_SHOW_HAND 			= 0x4009; //广播集体秀牌
 	
 	public static final int CMD_SERVER_RECONNECT 	    			= 0x400A; //客户端请求重连
+	public static final int CMD_SERVER_USER_ERROR 	    			= 0x400B; //操作错误
 	public static final int CMD_SERVER_GAME_OVER 	    			= 0x4FFF; //游戏结束，进行结算
 	
 	public static String getCmdString(int cmd){
@@ -50,6 +51,8 @@ public final class TexasCmd {
 			return "cmd_server_broadcast_show_hand";
 		}else if(cmd == CMD_SERVER_RECONNECT){
 			return "cmd_server_reconnect";
+		}else if(cmd == CMD_SERVER_USER_ERROR){
+			return "CMD_SERVER_USER_ERROR";
 		}else if(cmd == CMD_SERVER_GAME_OVER){
 			return "cmd_server_game_over";
 		}

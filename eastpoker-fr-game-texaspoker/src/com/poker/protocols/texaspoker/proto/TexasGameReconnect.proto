@@ -36,19 +36,20 @@ message TexasGameReconnect{
 	
 	//当前操作人信息
 	int32   next_op_seatId  		= 14;
-	int64   next_op_call_chip 		= 15;
-	int64   next_op_min_raise_chip 	= 16;
-	int64   next_op_max_raise_chip 	= 17;
-	int64   max_round_chip 			= 18;
+	int32   next_sets 				= 15;
+	int64   next_op_call_chip 		= 16;
+	int64   next_op_min_raise_chip 	= 17;
+	int64   next_op_max_raise_chip 	= 18;
+	int64   max_round_chip 			= 19;
 	
 	//剩余的操作超时时间
-	int32   rest_action_timeout     = 19;
+	int32   rest_action_timeout     = 20;
 	
 	//Pot信息
-	repeated int64  pots   			= 20;
+	repeated int64  pots   			= 21;
 	
 	//围观用户
-	repeated  GameUser  onLooker    = 21;
+	repeated  GameUser  onLooker    = 22;
 }
 
 // protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/texaspoker/proto/TexasGameReconnect.proto 

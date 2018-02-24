@@ -59,6 +59,39 @@ public class TexasDefine {
 		}
 	}
 	
+	public static enum Operate {
+	    FOLD(1),
+	    CHECK(2),
+	    CALL(4),
+	    RAISE(8),
+		UNRECOGNIZED(16);
+	    
+		private final int value;
+		
+		Operate(int value){
+			this.value = value;
+		}
+		
+		public int getValue() {
+			return value;
+		}
+		
+		public static Operate valueOf(int value) {
+		   switch (value) {
+		        case 1:
+		            return FOLD;
+		        case 2:
+		            return CHECK;
+		        case 4:
+		            return CALL;
+		        case 8:
+		            return RAISE;
+		        default:
+		        	return UNRECOGNIZED;
+		   }
+		}
+	 }
+	
 	public static enum TCard{
 		NO(0),  //无
 		HIGHT(1),  //高牌

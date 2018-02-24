@@ -1,8 +1,6 @@
 syntax="proto3";
 
-package com.poker.protocols.texaspoker.proto; 
-
-import "src/com/poker/protocols/texaspoker/proto/TexasGameBroadcastUserAction.proto";
+package com.poker.protocols.texaspoker.proto;
 
 option java_package = "com.poker.protocols.texaspoker";
 option java_outer_classname = "TexasGameActionRequestProto";
@@ -10,7 +8,7 @@ option java_outer_classname = "TexasGameActionRequestProto";
 message TexasGameActionRequest{
   	//当前操作者操作结果
 	int32   seatId  					= 1;
-	TexasGameBroadcastUserAction.Operate operate 	= 2;
+	int32   operate 	                = 2;
 	int64   chip    					= 3;
 }
 

@@ -24,13 +24,13 @@ import com.poker.games.impl.define.TexasDefine;
 import com.poker.games.impl.define.TexasUtil;
 import com.poker.games.impl.define.TexasDefine.UserStatus;
 import com.poker.games.impl.define.TexasDefine.GameStep;
+import com.poker.games.impl.define.TexasDefine.Operate;
 import com.poker.games.impl.define.TexasDefine.Pot;
 import com.poker.games.impl.define.TexasDefine.PotComparator;
 import com.poker.protocols.TexasCmd;
 import com.poker.protocols.TexasGameServer;
 import com.poker.protocols.server.ErrorServer;
 import com.poker.protocols.texaspoker.TexasGameActionRequestProto.TexasGameActionRequest;
-import com.poker.protocols.texaspoker.TexasGameBroadcastUserActionProto.TexasGameBroadcastUserAction.Operate;
 
 
 public class Table extends AbsTable {
@@ -589,16 +589,16 @@ public class Table extends AbsTable {
 			if(action == null) {
 				ret = -7;
 			}else{
-				User user = ((User)mUser);
-				user.operate = action.getOperate();
+				Operate actOperate = Operate.valueOf(action.getOperate());
 				long actBetChip = 0;
-				switch(action.getOperate()){
+				
+				switch(actOperate){
 				
 					case FOLD:
-						user.isFold  = true;
+						mUser.isFold  = true;
 						//如果一个用户弃牌了，从所有的Pot中将其删除，因为他将不参与分Pot
 						for(int i= 0;i< potList.size();i++){
-							potList.get(i).seatIds.remove(user.seatId);
+							potList.get(i).seatIds.remove(mUser.seatId);
 						}
 						break;
 						
@@ -606,22 +606,21 @@ public class Table extends AbsTable {
 						//如果有人下注，这里是不能进行Check的
 						if(max_round_chip > 0){
 							ret =  -8 ;
-							user.operate = Operate.FOLD;
 						}
 						break;
 						
 					case CALL:
 						{
-							long callChip = max_round_chip - user.round_chip;
-							if(user.chip >= callChip){
-								user.round_chip += callChip;
-								user.chip -= callChip;
+							long callChip = max_round_chip - mUser.round_chip;
+							if(mUser.chip >= callChip){
+								mUser.round_chip += callChip;
+								mUser.chip -= callChip;
 							}else{
-								user.round_chip += user.chip;
-								user.chip = 0;
+								mUser.round_chip += mUser.chip;
+								mUser.chip = 0;
 							}
-							actBetChip = user.round_chip;
-							user.isAllIn =(user.chip == 0);
+							actBetChip = mUser.round_chip;
+							mUser.isAllIn =(mUser.chip == 0);
 						}
 						break;
 				
@@ -633,15 +632,15 @@ public class Table extends AbsTable {
 							}else if(betChip > op_max_raise_chip){
 								betChip = op_max_raise_chip;
 							}
-							if(user.chip >= betChip){
-								user.round_chip += betChip;
-								user.chip -= betChip;
+							if(mUser.chip >= betChip){
+								mUser.round_chip += betChip;
+								mUser.chip -= betChip;
 							}else{
-								user.round_chip += user.chip;
-								user.chip = 0;
+								mUser.round_chip += mUser.chip;
+								mUser.chip = 0;
 							}
-							actBetChip = user.round_chip;
-							user.isAllIn =(user.chip == 0);
+							actBetChip = mUser.round_chip;
+							mUser.isAllIn =(mUser.chip == 0);
 						}
 						break;
 						
@@ -650,20 +649,28 @@ public class Table extends AbsTable {
 						break;
 				}
 				
-				if(actBetChip > max_round_chip) {
-					max_round_chip = actBetChip;
-					max_round_chip_seatid = user.seatId;
+				//所有条件都符合才算操作成功
+				if(ret == 0){
+					
+					mUser.operate = actOperate;
+					
+					if(actBetChip > max_round_chip) {
+						max_round_chip = actBetChip;
+						max_round_chip_seatid = mUser.seatId;
+					}
+					
+					broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, ++sequence_id, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip),mUser);
+					printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, "");
+					
+					next_option(mUser);
 				}
-				
-				broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, ++sequence_id, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip),user);
-				printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, "");
-				
-				next_option(user);
 			}
 		}
 		
 		if(ret <0){
 			//发送错误给客户端
+			sendToUser(TexasCmd.CMD_SERVER_USER_ERROR, ++sequence_id, TexasGameServer.broadcastUserActionError(mUser.seatId,ret,"操作错误"),mUser);
+			printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_USER_ERROR, "");
 		}
 		
 		Logger.v("user_request_action ret " + ret);
@@ -751,12 +758,12 @@ public class Table extends AbsTable {
 		op_min_raise_chip = Math.min(max_round_chip *2,users[op_seatid].chip);
 		op_max_raise_chip = users[op_seatid].chip;
 
-		op_sets = Operate.FOLD_VALUE | Operate.CHECK_VALUE | Operate.CALL_VALUE | Operate.RAISE_VALUE;
+		op_sets = Operate.FOLD.getValue() | Operate.CHECK.getValue() | Operate.CALL.getValue() | Operate.RAISE.getValue();
 		if(max_round_chip >0){
-			op_sets = (op_sets & ~ Operate.CHECK_VALUE);
+			op_sets = (op_sets & ~ Operate.CHECK.getValue());
 		}
 		if(max_round_chip >=users[op_seatid].chip){
-			op_sets = (op_sets & ~ Operate.RAISE_VALUE);
+			op_sets = (op_sets & ~ Operate.RAISE.getValue());
 		}
 		
 		broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, ++sequence_id, TexasGameServer.broadcastNextOperateUser(op_seatid,op_sets,op_call_chip,op_min_raise_chip,op_max_raise_chip),null);

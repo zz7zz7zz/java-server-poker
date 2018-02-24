@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 import com.poker.games.AbsUser;
 import com.poker.games.impl.define.TexasDefine.UserStatus;
+import com.poker.games.impl.define.TexasDefine.Operate;
 import com.poker.games.impl.define.TexasDefine.Result;
-import com.poker.protocols.texaspoker.TexasGameBroadcastUserActionProto.TexasGameBroadcastUserAction.Operate;
 
 public class User extends AbsUser {
 	

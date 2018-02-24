@@ -5,6 +5,7 @@ import com.poker.games.impl.Table;
 import com.poker.games.impl.User;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.games.impl.define.TexasDefine;
+import com.poker.games.impl.define.TexasDefine.Operate;
 import com.poker.games.impl.define.TexasDefine.UserStatus;
 import com.poker.protocols.texaspoker.TexasGameStartProto.TexasGameStart;
 import com.poker.protocols.game.server.BroadcastUserExitProto.BroadcastUserExit;
@@ -15,7 +16,7 @@ import com.poker.protocols.texaspoker.GameUserProto.GameUser;
 import com.poker.protocols.texaspoker.TexasGameBroadcastNextOperateProto.TexasGameBroadcastNextOperate;
 import com.poker.protocols.texaspoker.TexasGameBroadcastPotProto.TexasGameBroadcastPot;
 import com.poker.protocols.texaspoker.TexasGameBroadcastUserActionProto.TexasGameBroadcastUserAction;
-import com.poker.protocols.texaspoker.TexasGameBroadcastUserActionProto.TexasGameBroadcastUserAction.Operate;
+
 import com.poker.protocols.texaspoker.TexasGameConfigProto.TexasGameConfig;
 import com.poker.protocols.texaspoker.TexasGameDealFlopProto.TexasGameDealFlop;
 import com.poker.protocols.texaspoker.TexasGameDealPreFlopProto.TexasGameDealPreFlop;
@@ -23,6 +24,7 @@ import com.poker.protocols.texaspoker.TexasGameDealRiverProto.TexasGameDealRiver
 import com.poker.protocols.texaspoker.TexasGameDealTurnProto.TexasGameDealTurn;
 import com.poker.protocols.texaspoker.TexasGameEndProto.Result;
 import com.poker.protocols.texaspoker.TexasGameEndProto.TexasGameEnd;
+import com.poker.protocols.texaspoker.TexasGameErrorProto.TexasGameError;
 import com.poker.protocols.texaspoker.TexasGameReconnectProto.TexasGameReconnect;
 import com.poker.protocols.texaspoker.TexasGameResponseLoginGameProto.TexasGameResponseLoginGame;
 import com.poker.protocols.texaspoker.TexasGameShowHandProto.TexasGameShowHand;
@@ -215,9 +217,18 @@ public class TexasGameServer {
 	public static byte[] broadcastUserAction(int seateId , Operate operate , long chip ,long round_chip) {
 		TexasGameBroadcastUserAction.Builder builder = TexasGameBroadcastUserAction.newBuilder();
 		builder.setSeatId(seateId);
-		builder.setOperate(operate);
+		builder.setOperate(operate.getValue());
 		builder.setChip(chip);
 		builder.setRoundChip(round_chip);
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+	
+	public static byte[] broadcastUserActionError(int seateId,int err_code,String err_msg) {
+		TexasGameError.Builder builder = TexasGameError.newBuilder();
+		builder.setSeatId(seateId);
+		builder.setErrCode(err_code);
+		builder.setErrMsg(err_msg);
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -297,7 +308,7 @@ public class TexasGameServer {
 					userBuild.setLevel(user.level);
 				}
 				
-				userBuild.setOperate(user.operate.getNumber());
+				userBuild.setOperate(user.operate.getValue());
 				userBuild.setChip(user.chip);
 				userBuild.setChipTotal(user.chip_total);
 				userBuild.setPlayStatus(user.play_status.getValue());
@@ -371,7 +382,7 @@ public class TexasGameServer {
 				userBuild.setHeadPortrait(user.head_portrait);
 				userBuild.setLevel(user.level);
 
-				userBuild.setOperate(user.operate.getNumber());
+				userBuild.setOperate(user.operate.getValue());
 				userBuild.setChip(user.chip);
 				userBuild.setChipTotal(user.chip_total);
 				userBuild.setPlayStatus(user.play_status.getValue());
