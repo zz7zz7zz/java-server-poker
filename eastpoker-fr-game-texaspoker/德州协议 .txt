@@ -4,7 +4,7 @@ public final class TexasCmd {
 	
 	//客户端发起   （游戏业务命令字）,范围是0x3001~0x3FFF
 	public static final int CMD_CLIENT_ACTION						= 0x3001; //谁做了什么操作
-	public static final int CMD_CLIENT_SHOW_HAND 					= 0x3002; //秀牌
+	public static final int CMD_CLIENT_SHOW_HAND 					= 0x3002; //谁秀牌
 	public static final int CMD_CLIENT_RECONNECT 					= 0x3003; //客户端数据不对，请求重连
 	
 	//客户端返回   （游戏业务命令字）,范围是0x4001~0x4FFF
@@ -17,17 +17,18 @@ public final class TexasCmd {
 
 	public static final int CMD_SERVER_BROADCAST_USER_ACTION 		= 0x4006; //广播 谁做了什么操作
 	public static final int CMD_SERVER_BROADCAST_NEXT_OPERATE 		= 0x4007; //下一个操作者是谁
-	public static final int CMD_SERVER_BROADCAST_POTS 		        = 0x4008; //广播一局结束后，有几个Pot
+	public static final int CMD_SERVER_BROADCAST_POTS 		        = 0x4008; //广播一轮结束后，有几个Pot
 	public static final int CMD_SERVER_BROADCAST_SHOW_HAND 			= 0x4009; //广播集体秀牌
 	
 	public static final int CMD_SERVER_RECONNECT 	    			= 0x400A; //客户端请求重连
+	public static final int CMD_SERVER_USER_ERROR 	    			= 0x400B; //操作错误
 	public static final int CMD_SERVER_GAME_OVER 	    			= 0x4FFF; //游戏结束，进行结算
 }
 
 //-----------------------------------二、命令字详解（Client）--------------------------------------------
 
 1.1用户执行什么操作 0x3001
-	TexasGameClient.action(Operate operate,long chip);
+	TexasGameClient.action(int operate,long chip);
 
 1.2.秀牌 0x3002
 
@@ -118,7 +119,7 @@ public final class TexasCmd {
 	public static byte[] broadcastUserAction(int seateId , Operate operate , long chip ,long round_chip) {
 		TexasGameBroadcastUserAction.Builder builder = TexasGameBroadcastUserAction.newBuilder();
 		builder.setSeatId(seateId);
-		builder.setOperate(operate);
+		builder.setOperate(operate.getValue());
 		builder.setChip(chip);
 		builder.setRoundChip(round_chip);
 		byte[] body = builder.build().toByteArray();
@@ -126,9 +127,10 @@ public final class TexasCmd {
 	}
 	
 2.7广播 下一个操作者是谁0x4007
-	public static byte[] broadcastNextOperateUser(int op_seate_id ,long op_call_chip,long op_min_raise_chip,long op_max_raise_chip) {
+	public static byte[] broadcastNextOperateUser(int op_seate_id ,int op_sets,long op_call_chip,long op_min_raise_chip,long op_max_raise_chip) {
 		TexasGameBroadcastNextOperate.Builder builder = TexasGameBroadcastNextOperate.newBuilder();
 		builder.setNextOpSeatId(op_seate_id);
+		builder.setNextOpSets(op_sets);
 		builder.setNextOpCallChip(op_call_chip);
 		builder.setNextOpMinRaiseChip(op_min_raise_chip);
 		builder.setNextOpMaxRaiseChip(op_max_raise_chip);
@@ -147,18 +149,18 @@ public final class TexasCmd {
 	}
 	
 2.9广播集体秀牌 0x4009
-	public static byte[] showHand(AbsTable table){
+	public static byte[] showHand(Table table){
 		
 		TexasGameShowHand.Builder builder = TexasGameShowHand.newBuilder();
-        User[] gGsers=(User[])table.users;
-		for(int i = 0;i<gGsers.length;i++){
-			if(null == gGsers[i] || !gGsers[i].isPlaying() || gGsers[i].isFold){
+		for(int i =0 ;i<table.users.length;i++){
+			User user = (User) table.users[i];
+			if(null == user || !user.isPlaying() || user.isFold){
 				continue;
 			}
 			UserCard.Builder usercardBuilder =  UserCard.newBuilder();
 			usercardBuilder.setSeateId(table.users[i].seatId);
-			for(int j = 0 ;j<gGsers[i].handCard.length;j++){
-				usercardBuilder.addCards(gGsers[i].handCard[j]);
+			for(int j = 0 ;j<user.handCard.length;j++){
+				usercardBuilder.addCards(user.handCard[j]);
 			}
 			builder.addMUserCards(usercardBuilder);
 		}
@@ -202,7 +204,7 @@ public final class TexasCmd {
 					userBuild.setLevel(user.level);
 				}
 				
-				userBuild.setOperate(user.operate.getNumber());
+				userBuild.setOperate(user.operate.getValue());
 				userBuild.setChip(user.chip);
 				userBuild.setChipTotal(user.chip_total);
 				userBuild.setPlayStatus(user.play_status.getValue());
@@ -251,6 +253,7 @@ public final class TexasCmd {
 		
 		//当前操作人信息
 		builder.setNextOpSeatId(table.op_seatid);
+		builder.setNextSets(table.op_sets);
 		builder.setNextOpCallChip(table.op_call_chip);
 		builder.setNextOpMinRaiseChip(table.op_min_raise_chip);
 		builder.setNextOpMaxRaiseChip(table.op_max_raise_chip);
@@ -276,7 +279,7 @@ public final class TexasCmd {
 				userBuild.setHeadPortrait(user.head_portrait);
 				userBuild.setLevel(user.level);
 
-				userBuild.setOperate(user.operate.getNumber());
+				userBuild.setOperate(user.operate.getValue());
 				userBuild.setChip(user.chip);
 				userBuild.setChipTotal(user.chip_total);
 				userBuild.setPlayStatus(user.play_status.getValue());
@@ -289,7 +292,17 @@ public final class TexasCmd {
 		return body;
 	}
 
-2.11游戏结束，进行结算 0x4FFF
+2.11客户端操作错误 0x400B
+	public static byte[] broadcastUserActionError(int seateId,int err_code,String err_msg) {
+		TexasGameError.Builder builder = TexasGameError.newBuilder();
+		builder.setSeatId(seateId);
+		builder.setErrCode(err_code);
+		builder.setErrMsg(err_msg);
+		byte[] body = builder.build().toByteArray();
+		return body;
+	}
+	
+2.12游戏结束，进行结算 0x4FFF
 	public static byte[] gameOver(Table table){
 		TexasGameEnd.Builder builder = TexasGameEnd.newBuilder();
 		for(int i = 0;i<table.users.length;i++){

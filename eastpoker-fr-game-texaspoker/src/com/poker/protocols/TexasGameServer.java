@@ -357,6 +357,7 @@ public class TexasGameServer {
 		
 		//当前操作人信息
 		builder.setNextOpSeatId(table.op_seatid);
+		builder.setNextSets(table.op_sets);
 		builder.setNextOpCallChip(table.op_call_chip);
 		builder.setNextOpMinRaiseChip(table.op_min_raise_chip);
 		builder.setNextOpMaxRaiseChip(table.op_max_raise_chip);
