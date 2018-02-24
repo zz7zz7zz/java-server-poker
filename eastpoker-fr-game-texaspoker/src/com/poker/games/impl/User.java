@@ -35,7 +35,7 @@ public class User extends AbsUser {
 	
 	public void stopGame(){
 		super.stopGame();
-		operate = Operate.FOLD;
+		operate = Operate.UNRECOGNIZED;
 		play_status = UserStatus.NOT_PLAY_SITDOWN;
 		Arrays.fill(handCard, (byte)0);
 		

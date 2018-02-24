@@ -608,7 +608,7 @@ public class Table extends AbsTable {
 							
 						case CHECK:
 							//如果有人下注，这里是不能进行Check的
-							if(max_round_chip > 0){
+							if(max_round_chip > 0 && (max_round_chip- mUser.round_chip) >0){
 								ret =  -9 ;
 							}
 							break;
@@ -663,7 +663,7 @@ public class Table extends AbsTable {
 							max_round_chip_seatid = mUser.seatId;
 						}
 						
-						broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, ++sequence_id, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip),mUser);
+						broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, ++sequence_id, TexasGameServer.broadcastUserAction(mUser.seatId,mUser.operate,mUser.chip,actBetChip),null);
 						printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_USER_ACTION, "");
 						
 						next_option(mUser);
@@ -756,6 +756,15 @@ public class Table extends AbsTable {
         		
         		//说明大家下注额是一样了，进入下一圈
         		if(r_next_seatId_index == max_round_chip_seatid){
+        			
+        			//翻牌前大盲位还可以加注的机会
+        			if(step == GameStep.PREFLOP){
+        				if(max_round_chip_seatid == bb_seatid && users[bb_seatid].chip > 0 && users[bb_seatid].operate == Operate.UNRECOGNIZED){
+        					op_seatid = bb_seatid;
+        					break;
+        				}
+        			}
+        			
 	    			nextStep(false);
 	    			return;
 	    		}
@@ -765,7 +774,10 @@ public class Table extends AbsTable {
 	     			continue;
 	     		}
 	    		
-        		if(users[r_next_seatId_index].round_chip < max_round_chip) {
+        		if(max_round_chip == 0) {
+        			op_seatid = r_next_seatId_index;
+        			break;
+        		}else if(max_round_chip >0 && users[r_next_seatId_index].round_chip < max_round_chip) {
 	    			op_seatid = r_next_seatId_index;
 	    			break;
 	    		}
@@ -775,15 +787,20 @@ public class Table extends AbsTable {
 			max_round_chip_seatid = op_seatid;
 		}
 		op_call_chip 	  = max_round_chip;
-		op_min_raise_chip = Math.min(max_round_chip *2,users[op_seatid].chip);
+		op_min_raise_chip = Math.min(sb_chip *2,users[op_seatid].chip);
 		op_max_raise_chip = users[op_seatid].chip;
 
-		op_sets = Operate.FOLD.getValue() | Operate.CHECK.getValue() | Operate.CALL.getValue() | Operate.RAISE.getValue();
-		if(max_round_chip >0){
-			op_sets = (op_sets & ~ Operate.CHECK.getValue());
+		//用户没有筹码了
+		op_sets = Operate.FOLD.getValue() | Operate.CHECK.getValue();
+		
+		long needChip = op_call_chip - users[op_seatid].round_chip;
+		
+		if(needChip >0 && users[op_seatid].chip >0) {
+			op_sets |= Operate.CALL.getValue();
 		}
-		if(max_round_chip >=users[op_seatid].chip){
-			op_sets = (op_sets & ~ Operate.RAISE.getValue());
+		
+		if(users[op_seatid].chip > needChip){
+			op_sets |= Operate.RAISE.getValue();
 		}
 		
 		broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, ++sequence_id, TexasGameServer.broadcastNextOperateUser(op_seatid,op_sets,op_call_chip,op_min_raise_chip,op_max_raise_chip),null);
