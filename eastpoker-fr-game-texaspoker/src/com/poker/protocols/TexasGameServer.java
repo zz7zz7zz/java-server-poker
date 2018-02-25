@@ -6,7 +6,6 @@ import com.poker.games.impl.User;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.games.impl.define.TexasDefine;
 import com.poker.games.impl.define.TexasDefine.Operate;
-import com.poker.games.impl.define.TexasDefine.UserStatus;
 import com.poker.protocols.texaspoker.TexasGameStartProto.TexasGameStart;
 import com.poker.protocols.game.server.BroadcastUserExitProto.BroadcastUserExit;
 import com.poker.protocols.game.server.BroadcastUserOfflineProto.BroadcastUserOffline;
@@ -31,6 +30,9 @@ import com.poker.protocols.texaspoker.TexasGameShowHandProto.TexasGameShowHand;
 import com.poker.protocols.texaspoker.TexasGameShowHandProto.UserCard;
 
 public class TexasGameServer {
+	
+	public static boolean DEBUG = true;
+	public static String DEBUG_LOG = "";
 	
 	//--------------------------------------------------------基础指令----------------------------------------------------------------
 	public static byte[] userLogin(User gUser,Table table,GameConfig mGameConfig){
@@ -95,6 +97,10 @@ public class TexasGameServer {
 			}
 		}
 		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
+		}
+		
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -114,6 +120,10 @@ public class TexasGameServer {
 
 		builder.setUsers(userBuild);
 		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
+		}
+		
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -121,6 +131,11 @@ public class TexasGameServer {
 	public static byte[] broadUserLogout(AbsUser mUser){
 		BroadcastUserExit.Builder builder = BroadcastUserExit.newBuilder();
 		builder.setSeatId(mUser.seatId);
+		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
+		}
+		
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -128,6 +143,11 @@ public class TexasGameServer {
 	public static byte[] broadUserReady(AbsUser mUser){
 		BroadcastUserReady.Builder builder = BroadcastUserReady.newBuilder();
 		builder.setSeatId(mUser.seatId);
+		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
+		}
+		
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -136,6 +156,11 @@ public class TexasGameServer {
 		BroadcastUserOffline.Builder builder = BroadcastUserOffline.newBuilder();
 		builder.setUid(uid);
 		builder.setStatus(isOnLine ? 1 : 0);
+		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
+		}
+		
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -165,6 +190,10 @@ public class TexasGameServer {
 			}
 		}
 		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
+		}
+		
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -174,6 +203,10 @@ public class TexasGameServer {
 		TexasGameDealPreFlop.Builder builder = TexasGameDealPreFlop.newBuilder();
 		for(int i = 0;i<cards.length;i++){
 			builder.addCards(cards[i]);
+		}
+		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
 		}
 		
 		byte[] body = builder.build().toByteArray();
@@ -187,6 +220,10 @@ public class TexasGameServer {
 			builder.addCards(cards[i]);
 		}
 		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
+		}
+		
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -196,6 +233,10 @@ public class TexasGameServer {
 		TexasGameDealTurn.Builder builder = TexasGameDealTurn.newBuilder();
 		for(int i = 0;i<cards.length;i++){
 			builder.addCards(cards[i]);
+		}
+		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
 		}
 		
 		byte[] body = builder.build().toByteArray();
@@ -209,6 +250,10 @@ public class TexasGameServer {
 			builder.addCards(cards[i]);
 		}
 		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
+		}
+		
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -220,6 +265,11 @@ public class TexasGameServer {
 		builder.setOperate(operate.getValue());
 		builder.setChip(chip);
 		builder.setRoundChip(round_chip);
+		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
+		}
+		
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -229,6 +279,11 @@ public class TexasGameServer {
 		builder.setSeatId(seateId);
 		builder.setErrCode(err_code);
 		builder.setErrMsg(err_msg);
+		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
+		}
+		
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -241,6 +296,11 @@ public class TexasGameServer {
 		builder.setNextOpCallChip(op_call_chip);
 		builder.setNextOpMinRaiseChip(op_min_raise_chip);
 		builder.setNextOpMaxRaiseChip(op_max_raise_chip);
+		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
+		}
+		
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -250,6 +310,11 @@ public class TexasGameServer {
 		for(int i = 0 ;i<pots.length;i++){
 			builder.addPots(pots[i]);
 		}
+		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
+		}
+		
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -270,6 +335,10 @@ public class TexasGameServer {
 			builder.addMUserCards(usercardBuilder);
 		}
 	
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
+		}
+		
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -392,6 +461,10 @@ public class TexasGameServer {
 			}
 		}
 		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
+		}
+		
 		byte[] body = builder.build().toByteArray();
 		return body;
 	}
@@ -413,6 +486,10 @@ public class TexasGameServer {
 			resultBuilder.setWinPotChip(user.win_pot_chip);
 			resultBuilder.setWinChip(user.win_chip);
 			builder.addMResults(resultBuilder);
+		}
+		
+		if(DEBUG){
+			DEBUG_LOG = builder.toString();
 		}
 		
 		byte[] body = builder.build().toByteArray();
