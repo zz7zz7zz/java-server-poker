@@ -22,7 +22,6 @@ import com.poker.games.impl.config.CardConfig;
 import com.poker.games.impl.config.GameConfig;
 import com.poker.games.impl.define.TexasDefine;
 import com.poker.games.impl.define.TexasUtil;
-import com.poker.games.impl.define.TexasDefine.UserStatus;
 import com.poker.games.impl.define.TexasDefine.GameStep;
 import com.poker.games.impl.define.TexasDefine.Operate;
 import com.poker.games.impl.define.TexasDefine.Pot;
@@ -267,7 +266,7 @@ public class Table extends AbsTable {
 		}
 		
 		if(userCount>=this.mConfig.table_min_user) {
-			startGame();
+			preStartGame();
 		}
 		
 		return 0;
@@ -317,9 +316,8 @@ public class Table extends AbsTable {
 	}
 
 	//-------------------------------------------------------
-	public void startGame() {
-		super.startGame();
-		
+	public void preStartGame() {
+
         //1.设置每个玩家的游戏状态
 		int play_user_count = 0;
         for(int i =0;i<users.length;i++) {
@@ -337,10 +335,11 @@ public class Table extends AbsTable {
         	return;
         }
         
-        newGame();
+        startGame();
 	}
 	
-	public void newGame(){
+	public void startGame(){
+		super.startGame();
 		
 		//设置开始时的金币，方便结束时进行结算
         for(int i =0;i<users.length;i++) {
@@ -358,11 +357,11 @@ public class Table extends AbsTable {
 	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
 	        next_seatId_index = rd.nextInt(this.mConfig.table_max_user);
         }else{//说明是游戏持续
-        	next_seatId_index = btn_seateId+1;
+        	next_seatId_index = (btn_seateId+1)%this.mConfig.table_max_user;
         }
     	if(null == users[next_seatId_index]){
         	for(int i = 1 ;i<this.mConfig.table_max_user;i++){
-        		int r_next_seatId_index = (next_seatId_index - i + this.mConfig.table_max_user)%this.mConfig.table_max_user;
+        		int r_next_seatId_index = (next_seatId_index +i) %this.mConfig.table_max_user;
             	if(null != users[r_next_seatId_index]){
             		next_seatId_index = r_next_seatId_index;
             		break;
@@ -400,7 +399,7 @@ public class Table extends AbsTable {
 
 		//3.强制玩家交Ante,小盲大盲强制下盲注
 		for(int i =0;i<users.length;i++) {
-     		if(null ==users[i] || users[i].play_status != UserStatus.PLAY) {
+     		if(null ==users[i] || !users[i].isPlaying()) {
      			continue;
      		}
      		
@@ -439,7 +438,7 @@ public class Table extends AbsTable {
         
 		if(mCardConfig.isEnable) {
 	        for(int i =0;i<users.length;i++) {
-        		if(null ==users[i] || users[i].play_status != UserStatus.PLAY) {
+        		if(null ==users[i] || !users[i].isPlaying()) {
         			continue;
         		}
         		
@@ -452,7 +451,7 @@ public class Table extends AbsTable {
 	        long t = System.currentTimeMillis();//获得当前时间的毫秒数
 	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
 	        for(int i =0;i<users.length;i++) {
-        		if(null ==users[i] || users[i].play_status != UserStatus.PLAY) {
+        		if(null ==users[i] || !users[i].isPlaying()) {
         			continue;
         		}
         		
@@ -473,7 +472,7 @@ public class Table extends AbsTable {
 		}
 		
 		for(int i =0;i<users.length;i++) {
-     		if(null ==users[i] || users[i].play_status != UserStatus.PLAY) {
+     		if(null ==users[i] || !users[i].isPlaying()) {
      			continue;
      		}
      		
@@ -1198,7 +1197,7 @@ public class Table extends AbsTable {
 				break;
 				
 			case TimerId.TIMER_ID_NEW_GAME:
-				newGame();
+				startGame();
 				break;
 		}
 	}

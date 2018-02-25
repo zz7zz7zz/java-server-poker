@@ -154,7 +154,7 @@ public class TexasGameServer {
 		
 		for(int i =0 ;i<table.users.length;i++){
 			User user = (User) table.users[i];
-			if(null  != user && user.play_status == UserStatus.PLAY ){
+			if(null  != user && user.isPlaying()){
 				GameUser.Builder userBuild = GameUser.newBuilder();
 				userBuild.setSeatId(user.seatId);
 				userBuild.setChip(user.chip);

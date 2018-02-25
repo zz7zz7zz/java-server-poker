@@ -9,8 +9,8 @@ import com.poker.games.impl.define.TexasDefine.Result;
 
 public class User extends AbsUser {
 	
+	public UserStatus play_status = UserStatus.NOT_PLAY_SITDOWN;
 	public byte[] handCard=new byte[2];
-	public UserStatus play_status;
 	public Operate operate;
 	
 	public boolean isFold;
@@ -40,7 +40,6 @@ public class User extends AbsUser {
 		super.stopGame();
 		
 		Arrays.fill(handCard, (byte)0);
-		play_status = UserStatus.NOT_PLAY_SITDOWN;
 		operate = Operate.UNRECOGNIZED;
 		
 		isFold = false;
