@@ -177,19 +177,22 @@ public class Table extends AbsTable {
 	protected int sendToUser(int cmd, int squenceId, byte[] body, User user) {
 		if(user.isOnLine()){
 			sendToClient(cmd,squenceId,body,user);
+			return 1;
 		}
 		return 0;
 	}
 	
 	@Override
 	protected int broadcastToUser(int cmd, int squenceId, byte[] body, User user) {
+		int ret = 0;
 		for(int i =0 ;i<users.length;i++){
 			User mUser = (User) users[i];
 			if(null != mUser && mUser != user && mUser.isOnLine()){
 				sendToClient(cmd,squenceId,body,mUser);
+				ret++;
 			}
 		}
-		return 0;
+		return ret;
 	}
 	
 	@Override

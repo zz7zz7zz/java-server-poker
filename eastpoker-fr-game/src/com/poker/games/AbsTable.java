@@ -106,8 +106,8 @@ public abstract class AbsTable implements ITimer{
 	
 	//------------------------------------发送数据------------------------------------
 	
-	protected void sendToClient(int cmd,int squenceId ,byte[] body,User user){
-		this.sendToClient(cmd, squenceId, body, 0, body.length,user);
+	protected int sendToClient(int cmd,int squenceId ,byte[] body,User user){
+		return this.sendToClient(cmd, squenceId, body, 0, body.length,user);
 	}
 
 	protected int sendToClient(int cmd,int squenceId ,byte[] body,int offset ,int length,User user){
