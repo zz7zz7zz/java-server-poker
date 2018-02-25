@@ -1057,8 +1057,8 @@ public class Table extends AbsTable {
 				
 				users[i].stopGame();
 				
-				//将不在线的用户踢出去
-				if(!users[i].isOnLine()){
+				//将不在线的用户/金币不足的用户           踢出去
+				if(!users[i].isOnLine() || users[i].chip ==0){
 					mRoom.logoutGame(users[i], this);
 					users[i] = null;
 				}
