@@ -92,6 +92,41 @@ public class TexasDefine {
 		}
 	 }
 	
+	public static final class TimerId {
+		
+		public static final int TIMER_ID_PREFLOP 	= 100;
+		public static final int TIMER_ID_FLOP 		= 101;
+		public static final int TIMER_ID_TRUN 		= 102;
+		public static final int TIMER_ID_RIVER 		= 103;
+		public static final int TIMER_ID_SHOWHAND 	= 104;
+		
+		public static final int TIMER_ID_USER_ACTION 		= 105;
+		public static final int TIMER_ID_NEXT_USER_ACTION 	= 106;
+		public static final int TIMER_ID_POT 				= 107;
+		public static final int TIMER_ID_STOP_GAME 			= 108;
+		public static final int TIMER_ID_NEW_GAME 			= 109;
+		
+		//---------------------------------------------------------
+		
+	 }
+	
+	public static final class TimerDuration {
+		
+		public static final int TIMER_DURATION_PREFLOP 		= 5;
+		public static final int TIMER_DURATION_FLOP 		= 5;
+		public static final int TIMER_DURATION_TRUN 		= 5;
+		public static final int TIMER_DURATION_RIVER 		= 5;
+		public static final int TIMER_DURATION_SHOWHAND 	= 5;
+		
+		public static final int TIMER_DURATION_USER_ACTION 		= 5;
+		public static final int TIMER_DURATION_NEXT_USER_ACTION = 5;
+		public static final int TIMER_DURATION_POT 				= 5;
+		public static final int TIMER_DURATION_STOP_GAME 		= 5;
+		public static final int TIMER_DURATION_NEW_GAME 		= 20;
+		//---------------------------------------------------------
+		
+	 }
+	
 	public static enum TCard{
 		NO(0),  //无
 		HIGHT(1),  //高牌

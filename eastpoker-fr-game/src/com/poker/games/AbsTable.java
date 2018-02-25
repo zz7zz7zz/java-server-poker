@@ -1,5 +1,7 @@
 package com.poker.games;
 
+import com.open.net.base.ITimer;
+import com.open.net.base.Looper;
 import com.poker.cmd.AccessCmd;
 import com.poker.cmd.AllocatorCmd;
 import com.poker.cmd.UserCmd;
@@ -14,7 +16,7 @@ import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.packet.PacketTransfer;
 
-public abstract class AbsTable {
+public abstract class AbsTable implements ITimer{
 	
 	public Room mRoom;
 	public final int tableId;
@@ -102,6 +104,8 @@ public abstract class AbsTable {
 		Main.send2Dispatch(mTempBuff,0,length);	
 	}
 	
+	//------------------------------------发送数据------------------------------------
+	
 	protected void sendToClient(int cmd,int squenceId ,byte[] body,User user){
 		this.sendToClient(cmd, squenceId, body, 0, body.length,user);
 	}
@@ -111,6 +115,19 @@ public abstract class AbsTable {
 		Main.send2Dispatch(mOutPacket.getPacket(), 0, length);
 		return 1;
 	}
+	
+	//------------------------------------定时器------------------------------------
+	protected void startTimer(int timeOutId,int duration,ITimer timer){
+		Looper.register(timeOutId, duration, timer);
+	}
+
+	protected void stopTimer(int timeOutId,ITimer timer){
+		Looper.unRegister(timeOutId, timer);
+	}
+	
+	public void onTimeOut(int timeOutId){
+		
+	};
 	
 	//------------------------------------子游戏必需实现的业务逻辑------------------------------------
 	//游戏基础接口(非游戏内接口)
@@ -126,9 +143,6 @@ public abstract class AbsTable {
 	//发数据接口
 	protected abstract int sendToUser(int cmd,int squenceId ,byte[] body,User user);//用户准备
 	protected abstract int broadcastToUser(int cmd,int squenceId ,byte[] body,User user);//用户准备
-	
-	//定时器回调接口
-	public abstract int onTimeOut();
 	
 	//游戏内接口数据
 	public abstract int dispatchTableMessage(User mUser,int cmd, byte[] data, int header_start, int header_length, int body_start,int body_length);
