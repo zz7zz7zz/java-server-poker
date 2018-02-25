@@ -795,15 +795,15 @@ public class Table extends AbsTable {
 		op_max_raise_chip = users[op_seatid].chip;
 
 		//用户没有筹码了
+		long needChip = op_call_chip - users[op_seatid].round_chip;
+		
 		op_sets = Operate.FOLD.getValue();
 		
-		if(op_call_chip == 0){
+		if(op_call_chip == 0 || (needChip == 0 && step == GameStep.PREFLOP && max_round_chip_seatid == bb_seatid)){
 			op_sets |= Operate.CHECK.getValue();
 		}
 		
-		long needChip = op_call_chip - users[op_seatid].round_chip;
-		
-		if(needChip >0 && users[op_seatid].chip >0 || (needChip == 0 && step == GameStep.PREFLOP && max_round_chip_seatid == bb_seatid)) {
+		if(needChip >0 && users[op_seatid].chip >0) {
 			op_sets |= Operate.CALL.getValue();
 		}
 		
