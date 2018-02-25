@@ -615,7 +615,7 @@ public class Table extends AbsTable {
 				mUser.isFold  = true;
 				//如果一个用户弃牌了，从所有的Pot中将其删除，因为他将不参与分Pot
 				for(int i= 0;i< potList.size();i++){
-					potList.get(i).seatIds.remove(mUser.seatId);
+					potList.get(i).seatIds.remove((Integer)mUser.seatId);
 				}
 				break;
 				
@@ -817,12 +817,16 @@ public class Table extends AbsTable {
 	
 	private void nextStep(boolean isGameOver){
 		
-		handPots();
+		//刚开始强制大小盲后，还没有到翻牌前不需要处理Pots
+		if(step != GameStep.START){
+			dealPots();
+		}
 
 		if(isGameOver) {
 			stopGame();
 			return;
 		}
+		
 		if(step == GameStep.START){
 //			dealPreFlop();
 			startTimer(TimerId.TIMER_ID_PREFLOP, TimerDuration.TIMER_DURATION_PREFLOP, this);
@@ -844,7 +848,7 @@ public class Table extends AbsTable {
 		}
 	}
  
-	private void handPots(){
+	private void dealPots(){
 		//如果有人下注才需要处理Pots
 		if(max_round_chip >0){
 			

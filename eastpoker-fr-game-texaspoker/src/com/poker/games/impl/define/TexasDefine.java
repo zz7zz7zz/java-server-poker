@@ -112,17 +112,17 @@ public class TexasDefine {
 	
 	public static final class TimerDuration {
 		
-		public static final int TIMER_DURATION_PREFLOP 		= 5;
-		public static final int TIMER_DURATION_FLOP 		= 5;
-		public static final int TIMER_DURATION_TRUN 		= 5;
-		public static final int TIMER_DURATION_RIVER 		= 5;
-		public static final int TIMER_DURATION_SHOWHAND 	= 5;
+		public static final int TIMER_DURATION_PREFLOP 		= 60;
+		public static final int TIMER_DURATION_FLOP 		= 60;
+		public static final int TIMER_DURATION_TRUN 		= 60;
+		public static final int TIMER_DURATION_RIVER 		= 60;
+		public static final int TIMER_DURATION_SHOWHAND 	= 60;
 		
-		public static final int TIMER_DURATION_USER_ACTION 		= 5;
-		public static final int TIMER_DURATION_NEXT_USER_ACTION = 5;
-		public static final int TIMER_DURATION_POT 				= 5;
-		public static final int TIMER_DURATION_STOP_GAME 		= 5;
-		public static final int TIMER_DURATION_NEW_GAME 		= 20;
+		public static final int TIMER_DURATION_USER_ACTION 		= 60;
+		public static final int TIMER_DURATION_NEXT_USER_ACTION = 60;
+		public static final int TIMER_DURATION_POT 				= 60;
+		public static final int TIMER_DURATION_STOP_GAME 		= 60;
+		public static final int TIMER_DURATION_NEW_GAME 		= 120;
 		//---------------------------------------------------------
 		
 	 }

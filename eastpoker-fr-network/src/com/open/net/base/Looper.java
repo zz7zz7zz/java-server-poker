@@ -9,6 +9,8 @@ public final class Looper {
 	private static final LinkedList<IPoller> mPollerList = new LinkedList<>();
 	private static final LinkedList<ITimeObj>  mTimerList = new LinkedList<>();
 	
+	private static final LinkedList<ITimeObj>  mPendingTimerList = new LinkedList<>();//是为了解决java.util.ConcurrentModificationException
+	
 	//----------------------------------------------------
 	public static final void register(IPoller mPooer) {
 		if(!mPollerList.contains(mPooer)) {
@@ -22,7 +24,7 @@ public final class Looper {
 	
 	//----------------------------------------------------
 	public static final void register(int timeOutId,int duration,ITimer timer) {
-		mTimerList.add(new ITimeObj(timeOutId, duration, timer));
+		mPendingTimerList.add(new ITimeObj(timeOutId, duration, timer));
 	}
 	
 	public static final void unRegister(int timeOutId,ITimer timer) {
@@ -30,7 +32,7 @@ public final class Looper {
 		while (iterator.hasNext()) {
 			ITimeObj mITimeObj = iterator.next();
 			if(mITimeObj.timeOutId == timeOutId &&  mITimeObj.timer == timer){
-				iterator.remove();
+				mITimeObj.isInvalid = true;
 				break;
 			}
 		}
@@ -53,10 +55,21 @@ public final class Looper {
 				}
 				
 				//遍历定时器
+				if(mPendingTimerList.size()>0){
+					mTimerList.addAll(mPendingTimerList);	
+					mPendingTimerList.clear();
+				}
+
 				long now = System.currentTimeMillis();
 				Iterator<ITimeObj> iterator = mTimerList.iterator();
 				while (iterator.hasNext()) {
 					ITimeObj mITimeObj = iterator.next();
+					
+					if(mITimeObj.isInvalid){
+						iterator.remove();
+						continue;
+					}
+					
 					if(Math.abs(now - mITimeObj.timestamp) > 1000L){
 						mITimeObj.timestamp = now;
 						mITimeObj.duration --;
@@ -78,11 +91,19 @@ public final class Looper {
 	
 	
 //	public static void main(String argc[]){
+//		
+//		LinkedList<String>  mAddTimerList = new LinkedList<>();
+//		mAddTimerList.add("104");
+//		mAddTimerList.add("105");
+//		
 //		LinkedList<String>  mTimerList = new LinkedList<>();
 //		mTimerList.add("100");
 //		mTimerList.add("101");
 //		mTimerList.add("102");
 //		mTimerList.add("103");
+//		
+//		mTimerList.addAll(mAddTimerList);
+//		mAddTimerList.clear();
 //		
 ////		for (String iTimer : mTimerList) {
 ////			if(iTimer.equals("101")){
@@ -95,10 +116,10 @@ public final class Looper {
 //		Iterator<String> iterator = mTimerList.iterator();
 //		while (iterator.hasNext()) {
 //			String iTimer = iterator.next();
-//			if(iTimer.equals("101")){
-//				iterator.remove();
-//				continue;
-//			}
+////			if(iTimer.equals("101")){
+////				iterator.remove();
+////				continue;
+////			}
 //			System.out.println(iTimer);
 //		}
 //	}
