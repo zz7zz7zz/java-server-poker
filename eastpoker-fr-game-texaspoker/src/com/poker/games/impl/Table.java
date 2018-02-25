@@ -266,7 +266,7 @@ public class Table extends AbsTable {
 		}
 		
 		if(userCount>=this.mConfig.table_min_user) {
-			preStartGame();
+			readyToStartGame();
 		}
 		
 		return 0;
@@ -316,7 +316,7 @@ public class Table extends AbsTable {
 	}
 
 	//-------------------------------------------------------
-	public void preStartGame() {
+	public void readyToStartGame() {
 
         //1.设置每个玩家的游戏状态
 		int play_user_count = 0;
@@ -410,9 +410,11 @@ public class Table extends AbsTable {
 		
 		users[sb_seatid].round_chip =  users[sb_seatid].chip > sb_chip ? sb_chip : users[sb_seatid].chip;
 		users[sb_seatid].chip -= users[sb_seatid].round_chip;
+		users[sb_seatid].isAllIn = (users[sb_seatid].chip == 0);
 		
 		users[bb_seatid].round_chip =  users[bb_seatid].chip > sb_chip*2 ? sb_chip*2 : users[bb_seatid].chip;
 		users[bb_seatid].chip -= users[bb_seatid].round_chip;
+		users[bb_seatid].isAllIn = (users[bb_seatid].chip == 0);
 		
 		if(users[bb_seatid].round_chip > users[sb_seatid].round_chip){
 			max_round_chip = users[bb_seatid].round_chip;
@@ -1073,7 +1075,6 @@ public class Table extends AbsTable {
 		//--------------------------------------------------------------------------------
 		super.stopGame();
 		
-		int canPlayCount = 1;
 		//更新用户游戏状态，
 		for (int i = 0; i < users.length; i++) {
 			if(null != users[i]){
@@ -1084,8 +1085,6 @@ public class Table extends AbsTable {
 				if(!users[i].isOnLine() || users[i].chip ==0){
 					mRoom.logoutGame(users[i], this);
 					users[i] = null;
-				}else{
-					canPlayCount ++;
 				}
 			}
 		}
@@ -1103,6 +1102,7 @@ public class Table extends AbsTable {
 	
 		max_round_chip = 0;
 		max_round_chip_seatid = 0;
+		potList.clear();
 		
 		stopTimer(TimerId.TIMER_ID_PREFLOP, this);
 		stopTimer(TimerId.TIMER_ID_FLOP, this);
@@ -1116,9 +1116,7 @@ public class Table extends AbsTable {
 		stopTimer(TimerId.TIMER_ID_NEW_GAME, this);
 		
 		//------------------------------------------------------
-		if(canPlayCount>1){
-			startTimer(TimerId.TIMER_ID_NEW_GAME, mGameConfig.timeout_new_game, this);
-		}
+		startTimer(TimerId.TIMER_ID_NEW_GAME, mGameConfig.timeout_new_game, this);
 	}
 	
 	public void supendGame() {
@@ -1197,6 +1195,18 @@ public class Table extends AbsTable {
 				break;
 				
 			case TimerId.TIMER_ID_NEW_GAME:
+				
+				int play_user_count = 0;
+		        for(int i =0;i<users.length;i++) {
+		    		if(null == users[i]) {
+		    			continue;
+		    		}
+		    		play_user_count++;
+		        }
+		        if(play_user_count<this.mConfig.table_min_user){
+		        	return;
+		        }
+		        
 				startGame();
 				break;
 		}
