@@ -27,7 +27,6 @@ import com.poker.games.impl.define.TexasDefine.GameStep;
 import com.poker.games.impl.define.TexasDefine.Operate;
 import com.poker.games.impl.define.TexasDefine.Pot;
 import com.poker.games.impl.define.TexasDefine.PotComparator;
-import com.poker.games.impl.define.TexasDefine.TimerDuration;
 import com.poker.games.impl.define.TexasDefine.TimerId;
 import com.poker.protocols.TexasCmd;
 import com.poker.protocols.TexasGameServer;
@@ -815,7 +814,7 @@ public class Table extends AbsTable {
 		broadcastToUser(TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, ++sequence_id, TexasGameServer.broadcastNextOperateUser(op_seatid,op_sets,op_call_chip,op_min_raise_chip,op_max_raise_chip),null);
 		printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_NEXT_OPERATE, "");
 		
-  		startTimer(TimerId.TIMER_ID_USER_ACTION, TimerDuration.TIMER_DURATION_PREFLOP, this);
+  		startTimer(TimerId.TIMER_ID_USER_ACTION, mGameConfig.timeout_user_action, this);
 	}
 	
 	private void nextStep(boolean isGameOver){
@@ -832,22 +831,22 @@ public class Table extends AbsTable {
 		
 		if(step == GameStep.START){
 //			dealPreFlop();
-			startTimer(TimerId.TIMER_ID_PREFLOP, TimerDuration.TIMER_DURATION_PREFLOP, this);
+			startTimer(TimerId.TIMER_ID_PREFLOP, mGameConfig.timeout_preflop, this);
 		}else if(step == GameStep.PREFLOP) {
 //			dealFlop();
-			startTimer(TimerId.TIMER_ID_FLOP, TimerDuration.TIMER_DURATION_FLOP, this);
+			startTimer(TimerId.TIMER_ID_FLOP, mGameConfig.timeout_flop, this);
 		}else if(step == GameStep.FLOP) {
 //			dealTrun();
-			startTimer(TimerId.TIMER_ID_TRUN, TimerDuration.TIMER_DURATION_TRUN, this);
+			startTimer(TimerId.TIMER_ID_TRUN, mGameConfig.timeout_turn, this);
 		}else if(step == GameStep.TRUN) {
 //			dealRiver();
-			startTimer(TimerId.TIMER_ID_RIVER, TimerDuration.TIMER_DURATION_RIVER, this);
+			startTimer(TimerId.TIMER_ID_RIVER, mGameConfig.timeout_river, this);
 		}else if(step == GameStep.RIVER) {
 //			dealShowHands();
-			startTimer(TimerId.TIMER_ID_SHOWHAND, TimerDuration.TIMER_DURATION_SHOWHAND, this);
+			startTimer(TimerId.TIMER_ID_SHOWHAND, mGameConfig.timeout_showhand, this);
 		}else{
 //			stopGame();
-			startTimer(TimerId.TIMER_ID_STOP_GAME, TimerDuration.TIMER_DURATION_STOP_GAME, this);
+			startTimer(TimerId.TIMER_ID_CLEARING, mGameConfig.timeout_clearing, this);
 		}
 	}
  
@@ -1088,11 +1087,11 @@ public class Table extends AbsTable {
 		stopTimer(TimerId.TIMER_ID_USER_ACTION, this);
 		stopTimer(TimerId.TIMER_ID_NEXT_USER_ACTION, this);
 		stopTimer(TimerId.TIMER_ID_POT, this);
-		stopTimer(TimerId.TIMER_ID_STOP_GAME, this);
+		stopTimer(TimerId.TIMER_ID_CLEARING, this);
 		stopTimer(TimerId.TIMER_ID_NEW_GAME, this);
 		
 		//------------------------------------------------------
-		startTimer(TimerId.TIMER_ID_NEW_GAME, TimerDuration.TIMER_DURATION_NEW_GAME, this);
+		startTimer(TimerId.TIMER_ID_NEW_GAME, mGameConfig.timeout_new_game, this);
 	}
 	
 	public void supendGame() {
@@ -1156,7 +1155,7 @@ public class Table extends AbsTable {
 				dealShowHands();
 				break;
 				
-			case TimerId.TIMER_ID_STOP_GAME:
+			case TimerId.TIMER_ID_CLEARING:
 				stopGame();
 				break;
 				

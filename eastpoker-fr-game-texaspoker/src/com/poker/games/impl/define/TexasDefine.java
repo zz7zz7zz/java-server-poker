@@ -103,26 +103,9 @@ public class TexasDefine {
 		public static final int TIMER_ID_USER_ACTION 		= 105;
 		public static final int TIMER_ID_NEXT_USER_ACTION 	= 106;
 		public static final int TIMER_ID_POT 				= 107;
-		public static final int TIMER_ID_STOP_GAME 			= 108;
+		public static final int TIMER_ID_CLEARING 			= 108;
 		public static final int TIMER_ID_NEW_GAME 			= 109;
 		
-		//---------------------------------------------------------
-		
-	 }
-	
-	public static final class TimerDuration {
-		
-		public static final int TIMER_DURATION_PREFLOP 		= 5;
-		public static final int TIMER_DURATION_FLOP 		= 3;
-		public static final int TIMER_DURATION_TRUN 		= 3;
-		public static final int TIMER_DURATION_RIVER 		= 3;
-		public static final int TIMER_DURATION_SHOWHAND 	= 3;
-		
-		public static final int TIMER_DURATION_USER_ACTION 		= 30;
-		public static final int TIMER_DURATION_NEXT_USER_ACTION = 5;
-		public static final int TIMER_DURATION_POT 				= 5;
-		public static final int TIMER_DURATION_STOP_GAME 		= 10;
-		public static final int TIMER_DURATION_NEW_GAME 		= 60;
 		//---------------------------------------------------------
 		
 	 }

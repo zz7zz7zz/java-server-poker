@@ -6,8 +6,6 @@ import java.util.HashMap;
 import com.open.util.log.util.CfgParser;
 
 
-
-
 public class GameConfig {
 
 	public int game_id;
@@ -26,7 +24,16 @@ public class GameConfig {
     public long[] table_blind ;                 //大盲注;数组意味着比赛场，如SNG
     public int[] table_blind_time ;             //每个盲注持续时间;数组意味着比赛场，如SNG
 
-    public int table_action_timeout = 0;        //允许玩家执行动作对最大超时时间
+    public int timeout_preflop = 0;       
+    public int timeout_flop = 0;        
+    public int timeout_turn = 0;        
+    public int timeout_river = 0;        
+    public int timeout_showhand = 0;      
+    public int timeout_user_action = 0;        
+    public int timeout_next_user_action = 0;       
+    public int timeout_pot = 0;       
+    public int timeout_clearing = 0;       
+    public int timeout_new_game = 0;       
     
     //解析文件配置参数
     public final void initFileConfig(String config_path) {
@@ -73,8 +80,16 @@ public class GameConfig {
 	            }
 	        }
         
-    		table_action_timeout = CfgParser.getInt(map, "Game","table_action_timeout");
-    		
+	        timeout_preflop = CfgParser.getInt(map, "Game","timeout_preflop");
+	        timeout_flop = CfgParser.getInt(map, "Game","timeout_flop");
+	        timeout_turn = CfgParser.getInt(map, "Game","timeout_turn");
+	        timeout_river = CfgParser.getInt(map, "Game","timeout_river");
+	        timeout_showhand = CfgParser.getInt(map, "Game","timeout_showhand");
+	        timeout_user_action = CfgParser.getInt(map, "Game","timeout_user_action");
+	        timeout_next_user_action = CfgParser.getInt(map, "Game","timeout_next_user_action");
+	        timeout_pot = CfgParser.getInt(map, "Game","timeout_pot");
+	        timeout_clearing = CfgParser.getInt(map, "Game","timeout_clearing");
+	        timeout_new_game = CfgParser.getInt(map, "Game","timeout_new_game");
        }
     }
 
@@ -85,7 +100,10 @@ public class GameConfig {
 				+ ", table_min_chip=" + table_min_chip + ", table_max_chip=" + table_max_chip + ", table_init_chip="
 				+ table_init_chip + ", table_ante=" + Arrays.toString(table_ante) + ", table_blind="
 				+ Arrays.toString(table_blind) + ", table_blind_time=" + Arrays.toString(table_blind_time)
-				+ ", table_action_timeout=" + table_action_timeout + "]";
+				+ ", timeout_preflop=" + timeout_preflop + ", timeout_flop=" + timeout_flop + ", timeout_turn="
+				+ timeout_turn + ", timeout_river=" + timeout_river + ", timeout_showhand=" + timeout_showhand
+				+ ", timeout_user_action=" + timeout_user_action + ", timeout_next_user_action="
+				+ timeout_next_user_action + ", timeout_pot=" + timeout_pot + ", timeout_clearing=" + timeout_clearing
+				+ ", timeout_new_game=" + timeout_new_game + "]";
 	}
-    
 }

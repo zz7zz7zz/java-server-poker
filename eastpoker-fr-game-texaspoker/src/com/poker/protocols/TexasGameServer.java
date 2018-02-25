@@ -44,7 +44,7 @@ public class TexasGameServer {
 		configBuilder.setMaxUser(mGameConfig.table_max_user);
 		configBuilder.setMinChip(mGameConfig.table_min_chip);
 		configBuilder.setMaxChip(mGameConfig.table_max_chip);
-		configBuilder.setActionTimeout(mGameConfig.table_action_timeout);
+		configBuilder.setActionTimeout(mGameConfig.timeout_user_action);
 		int size = mGameConfig.table_ante.length;
 		for(int i = 0;i<size;i++){
 			configBuilder.addAnte(mGameConfig.table_ante[i]);
@@ -285,7 +285,7 @@ public class TexasGameServer {
 		configBuilder.setMaxUser(mGameConfig.table_max_user);
 		configBuilder.setMinChip(mGameConfig.table_min_chip);
 		configBuilder.setMaxChip(mGameConfig.table_max_chip);
-		configBuilder.setActionTimeout(mGameConfig.table_action_timeout);
+		configBuilder.setActionTimeout(mGameConfig.timeout_user_action);
 		int size = mGameConfig.table_ante.length;
 		for(int i = 0;i<size;i++){
 			configBuilder.addAnte(mGameConfig.table_ante[i]);
@@ -364,7 +364,7 @@ public class TexasGameServer {
 		builder.setMaxRoundChip(table.max_round_chip);
 		
 		//下一个操作者剩余操作时间
-		builder.setRestActionTimeout(mGameConfig.table_action_timeout);
+		builder.setRestActionTimeout(mGameConfig.timeout_user_action);
 		
 		//Pot信息
 		for(int i = 0 ;i<table.potList.size();i++){

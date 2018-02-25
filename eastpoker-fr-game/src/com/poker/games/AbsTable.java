@@ -125,6 +125,10 @@ public abstract class AbsTable implements ITimer{
 		Looper.unRegister(timeOutId, timer);
 	}
 	
+	public int getRemaingSecond(int timeOutId,ITimer timer){
+		return Looper.getRemaingSecond(timeOutId, timer);
+	}
+	
 	public void onTimeOut(int timeOutId){
 		
 	};
