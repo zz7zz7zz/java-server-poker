@@ -34,8 +34,6 @@ public class User extends AbsUser {
 	public void startGame(){
 		super.startGame();
 		play_status = UserStatus.PLAY;
-		
-		originalChip = chip;
 	}
 	
 	public void stopGame(){

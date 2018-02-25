@@ -337,7 +337,20 @@ public class Table extends AbsTable {
         	return;
         }
         
-        //2.找出按钮位 , 小盲，大盲位
+        newGame();
+	}
+	
+	public void newGame(){
+		
+		//设置开始时的金币，方便结束时进行结算
+        for(int i =0;i<users.length;i++) {
+    		if(null ==users[i] || !users[i].isPlaying()) {
+    			continue;
+    		}
+    		users[i].originalChip = users[i].chip;
+        }
+        
+		 //2.找出按钮位 , 小盲，大盲位
         //2.1找Button位
         int next_seatId_index = 0 ;
         if(btn_seateId == -1){//说明是游戏刚开始，没有持续
@@ -1037,12 +1050,14 @@ public class Table extends AbsTable {
 				winer.get(win_user_size-1).chip += average_chip;
 			}
 		}
-		
+	}
+	
+	public void calculateWinLose(){
 		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
      		if(null ==users[i] || !users[i].isPlaying()) {
      			continue;
      		}
-     		users[i].win_chip = users[i].originalChip - users[i].chip;
+     		users[i].win_chip =  users[i].chip - users[i].originalChip;
 		}
 	}
 	
@@ -1051,6 +1066,7 @@ public class Table extends AbsTable {
 			calculateCardType();
 		}
 		calculatePot();
+		calculateWinLose();
 		
 		broadcastToUser(TexasCmd.CMD_SERVER_GAME_OVER, ++sequence_id, TexasGameServer.gameOver(this),null);
 		printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_GAME_OVER, "");
@@ -1058,6 +1074,7 @@ public class Table extends AbsTable {
 		//--------------------------------------------------------------------------------
 		super.stopGame();
 		
+		int canPlayCount = 1;
 		//更新用户游戏状态，
 		for (int i = 0; i < users.length; i++) {
 			if(null != users[i]){
@@ -1068,6 +1085,8 @@ public class Table extends AbsTable {
 				if(!users[i].isOnLine() || users[i].chip ==0){
 					mRoom.logoutGame(users[i], this);
 					users[i] = null;
+				}else{
+					canPlayCount ++;
 				}
 			}
 		}
@@ -1098,7 +1117,9 @@ public class Table extends AbsTable {
 		stopTimer(TimerId.TIMER_ID_NEW_GAME, this);
 		
 		//------------------------------------------------------
-		startTimer(TimerId.TIMER_ID_NEW_GAME, mGameConfig.timeout_new_game, this);
+		if(canPlayCount>0){
+			startTimer(TimerId.TIMER_ID_NEW_GAME, mGameConfig.timeout_new_game, this);
+		}
 	}
 	
 	public void supendGame() {
@@ -1177,7 +1198,7 @@ public class Table extends AbsTable {
 				break;
 				
 			case TimerId.TIMER_ID_NEW_GAME:
-				startGame();
+				newGame();
 				break;
 		}
 	}
