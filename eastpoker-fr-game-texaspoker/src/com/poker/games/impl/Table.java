@@ -433,7 +433,7 @@ public class Table extends AbsTable {
     	
   		step = GameStep.START;
   		
-  		nextStep(false);
+  		nextStep(false,false);
 	}
 	
 	public void dealPreFlop() {
@@ -719,7 +719,7 @@ public class Table extends AbsTable {
 		int play_user_count 	= 0;//用户数
 		int allin_user_count 	= 0;//allin 用户数
 		int fold_user_count 	= 0;//fold 用户数
-		int action_user_count 	= 0;//可以操作的用户数
+		int action_user_count 	= 0;//需要继续操作的用户
 		
 		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
 	 		//对于不在游戏中，已经弃牌，AllIn的玩家不处理
@@ -739,12 +739,8 @@ public class Table extends AbsTable {
 					continue;
 				}
 				
-				//本局中 没人 下注
 				//本局中 有人 下注，用户下注还未加到最大注，还有筹码可下
-				if(max_round_chip == 0){
-					action_user_count++;
-				}
-				else if(max_round_chip > 0 && users[i].round_chip < max_round_chip && users[i].chip>0) {
+				if(max_round_chip > 0 && users[i].round_chip < max_round_chip && users[i].chip>0) {
 	     	   		action_user_count++;
 	     		}
 		}
@@ -754,15 +750,15 @@ public class Table extends AbsTable {
 		//case 2: 当前面用户有下注，现在又没有人可以跟注时，游戏结束；
 		int rest_op_user_count = play_user_count - allin_user_count - fold_user_count;
 		boolean isGameOver =   (rest_op_user_count == 0) 
-				|| (rest_op_user_count == 1) && allin_user_count == 0
-		        || (rest_op_user_count == 1) && action_user_count == 0;
+				|| (rest_op_user_count == 1) && allin_user_count == 0//这里说明没有all的用户，前面都是弃牌的用户
+		        || (rest_op_user_count == 1) && action_user_count == 0;//这里说明前面有人Allin，但是没人需要再下注
 		
 		//说明游戏结束
 		if(isGameOver) {
 			if(allin_user_count > 0) {//自动走到摊牌阶段
-				nextStep(false);
+				nextStep(false,true);
 			}else {//直接结束游戏
-				nextStep(true);
+				nextStep(true,true);
 			}
 			return;
 		}
@@ -783,7 +779,7 @@ public class Table extends AbsTable {
         				}
         			}
         			
-	    			nextStep(false);
+	    			nextStep(false,false);
 	    			return;
 	    		}
         		
@@ -831,7 +827,7 @@ public class Table extends AbsTable {
   		startTimer(TimerId.TIMER_ID_USER_ACTION, mGameConfig.timeout_user_action, this);
 	}
 	
-	private void nextStep(boolean isGameOver){
+	private void nextStep(boolean isGameOver,boolean isAutoEnd){
 		
 		//刚开始强制大小盲后，还没有到翻牌前不需要处理Pots
 		if(step != GameStep.START){
@@ -845,22 +841,22 @@ public class Table extends AbsTable {
 		
 		if(step == GameStep.START){
 //			dealPreFlop();
-			startTimer(TimerId.TIMER_ID_PREFLOP, mGameConfig.timeout_preflop, this);
+			startTimer(TimerId.TIMER_ID_PREFLOP, isAutoEnd ? 1 : mGameConfig.timeout_preflop, this);
 		}else if(step == GameStep.PREFLOP) {
 //			dealFlop();
-			startTimer(TimerId.TIMER_ID_FLOP, mGameConfig.timeout_flop, this);
+			startTimer(TimerId.TIMER_ID_FLOP, isAutoEnd ? 1 : mGameConfig.timeout_flop, this);
 		}else if(step == GameStep.FLOP) {
 //			dealTrun();
-			startTimer(TimerId.TIMER_ID_TRUN, mGameConfig.timeout_turn, this);
+			startTimer(TimerId.TIMER_ID_TRUN, isAutoEnd ? 1 : mGameConfig.timeout_turn, this);
 		}else if(step == GameStep.TRUN) {
 //			dealRiver();
-			startTimer(TimerId.TIMER_ID_RIVER, mGameConfig.timeout_river, this);
+			startTimer(TimerId.TIMER_ID_RIVER, isAutoEnd ? 1 : mGameConfig.timeout_river, this);
 		}else if(step == GameStep.RIVER) {
 //			dealShowHands();
-			startTimer(TimerId.TIMER_ID_SHOWHAND, mGameConfig.timeout_showhand, this);
+			startTimer(TimerId.TIMER_ID_SHOWHAND, isAutoEnd ? 1 : mGameConfig.timeout_showhand, this);
 		}else{
 //			stopGame();
-			startTimer(TimerId.TIMER_ID_CLEARING, mGameConfig.timeout_clearing, this);
+			startTimer(TimerId.TIMER_ID_CLEARING, isAutoEnd ? 1 : mGameConfig.timeout_clearing, this);
 		}
 	}
  
@@ -988,7 +984,7 @@ public class Table extends AbsTable {
 		printLog(game_sequence_id, sequence_id, TexasCmd.CMD_SERVER_BROADCAST_SHOW_HAND, "");
 		
 		step = GameStep.SHOWHAND;
-		nextStep(false);
+		nextStep(false,false);
 	}
 	
 	//给每个玩家算牌型
