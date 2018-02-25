@@ -409,8 +409,9 @@ public class TexasGameServer {
 			for(int j=0;j<user.result.finalCards.length;j++) {
 				resultBuilder.addCards(user.result.finalCards[j]);
 			}
-			resultBuilder.setWinChip(user.win_chip);
 			resultBuilder.setChip(user.chip);
+			resultBuilder.setWinPotChip(user.win_pot_chip);
+			resultBuilder.setWinChip(user.win_chip);
 			builder.addMResults(resultBuilder);
 		}
 		

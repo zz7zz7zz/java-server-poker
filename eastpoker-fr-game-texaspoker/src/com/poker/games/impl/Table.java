@@ -1029,13 +1029,20 @@ public class Table extends AbsTable {
 			long average_chip = mPot.pot_chips/win_user_size;//平均的
 			long extra_chip = mPot.pot_chips%win_user_size;//多出来的
 			for(int j = 0; j < win_user_size; ++j){
-				winer.get(j).win_chip += average_chip;
+				winer.get(j).win_pot_chip += average_chip;
 				winer.get(j).chip += average_chip;
 			}
 			if(extra_chip != 0){
-				winer.get(win_user_size-1).win_chip += average_chip;
+				winer.get(win_user_size-1).win_pot_chip += average_chip;
 				winer.get(win_user_size-1).chip += average_chip;
 			}
+		}
+		
+		for(int i = 0 ;i<this.mConfig.table_max_user;i++){
+     		if(null ==users[i] || !users[i].isPlaying()) {
+     			continue;
+     		}
+     		users[i].win_chip = users[i].originalChip - users[i].chip;
 		}
 	}
 	

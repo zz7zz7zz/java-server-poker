@@ -10,8 +10,9 @@ message Result{
 	int32  card_result   	= 2;
 	repeated int32  cards 	= 3;
 	
-	int64 chip 				= 4;
-	int64 win_chip 			= 5;
+	int64 chip 				= 4;//最终的金币
+	int64 win_pot_chip 		= 5;//赢下Pot中的金币
+	int64 win_chip 			= 6;//最终输赢的金币
 }
 
 message TexasGameEnd{

@@ -42,12 +42,29 @@ public final class TexasGameEndProto {
     int getCards(int index);
 
     /**
+     * <pre>
+     *最终的金币
+     * </pre>
+     *
      * <code>int64 chip = 4;</code>
      */
     long getChip();
 
     /**
-     * <code>int64 win_chip = 5;</code>
+     * <pre>
+     *赢下Pot中的金币
+     * </pre>
+     *
+     * <code>int64 win_pot_chip = 5;</code>
+     */
+    long getWinPotChip();
+
+    /**
+     * <pre>
+     *最终输赢的金币
+     * </pre>
+     *
+     * <code>int64 win_chip = 6;</code>
      */
     long getWinChip();
   }
@@ -68,6 +85,7 @@ public final class TexasGameEndProto {
       cardResult_ = 0;
       cards_ = java.util.Collections.emptyList();
       chip_ = 0L;
+      winPotChip_ = 0L;
       winChip_ = 0L;
     }
 
@@ -139,6 +157,11 @@ public final class TexasGameEndProto {
               break;
             }
             case 40: {
+
+              winPotChip_ = input.readInt64();
+              break;
+            }
+            case 48: {
 
               winChip_ = input.readInt64();
               break;
@@ -215,16 +238,37 @@ public final class TexasGameEndProto {
     public static final int CHIP_FIELD_NUMBER = 4;
     private long chip_;
     /**
+     * <pre>
+     *最终的金币
+     * </pre>
+     *
      * <code>int64 chip = 4;</code>
      */
     public long getChip() {
       return chip_;
     }
 
-    public static final int WIN_CHIP_FIELD_NUMBER = 5;
+    public static final int WIN_POT_CHIP_FIELD_NUMBER = 5;
+    private long winPotChip_;
+    /**
+     * <pre>
+     *赢下Pot中的金币
+     * </pre>
+     *
+     * <code>int64 win_pot_chip = 5;</code>
+     */
+    public long getWinPotChip() {
+      return winPotChip_;
+    }
+
+    public static final int WIN_CHIP_FIELD_NUMBER = 6;
     private long winChip_;
     /**
-     * <code>int64 win_chip = 5;</code>
+     * <pre>
+     *最终输赢的金币
+     * </pre>
+     *
+     * <code>int64 win_chip = 6;</code>
      */
     public long getWinChip() {
       return winChip_;
@@ -259,8 +303,11 @@ public final class TexasGameEndProto {
       if (chip_ != 0L) {
         output.writeInt64(4, chip_);
       }
+      if (winPotChip_ != 0L) {
+        output.writeInt64(5, winPotChip_);
+      }
       if (winChip_ != 0L) {
-        output.writeInt64(5, winChip_);
+        output.writeInt64(6, winChip_);
       }
       unknownFields.writeTo(output);
     }
@@ -296,9 +343,13 @@ public final class TexasGameEndProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(4, chip_);
       }
+      if (winPotChip_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(5, winPotChip_);
+      }
       if (winChip_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(5, winChip_);
+          .computeInt64Size(6, winChip_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -324,6 +375,8 @@ public final class TexasGameEndProto {
           .equals(other.getCardsList());
       result = result && (getChip()
           == other.getChip());
+      result = result && (getWinPotChip()
+          == other.getWinPotChip());
       result = result && (getWinChip()
           == other.getWinChip());
       result = result && unknownFields.equals(other.unknownFields);
@@ -348,6 +401,9 @@ public final class TexasGameEndProto {
       hash = (37 * hash) + CHIP_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getChip());
+      hash = (37 * hash) + WIN_POT_CHIP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getWinPotChip());
       hash = (37 * hash) + WIN_CHIP_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getWinChip());
@@ -502,6 +558,8 @@ public final class TexasGameEndProto {
         bitField0_ = (bitField0_ & ~0x00000004);
         chip_ = 0L;
 
+        winPotChip_ = 0L;
+
         winChip_ = 0L;
 
         return this;
@@ -536,6 +594,7 @@ public final class TexasGameEndProto {
         }
         result.cards_ = cards_;
         result.chip_ = chip_;
+        result.winPotChip_ = winPotChip_;
         result.winChip_ = winChip_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -597,6 +656,9 @@ public final class TexasGameEndProto {
         }
         if (other.getChip() != 0L) {
           setChip(other.getChip());
+        }
+        if (other.getWinPotChip() != 0L) {
+          setWinPotChip(other.getWinPotChip());
         }
         if (other.getWinChip() != 0L) {
           setWinChip(other.getWinChip());
@@ -749,12 +811,20 @@ public final class TexasGameEndProto {
 
       private long chip_ ;
       /**
+       * <pre>
+       *最终的金币
+       * </pre>
+       *
        * <code>int64 chip = 4;</code>
        */
       public long getChip() {
         return chip_;
       }
       /**
+       * <pre>
+       *最终的金币
+       * </pre>
+       *
        * <code>int64 chip = 4;</code>
        */
       public Builder setChip(long value) {
@@ -764,6 +834,10 @@ public final class TexasGameEndProto {
         return this;
       }
       /**
+       * <pre>
+       *最终的金币
+       * </pre>
+       *
        * <code>int64 chip = 4;</code>
        */
       public Builder clearChip() {
@@ -773,15 +847,61 @@ public final class TexasGameEndProto {
         return this;
       }
 
+      private long winPotChip_ ;
+      /**
+       * <pre>
+       *赢下Pot中的金币
+       * </pre>
+       *
+       * <code>int64 win_pot_chip = 5;</code>
+       */
+      public long getWinPotChip() {
+        return winPotChip_;
+      }
+      /**
+       * <pre>
+       *赢下Pot中的金币
+       * </pre>
+       *
+       * <code>int64 win_pot_chip = 5;</code>
+       */
+      public Builder setWinPotChip(long value) {
+        
+        winPotChip_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *赢下Pot中的金币
+       * </pre>
+       *
+       * <code>int64 win_pot_chip = 5;</code>
+       */
+      public Builder clearWinPotChip() {
+        
+        winPotChip_ = 0L;
+        onChanged();
+        return this;
+      }
+
       private long winChip_ ;
       /**
-       * <code>int64 win_chip = 5;</code>
+       * <pre>
+       *最终输赢的金币
+       * </pre>
+       *
+       * <code>int64 win_chip = 6;</code>
        */
       public long getWinChip() {
         return winChip_;
       }
       /**
-       * <code>int64 win_chip = 5;</code>
+       * <pre>
+       *最终输赢的金币
+       * </pre>
+       *
+       * <code>int64 win_chip = 6;</code>
        */
       public Builder setWinChip(long value) {
         
@@ -790,7 +910,11 @@ public final class TexasGameEndProto {
         return this;
       }
       /**
-       * <code>int64 win_chip = 5;</code>
+       * <pre>
+       *最终输赢的金币
+       * </pre>
+       *
+       * <code>int64 win_chip = 6;</code>
        */
       public Builder clearWinChip() {
         
@@ -1084,26 +1208,12 @@ public final class TexasGameEndProto {
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    //-----------------------------------------------------
-    public static com.poker.protocols.texaspoker.TexasGameEndProto.TexasGameEnd parseFrom(byte[] data,int offset ,int length)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return PARSER.parseFrom(data,offset,length);
-        }
-    //-----------------------------------------------------
     public static com.poker.protocols.texaspoker.TexasGameEndProto.TexasGameEnd parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    //-----------------------------------------------------
-    public static com.poker.protocols.texaspoker.TexasGameEndProto.TexasGameEnd parseFrom(
-    		byte[] data,int offset ,int length,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return PARSER.parseFrom(data,offset,length, extensionRegistry);
-        }
-   //-----------------------------------------------------
     public static com.poker.protocols.texaspoker.TexasGameEndProto.TexasGameEnd parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
@@ -1639,13 +1749,13 @@ public final class TexasGameEndProto {
     java.lang.String[] descriptorData = {
       "\n;src/com/poker/protocols/texaspoker/pro" +
       "to/TexasGameEnd.proto\022$com.poker.protoco" +
-      "ls.texaspoker.proto\"]\n\006Result\022\017\n\007seateId" +
+      "ls.texaspoker.proto\"s\n\006Result\022\017\n\007seateId" +
       "\030\001 \001(\005\022\023\n\013card_result\030\002 \001(\005\022\r\n\005cards\030\003 \003" +
-      "(\005\022\014\n\004chip\030\004 \001(\003\022\020\n\010win_chip\030\005 \001(\003\"N\n\014Te" +
-      "xasGameEnd\022>\n\010mResults\030\001 \003(\0132,.com.poker" +
-      ".protocols.texaspoker.proto.ResultB3\n\036co" +
-      "m.poker.protocols.texaspokerB\021TexasGameE" +
-      "ndProtob\006proto3"
+      "(\005\022\014\n\004chip\030\004 \001(\003\022\024\n\014win_pot_chip\030\005 \001(\003\022\020" +
+      "\n\010win_chip\030\006 \001(\003\"N\n\014TexasGameEnd\022>\n\010mRes" +
+      "ults\030\001 \003(\0132,.com.poker.protocols.texaspo" +
+      "ker.proto.ResultB3\n\036com.poker.protocols." +
+      "texaspokerB\021TexasGameEndProtob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1664,7 +1774,7 @@ public final class TexasGameEndProto {
     internal_static_com_poker_protocols_texaspoker_proto_Result_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_poker_protocols_texaspoker_proto_Result_descriptor,
-        new java.lang.String[] { "SeateId", "CardResult", "Cards", "Chip", "WinChip", });
+        new java.lang.String[] { "SeateId", "CardResult", "Cards", "Chip", "WinPotChip", "WinChip", });
     internal_static_com_poker_protocols_texaspoker_proto_TexasGameEnd_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_com_poker_protocols_texaspoker_proto_TexasGameEnd_fieldAccessorTable = new
