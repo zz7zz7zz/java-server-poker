@@ -58,6 +58,7 @@ public final class Looper {
 				while (iterator.hasNext()) {
 					ITimeObj mITimeObj = iterator.next();
 					if(Math.abs(now - mITimeObj.timestamp) > 1000L){
+						mITimeObj.timestamp = now;
 						mITimeObj.duration --;
 						if(mITimeObj.duration <=0){
 							mITimeObj.timer.onTimeOut(mITimeObj.timeOutId);
