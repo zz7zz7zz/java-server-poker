@@ -1117,7 +1117,7 @@ public class Table extends AbsTable {
 		stopTimer(TimerId.TIMER_ID_NEW_GAME, this);
 		
 		//------------------------------------------------------
-		if(canPlayCount>0){
+		if(canPlayCount>1){
 			startTimer(TimerId.TIMER_ID_NEW_GAME, mGameConfig.timeout_new_game, this);
 		}
 	}
