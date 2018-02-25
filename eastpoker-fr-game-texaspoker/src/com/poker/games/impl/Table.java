@@ -358,7 +358,7 @@ public class Table extends AbsTable {
 	        Random rd = new Random(t);//作为种子数传入到Random的构造器中
 	        next_seatId_index = rd.nextInt(this.mConfig.table_max_user);
         }else{//说明是游戏持续
-        	next_seatId_index = sb_seatid+1;
+        	next_seatId_index = btn_seateId+1;
         }
     	if(null == users[next_seatId_index]){
         	for(int i = 1 ;i<this.mConfig.table_max_user;i++){
