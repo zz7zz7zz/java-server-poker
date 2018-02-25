@@ -38,6 +38,17 @@ public final class Looper {
 		}
 	}
 	
+	public static final int getRemaingSecond(int timeOutId,ITimer timer) {
+		Iterator<ITimeObj> iterator = mTimerList.iterator();
+		while (iterator.hasNext()) {
+			ITimeObj mITimeObj = iterator.next();
+			if(mITimeObj.timeOutId == timeOutId &&  mITimeObj.timer == timer){
+				return mITimeObj.duration;
+			}
+		}
+		return 0;
+	}
+	
 	//----------------------------------------------------
 	public static final void set_sleep_millis(long sleep_millis){
 		SLEEP_MILLIS = sleep_millis;
