@@ -801,7 +801,7 @@ public class Table extends AbsTable {
 		
 		long needChip = op_call_chip - users[op_seatid].round_chip;
 		
-		if(needChip >0 && users[op_seatid].chip >0) {
+		if(needChip >0 && users[op_seatid].chip >0 || (needChip == 0 && step == GameStep.PREFLOP && max_round_chip_seatid == bb_seatid)) {
 			op_sets |= Operate.CALL.getValue();
 		}
 		
