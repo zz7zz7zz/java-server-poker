@@ -6,8 +6,8 @@
 	<classpathentry kind="lib" path="libs/open.util.log.jar" sourcepath="/java-logger"/>
 	<classpathentry kind="lib" path="libs/org.json.jar"/>
 	<classpathentry kind="lib" path="libs/protobuf-java-3.5.1.jar"/>
-	<classpathentry kind="lib" path="libs/gameimpl.jar"/>
-	<classpathentry kind="lib" path="libs/open.net.jar"/>
+	<classpathentry kind="lib" path="libs/gameimpl.jar" sourcepath="/eastpoker-fr-game-texaspoker"/>
+	<classpathentry kind="lib" path="libs/open.net.jar" sourcepath="/eastpoker-fr-network"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/eastpoker-fr-protocol"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
