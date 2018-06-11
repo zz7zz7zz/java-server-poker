@@ -1,6 +1,7 @@
 package com.poker.access.handler;
 
 import com.open.net.server.object.AbstractServerClient;
+import com.open.net.server.object.ServerConfig;
 import com.open.util.log.Logger;
 import com.poker.access.Main;
 import com.poker.access.object.User;
@@ -15,12 +16,30 @@ import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
 import com.poker.packet.PacketTransfer;
+import com.poker.protocols.server.SCConfigProto.SCConfig;
 
 public class ServerHandler extends AbsServerHandler{
 
 	public ServerHandler(InPacket mInPacket, OutPacket mOutPacket) {
 		super(mInPacket, mOutPacket);
 	}
+
+	@Override
+	public void onClientEnter(AbstractServerClient client) {
+		super.onClientEnter(client);
+		
+		
+		//下发服务器相关配置，比如心跳包
+		SCConfig.Builder builder = SCConfig.newBuilder();
+		builder.setHeatBeatInterval(10000);
+		byte[] body = builder.build().toByteArray();
+
+		byte[] mTempBuff = mInPacket.getPacket();
+		int length 		= BasePacket.buildClientPacekt(mTempBuff, 0, SystemCmd.CMD_SYS_SERVER_CONFIG, (byte)0,body,0,body.length);
+        Main.mServerHandler.unicast(client, mTempBuff,0,length);
+        
+	}
+
 
 	@Override
 	public void onClientExit(AbstractServerClient client) {
