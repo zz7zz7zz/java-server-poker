@@ -51,8 +51,21 @@ public final class DataCryptor {
 	 * @param data
 	 */
 	public static void encrypt(byte[] data){
-		for(int i = 0;i<data.length;i++){
-			data[i] = SEND[data[i]+128];
+		encrypt(data, 0, data.length);
+	}
+	
+	/**
+	 * 加密
+	 * @param data
+	 * @param offset
+	 * @param length
+	 */
+	public static void encrypt(byte[] data, int offset ,int length){
+		if (data == null || data.length == 0 || data.length < (offset + length)) {
+			return ;
+		}
+		for(int i = 0;i<length;i++){
+			data[offset + i] = SEND[data[offset + i]+128];
 		}
 	}
 
@@ -61,8 +74,21 @@ public final class DataCryptor {
 	 * @param data
 	 */
 	public static void decrypt(byte[] data){
-		for(int i = 0;i<data.length;i++){
-			data[i] = RECV[data[i]+128];
+		decrypt(data, 0, data.length);
+	}
+	
+	/**
+	 * 解密
+	 * @param data
+	 * @param offset
+	 * @param length
+	 */
+	public static void decrypt(byte[] data, int offset ,int length){
+		if (data == null || data.length == 0 || data.length < (offset + length)) {
+			return ;
+		}
+		for(int i = 0;i<length;i++){
+			data[offset + i] = RECV[data[offset + i]+128];
 		}
 	}
 }
