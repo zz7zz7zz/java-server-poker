@@ -9,6 +9,7 @@ import com.poker.base.ServerIds;
 import com.poker.cmd.BaseGameCmd;
 import com.poker.cmd.Cmd;
 import com.poker.cmd.LoginCmd;
+import com.poker.cmd.SystemCmd;
 import com.poker.data.DistapchType;
 import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
@@ -89,7 +90,13 @@ public class ServerHandler extends AbsServerHandler{
       		}
       	}else{
 			if(cmd < 0x1001){//系统处理
-				Logger.v("unhandled sys_cmd_b ");
+				if(cmd == SystemCmd.CMD_SYS_HEAR_BEAT){
+	      			byte[] mTempBuff = mInPacket.getPacket();
+					int length 		= BasePacket.buildClientPacekt(mTempBuff, squenceId+1, SystemCmd.CMD_SYS_HEAR_BEAT_REPONSE, (byte)0,mOutPacket.getPacket(),0,0);
+			        Main.mServerHandler.unicast(client, mTempBuff,0,length);
+				}else{
+					Logger.v("unhandled sys_cmd_b ");
+				}
 			}else{//游戏处理
 				if(user.gameId>0){//说明处于游戏中
 	      			//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片

@@ -12,6 +12,7 @@ import com.poker.access.object.UserPool;
 import com.poker.cmd.AccessCmd;
 import com.poker.cmd.Cmd;
 import com.poker.cmd.LoginCmd;
+import com.poker.data.DataCryptor;
 import com.poker.packet.BasePacket;
 import com.poker.packet.InPacket;
 import com.poker.packet.OutPacket;
@@ -128,6 +129,9 @@ public class ClientHandler extends AbsClientHandler{
 				
 				//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 				byte[] mTempBuff = mOutPacket.getPacket();
+				
+				//对包体数据进行加密
+				DataCryptor.encrypt(mInPacket.getPacket(),0,mDispatchPacket.getData().size());
 				
 				int length 		= BasePacket.buildClientPacekt(mTempBuff, sequenceId, cmd, (byte)0,mInPacket.getPacket(),0,mDispatchPacket.getData().size());
 		        Main.mServerHandler.unicast(mConnection, mTempBuff,0,length);
