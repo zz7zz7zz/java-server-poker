@@ -1,0 +1,10 @@
+syntax="proto3";
+
+option java_package = "com.poker.protocols.server";
+option java_outer_classname = "ServerConfigProto";
+
+message ServerConfig{
+	int32 heat_beat_interval = 1;
+}
+
+// protoc_3.5.1 --java_out=./src ./src/com/poker/protocols/server/proto/ServerConfig.proto 
