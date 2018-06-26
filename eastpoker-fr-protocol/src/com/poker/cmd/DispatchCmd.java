@@ -24,7 +24,7 @@ public final class DispatchCmd {
 		}else if(cmd == CMD_DISPATCH_DATA_MATCH_GROUP){
 			return "cmd_dispatch_data_match_group";
 		}
-		return "unknown_dispatch_cmd";
+		return "unknown_dispatch_cmd 0x"+Integer.toHexString(cmd);
 	}
 	
 }

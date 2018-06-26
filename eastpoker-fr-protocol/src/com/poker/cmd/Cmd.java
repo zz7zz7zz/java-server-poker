@@ -36,7 +36,7 @@ public class Cmd {
 					return ret;
 				}
 			}
-			return "unknown_gameimpl_cmd";
+			return "unknown_gameimpl_cmd 0x"+Integer.toHexString(cmd);
 		}
 	}
 	

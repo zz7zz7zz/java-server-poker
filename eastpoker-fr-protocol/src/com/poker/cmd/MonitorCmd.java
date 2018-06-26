@@ -14,6 +14,6 @@ public final class MonitorCmd {
 		}else if(cmd == CMD_MONITOR_UNREGISTER){
 			return "cmd_monitor_unregister";
 		}
-		return "unknown_monitor_cmd";
+		return "unknown_monitor_cmd 0x"+Integer.toHexString(cmd);
 	}
 }

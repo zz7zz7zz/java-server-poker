@@ -14,6 +14,6 @@ public class MatchCmd {
 		}else if(cmd == CMD_MATCH_DESTROY){
 			return "cmd_match_destroy";
 		}
-		return "unknown_match_cmd";
+		return "unknown_match_cmd 0x"+Integer.toHexString(cmd);
 	}
 }
