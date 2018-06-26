@@ -14,3 +14,6 @@ Allocator :  10040~10050
 
 Game      :  10050~10059
 
+Match     :  10060~10069
+MatchGameSer :  10070~10079
+
