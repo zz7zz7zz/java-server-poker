@@ -22,6 +22,8 @@ public class Cmd {
 			return MonitorCmd.getCmdString(cmd);
 		}else if(server == ServerIds.SERVER_GAME){
 			return GameCmd.getCmdString(cmd);
+		}else if(server == ServerIds.SERVER_MATCH){
+			return MatchCmd.getCmdString(cmd);
 		}else {
 			if(cmd < 0x1001){
 				return SystemCmd.getCmdString(cmd);

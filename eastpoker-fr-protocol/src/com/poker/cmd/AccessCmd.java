@@ -14,7 +14,7 @@ public final class AccessCmd {
 		}else if(cmd == CMD_LOGINOUT_GAME){
 			return "cmd_loginout_game";
 		}
-		return "unknown_accesscmd";
+		return "unknown_access_cmd";
 	}
 	
 }

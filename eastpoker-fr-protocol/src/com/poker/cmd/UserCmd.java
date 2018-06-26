@@ -20,6 +20,6 @@ public class UserCmd {
 		}else if(cmd == CMD_LEAVE_ROOM){
 			return "cmd_leave_room";
 		}
-		return "unknown_usercmd";
+		return "unknown_user_cmd";
 	}
 }

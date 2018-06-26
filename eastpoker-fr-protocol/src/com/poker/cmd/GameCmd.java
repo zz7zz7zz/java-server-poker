@@ -14,6 +14,6 @@ public final class GameCmd {
 		}else if(cmd == CMD_CHECK_GAME_STATUS){
 			return "cmd_check_game_status";
 		}
-		return "unknown_gamecmd";
+		return "unknown_game_cmd";
 	}
 }

@@ -22,7 +22,7 @@ public final class AllocatorCmd {
 		}else if(cmd == CMD_LOGIN_GAME){
 			return "cmd_login_game";
 		}
-		return "unknown_allocatorcmd";
+		return "unknown_allocator_cmd";
 	}
 	
 }

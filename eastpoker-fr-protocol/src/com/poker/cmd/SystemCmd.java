@@ -17,6 +17,6 @@ public class SystemCmd {
 		}else if(cmd == CMD_SYS_SERVER_CONFIG){
 			return "cmd_sys_server_config";
 		}
-		return "unknown_SystemCmd";
+		return "unknown_system_cmd";
 	}
 }
