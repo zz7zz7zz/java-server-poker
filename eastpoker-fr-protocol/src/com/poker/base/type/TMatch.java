@@ -6,6 +6,6 @@ package com.poker.base.type;
  */
 public final class TMatch {
 	
-	public static final int MATCH_NORMAL 		= 1;//监听
+	public static final int MATCH_NORMAL 		= 1;//正常比赛
 	
 }

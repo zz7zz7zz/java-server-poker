@@ -9,9 +9,6 @@ import com.open.net.client.object.UdpAddress;
 
 
 public class Config {
-
-	//Allocator
-	public int game_id;
 	
 	//Dispatcher
     public TcpAddress[] dispatcher_net_tcp;
@@ -19,6 +16,12 @@ public class Config {
     
     //Monitor
     public UdpAddress[] monitor_net_udp;
+    
+    //----------------比赛专用------------------
+    public int matchId;
+    public int matchServerId;
+    public int matchType;
+    public String matchName;
     
     //解析文件配置参数
     public final void initFileConfig(String config_path) {
@@ -29,8 +32,6 @@ public class Config {
     //-------------------------------------------------------------------------------------------
     protected void initFileConfig(HashMap<String,Object> map){
     	if(null !=map){
-    		
-    		game_id = CfgParser.getInt(map, "Allocator","game_id");
     		
             String val[]     = CfgParser.getStringArray(map,"Dispatcher","net_tcp");
             if(null != val){
@@ -64,13 +65,18 @@ public class Config {
                     }
                 }
             }
+            
+            matchId = CfgParser.getInt(map, "Match","matchId");
+            matchType = CfgParser.getInt(map, "Match","matchType");
+            matchName = CfgParser.getString(map, "Match","matchName");
        }
     }
 
 	@Override
 	public String toString() {
-		return "Config [game_id=" + game_id + ", dispatcher_net_tcp=" + Arrays.toString(dispatcher_net_tcp)
-				+ ", dispatcher_net_udp=" + Arrays.toString(dispatcher_net_udp) + ", monitor_net_udp="
-				+ Arrays.toString(monitor_net_udp) + "]";
+		return "Config [dispatcher_net_tcp=" + Arrays.toString(dispatcher_net_tcp) + ", dispatcher_net_udp="
+				+ Arrays.toString(dispatcher_net_udp) + ", monitor_net_udp=" + Arrays.toString(monitor_net_udp)
+				+ ", matchId=" + matchId + ", matchServerId=" + matchServerId + ", matchType=" + matchType
+				+ ", matchName=" + matchName + "]";
 	}
 }

@@ -42,7 +42,7 @@ public class Main {
     	//1.1 服务器配置初始化:解析命令行参数
     	libArgsConfig = new ArgsConfig();
     	libArgsConfig.initArgsConfig(args);
-    	libArgsConfig.server_type = TServer.SERVER_ALLOCATOR;
+    	libArgsConfig.server_type = TServer.SERVER_MATCH;
         
         //1.3 服务器配置初始化:作为客户端配置
         libClientConfig = new ClientConfig();
@@ -57,6 +57,9 @@ public class Main {
         //1.4 业务配置初始化
         mServerConfig = new Config();
         mServerConfig.initFileConfig("./conf/server.config");
+        mServerConfig.matchServerId = libArgsConfig.id;
+        
+        libArgsConfig.server_type = (mServerConfig.matchId<<16 | TServer.SERVER_MATCH);
         
         //-----------------------------------------初始化全局属性-----------------------------------------------
         initGlobalFields(libClientConfig.packet_max_length_tcp);
@@ -85,7 +88,7 @@ public class Main {
 
     //---------------------------------------Fields----------------------------------------------------
     public static ArgsConfig libArgsConfig;
-    public static  ClientConfig libClientConfig;
+    public static ClientConfig libClientConfig;
     public static Config mServerConfig;
     public static NioClient [] dispatcher;
     public static int 		   dispatchIndex = -1;
