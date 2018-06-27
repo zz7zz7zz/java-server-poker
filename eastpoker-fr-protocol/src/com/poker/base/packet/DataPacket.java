@@ -1,4 +1,6 @@
-package com.poker.base.data;
+package com.poker.base.packet;
+
+import com.poker.base.data.ByteUtil;
 
 /**
  * author       :   Administrator

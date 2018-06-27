@@ -19,7 +19,7 @@ import com.open.util.log.base.LogConfig;
 import com.poker.base.cmd.BaseGameCmd;
 import com.poker.base.cmd.Cmd;
 import com.poker.base.cmd.Cmd.ICmdRecognizer;
-import com.poker.base.data.DataPacket;
+import com.poker.base.packet.DataPacket;
 import com.poker.base.packet.InPacket;
 import com.poker.base.packet.OutPacket;
 import com.poker.base.packet.PacketTransfer;

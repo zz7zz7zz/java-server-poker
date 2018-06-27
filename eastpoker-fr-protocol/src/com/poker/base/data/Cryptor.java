@@ -6,7 +6,7 @@ package com.poker.base.data;
  * description  :
  */
 
-public final class DataCryptor {
+public final class Cryptor {
 
 	private static final byte[] SEND = {
 			-95,-62,-66,39,6,-120,-98,-7,15,-109,19,48,-13,-39,-89,80,

@@ -10,8 +10,8 @@ import com.open.net.client.object.AbstractClientMessageProcessor;
 import com.open.util.log.Logger;
 import com.poker.allocator.Main;
 import com.poker.base.cmd.Cmd;
-import com.poker.base.data.DataPacket;
 import com.poker.base.packet.BasePacket;
+import com.poker.base.packet.DataPacket;
 import com.poker.base.packet.InPacket;
 import com.poker.base.packet.OutPacket;
 

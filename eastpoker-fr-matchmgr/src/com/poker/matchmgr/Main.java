@@ -17,7 +17,7 @@ import com.open.net.server.object.ServerLog.LogListener;
 
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
-import com.poker.base.data.DataPacket;
+import com.poker.base.packet.DataPacket;
 import com.poker.base.packet.InPacket;
 import com.poker.base.packet.OutPacket;
 import com.poker.base.packet.PacketTransfer;

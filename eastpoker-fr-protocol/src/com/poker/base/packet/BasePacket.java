@@ -2,7 +2,6 @@ package com.poker.base.packet;
 
 import com.google.protobuf.ByteString;
 import com.poker.base.data.ByteUtil;
-import com.poker.base.data.DataPacket;
 
 public class BasePacket {
     

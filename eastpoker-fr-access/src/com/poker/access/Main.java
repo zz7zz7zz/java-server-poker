@@ -25,7 +25,7 @@ import com.poker.access.handler.ClientHandler;
 import com.poker.access.handler.ServerHandler;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
-import com.poker.base.data.DataPacket;
+import com.poker.base.packet.DataPacket;
 import com.poker.base.packet.InPacket;
 import com.poker.base.packet.OutPacket;
 import com.poker.base.packet.PacketTransfer;

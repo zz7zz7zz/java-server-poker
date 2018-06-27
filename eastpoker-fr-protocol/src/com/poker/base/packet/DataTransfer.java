@@ -1,5 +1,5 @@
 
-package com.poker.base.data;
+package com.poker.base.packet;
 
 import com.google.protobuf.ByteString;
 import com.poker.base.type.TServer;
