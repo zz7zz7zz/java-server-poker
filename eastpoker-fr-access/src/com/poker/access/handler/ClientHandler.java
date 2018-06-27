@@ -9,9 +9,9 @@ import com.open.util.log.Logger;
 import com.poker.access.Main;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
-import com.poker.base.cmd.AccessCmd;
+import com.poker.base.cmd.CmdAccess;
 import com.poker.base.cmd.Cmd;
-import com.poker.base.cmd.LoginCmd;
+import com.poker.base.cmd.CmdLogin;
 import com.poker.base.data.Cryptor;
 import com.poker.base.packet.BasePacket;
 import com.poker.base.packet.InPacket;
@@ -33,9 +33,9 @@ public class ClientHandler extends AbsClientHandler{
 			
     		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
     		
-			if(cmd == LoginCmd.CMD_LOGIN_RESPONSE){
+			if(cmd == CmdLogin.CMD_LOGIN_RESPONSE){
             	onClinetLogin(client, mDispatchPacket);
-            }else if(cmd == AccessCmd.CMD_LOGIN_GAME){
+            }else if(cmd == CmdAccess.CMD_LOGIN_GAME){
             	onLoginGame(client, mDispatchPacket);
             }else {
             	sendDataToClient(client, mDispatchPacket);

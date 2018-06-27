@@ -1,6 +1,6 @@
 package com.poker.protocols;
 
-import com.poker.base.cmd.DispatchCmd;
+import com.poker.base.cmd.CmdDispatcher;
 import com.poker.base.packet.BasePacket;
 import com.poker.protocols.server.ServerProto;
 
@@ -25,7 +25,7 @@ public class Dispatcher {
 			builder.setMatchGroup(match_group);
 		}
 		byte[] body = builder.build().toByteArray();
-		return BasePacket.buildServerPacket(writeBuff, 1, DispatchCmd.CMD_DISPATCH_REGISTER, body, 0, body.length);
+		return BasePacket.buildServerPacket(writeBuff, 1, CmdDispatcher.CMD_DISPATCH_REGISTER, body, 0, body.length);
 	}
 	
 	public static int unregister2Dispatcher(byte[] writeBuff,int type ,String name, int id, String host ,int port){
@@ -48,6 +48,6 @@ public class Dispatcher {
 		}
 		
 		byte[] body = builder.build().toByteArray();
-		return BasePacket.buildServerPacket(writeBuff, 2, DispatchCmd.CMD_DISPATCH_UNREGISTER, body, 0, body.length);
+		return BasePacket.buildServerPacket(writeBuff, 2, CmdDispatcher.CMD_DISPATCH_UNREGISTER, body, 0, body.length);
 	}
 }

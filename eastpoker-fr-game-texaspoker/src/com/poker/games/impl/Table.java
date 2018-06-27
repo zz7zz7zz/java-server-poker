@@ -9,7 +9,7 @@ import java.util.Random;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
-import com.poker.base.cmd.BaseGameCmd;
+import com.poker.base.cmd.CmdGameBase;
 import com.poker.base.cmd.Cmd;
 import com.poker.base.cmd.Cmd.ICmdRecognizer;
 import com.poker.common.config.Config;
@@ -112,8 +112,8 @@ public class Table extends AbsTable {
 		}else if(ret == LoginResult.LOGIN_SUCCESS_ALREADY_EXIST){
 			onReLogin(mUser);
 		}else if(ret == LoginResult.LOGIN_FAILED_FULL){
-			sendToUser(BaseGameCmd.CMD_SERVER_LOGIN_ERR,++sequence_id,ErrorServer.error(BaseGameCmd.ERR_CODE_LOGIN_TABLE_FULL,""),mUser);
-	    	printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_LOGIN_ERR, TexasGameServer.DEBUG_LOG);
+			sendToUser(CmdGameBase.CMD_SERVER_LOGIN_ERR,++sequence_id,ErrorServer.error(CmdGameBase.ERR_CODE_LOGIN_TABLE_FULL,""),mUser);
+	    	printLog(game_sequence_id, sequence_id, CmdGameBase.CMD_SERVER_LOGIN_ERR, TexasGameServer.DEBUG_LOG);
 		}
 		return ret;
 	};
@@ -121,8 +121,8 @@ public class Table extends AbsTable {
 	@Override
 	public int onUserReady(User mUser){
 		if(userReady(mUser) == 1){
-			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERREADY, ++sequence_id, TexasGameServer.broadUserReady(mUser),mUser);
-			printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_BROAD_USERREADY, TexasGameServer.DEBUG_LOG);
+			broadcastToUser(CmdGameBase.CMD_SERVER_BROAD_USERREADY, ++sequence_id, TexasGameServer.broadUserReady(mUser),mUser);
+			printLog(game_sequence_id, sequence_id, CmdGameBase.CMD_SERVER_BROAD_USERREADY, TexasGameServer.DEBUG_LOG);
 			return 1;
 		}
 		return 0;
@@ -132,8 +132,8 @@ public class Table extends AbsTable {
 	public LogoutResult onUserExit(User mUser){
 		LogoutResult ret= userExit(mUser);
 		if(ret ==  LogoutResult.LOGOUT_SUCCESS){
-			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, ++sequence_id, TexasGameServer.broadUserLogout(mUser),mUser);
-			printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_BROAD_USERLOGOUT, TexasGameServer.DEBUG_LOG);
+			broadcastToUser(CmdGameBase.CMD_SERVER_BROAD_USERLOGOUT, ++sequence_id, TexasGameServer.broadUserLogout(mUser),mUser);
+			printLog(game_sequence_id, sequence_id, CmdGameBase.CMD_SERVER_BROAD_USERLOGOUT, TexasGameServer.DEBUG_LOG);
 		}
 		return ret;
 	};
@@ -148,8 +148,8 @@ public class Table extends AbsTable {
 		//两个状态不一致
 		if(mUser.isOnLine() != isOnLine){
 			mUser.setOnLine(isOnLine);
-			broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USEROFFLINE, ++sequence_id, TexasGameServer.broadUserOffline(mUser.uid,mUser.isOnLine()),mUser);
-			printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_BROAD_USEROFFLINE, TexasGameServer.DEBUG_LOG);
+			broadcastToUser(CmdGameBase.CMD_SERVER_BROAD_USEROFFLINE, ++sequence_id, TexasGameServer.broadUserOffline(mUser.uid,mUser.isOnLine()),mUser);
+			printLog(game_sequence_id, sequence_id, CmdGameBase.CMD_SERVER_BROAD_USEROFFLINE, TexasGameServer.DEBUG_LOG);
 			return 1;
 		}
 
@@ -253,12 +253,12 @@ public class Table extends AbsTable {
 		}
 		
 		//1。对进来的用户广播桌子上有哪些用户
-		sendToUser(BaseGameCmd.CMD_SERVER_USERLOGIN, ++sequence_id, TexasGameServer.userLogin(mUser,this,mGameConfig),mUser);
-		printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_USERLOGIN, TexasGameServer.DEBUG_LOG);
+		sendToUser(CmdGameBase.CMD_SERVER_USERLOGIN, ++sequence_id, TexasGameServer.userLogin(mUser,this,mGameConfig),mUser);
+		printLog(game_sequence_id, sequence_id, CmdGameBase.CMD_SERVER_USERLOGIN, TexasGameServer.DEBUG_LOG);
 		
 		//2.对桌子上的用户广播谁进来类
-		broadcastToUser(BaseGameCmd.CMD_SERVER_BROAD_USERLOGIN, ++sequence_id, TexasGameServer.broadUserLogin(mUser),mUser);
-		printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_BROAD_USERLOGIN, TexasGameServer.DEBUG_LOG);
+		broadcastToUser(CmdGameBase.CMD_SERVER_BROAD_USERLOGIN, ++sequence_id, TexasGameServer.broadUserLogin(mUser),mUser);
+		printLog(game_sequence_id, sequence_id, CmdGameBase.CMD_SERVER_BROAD_USERLOGIN, TexasGameServer.DEBUG_LOG);
 		
 		//3.判断游戏谁否可以开始了
 		if(table_status == TableStatus.TABLE_STATUS_PLAY){
@@ -279,8 +279,8 @@ public class Table extends AbsTable {
 			return 0;
 		}else{//游戏暂停中，直接返回登录即可
 			sequence_id++;
-			sendToUser(BaseGameCmd.CMD_SERVER_USERLOGIN, ++sequence_id, TexasGameServer.userLogin((User)mUser,this,mGameConfig),mUser);
-			printLog(game_sequence_id, sequence_id, BaseGameCmd.CMD_SERVER_USERLOGIN, TexasGameServer.DEBUG_LOG);
+			sendToUser(CmdGameBase.CMD_SERVER_USERLOGIN, ++sequence_id, TexasGameServer.userLogin((User)mUser,this,mGameConfig),mUser);
+			printLog(game_sequence_id, sequence_id, CmdGameBase.CMD_SERVER_USERLOGIN, TexasGameServer.DEBUG_LOG);
 		}
 		return 0;
 	}

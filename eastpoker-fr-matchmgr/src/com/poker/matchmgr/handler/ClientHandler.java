@@ -7,7 +7,7 @@ import java.util.HashMap;
 import com.open.net.client.object.AbstractClient;
 import com.open.util.log.Logger;
 import com.poker.base.cmd.Cmd;
-import com.poker.base.cmd.MatchCmd;
+import com.poker.base.cmd.CmdMatch;
 import com.poker.base.packet.BasePacket;
 import com.poker.base.packet.InPacket;
 import com.poker.base.packet.OutPacket;
@@ -28,7 +28,7 @@ public class ClientHandler extends AbsClientHandler{
 		int cmd   = BasePacket.getCmd(data, header_start);
 		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
 		
-		if(cmd == MatchCmd.CMD_MATCHSERVER_REGISTER){
+		if(cmd == CmdMatch.CMD_MATCHSERVER_REGISTER){
 			MatchServer inMatchServer = null;
 			ArrayList<MatchServer> match_server_list = map.get(inMatchServer.matchGameId);
 			if(null == match_server_list){

@@ -1,6 +1,6 @@
 package com.poker.protocols;
 
-import com.poker.base.cmd.MonitorCmd;
+import com.poker.base.cmd.CmdMonitor;
 import com.poker.base.packet.BasePacket;
 import com.poker.protocols.server.ServerProto;
 
@@ -16,7 +16,7 @@ public class Monitor {
 		builder.setPort(port);
 		
 		byte[] body = builder.build().toByteArray();
-		return BasePacket.buildServerPacket(writeBuff, 1, MonitorCmd.CMD_MONITOR_REGISTER, body, 0, body.length);
+		return BasePacket.buildServerPacket(writeBuff, 1, CmdMonitor.CMD_MONITOR_REGISTER, body, 0, body.length);
 	}
 	
 	public static int unregister2Monitor(byte[] writeBuff,int type ,String name, int id, String host ,int port){
@@ -29,6 +29,6 @@ public class Monitor {
 		builder.setPort(port);
 
 		byte[] body = builder.build().toByteArray();
-		return BasePacket.buildServerPacket(writeBuff, 2, MonitorCmd.CMD_MONITOR_UNREGISTER, body, 0, body.length);
+		return BasePacket.buildServerPacket(writeBuff, 2, CmdMonitor.CMD_MONITOR_UNREGISTER, body, 0, body.length);
 	}
 }

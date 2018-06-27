@@ -1,7 +1,7 @@
 package com.poker.base.cmd;
 
 
-public class SystemCmd {
+public class CmdSystem {
 	
 	public static final int CMD_SYS_HEAR_BEAT 			= 0x0001;
 	

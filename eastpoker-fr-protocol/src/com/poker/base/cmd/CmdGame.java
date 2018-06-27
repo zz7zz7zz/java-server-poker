@@ -2,7 +2,7 @@ package com.poker.base.cmd;
 
 import com.poker.base.type.TServer;
 
-public final class GameCmd {
+public final class CmdGame {
 	
 	//-----------------------------------------------------
 	public static int CMD_LOGIN_GAME 				= (TServer.SERVER_GAME <<16) + 0x1001;//0x71001登录游戏

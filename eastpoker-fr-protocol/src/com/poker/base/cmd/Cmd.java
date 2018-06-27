@@ -9,24 +9,24 @@ public class Cmd {
 	public static String getCmdString(int cmd){
 		int server = cmd >> 16;
 		if(server == TServer.SERVER_ACCESS){
-			return AccessCmd.getCmdString(cmd);
+			return CmdAccess.getCmdString(cmd);
 		}else if(server == TServer.SERVER_USER){
-			return UserCmd.getCmdString(cmd);
+			return CmdUser.getCmdString(cmd);
 		}else if(server == TServer.SERVER_ALLOCATOR){
-			return AllocatorCmd.getCmdString(cmd);
+			return CmdAllocator.getCmdString(cmd);
 		}else if(server == TServer.SERVER_LOGIN){
-			return LoginCmd.getCmdString(cmd);
+			return CmdLogin.getCmdString(cmd);
 		}else if(server == TServer.SERVER_DIAPATCHER){
-			return DispatchCmd.getCmdString(cmd);
+			return CmdDispatcher.getCmdString(cmd);
 		}else if(server == TServer.SERVER_MONITOR){
-			return MonitorCmd.getCmdString(cmd);
+			return CmdMonitor.getCmdString(cmd);
 		}else if(server == TServer.SERVER_GAME){
-			return GameCmd.getCmdString(cmd);
+			return CmdGame.getCmdString(cmd);
 		}else if(server == TServer.SERVER_MATCH){
-			return MatchCmd.getCmdString(cmd);
+			return CmdMatch.getCmdString(cmd);
 		}else {
 			if(cmd < 0x1001){
-				return SystemCmd.getCmdString(cmd);
+				return CmdSystem.getCmdString(cmd);
 			}
 			
 			int size = cmdListener.size();

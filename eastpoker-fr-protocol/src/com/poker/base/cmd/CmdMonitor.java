@@ -2,7 +2,7 @@ package com.poker.base.cmd;
 
 import com.poker.base.type.TServer;
 
-public final class MonitorCmd {
+public final class CmdMonitor {
 	
 	public static final int CMD_MONITOR_REGISTER    = (TServer.SERVER_MONITOR <<16) + 1;//0x10002
 	public static final int CMD_MONITOR_UNREGISTER  = (TServer.SERVER_MONITOR <<16) + 2;//0x10002

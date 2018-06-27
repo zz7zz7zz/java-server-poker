@@ -2,7 +2,7 @@ package com.poker.base.cmd;
 
 import com.poker.base.type.TServer;
 
-public class UserCmd {
+public class CmdUser {
 
 	public static int CMD_LOGIN_GAME 				= (TServer.SERVER_USER <<16) + 0x1001;//0x50001登录游戏
 	public static int CMD_CHECK_GAME_STATUS 		= (TServer.SERVER_USER <<16) + 0x1002;//0x50002用户登录账号后后，检查游戏状态

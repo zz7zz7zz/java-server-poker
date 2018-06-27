@@ -16,7 +16,7 @@ import com.open.net.server.object.ServerLog.LogListener;
 
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
-import com.poker.base.cmd.BaseGameCmd;
+import com.poker.base.cmd.CmdGameBase;
 import com.poker.base.cmd.Cmd;
 import com.poker.base.cmd.Cmd.ICmdRecognizer;
 import com.poker.base.packet.DataPacket;
@@ -113,7 +113,7 @@ public class Main {
         Cmd.AddCmdRecognizer(new ICmdRecognizer() {
 			@Override
 			public String getCmdString(int cmd) {
-				return BaseGameCmd.getCmdString(cmd);
+				return CmdGameBase.getCmdString(cmd);
 			}
 		});
     }

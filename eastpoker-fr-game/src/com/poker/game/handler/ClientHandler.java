@@ -6,7 +6,7 @@ import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 
 import com.open.util.log.Logger;
-import com.poker.base.cmd.AllocatorCmd;
+import com.poker.base.cmd.CmdAllocator;
 import com.poker.base.cmd.Cmd;
 import com.poker.base.packet.BasePacket;
 import com.poker.base.packet.InPacket;
@@ -35,7 +35,7 @@ public class ClientHandler extends AbsClientHandler{
     		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
     		
     		//先判断游戏外逻辑，再判断游戏内逻辑
-        	if(cmd == AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){
+        	if(cmd == CmdAllocator.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){
         		on_get_roominfo(client,1,this,Main.mServerConfig,Main.mRoom);
         	}else{
         		Main.mRoom.dispatchRoomMessage(cmd, data, header_start, header_length, body_start, body_length);
@@ -61,7 +61,7 @@ public class ClientHandler extends AbsClientHandler{
 
 			int dst_server_id = Main.mServerConfig.game_id;
 			int dispatch_type = TDistapch.TYPE_P2P;
-			int length = PacketTransfer.send2Alloc(dst_server_id, mOutPacket.getPacket(), squenceId, 0, AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO, dispatch_type, body,0, body.length);
+			int length = PacketTransfer.send2Alloc(dst_server_id, mOutPacket.getPacket(), squenceId, 0, CmdAllocator.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO, dispatch_type, body,0, body.length);
 			sender.send(client, mOutPacket.getPacket(), 0, length);
 			return 1;
 		}
@@ -87,7 +87,7 @@ public class ClientHandler extends AbsClientHandler{
 		
 		int dst_server_id = Main.mServerConfig.game_id;
 		int dispatch_type = TDistapch.TYPE_P2P;
-		int length = PacketTransfer.send2Alloc(dst_server_id, mOutPacket.getPacket(), squenceId, 0, AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO, dispatch_type, body,0, body.length);
+		int length = PacketTransfer.send2Alloc(dst_server_id, mOutPacket.getPacket(), squenceId, 0, CmdAllocator.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO, dispatch_type, body,0, body.length);
 		sender.send(client, mOutPacket.getPacket(), 0, length);
 		return 1;
 	}

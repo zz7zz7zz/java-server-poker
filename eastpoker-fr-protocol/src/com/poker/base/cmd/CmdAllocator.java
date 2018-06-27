@@ -2,7 +2,7 @@ package com.poker.base.cmd;
 
 import com.poker.base.type.TServer;
 
-public final class AllocatorCmd {
+public final class CmdAllocator {
 	
 	public static final int CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO = (TServer.SERVER_ALLOCATOR <<16) + 1;//0x60001,上报桌子信息
 	public static final int CMD_GAMESERVER_TO_ALLOCATOR_UPDATE_ROOMINFO = (TServer.SERVER_ALLOCATOR <<16) + 2;//0x60002,上报桌子信息

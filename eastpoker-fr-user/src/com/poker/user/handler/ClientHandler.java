@@ -8,10 +8,10 @@ import com.open.net.client.object.AbstractClient;
 import com.open.util.log.Logger;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
-import com.poker.base.cmd.AllocatorCmd;
+import com.poker.base.cmd.CmdAllocator;
 import com.poker.base.cmd.Cmd;
-import com.poker.base.cmd.GameCmd;
-import com.poker.base.cmd.UserCmd;
+import com.poker.base.cmd.CmdGame;
+import com.poker.base.cmd.CmdUser;
 import com.poker.base.packet.BasePacket;
 import com.poker.base.packet.InPacket;
 import com.poker.base.packet.OutPacket;
@@ -38,13 +38,13 @@ public class ClientHandler extends AbsClientHandler{
     		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
     		
     		int squenceId = BasePacket.getSequenceId(data, header_start);
-    		if(cmd == UserCmd.CMD_CHECK_GAME_STATUS){
+    		if(cmd == CmdUser.CMD_CHECK_GAME_STATUS){
         		checkGameStatus(squenceId,data, header_start,header_length,body_start, body_length);
-        	}else if(cmd == UserCmd.CMD_LOGIN_GAME){
+        	}else if(cmd == CmdUser.CMD_LOGIN_GAME){
         		loginGame(squenceId,data, header_start,header_length,body_start, body_length);
-        	}else if(cmd == UserCmd.CMD_ENTER_ROOM){
+        	}else if(cmd == CmdUser.CMD_ENTER_ROOM){
         		enterRoom(squenceId,data, header_start,header_length,body_start, body_length);
-        	}else if(cmd == UserCmd.CMD_LEAVE_ROOM){
+        	}else if(cmd == CmdUser.CMD_LEAVE_ROOM){
         		leaveRoom(squenceId,data, header_start,header_length,body_start, body_length);
         	}
     		
@@ -72,11 +72,11 @@ public class ClientHandler extends AbsClientHandler{
 			byte[] mTempBuff = mInPacket.getPacket();
 			if(tableId >= 0){//说明在游戏中，需要重新进入游戏
 				
-				mOutPacket.begin(squenceId, GameCmd.CMD_CHECK_GAME_STATUS);
+				mOutPacket.begin(squenceId, CmdGame.CMD_CHECK_GAME_STATUS);
 				mOutPacket.writeInt(accessId);//AccessId
 				mOutPacket.end();
 				
-				int length = PacketTransfer.send2Game(gameId,gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_CHECK_GAME_STATUS, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+				int length = PacketTransfer.send2Game(gameId,gameSid, mTempBuff, squenceId, uid, CmdGame.CMD_CHECK_GAME_STATUS, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 				send2Dispatch(mTempBuff,0,length);	
 			}
 			
@@ -123,21 +123,21 @@ public class ClientHandler extends AbsClientHandler{
 		byte[] mTempBuff = mInPacket.getPacket();
 		if(tableId >= 0){//说明在游戏中，需要重新进入游戏
 			
-			mOutPacket.begin(squenceId, GameCmd.CMD_LOGIN_GAME);
+			mOutPacket.begin(squenceId, CmdGame.CMD_LOGIN_GAME);
 			mOutPacket.writeInt(accessId);//AccessId
 			mOutPacket.writeInt(tableId);//tableId
 			mOutPacket.end();
 			
-			int length = PacketTransfer.send2Game(gameId,gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_LOGIN_GAME, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+			int length = PacketTransfer.send2Game(gameId,gameSid, mTempBuff, squenceId, uid, CmdGame.CMD_LOGIN_GAME, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 			send2Dispatch(mTempBuff,0,length);	
 		}else{//说明没有在游戏中，去Alloc中寻找桌子再进入游戏
 			
-			mOutPacket.begin(squenceId, AllocatorCmd.CMD_LOGIN_GAME);
+			mOutPacket.begin(squenceId, CmdAllocator.CMD_LOGIN_GAME);
 			mOutPacket.writeInt(accessId);//AccessId
 			mOutPacket.writeBytes(mSubPacket.buff, mSubPacket.header_start, mSubPacket.header_length+mSubPacket.body_length);
 			mOutPacket.end();
 			
-			int length = PacketTransfer.send2Alloc(request_gameid,mTempBuff, squenceId, uid,AllocatorCmd.CMD_LOGIN_GAME,TDistapch.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
+			int length = PacketTransfer.send2Alloc(request_gameid,mTempBuff, squenceId, uid,CmdAllocator.CMD_LOGIN_GAME,TDistapch.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
 	  		send2Dispatch(mTempBuff,0,length);	
 		}
 	}

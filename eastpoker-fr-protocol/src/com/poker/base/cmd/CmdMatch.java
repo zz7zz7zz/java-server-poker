@@ -2,7 +2,7 @@ package com.poker.base.cmd;
 
 import com.poker.base.type.TServer;
 
-public class MatchCmd {
+public class CmdMatch {
 	
 	//自建比赛场次
 	public static final int CMD_MATCHSERVER_REGISTER   = (TServer.SERVER_MATCH <<16) + 1;//0x90001 , 注册比赛服务

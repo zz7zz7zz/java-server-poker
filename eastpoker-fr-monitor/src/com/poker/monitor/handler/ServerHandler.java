@@ -11,7 +11,7 @@ import com.open.net.base.util.TextUtils;
 import com.open.net.server.object.AbstractServerClient;
 import com.open.util.log.Logger;
 import com.poker.base.cmd.Cmd;
-import com.poker.base.cmd.MonitorCmd;
+import com.poker.base.cmd.CmdMonitor;
 import com.poker.base.packet.BasePacket;
 import com.poker.base.packet.InPacket;
 import com.poker.base.packet.OutPacket;
@@ -30,7 +30,7 @@ public class ServerHandler extends AbsServerHandler{
 			int cmd   = BasePacket.getCmd(data, header_start);
 	      	Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
 	      	
-    		if(cmd == MonitorCmd.CMD_MONITOR_REGISTER){
+    		if(cmd == CmdMonitor.CMD_MONITOR_REGISTER){
     			register(client, data, body_start,body_length);
     		}
 		} catch (Exception e) {

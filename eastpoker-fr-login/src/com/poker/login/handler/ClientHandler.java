@@ -9,8 +9,8 @@ import com.open.net.client.object.AbstractClientMessageProcessor;
 
 import com.open.util.log.Logger;
 import com.poker.base.cmd.Cmd;
-import com.poker.base.cmd.LoginCmd;
-import com.poker.base.cmd.UserCmd;
+import com.poker.base.cmd.CmdLogin;
+import com.poker.base.cmd.CmdUser;
 import com.poker.base.packet.BasePacket;
 import com.poker.base.packet.InPacket;
 import com.poker.base.packet.OutPacket;
@@ -38,7 +38,7 @@ public class ClientHandler extends AbsClientHandler{
     		int cmd   = BasePacket.getCmd(data, header_start);
     		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
     		
-        	if(cmd == LoginCmd.CMD_LOGIN_REQUEST){
+        	if(cmd == CmdLogin.CMD_LOGIN_REQUEST){
         		login(client, data, body_start, body_length, 1, this);
         	}
 		} catch (Exception e) {
@@ -72,24 +72,24 @@ public class ClientHandler extends AbsClientHandler{
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
 		
-		mOutPacket.begin(squenceId, LoginCmd.CMD_LOGIN_RESPONSE);
+		mOutPacket.begin(squenceId, CmdLogin.CMD_LOGIN_RESPONSE);
 		mOutPacket.writeLong(socketId);//额外的数据
 		mOutPacket.writeLong(uid);//额外的数据
 		//发给客户端的包
 		byte[] resp_data = LoginServer.responseLogin(squenceId, uid,"粤B"+uid%100000,"http://img0.bdstatic.com/static/searchresult/img/logo-2X_b99594a.png",1);
-		int length = BasePacket.buildClientPacekt(mTempBuff, squenceId, LoginCmd.CMD_LOGIN_RESPONSE, (byte)0, resp_data, 0, resp_data.length);
+		int length = BasePacket.buildClientPacekt(mTempBuff, squenceId, CmdLogin.CMD_LOGIN_RESPONSE, (byte)0, resp_data, 0, resp_data.length);
 		mOutPacket.writeBytes(mTempBuff,0,length);
 		mOutPacket.end();
 		
-		length = PacketTransfer.send2Access(accessId,mTempBuff, squenceId, uid, LoginCmd.CMD_LOGIN_RESPONSE, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		length = PacketTransfer.send2Access(accessId,mTempBuff, squenceId, uid, CmdLogin.CMD_LOGIN_RESPONSE, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 		send2Dispatch(mTempBuff, 0, length);
 		
 		//2.检查游戏状态
-		mOutPacket.begin(squenceId, UserCmd.CMD_CHECK_GAME_STATUS);
+		mOutPacket.begin(squenceId, CmdUser.CMD_CHECK_GAME_STATUS);
 		mOutPacket.writeInt(accessId);//额外的数据
 		mOutPacket.end();
 		int user_server_id = 0;
-		length = PacketTransfer.send2User(user_server_id,mTempBuff, squenceId, uid, UserCmd.CMD_CHECK_GAME_STATUS, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		length = PacketTransfer.send2User(user_server_id,mTempBuff, squenceId, uid, CmdUser.CMD_CHECK_GAME_STATUS, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 		send2Dispatch(mTempBuff, 0, length);
 		
 		System.out.println(" socketId " + socketId + " login "+loginRequest.toString());

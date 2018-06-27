@@ -1,7 +1,7 @@
 package com.poker.base.cmd;
 
 
-public final class BaseGameCmd {
+public final class CmdGameBase {
 	
 	//客户端发起   （游戏基础命令字）,范围是0x1001~0x1FFF
 	public static final int CMD_CLIENT_USER_EXIT             	= 0x1002;//用户退出

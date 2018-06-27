@@ -13,7 +13,7 @@ import com.open.net.server.object.AbstractServerMessageProcessor;
 
 import com.open.util.log.Logger;
 import com.poker.base.cmd.Cmd;
-import com.poker.base.cmd.DispatchCmd;
+import com.poker.base.cmd.CmdDispatcher;
 import com.poker.base.packet.BasePacket;
 import com.poker.base.packet.InPacket;
 import com.poker.base.packet.OutPacket;
@@ -43,11 +43,11 @@ public class ServerHandler extends AbsServerHandler{
     		int cmd   = BasePacket.getCmd(data, header_start);
           	Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
           	
-    		if(cmd == DispatchCmd.CMD_DISPATCH_REGISTER){
+    		if(cmd == CmdDispatcher.CMD_DISPATCH_REGISTER){
     			register(client, data, body_start,body_length);
-    		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA_GAME_GROUP){
+    		}else if(cmd == CmdDispatcher.CMD_DISPATCH_DATA_GAME_GROUP){
     			dispatchGameGoup(client, data, body_start, body_length, this);
-    		}else if(cmd == DispatchCmd.CMD_DISPATCH_DATA_MATCH_GROUP){
+    		}else if(cmd == CmdDispatcher.CMD_DISPATCH_DATA_MATCH_GROUP){
     			dispatchMatchGroup(client, data, body_start, body_length, this);
     		}else{
     			dispatch(client, data, header_start,header_length,body_start, body_length,this);

@@ -5,10 +5,10 @@ import com.open.util.log.Logger;
 import com.poker.access.Main;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
-import com.poker.base.cmd.BaseGameCmd;
+import com.poker.base.cmd.CmdGameBase;
 import com.poker.base.cmd.Cmd;
-import com.poker.base.cmd.LoginCmd;
-import com.poker.base.cmd.SystemCmd;
+import com.poker.base.cmd.CmdLogin;
+import com.poker.base.cmd.CmdSystem;
 import com.poker.base.packet.BasePacket;
 import com.poker.base.packet.InPacket;
 import com.poker.base.packet.OutPacket;
@@ -34,7 +34,7 @@ public class ServerHandler extends AbsServerHandler{
 		byte[] body = builder.build().toByteArray();
 
 		byte[] mTempBuff = mInPacket.getPacket();
-		int length 		= BasePacket.buildClientPacekt(mTempBuff, 0, SystemCmd.CMD_SYS_SERVER_CONFIG, (byte)0,body,0,body.length);
+		int length 		= BasePacket.buildClientPacekt(mTempBuff, 0, CmdSystem.CMD_SYS_SERVER_CONFIG, (byte)0,body,0,body.length);
         Main.mServerHandler.unicast(client, mTempBuff,0,length);
         
 	}
@@ -50,7 +50,7 @@ public class ServerHandler extends AbsServerHandler{
         		int squenceId = 0;
         		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
         		byte[] mTempBuff = mInPacket.getPacket();
-        		int length = PacketTransfer.send2Game(attachUser.gameId, attachUser.gameSid, mTempBuff, squenceId, attachUser.uid, BaseGameCmd.CMD_CLIENT_OFFLINE, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  0);
+        		int length = PacketTransfer.send2Game(attachUser.gameId, attachUser.gameSid, mTempBuff, squenceId, attachUser.uid, CmdGameBase.CMD_CLIENT_OFFLINE, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  0);
         		send2Dispatch(mTempBuff,0,length);	
         	}
         	
@@ -67,7 +67,7 @@ public class ServerHandler extends AbsServerHandler{
       	Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
       	
 		User user = (User)client.getAttachment();
-		if(cmd != LoginCmd.CMD_LOGIN_REQUEST && null == user){//非登录指令/非心跳指令，一律必需先登录
+		if(cmd != CmdLogin.CMD_LOGIN_REQUEST && null == user){//非登录指令/非心跳指令，一律必需先登录
 			Logger.v("please login frist ");
 			return;
 		}	
@@ -119,9 +119,9 @@ public class ServerHandler extends AbsServerHandler{
       		}
       	}else{
 			if(cmd < 0x1001){//系统处理
-				if(cmd == SystemCmd.CMD_SYS_HEAR_BEAT){
+				if(cmd == CmdSystem.CMD_SYS_HEAR_BEAT){
 	      			byte[] mTempBuff = mInPacket.getPacket();
-					int length 		= BasePacket.buildClientPacekt(mTempBuff, squenceId+1, SystemCmd.CMD_SYS_HEAR_BEAT_REPONSE, (byte)0,mOutPacket.getPacket(),0,0);
+					int length 		= BasePacket.buildClientPacekt(mTempBuff, squenceId+1, CmdSystem.CMD_SYS_HEAR_BEAT_REPONSE, (byte)0,mOutPacket.getPacket(),0,0);
 			        Main.mServerHandler.unicast(client, mTempBuff,0,length);
 				}else{
 					Logger.v("unhandled sys_cmd 0x"+Integer.toHexString(cmd));

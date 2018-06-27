@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
-import com.poker.base.cmd.BaseGameCmd;
-import com.poker.base.cmd.GameCmd;
+import com.poker.base.cmd.CmdGameBase;
+import com.poker.base.cmd.CmdGame;
 import com.poker.common.config.Config;
 import com.poker.games.define.UserPool;
 import com.poker.games.define.GameDefine.LoginResult;
@@ -58,7 +58,7 @@ public class Room {
 			}
 		}
 		
-		if(cmd == GameCmd.CMD_LOGIN_GAME){
+		if(cmd == CmdGame.CMD_LOGIN_GAME){
 			
 			AbsTable.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());	
 			int accessId = AbsTable.mInPacket.readInt();
@@ -97,7 +97,7 @@ public class Room {
 				return;
 			}
     		
-    		if(cmd == GameCmd.CMD_CHECK_GAME_STATUS){
+    		if(cmd == CmdGame.CMD_CHECK_GAME_STATUS){
     			
     			AbsTable.mInPacket.copyFrom(mDispatchPacket.getData().toByteArray(), 0, mDispatchPacket.getData().size());	
     			int accessId = AbsTable.mInPacket.readInt();
@@ -110,22 +110,22 @@ public class Room {
     				logoutGame(mUser,mTable);
     			}
     			
-        	}else if(cmd == BaseGameCmd.CMD_CLIENT_USER_EXIT){
+        	}else if(cmd == CmdGameBase.CMD_CLIENT_USER_EXIT){
         		
         		logoutGame(mUser,mTable);
         		
-        	}else if(cmd == BaseGameCmd.CMD_CLIENT_USER_READY){
+        	}else if(cmd == CmdGameBase.CMD_CLIENT_USER_READY){
         		
         		mUser.accessId = mDispatchPacket.getDispatchChainList(0).getSrcServerId();
         		mTable.updateOnLineStatus(mUser,true);
         		
     			mTable.onUserReady(mUser);
     			
-        	}else if(cmd == BaseGameCmd.CMD_CLIENT_OFFLINE){
+        	}else if(cmd == CmdGameBase.CMD_CLIENT_OFFLINE){
         		
         		mTable.updateOnLineStatus(mUser,false);
         		
-        	}else if(cmd == BaseGameCmd.CMD_CLIENT_KICK_USER){
+        	}else if(cmd == CmdGameBase.CMD_CLIENT_KICK_USER){
         		
         		long kickedUid = 0;
         		User kickedUser = userMap.get(kickedUid);

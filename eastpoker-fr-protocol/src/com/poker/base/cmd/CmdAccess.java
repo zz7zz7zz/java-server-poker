@@ -2,7 +2,7 @@ package com.poker.base.cmd;
 
 import com.poker.base.type.TServer;
 
-public final class AccessCmd {
+public final class CmdAccess {
 	
 	public static final int CMD_LOGIN_GAME 			= (TServer.SERVER_ACCESS <<16) + 1;//0x30001
 	public static final int CMD_LOGINOUT_GAME 	    = (TServer.SERVER_ACCESS <<16) + 2;//0x30002

@@ -11,9 +11,9 @@ import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 
 import com.open.util.log.Logger;
-import com.poker.base.cmd.AllocatorCmd;
+import com.poker.base.cmd.CmdAllocator;
 import com.poker.base.cmd.Cmd;
-import com.poker.base.cmd.GameCmd;
+import com.poker.base.cmd.CmdGame;
 import com.poker.base.packet.BasePacket;
 import com.poker.base.packet.InPacket;
 import com.poker.base.packet.OutPacket;
@@ -40,13 +40,13 @@ public class ClientHandler extends AbsClientHandler{
 			int cmd   = BasePacket.getCmd(data, header_start);
     		Logger.v("input_packet cmd 0x" + Integer.toHexString(cmd) + " name " + Cmd.getCmdString(cmd) + " length " + BasePacket.getLength(data,header_start));
     		
-        	if(cmd == AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO){
+        	if(cmd == CmdAllocator.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO){
         		on_report_roominfo(client,data,header_start,header_length,body_start,body_length);
-        	}else if(cmd == AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){
+        	}else if(cmd == CmdAllocator.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO){
         		on_get_roominfo(client,data,header_start,header_length,body_start,body_length);
-        	}else if(cmd == AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_UPDATE_ROOMINFO){
+        	}else if(cmd == CmdAllocator.CMD_GAMESERVER_TO_ALLOCATOR_UPDATE_ROOMINFO){
         		on_update_roominfo(client,data,header_start,header_length,body_start,body_length);
-        	}else if(cmd == AllocatorCmd.CMD_LOGIN_GAME){
+        	}else if(cmd == CmdAllocator.CMD_LOGIN_GAME){
         		
         		on_login_game(client, data, body_start, body_length, 1, this);
         	
@@ -274,14 +274,14 @@ public class ClientHandler extends AbsClientHandler{
 		int tableId = findTable(request_gameid,request_gamelevel);
 		short gameSid= (short)(tableId>>16);
 
-		mOutPacket.begin(squenceId, GameCmd.CMD_LOGIN_GAME);
+		mOutPacket.begin(squenceId, CmdGame.CMD_LOGIN_GAME);
 		mOutPacket.writeInt(accessId);//AccessId
 		mOutPacket.writeInt(tableId);//tableId
 		mOutPacket.end();
 		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		int length = PacketTransfer.send2Game(request_gameid,gameSid,mTempBuff, squenceId, uid,GameCmd.CMD_LOGIN_GAME,TDistapch.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		int length = PacketTransfer.send2Game(request_gameid,gameSid,mTempBuff, squenceId, uid,CmdGame.CMD_LOGIN_GAME,TDistapch.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
   		send2Dispatch(mTempBuff,0,length);	
 	}
 	

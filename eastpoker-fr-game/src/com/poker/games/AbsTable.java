@@ -2,9 +2,9 @@ package com.poker.games;
 
 import com.open.net.base.ITimer;
 import com.open.net.base.Looper;
-import com.poker.base.cmd.AccessCmd;
-import com.poker.base.cmd.AllocatorCmd;
-import com.poker.base.cmd.UserCmd;
+import com.poker.base.cmd.CmdAccess;
+import com.poker.base.cmd.CmdAllocator;
+import com.poker.base.cmd.CmdUser;
 import com.poker.base.packet.InPacket;
 import com.poker.base.packet.OutPacket;
 import com.poker.base.packet.PacketTransfer;
@@ -52,7 +52,7 @@ public abstract class AbsTable implements ITimer{
 	
 	public void enterRoom2Access(User user,AbsTable table){
 		int squenceId = 0;
-		mOutPacket.begin(squenceId, AccessCmd.CMD_LOGIN_GAME);
+		mOutPacket.begin(squenceId, CmdAccess.CMD_LOGIN_GAME);
 		mOutPacket.writeInt(table.tableId);
 		mOutPacket.writeShort(mRoom.gameId);
 		mOutPacket.writeShort(mRoom.gameSid);
@@ -60,7 +60,7 @@ public abstract class AbsTable implements ITimer{
 		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		int length = PacketTransfer.send2Access(user.accessId, mTempBuff, squenceId, user.uid, AccessCmd.CMD_LOGIN_GAME, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		int length = PacketTransfer.send2Access(user.accessId, mTempBuff, squenceId, user.uid, CmdAccess.CMD_LOGIN_GAME, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 		Main.send2Dispatch(mTempBuff,0,length);	
 	}
 	
@@ -71,7 +71,7 @@ public abstract class AbsTable implements ITimer{
 	public void enterRoom2User(User user,AbsTable table){
 		int squenceId = 0;
 		int dst_server_id = 0;
-		mOutPacket.begin(squenceId, AllocatorCmd.CMD_LOGIN_GAME);
+		mOutPacket.begin(squenceId, CmdAllocator.CMD_LOGIN_GAME);
 		mOutPacket.writeInt(table.tableId);
 		mOutPacket.writeShort(mRoom.gameId);
 		mOutPacket.writeShort(mRoom.gameSid);
@@ -79,7 +79,7 @@ public abstract class AbsTable implements ITimer{
 		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		int length = PacketTransfer.send2User(dst_server_id, mTempBuff, squenceId, user.uid, UserCmd.CMD_ENTER_ROOM, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		int length = PacketTransfer.send2User(dst_server_id, mTempBuff, squenceId, user.uid, CmdUser.CMD_ENTER_ROOM, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 		Main.send2Dispatch(mTempBuff,0,length);	
 	}
 	
@@ -87,7 +87,7 @@ public abstract class AbsTable implements ITimer{
 		int squenceId = 0;
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		int length = PacketTransfer.send2User(user.accessId, mTempBuff, squenceId, user.uid, AccessCmd.CMD_LOGINOUT_GAME, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  0);
+		int length = PacketTransfer.send2User(user.accessId, mTempBuff, squenceId, user.uid, CmdAccess.CMD_LOGINOUT_GAME, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  0);
 		Main.send2Dispatch(mTempBuff,0,length);	
 	}
 	
@@ -100,7 +100,7 @@ public abstract class AbsTable implements ITimer{
 		int dst_server_id = 0;
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		int length = PacketTransfer.send2User(dst_server_id, mTempBuff, squenceId, user.uid, UserCmd.CMD_LEAVE_ROOM, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  0);
+		int length = PacketTransfer.send2User(dst_server_id, mTempBuff, squenceId, user.uid, CmdUser.CMD_LEAVE_ROOM, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  0);
 		Main.send2Dispatch(mTempBuff,0,length);	
 	}
 	
