@@ -9,9 +9,9 @@ import com.open.util.log.Logger;
 import com.poker.base.cmd.AllocatorCmd;
 import com.poker.base.cmd.Cmd;
 import com.poker.base.packet.BasePacket;
-import com.poker.base.packet.DataTransfer;
 import com.poker.base.packet.InPacket;
 import com.poker.base.packet.OutPacket;
+import com.poker.base.packet.PacketTransfer;
 import com.poker.base.type.TDistapch;
 import com.poker.common.config.Config;
 import com.poker.game.Main;
@@ -61,7 +61,7 @@ public class ClientHandler extends AbsClientHandler{
 
 			int dst_server_id = Main.mServerConfig.game_id;
 			int dispatch_type = TDistapch.TYPE_P2P;
-			int length = DataTransfer.send2Allocator(mOutPacket.getPacket(),squenceId,0,AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO,dispatch_type, body,0,body.length, Main.libArgsConfig.server_type, Main.libArgsConfig.id, dst_server_id,-1,-1);
+			int length = PacketTransfer.send2Alloc(dst_server_id, mOutPacket.getPacket(), squenceId, 0, AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO, dispatch_type, body,0, body.length);
 			sender.send(client, mOutPacket.getPacket(), 0, length);
 			return 1;
 		}
@@ -87,7 +87,7 @@ public class ClientHandler extends AbsClientHandler{
 		
 		int dst_server_id = Main.mServerConfig.game_id;
 		int dispatch_type = TDistapch.TYPE_P2P;
-		int length = DataTransfer.send2Allocator(mOutPacket.getPacket(),squenceId,0,AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO,dispatch_type, body,0,body.length, Main.libArgsConfig.server_type, Main.libArgsConfig.id, dst_server_id,-1,-1);
+		int length = PacketTransfer.send2Alloc(dst_server_id, mOutPacket.getPacket(), squenceId, 0, AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO, dispatch_type, body,0, body.length);
 		sender.send(client, mOutPacket.getPacket(), 0, length);
 		return 1;
 	}

@@ -6,7 +6,7 @@ import com.poker.base.type.TServer;
 import com.poker.protocols.server.DispatchChainProto;
 import com.poker.protocols.server.DispatchPacketProto;
 
-public class PacketTransfer{
+public final class PacketTransfer{
 	
 	public static int SERVER_ID = 0;
 	public static int SERVER_TYPE;
