@@ -13,13 +13,13 @@ import com.open.net.server.object.ServerLog.LogListener;
 
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
-import com.poker.base.ServerIds;
+import com.poker.base.data.DataPacket;
+import com.poker.base.packet.InPacket;
+import com.poker.base.packet.OutPacket;
+import com.poker.base.packet.PacketTransfer;
+import com.poker.base.type.TServer;
 import com.poker.common.config.Config;
-import com.poker.data.DataPacket;
 import com.poker.dispatcher.handler.ServerHandler;
-import com.poker.packet.InPacket;
-import com.poker.packet.OutPacket;
-import com.poker.packet.PacketTransfer;
 import com.poker.protocols.Monitor;
 
 
@@ -37,7 +37,7 @@ public class Main {
     	//1.1 服务器配置初始化:解析命令行参数
     	libArgsConfig = new ArgsConfig();
     	libArgsConfig.initArgsConfig(args);
-    	libArgsConfig.server_type = ServerIds.SERVER_DIAPATCHER;
+    	libArgsConfig.server_type = TServer.SERVER_DIAPATCHER;
     	
     	//1.2 服务器配置初始化:解析文件配置
         ServerConfig libServerConfig = new ServerConfig();

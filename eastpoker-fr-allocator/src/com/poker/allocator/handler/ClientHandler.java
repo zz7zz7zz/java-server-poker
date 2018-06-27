@@ -11,15 +11,15 @@ import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 
 import com.open.util.log.Logger;
-import com.poker.cmd.AllocatorCmd;
-import com.poker.cmd.Cmd;
-import com.poker.cmd.GameCmd;
-import com.poker.data.DistapchType;
-import com.poker.packet.BasePacket;
-import com.poker.packet.InPacket;
-import com.poker.packet.OutPacket;
-import com.poker.packet.PacketInfo;
-import com.poker.packet.PacketTransfer;
+import com.poker.base.cmd.AllocatorCmd;
+import com.poker.base.cmd.Cmd;
+import com.poker.base.cmd.GameCmd;
+import com.poker.base.packet.BasePacket;
+import com.poker.base.packet.InPacket;
+import com.poker.base.packet.OutPacket;
+import com.poker.base.packet.PacketInfo;
+import com.poker.base.packet.PacketTransfer;
+import com.poker.base.type.TDistapch;
 import com.poker.protocols.game.client.RequestLoginGameProto.RequestLoginGame;
 import com.poker.protocols.game.server.GameServerProto;
 import com.poker.protocols.game.server.GameServerProto.GameServer;
@@ -281,7 +281,7 @@ public class ClientHandler extends AbsClientHandler{
 		
 		//当InPacket不需要使用时，可以复用buff，防止过多的分配内存，产生内存碎片
 		byte[] mTempBuff = mInPacket.getPacket();
-		int length = PacketTransfer.send2Game(request_gameid,gameSid,mTempBuff, squenceId, uid,GameCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		int length = PacketTransfer.send2Game(request_gameid,gameSid,mTempBuff, squenceId, uid,GameCmd.CMD_LOGIN_GAME,TDistapch.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
   		send2Dispatch(mTempBuff,0,length);	
 	}
 	

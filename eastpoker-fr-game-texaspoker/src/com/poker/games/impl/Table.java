@@ -9,9 +9,9 @@ import java.util.Random;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
-import com.poker.cmd.BaseGameCmd;
-import com.poker.cmd.Cmd;
-import com.poker.cmd.Cmd.ICmdRecognizer;
+import com.poker.base.cmd.BaseGameCmd;
+import com.poker.base.cmd.Cmd;
+import com.poker.base.cmd.Cmd.ICmdRecognizer;
 import com.poker.common.config.Config;
 import com.poker.games.Room;
 import com.poker.games.AbsTable;

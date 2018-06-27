@@ -16,17 +16,17 @@ import com.open.net.server.object.ServerLog.LogListener;
 
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
-import com.poker.base.ServerIds;
-import com.poker.cmd.BaseGameCmd;
-import com.poker.cmd.Cmd;
-import com.poker.cmd.Cmd.ICmdRecognizer;
+import com.poker.base.cmd.BaseGameCmd;
+import com.poker.base.cmd.Cmd;
+import com.poker.base.cmd.Cmd.ICmdRecognizer;
+import com.poker.base.data.DataPacket;
+import com.poker.base.packet.InPacket;
+import com.poker.base.packet.OutPacket;
+import com.poker.base.packet.PacketTransfer;
+import com.poker.base.type.TServer;
 import com.poker.common.config.Config;
-import com.poker.data.DataPacket;
 import com.poker.game.handler.ClientHandler;
 import com.poker.games.Room;
-import com.poker.packet.InPacket;
-import com.poker.packet.OutPacket;
-import com.poker.packet.PacketTransfer;
 import com.poker.protocols.Dispatcher;
 import com.poker.protocols.Monitor;
 
@@ -45,7 +45,7 @@ public class Main {
     	//1.1 服务器配置初始化:解析命令行参数
     	libArgsConfig = new ArgsConfig();
     	libArgsConfig.initArgsConfig(args);
-    	libArgsConfig.server_type = ServerIds.SERVER_GAME;
+    	libArgsConfig.server_type = TServer.SERVER_GAME;
         
         //1.3 服务器配置初始化:作为客户端配置
         libClientConfig = new ClientConfig();
@@ -62,7 +62,7 @@ public class Main {
         mServerConfig.initFileConfig("./conf/server.config");
         mServerConfig.server_id = libArgsConfig.id;
         
-        libArgsConfig.server_type = (mServerConfig.game_id<<16 | ServerIds.SERVER_GAME);
+        libArgsConfig.server_type = (mServerConfig.game_id<<16 | TServer.SERVER_GAME);
         //-----------------------------------------初始化全局属性-----------------------------------------------
         initGlobalFields(libClientConfig.packet_max_length_tcp);
         

@@ -8,16 +8,16 @@ import com.open.net.client.object.AbstractClient;
 import com.open.util.log.Logger;
 import com.poker.access.object.User;
 import com.poker.access.object.UserPool;
-import com.poker.cmd.AllocatorCmd;
-import com.poker.cmd.Cmd;
-import com.poker.cmd.GameCmd;
-import com.poker.cmd.UserCmd;
-import com.poker.data.DistapchType;
-import com.poker.packet.BasePacket;
-import com.poker.packet.InPacket;
-import com.poker.packet.OutPacket;
-import com.poker.packet.PacketInfo;
-import com.poker.packet.PacketTransfer;
+import com.poker.base.cmd.AllocatorCmd;
+import com.poker.base.cmd.Cmd;
+import com.poker.base.cmd.GameCmd;
+import com.poker.base.cmd.UserCmd;
+import com.poker.base.packet.BasePacket;
+import com.poker.base.packet.InPacket;
+import com.poker.base.packet.OutPacket;
+import com.poker.base.packet.PacketInfo;
+import com.poker.base.packet.PacketTransfer;
+import com.poker.base.type.TDistapch;
 import com.poker.protocols.game.client.RequestLoginGameProto.RequestLoginGame;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
 import com.poker.user.Main;
@@ -76,7 +76,7 @@ public class ClientHandler extends AbsClientHandler{
 				mOutPacket.writeInt(accessId);//AccessId
 				mOutPacket.end();
 				
-				int length = PacketTransfer.send2Game(gameId,gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_CHECK_GAME_STATUS, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+				int length = PacketTransfer.send2Game(gameId,gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_CHECK_GAME_STATUS, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 				send2Dispatch(mTempBuff,0,length);	
 			}
 			
@@ -128,7 +128,7 @@ public class ClientHandler extends AbsClientHandler{
 			mOutPacket.writeInt(tableId);//tableId
 			mOutPacket.end();
 			
-			int length = PacketTransfer.send2Game(gameId,gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_LOGIN_GAME, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+			int length = PacketTransfer.send2Game(gameId,gameSid, mTempBuff, squenceId, uid, GameCmd.CMD_LOGIN_GAME, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 			send2Dispatch(mTempBuff,0,length);	
 		}else{//说明没有在游戏中，去Alloc中寻找桌子再进入游戏
 			
@@ -137,7 +137,7 @@ public class ClientHandler extends AbsClientHandler{
 			mOutPacket.writeBytes(mSubPacket.buff, mSubPacket.header_start, mSubPacket.header_length+mSubPacket.body_length);
 			mOutPacket.end();
 			
-			int length = PacketTransfer.send2Alloc(request_gameid,mTempBuff, squenceId, uid,AllocatorCmd.CMD_LOGIN_GAME,DistapchType.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
+			int length = PacketTransfer.send2Alloc(request_gameid,mTempBuff, squenceId, uid,AllocatorCmd.CMD_LOGIN_GAME,TDistapch.TYPE_P2P,mOutPacket.getPacket(),0,  mOutPacket.getLength());
 	  		send2Dispatch(mTempBuff,0,length);	
 		}
 	}

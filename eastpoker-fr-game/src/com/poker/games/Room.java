@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.open.util.log.Logger;
-import com.poker.cmd.BaseGameCmd;
-import com.poker.cmd.GameCmd;
+import com.poker.base.cmd.BaseGameCmd;
+import com.poker.base.cmd.GameCmd;
 import com.poker.common.config.Config;
 import com.poker.games.define.UserPool;
 import com.poker.games.define.GameDefine.LoginResult;

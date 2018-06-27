@@ -11,10 +11,10 @@ import com.open.net.server.object.ServerLog;
 import com.open.net.server.object.ServerLog.LogListener;
 import com.open.util.log.Logger;
 import com.open.util.log.base.LogConfig;
-import com.poker.base.ServerIds;
+import com.poker.base.packet.InPacket;
+import com.poker.base.packet.OutPacket;
+import com.poker.base.type.TServer;
 import com.poker.monitor.handler.ServerHandler;
-import com.poker.packet.InPacket;
-import com.poker.packet.OutPacket;
 
 /**
  * author       :   long
@@ -30,7 +30,7 @@ public class Main {
     	//1.1 服务器配置初始化:解析命令行参数
     	ArgsConfig libArgsConfig = new ArgsConfig();
     	libArgsConfig.initArgsConfig(args);
-    	libArgsConfig.server_type = ServerIds.SERVER_ACCESS;
+    	libArgsConfig.server_type = TServer.SERVER_ACCESS;
     	
     	//1.2 服务器配置初始化:解析文件配置
         ServerConfig libServerConfig = new ServerConfig();

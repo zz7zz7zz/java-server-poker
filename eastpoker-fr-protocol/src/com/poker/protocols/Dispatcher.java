@@ -1,7 +1,7 @@
 package com.poker.protocols;
 
-import com.poker.cmd.DispatchCmd;
-import com.poker.packet.BasePacket;
+import com.poker.base.cmd.DispatchCmd;
+import com.poker.base.packet.BasePacket;
 import com.poker.protocols.server.ServerProto;
 
 public class Dispatcher {

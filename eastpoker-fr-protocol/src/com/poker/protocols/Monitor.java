@@ -1,7 +1,7 @@
 package com.poker.protocols;
 
-import com.poker.cmd.MonitorCmd;
-import com.poker.packet.BasePacket;
+import com.poker.base.cmd.MonitorCmd;
+import com.poker.base.packet.BasePacket;
 import com.poker.protocols.server.ServerProto;
 
 public class Monitor {

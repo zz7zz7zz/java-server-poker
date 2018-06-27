@@ -8,15 +8,15 @@ import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 
 import com.open.util.log.Logger;
-import com.poker.cmd.Cmd;
-import com.poker.cmd.LoginCmd;
-import com.poker.cmd.UserCmd;
-import com.poker.data.DistapchType;
-import com.poker.packet.BasePacket;
-import com.poker.packet.InPacket;
-import com.poker.packet.OutPacket;
-import com.poker.packet.PacketInfo;
-import com.poker.packet.PacketTransfer;
+import com.poker.base.cmd.Cmd;
+import com.poker.base.cmd.LoginCmd;
+import com.poker.base.cmd.UserCmd;
+import com.poker.base.packet.BasePacket;
+import com.poker.base.packet.InPacket;
+import com.poker.base.packet.OutPacket;
+import com.poker.base.packet.PacketInfo;
+import com.poker.base.packet.PacketTransfer;
+import com.poker.base.type.TDistapch;
 import com.poker.protocols.LoginServer;
 import com.poker.protocols.login.client.RequestLoginProto.RequestLogin;
 import com.poker.protocols.server.DispatchPacketProto.DispatchPacket;
@@ -81,7 +81,7 @@ public class ClientHandler extends AbsClientHandler{
 		mOutPacket.writeBytes(mTempBuff,0,length);
 		mOutPacket.end();
 		
-		length = PacketTransfer.send2Access(accessId,mTempBuff, squenceId, uid, LoginCmd.CMD_LOGIN_RESPONSE, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		length = PacketTransfer.send2Access(accessId,mTempBuff, squenceId, uid, LoginCmd.CMD_LOGIN_RESPONSE, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 		send2Dispatch(mTempBuff, 0, length);
 		
 		//2.检查游戏状态
@@ -89,7 +89,7 @@ public class ClientHandler extends AbsClientHandler{
 		mOutPacket.writeInt(accessId);//额外的数据
 		mOutPacket.end();
 		int user_server_id = 0;
-		length = PacketTransfer.send2User(user_server_id,mTempBuff, squenceId, uid, UserCmd.CMD_CHECK_GAME_STATUS, DistapchType.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
+		length = PacketTransfer.send2User(user_server_id,mTempBuff, squenceId, uid, UserCmd.CMD_CHECK_GAME_STATUS, TDistapch.TYPE_P2P, mOutPacket.getPacket(),0,  mOutPacket.getLength());
 		send2Dispatch(mTempBuff, 0, length);
 		
 		System.out.println(" socketId " + socketId + " login "+loginRequest.toString());

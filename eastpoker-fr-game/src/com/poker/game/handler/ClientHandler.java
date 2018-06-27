@@ -6,17 +6,17 @@ import com.open.net.client.object.AbstractClient;
 import com.open.net.client.object.AbstractClientMessageProcessor;
 
 import com.open.util.log.Logger;
-import com.poker.cmd.AllocatorCmd;
-import com.poker.cmd.Cmd;
+import com.poker.base.cmd.AllocatorCmd;
+import com.poker.base.cmd.Cmd;
+import com.poker.base.data.DataTransfer;
+import com.poker.base.packet.BasePacket;
+import com.poker.base.packet.InPacket;
+import com.poker.base.packet.OutPacket;
+import com.poker.base.type.TDistapch;
 import com.poker.common.config.Config;
-import com.poker.data.DataTransfer;
-import com.poker.data.DistapchType;
 import com.poker.game.Main;
 import com.poker.games.Room;
 import com.poker.games.AbsTable;
-import com.poker.packet.BasePacket;
-import com.poker.packet.InPacket;
-import com.poker.packet.OutPacket;
 import com.poker.protocols.game.server.GameServerProto;
 import com.poker.protocols.game.server.GameTableProto;
 
@@ -60,7 +60,7 @@ public class ClientHandler extends AbsClientHandler{
 			byte[] body = builder.build().toByteArray();
 
 			int dst_server_id = Main.mServerConfig.game_id;
-			int dispatch_type = DistapchType.TYPE_P2P;
+			int dispatch_type = TDistapch.TYPE_P2P;
 			int length = DataTransfer.send2Allocator(mOutPacket.getPacket(),squenceId,0,AllocatorCmd.CMD_GAMESERVER_TO_ALLOCATOR_REPORT_ROOMINFO,dispatch_type, body,0,body.length, Main.libArgsConfig.server_type, Main.libArgsConfig.id, dst_server_id,-1,-1);
 			sender.send(client, mOutPacket.getPacket(), 0, length);
 			return 1;
@@ -86,7 +86,7 @@ public class ClientHandler extends AbsClientHandler{
 		byte[] body = builder.build().toByteArray();
 		
 		int dst_server_id = Main.mServerConfig.game_id;
-		int dispatch_type = DistapchType.TYPE_P2P;
+		int dispatch_type = TDistapch.TYPE_P2P;
 		int length = DataTransfer.send2Allocator(mOutPacket.getPacket(),squenceId,0,AllocatorCmd.CMD_ALLOCATOR_BROADCAST_GET_ROOMINFO,dispatch_type, body,0,body.length, Main.libArgsConfig.server_type, Main.libArgsConfig.id, dst_server_id,-1,-1);
 		sender.send(client, mOutPacket.getPacket(), 0, length);
 		return 1;

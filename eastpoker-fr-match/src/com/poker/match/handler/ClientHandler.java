@@ -1,8 +1,8 @@
 package com.poker.match.handler;
 
 import com.open.net.client.object.AbstractClient;
-import com.poker.packet.InPacket;
-import com.poker.packet.OutPacket;
+import com.poker.base.packet.InPacket;
+import com.poker.base.packet.OutPacket;
 
 
 public class ClientHandler extends AbsClientHandler{
