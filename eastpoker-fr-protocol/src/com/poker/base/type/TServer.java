@@ -23,4 +23,6 @@ public final class TServer {
 	public static final int SERVER_PROPERTIES  	= 8;//用户属性服务，包含金币等属性
 	
 	public static final int SERVER_MATCH  	    = 9;//比赛服务
+	
+	public static final int SERVER_MATCH_MGR  	= 10;//比赛管理服务
 }

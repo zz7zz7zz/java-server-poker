@@ -18,9 +18,9 @@ public class Config {
     public UdpAddress[] monitor_net_udp;
     
     //----------------比赛专用------------------
-    public int matchId;
-    public int matchServerId;
-    public int matchType;
+    public short matchId;
+    public short matchServerId;
+    public short matchType;
     public String matchName;
     
     //解析文件配置参数
@@ -66,8 +66,8 @@ public class Config {
                 }
             }
             
-            matchId = CfgParser.getInt(map, "Match","matchId");
-            matchType = CfgParser.getInt(map, "Match","matchType");
+            matchId = CfgParser.getShort(map, "Match","matchId");
+            matchType = CfgParser.getShort(map, "Match","matchType");
             matchName = CfgParser.getString(map, "Match","matchName");
        }
     }
